@@ -1,0 +1,3189 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>الرحلة الفريدة - نظام KPIs والتشغيل المتكامل</title>
+    <!-- Chart.js for performance graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- SheetJS (XLSX) لدعم رفع شيت الإكسل (.xlsx / .xls / .csv) كما هو مباشرة -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, Arial, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; padding: 15px; direction: rtl; min-height: 100vh; margin: 0; }
+        .container { width: 100%; max-width: 100%; margin: 0; padding: 0; }
+        
+        #login-screen { display: flex; justify-content: center; align-items: center; min-height: 80vh; }
+        .login-card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 30px; width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        .login-title { font-size: 22px; color: #38bdf8; font-weight: bold; text-align: center; margin-bottom: 8px; }
+        .login-sub { font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 24px; }
+        .login-error { background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; padding: 10px; border-radius: 8px; font-size: 12px; text-align: center; margin-bottom: 15px; display: none; }
+        header { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 15px 20px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; width: 100%; }
+        h1 { font-size: 20px; color: #38bdf8; font-weight: bold; }
+        p { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+        
+        .header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .branch-group { display: flex; background: #0f172a; padding: 4px; border-radius: 8px; border: 1px solid #334155; gap: 4px; }
+        .btn-branch { padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 13px; border: none; cursor: pointer; background: transparent; color: #94a3b8; }
+        .btn-branch.active { background: #0284c7; color: #fff; }
+        .user-badge { background: #0f172a; border: 1px solid #38bdf8; color: #38bdf8; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 8px; }
+        .btn-action { background: #0284c7; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-logout { background: #dc2626; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 15px; background: #1e293b; padding: 10px 15px; border-radius: 10px; border: 1px solid #334155; width: 100%; }
+        .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+        .btn-tab { padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 12px; border: none; cursor: pointer; background: #334155; color: #cbd5e1; }
+        .btn-tab.active { background: #0284c7; color: #fff; }
+        .btn-add { background: #059669; color: #fff; }
+        
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; overflow-x: auto; padding: 15px; margin-bottom: 15px; width: 100%; }
+        table { width: 100%; border-collapse: collapse; text-align: right; white-space: nowrap; }
+        th { background: #0f172a; color: #38bdf8; font-size: 11px; padding: 12px 10px; border-bottom: 1px solid #334155; text-align: center; }
+        th:nth-child(1), th:nth-child(2) { text-align: right; }
+        td { padding: 8px; border-bottom: 1px solid #334155; font-size: 12px; color: #e2e8f0; }
+        tr:hover { background: rgba(51, 65, 85, 0.3); }
+        select, input.table-input { background: #0f172a; border: 1px solid #475569; color: #fff; padding: 4px; border-radius: 4px; font-weight: bold; font-size: 12px; text-align: center; width: 100%; }
+        
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .b-green { background: rgba(6, 95, 70, 0.4); color: #34d399; border: 1px solid #059669; }
+        .b-blue { background: rgba(22, 78, 99, 0.4); color: #22d3ee; border: 1px solid #0284c7; }
+        .b-red { background: rgba(127, 29, 29, 0.4); color: #fb7185; border: 1px solid #dc2626; }
+        .b-yellow { background: rgba(202, 138, 4, 0.4); color: #facc15; border: 1px solid #ca8a04; }
+        .btn-danger { background: rgba(220, 38, 38, 0.2); color: #fb7185; border: 1px solid #dc2626; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-edit-tbl { background: rgba(2, 132, 199, 0.2); color: #38bdf8; border: 1px solid #0284c7; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; margin-left: 4px; }
+        
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; padding: 15px; }
+        .modal.active { display: flex; }
+        .modal-content { background: #1e293b; border: 1px solid #475569; border-radius: 12px; width: 100%; max-width: 650px; padding: 25px; max-height: 95vh; overflow-y: auto; }
+        .form-group { margin-bottom: 12px; }
+        .form-label { display: block; font-size: 11px; font-weight: bold; color: #cbd5e1; margin-bottom: 4px; }
+        .form-input { width: 100%; background: #0f172a; border: 1px solid #475569; border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 12px; outline: none; }
+        
+        .checkbox-group { display: flex; flex-direction: column; gap: 6px; background: #0f172a; padding: 10px; border-radius: 6px; border: 1px solid #475569; max-height: 150px; overflow-y: auto; }
+        .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #cbd5e1; cursor: pointer; }
+        .clickable-emp { color: #38bdf8; cursor: pointer; font-weight: bold; text-decoration: underline; }
+        .clickable-emp:hover { color: #7dd3fc; }
+        .dept-filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px; background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; align-items: center; justify-content: space-between; }
+        .btn-dept { background: #1e293b; border: 1px solid #475569; color: #cbd5e1; padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .btn-dept.active { background: #0284c7; color: #fff; border-color: #38bdf8; }
+        .summary-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px; }
+        .stat-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; display: flex; align-items: center; justify-content: space-between; }
+        .stat-card h4 { font-size: 11px; color: #94a3b8; margin-bottom: 2px; }
+        .stat-card .val { font-size: 18px; font-weight: bold; color: #38bdf8; }
+        .row-excellent { background: rgba(6, 95, 70, 0.15) !important; }
+        .row-alert { background: rgba(127, 29, 29, 0.2) !important; }
+        .camera-command-center { position: relative; width: 100%; background: #000; border-radius: 10px; overflow: hidden; border: 1px solid #334155; min-height: 420px; display: flex; align-items: center; justify-content: center; }
+        .camera-video-bg { width: 100%; height: 420px; object-fit: cover; opacity: 0.85; }
+        .hud-overlay { position: absolute; inset: 0; padding: 15px; display: flex; flex-wrap: wrap; gap: 12px; align-content: flex-start; pointer-events: none; }
+        .hud-badge-card { background: rgba(15, 23, 42, 0.85); border: 1px solid #38bdf8; backdrop-filter: blur(4px); padding: 10px 14px; border-radius: 8px; min-width: 180px; box-shadow: 0 4px 6px rgba(0,0,0,0.4); pointer-events: auto; }
+        .hud-badge-card.alert { border-color: #ef4444; background: rgba(127, 29, 29, 0.85); }
+        .completed-task input { text-decoration: line-through; color: #64748b !important; }
+        .coaching-resolved input { text-decoration: line-through; color: #64748b !important; }
+        .coaching-resolved td { text-decoration: line-through; color: #64748b !important; opacity: 0.7; }
+        @media print {
+            body { background: #fff !important; color: #000 !important; }
+            .controls, header, .btn-action, .btn-logout, .branch-group, .tabs, .dept-filter-bar, .summary-cards-grid { display: none !important; }
+            .card { border: none !important; background: #fff !important; color: #000 !important; }
+            table { width: 100% !important; color: #000 !important; }
+            th { background: #eee !important; color: #000 !important; border: 1px solid #000 !important; }
+            td { border: 1px solid #ddd !important; color: #000 !important; }
+        }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="login-title">الرحلة الفريدة</div>
+            <div class="login-sub">نظام تقييم الأداء والتشغيل - تسجيل الدخول</div>
+            <div id="loginError" class="login-error">اسم المستخدم أو كلمة المرور غير صحيحة!</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="login-sub" style="display:block; text-align:right; margin-bottom:4px;">اسم المستخدم أو البريد أو كود الموظف</label>
+                    <input type="text" id="loginEmail" required class="form-input" placeholder="اكتب اسمك أو كودك">
+                </div>
+                <div class="form-group">
+                    <label class="login-sub" style="display:block; text-align:right; margin-bottom:4px;">كلمة المرور</label>
+                    <input type="password" id="loginPassword" required class="form-input" placeholder="••••••••">
+                </div>
+                <button type="submit" style="width:100%; background:#0284c7; color:#fff; border:none; padding:10px; border-radius:8px; font-weight:bold; font-size:14px; cursor:pointer; margin-top:10px;">تسجيل الدخول</button>
+            </form>
+        </div>
+    </div>
+    <div id="main-app" class="container hidden">
+        <!-- 🔔 مركز التنبيهات الفورية الذكية (مضاف حديثاً) -->
+        <div id="smartNotificationBanner" style="background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #38bdf8; border-radius: 12px; padding: 15px 20px; margin-bottom: 15px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 26px;">🔔</span>
+                <div>
+                    <h4 style="color: #38bdf8; font-size: 15px; margin-bottom: 3px;">مركز التنبيهات الفورية الذكية والملخص التشغيلي</h4>
+                    <p id="bannerAlertText" style="color: #cbd5e1; font-size: 12px;">جاري فحص حالة الفروع والموظفين...</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button type="button" onclick="switchTab('alerts')" class="btn-action" style="background: #dc2626; padding: 6px 14px;">🚨 عرض الإنذارات</button>
+                <button type="button" onclick="switchTab('coaching')" class="btn-action" style="background: #059669; padding: 6px 14px;">⚡ التوجيه الذكي</button>
+            </div>
+        </div>
+
+        <header>
+            <div>
+                <h1>الرحلة الفريدة - نظام تقييم الأداء والتشغيل</h1>
+                <p>إدارة مؤشرات الأداء (KPIs) وتقييم الفروع وخطة العمل</p>
+            </div>
+            <div class="header-left">
+                <div class="user-badge">
+                    <span id="loggedInUserName">المستخدم</span>
+                    <button type="button" onclick="openProfileModal()" class="btn-action">تعديل بياناتي</button>
+                    <button type="button" onclick="handleLogout()" class="btn-logout">خروج</button>
+                </div>
+                <div class="branch-group" id="branchButtonGroup"></div>
+                <button type="button" id="btnAddBranchHeader" onclick="openAddBranchModal()" class="btn-action btn-add hidden" style="background:#059669;">➕ فرع جديد</button>
+            </div>
+        </header>
+        <div class="controls">
+            <div class="tabs" id="appTabsContainer">
+                <button type="button" onclick="openAddModal()" id="tab-addemp" class="btn-tab btn-add admin-only">➕ إضافة موظف</button>
+                <button type="button" onclick="switchTab('eval')" id="tab-eval" class="btn-tab active">شيت التقييم</button>
+                <button type="button" onclick="switchTab('allemp')" id="tab-allemp" class="btn-tab admin-manager-only">👥 الموظفون</button>
+                <button type="button" onclick="switchTab('camerarules')" id="tab-camerarules" class="btn-tab admin-manager-only" style="background:#7c3aed; color:#fff;">🎥 الكاميرات</button>
+                <button type="button" onclick="switchTab('alerts')" id="tab-alerts" class="btn-tab admin-manager-only" style="background:#dc2626; color:#fff;">🚨 الإنذار المبكر</button>
+                <button type="button" onclick="switchTab('coaching')" id="tab-coaching" class="btn-tab admin-manager-only">⚡ التوجيه اللحظي الذكي</button>
+                <button type="button" onclick="switchTab('compare')" id="tab-compare" class="btn-tab admin-manager-only">⚔️ مقارنة حية</button>
+                <button type="button" onclick="switchTab('rootcause')" id="tab-rootcause" class="btn-tab admin-manager-only">🔍 تحليل الأخطاء</button>
+                <button type="button" onclick="switchTab('career')" id="tab-career" class="btn-tab admin-manager-only">🌱 النمو الوظيفي</button>
+                <button type="button" onclick="switchTab('executivereport')" id="tab-executivereport" class="btn-tab admin-manager-only" style="background:#059669; color:#fff;">📊 التقرير التنفيذي</button>
+                <button type="button" onclick="switchTab('devicelog')" id="tab-devicelog" class="btn-tab admin-only" style="background:#0284c7; color:#fff;">💻 سجل الأجهزة والدخول</button>
+                <button type="button" onclick="switchTab('auditlog')" id="tab-auditlog" class="btn-tab admin-only" style="background:#d97706; color:#fff;">🛡️ سجل التعديلات والرقابة</button>
+                <button type="button" onclick="switchTab('weeklyindividuals')" id="tab-weeklyindividuals" class="btn-tab">📅 تقارير الأسابيع</button>
+                <button type="button" onclick="switchTab('leaderboard')" id="tab-leaderboard" class="btn-tab">🏆 لوحة الشرف</button>
+                <button type="button" onclick="switchTab('charts')" id="tab-charts" class="btn-tab">📈 الرسوم</button>
+                <button type="button" onclick="switchTab('plan')" id="tab-plan" class="btn-tab">خطة العمل</button>
+                <button type="button" onclick="switchTab('users')" id="tab-users" class="btn-tab admin-only">⚙️ الإعدادات والصلاحيات</button>
+            </div>
+            <div>
+                <button type="button" onclick="window.print()" class="btn-action" style="background:#059669; padding:8px 14px;">🖨️ طباعة PDF</button>
+            </div>
+        </div>
+        <!-- 1. شيت التقييم -->
+        <div id="sec-eval" class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:#0f172a; padding:10px; border-radius:8px; flex-wrap:wrap; gap:10px;">
+                <div id="currentWeekStatus" style="font-size:12px; color:#38bdf8; font-weight:bold;"></div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <input type="text" id="inlineNewMetricInput" placeholder="اكتب اسم بند تقييم جديد..." class="form-input admin-only" style="width:170px; padding:5px 8px; font-size:11px;">
+                    <input type="number" id="inlineNewMetricWeight" placeholder="النسبة % (مثلاً 20)" min="1" max="100" class="form-input admin-only" style="width:120px; padding:5px 8px; font-size:11px;">
+                    <button type="button" onclick="addInlineNewMetric()" class="btn-action btn-add admin-only" style="background:#059669; padding:6px 12px;">➕ إضافة تقييم (بند جديد)</button>
+                    <button type="button" onclick="switchTab('users')" class="btn-action admin-only" style="background:#7c3aed; padding:6px 12px;">⚖️ تخصيص الأقسام والنسب</button>
+                    <div id="weekLockNotice" style="font-size:11px; color:#facc15;"></div>
+                </div>
+            </div>
+            <div class="summary-cards-grid">
+                <div class="stat-card">
+                    <div>
+                        <h4>متوسط أداء الفرع</h4>
+                        <div class="val" id="statAvgPct">0%</div>
+                    </div>
+                    <span style="font-size: 20px;">📈</span>
+                </div>
+                <div class="stat-card">
+                    <div>
+                        <h4>المتميزون (≥ 90%)</h4>
+                        <div class="val" id="statExcellentCount" style="color:#34d399;">0</div>
+                    </div>
+                    <span style="font-size: 20px;">🌟</span>
+                </div>
+                <div class="stat-card">
+                    <div>
+                        <h4>تحتاج تدخلاً (≤ 60%)</h4>
+                        <div class="val" id="statAlertCount" style="color:#fb7185;">0</div>
+                    </div>
+                    <span style="font-size: 20px;">🚨</span>
+                </div>
+            </div>
+            <div class="dept-filter-bar">
+                <div id="deptFilterBar" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+                <div>
+                    <input type="text" id="quickSearchInput" oninput="renderEvalTable()" placeholder="🔍 بحث سريع عن موظف..." class="form-input" style="width: 200px; padding: 6px; font-size: 11px;">
+                </div>
+            </div>
+            <table>
+                <thead id="evalTableHead"></thead>
+                <tbody id="evalTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 2. الموظفون كلهم -->
+        <div id="sec-allemp" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <h3 style="color:#38bdf8; font-size:15px;">👥 قاعدة بيانات الموظفين (الوظيفة، الإدارات، الأقسام، الفروع)</h3>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <label class="btn-action" style="background:#059669; cursor:pointer; margin:0; padding:6px 14px;">
+                        📁 رفع شيت إكسل/CSV للوظائف
+                        <input type="file" id="excelUploadInput" accept=".xlsx, .xls, .csv, .txt" onchange="handleExcelUpload(event)" style="display:none;">
+                    </label>
+                </div>
+            </div>
+            <p style="color:#94a3b8; margin-bottom:15px; font-size:11px;">يمكنك الضغط على زر (تعديل) بجانب أي موظف لتعديل الفرع والاسم والإدارة والقسم والوظيفة، أو حذف بياناته، أو رفع شيت إكسل أو CSV كما هو مباشرة.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">الفرع</th>
+                        <th style="text-align: right;">اسم الموظف</th>
+                        <th style="text-align: right;">الإدارة</th>
+                        <th style="text-align: right;">القسم</th>
+                        <th style="text-align: right;">الوظيفة</th>
+                        <th style="text-align: center;">النسبة الحالية</th>
+                        <th style="text-align: center;">التقدير</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="allEmployeesTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 3. كاميرات وغرفة العمليات الحية -->
+        <div id="sec-camerarules" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <h3 style="color:#38bdf8; font-size:16px;">🎥 غرفة عمليات الكاميرات الحية ومعايير الأفراد اللحظية</h3>
+            </div>
+            <p style="color:#94a3b8; margin-bottom:15px; font-size:11px;">ضع رابط بث الكاميرا في الخانة أدناه ليعمل مباشرة، وفوقه ستظهر مؤشرات وتقييمات الموظفين الحية.</p>
+            <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap;">
+                <input type="text" id="cameraUrlInput" placeholder="أدخل رابط الكاميرا المباشر هنا..." class="form-input" style="flex:1; min-width:300px;">
+                <button type="button" onclick="applyCameraStream()" class="btn-tab btn-add" style="padding:8px 18px;">▶ تشغيل الكاميرا</button>
+            </div>
+            <div class="camera-command-center" style="margin-bottom: 25px;">
+                <video id="liveCameraVideo" autoplay muted playsinline loop class="camera-video-bg">
+                    <source id="videoSourceTag" src="https://assets.mixkit.co/videos/preview/mixkit-busy-commercial-kitchen-cooking-41603-large.mp4" type="video/mp4">
+                </video>
+                <div class="hud-overlay" id="liveHudBadgesContainer"></div>
+            </div>
+            <div style="background:#0f172a; padding:15px; border-radius:8px; border:1px solid #334155; margin-bottom:20px;">
+                <h4 style="color:#34d399; font-size:13px; margin-bottom:10px;">➕ إضافة بند تشغيلي مخصص للكاميرا</h4>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <select id="ruleBranchSelect" onchange="updateRuleEmpDropdown()" class="form-input" style="max-width:180px;"></select>
+                    <select id="ruleEmpSelect" class="form-input" style="max-width:200px;"></select>
+                    <input type="text" id="ruleDescInput" placeholder="اكتب بند الرصد..." class="form-input" style="flex:1; min-width:250px;">
+                    <button type="button" onclick="saveCustomCameraRule()" class="btn-tab btn-add" style="padding:8px 16px;">حفظ البند</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">الفرع</th>
+                        <th style="text-align: right;">اسم الموظف</th>
+                        <th style="text-align: right;">بند التشغيل المخصص للكاميرا</th>
+                        <th style="text-align: center;">تاريخ الإضافة</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="cameraRulesTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 🚨 الإنذار المبكر -->
+        <div id="sec-alerts" class="card hidden">
+            <h3 style="color:#ef4444; margin-bottom:8px; font-size:16px;">🚨 مركز الإنذار المبكر والتنبيهات العاجلة</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">الفرع</th>
+                        <th style="text-align: right;">اسم الموظف</th>
+                        <th style="text-align: center;">النسبة الحالية</th>
+                        <th style="text-align: center;">نوع الإنذار</th>
+                        <th style="text-align: right;">الإجراء الفوري المقترح</th>
+                    </tr>
+                </thead>
+                <tbody id="alertsTableBody"></tbody>
+            </table>
+        </div>
+        <!-- ⚡ التوجيه اللحظي الذكي -->
+        <div id="sec-coaching" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">⚡ لوحة التوجيه اللحظي الذكي (Smart Micro-Coaching Dashboard)</h3>
+                    <p style="color:#94a3b8; margin-top:4px; font-size:11px;">يرصد النظام تلقائياً القصور وضعف الأداء في الـ KPIs، ويحدد (اسم الموظف، الوظيفة، القسم، الفرع) ويقترح الحل الذكي. اضغط على مربع (تم الحل) لتنشيط خط الشطب عند معالجة المشكلة.</p>
+                </div>
+                <div>
+                    <button type="button" onclick="renderSmartCoachingTable()" class="btn-action" style="background:#059669;">🔄 تحديث الرصد الذكي</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">تم الحل</th>
+                        <th style="text-align: right;">الفرع والإدارة</th>
+                        <th style="text-align: right;">اسم الموظف والوظيفة</th>
+                        <th style="text-align: right;">القسم</th>
+                        <th style="text-align: right;">القصور المرصد في الـ KPIs</th>
+                        <th style="text-align: right;">التوجيه أو الحل الذكي المقترح</th>
+                        <th style="text-align: center;">الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="smartCoachingTableBody"></tbody>
+            </table>
+        </div>
+        <!-- ⚔️ مقارنة حية -->
+        <div id="sec-compare" class="card hidden">
+            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">⚔️ شاشة المقارنة الحية بين موظفين اثنين</h3>
+            <div style="display:flex; gap:15px; margin-bottom:20px; background:#0f172a; padding:15px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap;">
+                <div>
+                    <label class="form-label">الموظف الأول:</label>
+                    <select id="compEmp1Select" class="form-input" style="width:220px;" onchange="renderComparison()"></select>
+                </div>
+                <div>
+                    <label class="form-label">الموظف الثاني:</label>
+                    <select id="compEmp2Select" class="form-input" style="width:220px;" onchange="renderComparison()"></select>
+                </div>
+            </div>
+            <div id="comparisonResultArea"></div>
+        </div>
+        <!-- 🔍 تحليل الأخطاء -->
+        <div id="sec-rootcause" class="card hidden">
+            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">🔍 تحليل جذور الأخطاء التشغيلية ومعالجتها</h3>
+            <div style="background:#0f172a; padding:15px; border-radius:8px; border:1px solid #334155; margin-bottom:20px;">
+                <h4 style="color:#34d399; font-size:13px; margin-bottom:10px;">➕ تسجيل خطأ تشغيلي جديد مع السبب الجذري</h4>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <select id="errBranchSelect" onchange="updateErrEmpDropdown()" class="form-input" style="max-width:160px;"></select>
+                    <select id="errEmpSelect" class="form-input" style="max-width:180px;"></select>
+                    <input type="text" id="errDescInput" placeholder="وصف الخطأ" class="form-input" style="flex:1; min-width:200px;">
+                    <select id="errRootCause" class="form-input" style="max-width:180px;">
+                        <option value="نقص تدريب">نقص تدريب</option>
+                        <option value="ضغط عملاء مفاجئ">ضغط عملاء مفاجئ</option>
+                        <option value="خطأ بشري فردي">خطأ بشري فردي</option>
+                        <option value="خلل في النظام">خلل في النظام</option>
+                    </select>
+                    <button type="button" onclick="saveRootCauseError()" class="btn-tab btn-add" style="padding:8px 16px;">حفظ وتحليل</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">الفرع والموظف</th>
+                        <th style="text-align: right;">وصف الخطأ</th>
+                        <th style="text-align: center;">السبب الجذري المصنف</th>
+                        <th style="text-align: right;">التوجيه الإداري المقترح</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="rootCauseTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 🌱 النمو الوظيفي -->
+        <div id="sec-career" class="card hidden">
+            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">🌱 سجل النمو الوظيفي والمسار المهني</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم الموظف</th>
+                        <th style="text-align: right;">الفرع والقسم</th>
+                        <th style="text-align: center;">متوسط الأداء التاريخي</th>
+                        <th style="text-align: center;">حالة التطور والجاهزية</th>
+                    </tr>
+                </thead>
+                <tbody id="careerTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 📊 التقرير التنفيذي -->
+        <div id="sec-executivereport" class="card hidden">
+            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">📊 التقرير التنفيذي الذكي وحلول معالجة المشكلات</h3>
+            <div id="executiveReportContent" style="background:#0f172a; padding:20px; border-radius:10px; border:1px solid #334155; line-height: 1.8; font-size: 13px;"></div>
+        </div>
+        <!-- 💻 سجل الأجهزة والدخول -->
+        <div id="sec-devicelog" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <h3 style="color:#38bdf8; font-size:16px;">💻 سجل نشاط ودخول المستخدمين والأجهزة</h3>
+                <button type="button" onclick="clearDeviceLogs()" class="btn-danger">مسح السجل</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم المستخدم</th>
+                        <th style="text-align: center;">الدور / الصلاحية</th>
+                        <th style="text-align: center;">الفرع</th>
+                        <th style="text-align: right;">اسم الجهاز ونظام التشغيل</th>
+                        <th style="text-align: center;">عنوان IP</th>
+                        <th style="text-align: center;">الموقع الجغرافي</th>
+                        <th style="text-align: center;">تاريخ ووقت الفتح</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="deviceLogsTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 🛡️ سجل التعديلات والرقابة -->
+        <div id="sec-auditlog" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#facc15; font-size:16px;">🛡️ سجل التعديلات والرقابة الإدارية (Audit Log)</h3>
+                    <p style="color:#94a3b8; margin-top:4px; font-size:11px;">يرصد تلقائياً أي تعديل في تقييمات الموظفين، أو إضافة/حذف بنود وموظفين، أو تغيير في النسب والأقسام مع ذكر اسم المستخدم والوقت.</p>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="text" id="auditSearchInput" oninput="renderAuditLogsTable()" placeholder="🔍 بحث في السجل..." class="form-input" style="width:180px; padding:6px; font-size:11px;">
+                    <button type="button" onclick="clearAuditLogs()" class="btn-danger">🗑️ مسح سجل الرقابة</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">المستخدم الذي قام بالإجراء</th>
+                        <th style="text-align: center;">الدور</th>
+                        <th style="text-align: center;">نوع العملية</th>
+                        <th style="text-align: right;">تفاصيل التعديل (قبل وبعد)</th>
+                        <th style="text-align: center;">التاريخ والوقت</th>
+                        <th style="text-align: center;">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="auditLogsTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 4. لوحة الشرف -->
+        <div id="sec-leaderboard" class="card hidden">
+            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">🏆 لوحة الشرف التنافسية</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: center; width: 60px;">المركز</th>
+                        <th style="text-align: right;">اسم الموظف</th>
+                        <th style="text-align: right;">الفرع</th>
+                        <th style="text-align: right;">القسم</th>
+                        <th style="text-align: center;">النسبة</th>
+                        <th style="text-align: center;">الوسام والشهادة</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboardTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 5. التقارير الأسبوعية -->
+        <div id="sec-weeklyindividuals" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <h3 style="color:#38bdf8; font-size:15px;">📅 أرشيف وتقييمات الأسابيع</h3>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <select id="archiveWeekSelector" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:200px;"></select>
+                    <select id="weeklyBranchFilter" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:150px;">
+                        <option value="all">كل الفروع</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم الموظف</th>
+                        <th style="text-align: right;">الفرع</th>
+                        <th style="text-align: center;">تقييم الأسبوع المحدد</th>
+                        <th style="text-align: center;">حالة القفل</th>
+                    </tr>
+                </thead>
+                <tbody id="weeklyIndividualsTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 6. الرسوم -->
+        <div id="sec-charts" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <h3 style="color:#38bdf8; font-size:15px;">📈 تحليلات أداء الموظفين</h3>
+                <select id="chartBranchFilter" onchange="renderEmployeePerformanceChart()" class="form-input" style="width:160px;">
+                    <option value="all">كل الفروع</option>
+                </select>
+            </div>
+            <div style="background:#0f172a; padding:15px; border-radius:8px; height:340px;">
+                <canvas id="employeePerformanceChart"></canvas>
+            </div>
+        </div>
+        <!-- 7. خطة العمل -->
+        <div id="sec-plan" class="card hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:15px;">خطة العمل التشغيلية والأسبوعية</h3>
+                </div>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" onclick="generateSmartWeeklySuggestions()" class="btn-tab admin-only" style="background:#0284c7; color:#fff;">💡 اقتراحات ذكية لخطة الأسبوع</button>
+                    <button type="button" id="btnAddPlan" onclick="addPlanRow()" class="btn-tab btn-add admin-only">➕ إضافة بند للخطة</button>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 50px; text-align: center;">إنجاز</th>
+                        <th style="width: 25%; text-align: right;">محور التطوير / الهدف</th>
+                        <th style="width: 45%; text-align: right;">الإجراءات التنفيذية</th>
+                        <th style="width: 15%; text-align: right;">المسؤول</th>
+                        <th style="text-align: center;">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="planTableBody"></tbody>
+            </table>
+        </div>
+        <!-- 8. المستخدمين والفروع والإدارات والأقسام -->
+        <div id="sec-users" class="card hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="color:#38bdf8; font-size:15px;">إدارة الفروع</h3>
+                <button type="button" onclick="openAddBranchModal()" class="btn-tab btn-add">➕ إضافة فرع</button>
+            </div>
+            <table style="margin-bottom: 25px;">
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم الفرع</th>
+                        <th style="text-align: center;">معرف الفرع</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="branchesTableBody"></tbody>
+            </table>
+
+            <!-- إدارة الإدارات -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="color:#38bdf8; font-size:15px;">إدارة الإدارات</h3>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
+                <input type="text" id="newAdminDeptNameInput" placeholder="اسم الإدارة الجديد" class="form-input" style="max-width:300px;">
+                <button type="button" onclick="addNewAdminDepartment()" class="btn-tab btn-add">➕ إضافة إدارة</button>
+            </div>
+            <table style="margin-bottom: 25px;">
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم الإدارة</th>
+                        <th style="text-align: center;">معرف الإدارة</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="adminDepartmentsTableBody"></tbody>
+            </table>
+
+            <!-- إدارة الأقسام -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="color:#38bdf8; font-size:15px;">إدارة الأقسام</h3>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155;">
+                <input type="text" id="newDeptNameInput" placeholder="اسم القسم الجديد" class="form-input" style="max-width:300px;">
+                <button type="button" onclick="addNewDepartment()" class="btn-tab btn-add">➕ إضافة قسم</button>
+            </div>
+            <table style="margin-bottom: 25px;">
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم القسم</th>
+                        <th style="text-align: center;">معرف القسم</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="departmentsTableBody"></tbody>
+            </table>
+
+            <!-- ⚖️ تخصيص بنود التقييم لكل قسم والتحكم في نسبتها المئوية (%) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#facc15; font-size:15px;">⚖️ تخصيص بنود التقييم والتحكم في نسبتها (%) وتحديد الأقسام التي يظهر لها كل بند</h3>
+                    <p style="color:#94a3b8; font-size:11px; margin-top:2px;">اكتب النسبة المئوية لكل بند بنفسك، وحدد الأقسام التي يظهر لها هذا البند في شيت التقييم (إذا اخترت "كل الأقسام" سيظهر للجميع، أو اختر أقساماً محددة ليظهر لموظفيها فقط).</p>
+                </div>
+                <div id="totalWeightsBadge" class="badge b-blue" style="font-size:12px; padding:6px 12px;">إجمالي النسب: 100%</div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap; align-items:center;">
+                <input type="text" id="settingsNewMetricName" placeholder="اسم بند التقييم الجديد..." class="form-input" style="max-width:240px;">
+                <input type="number" id="settingsNewMetricWeight" placeholder="النسبة % (مثلاً 15)" min="1" max="100" class="form-input" style="max-width:150px;">
+                <button type="button" onclick="addMetricFromSettings()" class="btn-tab btn-add">➕ إضافة بند تقييم جديد</button>
+                <button type="button" onclick="distributeWeightsEqually()" class="btn-tab" style="background:#0284c7; color:#fff;">⚖️ توزيع النسب بالتساوي (100%)</button>
+            </div>
+            <table style="margin-bottom: 25px;">
+                <thead>
+                    <tr>
+                        <th style="text-align: right; width: 22%;">اسم بند التقييم</th>
+                        <th style="text-align: center; width: 15%;">النسبة المئوية للبند (%)</th>
+                        <th style="text-align: right; width: 53%;">الأقسام المسموح لها برؤية وتقييم هذا البند</th>
+                        <th style="text-align: center; width: 10%;">حذف</th>
+                    </tr>
+                </thead>
+                <tbody id="metricsConfigTableBody"></tbody>
+            </table>
+
+            <!-- 🎭 إدارة الأدوار والمسميات الوظيفية للصلاحيات (القائمة المنسدلة للأدوار) -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:15px;">🎭 إدارة الأدوار والصلاحيات (القائمة المنسدلة للأدوار)</h3>
+                    <p style="color:#94a3b8; font-size:11px; margin-top:2px;">أضف أي دور جديد تريده هنا ليظهر فوراً في القائمة المنسدلة عند إضافة أو تعديل أي مستخدم.</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap;">
+                <input type="text" id="newCustomRoleInput" placeholder="اكتب اسم الدور الجديد (مثال: مشرف مبيعات، مدير جودة، HR...)" class="form-input" style="max-width:350px;">
+                <button type="button" onclick="addNewCustomRole()" class="btn-tab btn-add">➕ إضافة دور للقائمة المنسدلة</button>
+            </div>
+            <table style="margin-bottom: 25px;">
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم الدور / الصلاحية في القائمة</th>
+                        <th style="text-align: center;">معرف الدور</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="customRolesTableBody"></tbody>
+            </table>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="color:#38bdf8; font-size:15px;">👥 إدارة المستخدمين والصلاحيات والأرقام السرية</h3>
+                <button type="button" onclick="openUserModal(-1)" class="btn-tab btn-add">➕ إضافة مستخدم جديد</button>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: right;">اسم المستخدم</th>
+                        <th style="text-align: right;">البريد الإلكتروني / اسم الدخول</th>
+                        <th style="text-align: center;">الرقم السري الحالي</th>
+                        <th style="text-align: center;">الدور / الصلاحية</th>
+                        <th style="text-align: center;">الفرع المخصص</th>
+                        <th style="text-align: center;">إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- نافذة تحليل أداء الموظف -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid #334155; padding-bottom:10px;">
+                <h3 id="modalEmpTitle" style="color:#38bdf8; font-size:18px;">تقرير أداء الموظف</h3>
+                <button type="button" onclick="closeEmployeeModal()" style="background:transparent; color:#94a3b8; border:none; font-size:18px; cursor:pointer;">✕</button>
+            </div>
+            <div style="margin-bottom: 20px; background:#0f172a; padding:15px; border-radius:8px; height:200px;">
+                <canvas id="individualChart"></canvas>
+            </div>
+            <div id="digitalCertContainer" style="margin-bottom: 15px; display: none; background: linear-gradient(135deg, #065f46, #047857); border: 2px solid #34d399; padding: 15px; border-radius: 10px; text-align: center;">
+                <h4 style="color: #fef08a; font-size: 15px; margin-bottom: 4px;">🏆 شهادة تميز وانضباط رقمية</h4>
+                <p id="certText" style="font-size: 11px; color: #d1fae5;"></p>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h4 style="color:#fb7185; font-size:13px; margin-bottom:6px;">مواطن القصور والتنبيهات المبكرة:</h4>
+                <div id="modalWeaknesses" style="background:rgba(220,38,38,0.1); border:1px solid #dc2626; padding:10px; border-radius:6px; font-size:12px; color:#fca5a5;"></div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <h4 style="color:#34d399; font-size:13px; margin-bottom:6px;">اقتراح ذكي وتوجيهي لتطوير هذا القصور:</h4>
+                <div id="modalSuggestions" style="background:rgba(16,185,129,0.1); border:1px solid #059669; padding:10px; border-radius:6px; font-size:12px; color:#6ee7b7; line-height: 1.6;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة / تعديل مستخدم وتحديد صلاحياته وبنود تقييمه -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <h3 id="userModalTitle" style="color:#38bdf8; margin-bottom:12px; font-size:16px;">إضافة مستخدم جديد وتحديد صلاحياته وبنود تقييمه</h3>
+            <form id="addUserForm">
+                <input type="hidden" id="editUserIndex" value="-1">
+                <div class="form-group">
+                    <label class="form-label">اسم المستخدم أو الموظف</label>
+                    <input type="text" id="usrName" required class="form-input" placeholder="مثال: ميرنا حمزه أو أحمد محمد">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">البريد الإلكتروني / اسم الدخول (اكتب أي بريد تريده)</label>
+                    <input type="text" id="usrEmail" required class="form-input" placeholder="مثال: mirna@alrehlaalfarida.com أو أي بريد">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الرقم السري (يمكن للمستخدم تغييره لاحقاً من حسابه)</label>
+                    <input type="text" id="usrPassword" required class="form-input" placeholder="اكتب الرقم السري مثل: 123456">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الدور وصلاحية الدخول (اختر من القائمة المنسدلة أو اكتب دوراً جديداً بالأسفل ليضاف للقائمة)</label>
+                    <select id="usrRole" class="form-input"></select>
+                    <div style="display:flex; gap:8px; margin-top:6px;">
+                        <input type="text" id="quickNewRoleInput" class="form-input" placeholder="اكتب أي دور جديد هنا (مثل: مشرف مبيعات، HR، محاسب...)" style="flex:1;">
+                        <button type="button" onclick="quickAddRoleFromModal()" class="btn-action" style="background:#059669; white-space:nowrap;">➕ إضافة للقائمة</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الفرع المخصص</label>
+                    <select id="usrBranch" class="form-input">
+                        <option value="all">كل الفروع (الإدارة العامة)</option>
+                        <option value="sandoob">فرع سندوب</option>
+                        <option value="tura">فرع الترعة (الإدارة)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">التبويبات والأيقونات المسموح له برؤيتها والوصول إليها:</label>
+                    <div class="checkbox-group" id="userTabsPermissionsGroup">
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="eval" checked> شيت التقييم</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="allemp" checked> الموظفون</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="camerarules" checked> الكاميرات الحية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="alerts" checked> الإنذار المبكر</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="coaching" checked> التوجيه اللحظي الذكي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="compare" checked> مقارنة حية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="rootcause" checked> تحليل الأخطاء</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="career" checked> النمو الوظيفي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="executivereport" checked> التقرير التنفيذي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="leaderboard" checked> لوحة الشرف</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="charts" checked> الرسوم البيانية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="plan" checked> خطة العمل</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الأفراد والموظفين المسموح له برؤيتهم وتقييمهم:</label>
+                    <div class="checkbox-group" id="userEmployeesPermissionsGroup"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">معايير وبنود التقييم المسموح له برؤيتها وتقييمها:</label>
+                    <div class="checkbox-group" id="userMetricsPermissionsGroup"></div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
+                    <button type="button" onclick="closeUserModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">إلغاء</button>
+                    <button type="submit" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">حفظ المستخدم</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل الحساب وتغيير الإيميل والرقم السري -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#38bdf8; margin-bottom:12px; font-size:16px;">✏️ تعديل بياناتي (الاسم، البريد الإلكتروني، والرقم السري)</h3>
+            <form id="profileForm">
+                <div class="form-group">
+                    <label class="form-label">الاسم</label>
+                    <input type="text" id="profileName" required class="form-input" placeholder="الاسم">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">البريد الإلكتروني / اسم الدخول الخاص بك</label>
+                    <input type="text" id="profileEmail" required class="form-input" placeholder="مثال: mostafa@alrehlaalfarida.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الرقم السري (عدّله لكتابة رقم سري جديد أو اتركه كما هو)</label>
+                    <input type="text" id="profilePassword" required class="form-input" placeholder="الرقم السري...">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
+                    <button type="button" onclick="closeProfileModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">إلغاء</button>
+                    <button type="submit" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">حفظ التعديلات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة موظف جديد -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#38bdf8; margin-bottom:12px; font-size:16px;">إضافة موظف جديد</h3>
+            <form id="addEmpForm">
+                <div class="form-group">
+                    <label class="form-label">اسم الموظف</label>
+                    <input type="text" id="newName" required class="form-input" placeholder="اسم الموظف">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الإدارة</label>
+                    <select id="newAdminDept" class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">القسم</label>
+                    <select id="newDept" class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">المسمى الوظيفي</label>
+                    <input type="text" id="newJobTitle" class="form-input" placeholder="مثال: مسؤول مبيعات أول">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الفرع التابع له</label>
+                    <select id="newEmpBranch" required class="form-input"></select>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
+                    <button type="button" onclick="closeAddModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">إلغاء</button>
+                    <button type="submit" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل بيانات الموظف -->
+    <div id="editEmployeeModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#38bdf8; margin-bottom:12px; font-size:16px;">✏️ تعديل بيانات الموظف</h3>
+            <form id="editEmpForm">
+                <input type="hidden" id="editOldBranchId">
+                <input type="hidden" id="editEmpIndex">
+                <div class="form-group">
+                    <label class="form-label">الفرع</label>
+                    <select id="editEmpBranch" required class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">اسم الموظف</label>
+                    <input type="text" id="editEmpName" required class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الإدارة</label>
+                    <select id="editEmpAdminDept" class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">القسم</label>
+                    <select id="editEmpDept" class="form-input"></select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الوظيفة</label>
+                    <input type="text" id="editEmpJobTitle" class="form-input">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
+                    <button type="button" onclick="closeEditEmpModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">إلغاء</button>
+                    <button type="submit" style="background:#059669; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">حفظ التعديلات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة إضافة فرع جديد -->
+    <div id="addBranchModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:#38bdf8; margin-bottom:12px; font-size:16px;">إضافة فرع جديد</h3>
+            <form id="addBranchForm">
+                <div class="form-group">
+                    <label class="form-label">اسم الفرع الجديد</label>
+                    <input type="text" id="newBranchNameInput" required class="form-input" placeholder="اسم الفرع">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
+                    <button type="button" onclick="closeAddBranchModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">إلغاء</button>
+                    <button type="submit" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    let metricNames = ["الالتزام بالمواعيد", "التعامل مع الزملاء", "المبادرة والتطوير", "خدمة العملاء واللباقة", "تقييم الجودة", "المظهر والسلوك المهني", "الأداء والإنتاجية"];
+    try {
+        let mSaved = localStorage.getItem('unique_journey_metrics_v1');
+        if (mSaved) {
+            let parsedM = JSON.parse(mSaved);
+            if (Array.isArray(parsedM) && parsedM.length > 0) metricNames = parsedM;
+        }
+    } catch(e) {}
+
+    let defaultMetricSettings = {
+        "الالتزام بالمواعيد": { weight: 15, depts: ["all"] },
+        "التعامل مع الزملاء": { weight: 10, depts: ["all"] },
+        "المبادرة والتطوير": { weight: 10, depts: ["all"] },
+        "خدمة العملاء واللباقة": { weight: 20, depts: ["all"] },
+        "تقييم الجودة": { weight: 15, depts: ["all"] },
+        "المظهر والسلوك المهني": { weight: 10, depts: ["all"] },
+        "الأداء والإنتاجية": { weight: 20, depts: ["all"] }
+    };
+    let metricSettingsData = {};
+    try {
+        let msSaved = localStorage.getItem('unique_journey_metric_settings_v1');
+        if (msSaved) metricSettingsData = JSON.parse(msSaved);
+    } catch(e) {}
+
+    function ensureMetricSettingsSync() {
+        metricNames.forEach(m => {
+            if (!metricSettingsData[m]) {
+                let defW = defaultMetricSettings[m] ? defaultMetricSettings[m].weight : 15;
+                let defD = defaultMetricSettings[m] ? [...defaultMetricSettings[m].depts] : ["all"];
+                metricSettingsData[m] = { weight: defW, depts: defD };
+            } else {
+                if (typeof metricSettingsData[m].weight !== 'number' || isNaN(metricSettingsData[m].weight)) {
+                    metricSettingsData[m].weight = 15;
+                }
+                if (!Array.isArray(metricSettingsData[m].depts) || metricSettingsData[m].depts.length === 0) {
+                    metricSettingsData[m].depts = ["all"];
+                }
+            }
+        });
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+    }
+    ensureMetricSettingsSync();
+
+    let auditLogsData = [];
+    try {
+        let alSaved = localStorage.getItem('unique_journey_audit_logs_v1');
+        if (alSaved) auditLogsData = JSON.parse(alSaved);
+    } catch(e) {}
+
+    function recordAuditLog(actionType, detailsText) {
+        let userName = currentUser ? currentUser.name : 'مستخدم';
+        let userRole = currentUser ? currentUser.role : 'Admin';
+        let timeStr = new Date().toLocaleString('ar-EG');
+        auditLogsData.unshift({
+            user: userName,
+            role: userRole,
+            action: actionType,
+            details: detailsText,
+            time: timeStr
+        });
+        if (auditLogsData.length > 500) auditLogsData.pop();
+        localStorage.setItem('unique_journey_audit_logs_v1', JSON.stringify(auditLogsData));
+    }
+
+    function getCurrentWeekKey() {
+        let now = new Date();
+        let day = now.getDay();
+        let diffToSat = (day === 6) ? 0 : -(day + 1);
+        let sat = new Date(now);
+        sat.setDate(now.getDate() + diffToSat);
+        let yyyy = sat.getFullYear();
+        let mm = String(sat.getMonth() + 1).padStart(2, '0');
+        let dd = String(sat.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd} (سبت - جمعة)`;
+    }
+
+    function getAvailableWeeks() {
+        let currentKey = getCurrentWeekKey();
+        return [currentKey, "2026-10-31 (سبت - جمعة)", "2026-10-24 (سبت - جمعة)", "2026-10-17 (سبت - جمعة)"];
+    }
+
+    function isCurrentWeekActive(selectedWeekKey) {
+        return selectedWeekKey === getCurrentWeekKey();
+    }
+
+    function detectDeviceType() {
+        let ua = navigator.userAgent;
+        let device = "كمبيوتر مكتبي (Desktop)";
+        if (/android/i.test(ua)) device = "هاتف محمول (Android)";
+        else if (/iphone|ipad|ipod/i.test(ua)) device = "هاتف محمول (iOS / iPhone)";
+        else if (/mobile/i.test(ua)) device = "هاتف محمول (Mobile)";
+        
+        let os = "Windows / Mac";
+        if (/windows nt/i.test(ua)) os = "Windows PC";
+        else if (/macintosh|mac os x/i.test(ua)) os = "Mac OS";
+        else if (/linux/i.test(ua)) os = "Linux";
+        else if (/android/i.test(ua)) os = "Android OS";
+        else if (/like mac os x/i.test(ua)) os = "iOS";
+
+        return `${device} (${os})`;
+    }
+
+    let defaultDepartments = [
+        { id: 'sales', name: 'المبيعات' },
+        { id: 'acc', name: 'الحسابات' },
+        { id: 'reception', name: 'الاستقبال' },
+        { id: 'pricing', name: 'التسعير' },
+        { id: 'quality', name: 'الجودة' }
+    ];
+    let departmentsData = defaultDepartments;
+    try {
+        let dSaved = localStorage.getItem('unique_journey_departments_v1');
+        if (dSaved) departmentsData = JSON.parse(dSaved);
+    } catch(e) {}
+
+    let defaultAdminDepartments = [
+        { id: 'adm_1', name: 'الإدارة العامة' },
+        { id: 'adm_2', name: 'إدارة الموارد البشرية' },
+        { id: 'adm_3', name: 'إدارة المبيعات والتشغيل' },
+        { id: 'adm_4', name: 'الإدارة المالية' },
+        { id: 'adm_5', name: 'إدارة الجودة والرقابة المؤسسية' }
+    ];
+    let adminDepartmentsData = defaultAdminDepartments;
+    try {
+        let adSaved = localStorage.getItem('unique_journey_admin_depts_v1');
+        if (adSaved) adminDepartmentsData = JSON.parse(adSaved);
+    } catch(e) {}
+
+    let defaultBranches = [
+        {id: 'sandoob', name: 'فرع سندوب'},
+        {id: 'tura', name: 'فرع الترعة (الإدارة)'}
+    ];
+    let branchesData = defaultBranches;
+    try {
+        let bSaved = localStorage.getItem('unique_journey_branches_v4');
+        if (bSaved) branchesData = JSON.parse(bSaved);
+    } catch(e) {}
+
+    let currentBranch = branchesData.length > 0 ? branchesData[0].id : 'sandoob';
+    let currentUser = null;
+    let currentDeptFilter = 'all';
+
+    let cameraRulesData = [];
+    try {
+        let crSaved = localStorage.getItem('unique_journey_camera_rules_v1');
+        if (crSaved) cameraRulesData = JSON.parse(crSaved);
+    } catch(e) {}
+
+    let smartCoachingResolvedState = {};
+    try {
+        let scsSaved = localStorage.getItem('unique_journey_smart_coaching_resolved_v1');
+        if (scsSaved) smartCoachingResolvedState = JSON.parse(scsSaved);
+    } catch(e) {}
+
+    let rootCauseErrorsData = [];
+    try {
+        let rcSaved = localStorage.getItem('unique_journey_root_cause_v1');
+        if (rcSaved) rootCauseErrorsData = JSON.parse(rcSaved);
+    } catch(e) {}
+
+    let deviceLogsData = [];
+    try {
+        let dlSaved = localStorage.getItem('unique_journey_device_logs_v1');
+        if (dlSaved) deviceLogsData = JSON.parse(dlSaved);
+    } catch(e) {}
+
+    let defaultDb = {
+        sandoob: [
+            {name: "إسراء محمد السيد", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مستشار مبيعات", history: {}},
+            {name: "زياد وليد إبراهيم", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مسؤول مبيعات", history: {}},
+            {name: "محمود سامح عبدالحليم", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مسؤول مبيعات", history: {}},
+            {name: "ندى عادل متولي", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "خدمة عملاء", history: {}},
+            {name: "يوسف علي الشربيني", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مسؤول مبيعات", history: {}},
+            {name: "حازم وائل نبيل", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مسؤول مبيعات", history: {}},
+            {name: "محمد بدوي حسن", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مسؤول مبيعات", history: {}},
+            {name: "ساره محمد الشريف", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "خدمة عملاء", history: {}},
+            {name: "مصطفى البنداري", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مشرف مبيعات", history: {}},
+            {name: "آية وائل السعيد", adminDept: "إدارة المبيعات والتشغيل", dept: "sales", jobTitle: "مسؤول مبيعات", history: {}}
+        ],
+        tura: [
+            {name: "محمد البيار", adminDept: "الإدارة المالية", dept: "acc", jobTitle: "محاسب أول", history: {}},
+            {name: "محمد حسن", adminDept: "الإدارة المالية", dept: "acc", jobTitle: "محاسب", history: {}},
+            {name: "السيد لطفي", adminDept: "الإدارة العامة", dept: "reception", jobTitle: "مسؤول استقبال", history: {}},
+            {name: "محمد مصطفى", adminDept: "الإدارة العامة", dept: "reception", jobTitle: "مسؤول استقبال", history: {}},
+            {name: "هند جمال", adminDept: "الإدارة العامة", dept: "reception", jobTitle: "مسؤول استقبال", history: {}}
+        ]
+    };
+
+    let dbData = defaultDb;
+    try {
+        let dbSaved = localStorage.getItem('unique_journey_db_v30');
+        if (dbSaved) dbData = JSON.parse(dbSaved);
+    } catch(e) {}
+
+    let currentWeekKey = getCurrentWeekKey();
+    Object.keys(dbData).forEach(bId => {
+        if(Array.isArray(dbData[bId])) {
+            dbData[bId].forEach(emp => {
+                if(!emp.adminDept) emp.adminDept = adminDepartmentsData.length > 0 ? adminDepartmentsData[0].name : "الإدارة العامة";
+                if(!emp.jobTitle) emp.jobTitle = "موظف";
+                if(!emp.history) emp.history = {};
+                if(!emp.history[currentWeekKey]) {
+                    emp.history[currentWeekKey] = new Array(metricNames.length).fill(3);
+                } else {
+                    while (emp.history[currentWeekKey].length < metricNames.length) {
+                        emp.history[currentWeekKey].push(3);
+                    }
+                }
+            });
+        }
+    });
+
+    let defaultPlan = [
+        {goal: "فصل الذمم التشغيلية وأخطاء الأقسام", action: "تنظيم العلاقة بين المبيعات والأقسام الأخرى لضمان عدم تحمل موظفي المبيعات أخطاء غيرهم.", resp: "مدير الفرع / HR", completed: false},
+        {goal: "تمكين قادة الفرق (Team Leaders)", action: "توجيه دور الليدرز ليكون إشرافياً وتوجيهياً لحل مشكلات الموظفين اليومية.", resp: "قادة الأقسام", completed: false},
+        {goal: "الشفافية المالية وهيكل الرواتب", action: "ضبط تقفيل الحسابات المالية قبل مواعيد الصرف لضمان نزول البونص والتارجت.", resp: "الإدارة المالية / HR", completed: false},
+        {goal: "تفعيل نظام تقييم الأداء (KPIs)", action: "تطبيق معايير التقييم المحدثة بدقة وتثبيت جلسات الدعم للعناصر المتعثرة.", resp: "إدارة الموارد البشرية", completed: false}
+    ];
+    let planData = defaultPlan;
+    try {
+        let planSaved = localStorage.getItem('unique_journey_plan_v21');
+        if (planSaved) planData = JSON.parse(planSaved);
+    } catch(e) {}
+
+    let defaultUsers = [
+        {name: "مصطفى", email: "mostafa@admin.com", password: "123456", role: "Admin", branch: "all"},
+        {name: "مشرف سندوب", email: "sandoob@manager.com", password: "123456", role: "Branch Manager", branch: "sandoob"},
+        {name: "إسراء محمد السيد", email: "israa@emp.com", password: "123456", role: "Employee", branch: "sandoob"}
+    ];
+    let usersData = defaultUsers;
+    try {
+        let usrSaved = localStorage.getItem('unique_journey_users_v20');
+        if (usrSaved) usersData = JSON.parse(usrSaved);
+    } catch(e) {}
+
+    let empChartInstance = null;
+    let individualChartInstance = null;
+
+    function getDeptDisplayName(deptVal) {
+        if (!deptVal) return 'المبيعات';
+        let dObj = departmentsData.find(d => d.id === deptVal || d.name === deptVal);
+        return dObj ? dObj.name : deptVal;
+    }
+
+    function getNormalizedDeptId(deptVal) {
+        if (!deptVal) return 'sales';
+        let dObj = departmentsData.find(d => d.id === deptVal || d.name === deptVal);
+        return dObj ? dObj.id : deptVal;
+    }
+
+    function isMetricApplicableForDept(metricName, empDeptVal) {
+        let cfg = metricSettingsData[metricName];
+        if (!cfg || !Array.isArray(cfg.depts) || cfg.depts.includes('all')) return true;
+        let normId = getNormalizedDeptId(empDeptVal);
+        let dispName = getDeptDisplayName(empDeptVal);
+        return cfg.depts.includes(normId) || cfg.depts.includes(dispName) || cfg.depts.includes(empDeptVal);
+    }
+
+    function calculateWeightedEmployeePct(emp, scoresArr, filterAllowedMetrics) {
+        let weightedEarned = 0;
+        let totalApplicableWeight = 0;
+        let sc = scoresArr || [];
+        metricNames.forEach((m, idx) => {
+            if (filterAllowedMetrics && !filterAllowedMetrics.includes(m)) return;
+            if (!isMetricApplicableForDept(m, emp ? emp.dept : 'all')) return;
+            let w = (metricSettingsData[m] && Number(metricSettingsData[m].weight) > 0) ? Number(metricSettingsData[m].weight) : 15;
+            let val = Number(sc[idx]) || 3;
+            weightedEarned += (val / 5) * w;
+            totalApplicableWeight += w;
+        });
+        if (totalApplicableWeight === 0) return 0;
+        return Math.round((weightedEarned / totalApplicableWeight) * 100);
+    }
+
+    function addInlineNewMetric() {
+        if (currentUser && currentUser.role !== 'Admin') { alert('المدير العام فقط يمكنه إضافة بند تقييم جديد!'); return; }
+        let inp = document.getElementById('inlineNewMetricInput');
+        let wInp = document.getElementById('inlineNewMetricWeight');
+        let name = inp ? inp.value.trim() : '';
+        let weightVal = wInp && wInp.value ? parseFloat(wInp.value) : 0;
+        if (!name) {
+            name = prompt('اكتب اسم بند التقييم الجديد:');
+            if (name) name = name.trim();
+        }
+        if (!name) return;
+        if (metricNames.includes(name)) { alert('هذا البند موجود بالفعل!'); return; }
+        if (!weightVal || weightVal <= 0) {
+            let pW = prompt('اكتب النسبة المئوية لهذا البند (%) مثل 15 أو 20:', '15');
+            weightVal = parseFloat(pW) || 15;
+        }
+        metricNames.push(name);
+        metricSettingsData[name] = { weight: weightVal, depts: ['all'] };
+        localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        Object.keys(dbData).forEach(bId => {
+            (dbData[bId] || []).forEach(emp => {
+                if (!emp.history) emp.history = {};
+                Object.keys(emp.history).forEach(wk => {
+                    while (emp.history[wk].length < metricNames.length) emp.history[wk].push(3);
+                });
+            });
+        });
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('إضافة بند تقييم', `تم إضافة بند تقييم جديد "${name}" بنسبة وزن (${weightVal}%)`);
+        if (inp) inp.value = '';
+        if (wInp) wInp.value = '';
+        renderEvalTable();
+        renderMetricsConfigTable();
+        alert(`تمت إضافة بند التقييم الجديد: ${name} (النسبة: ${weightVal}%)`);
+    }
+
+    function addMetricFromSettings() {
+        let inp = document.getElementById('settingsNewMetricName');
+        let wInp = document.getElementById('settingsNewMetricWeight');
+        let name = inp ? inp.value.trim() : '';
+        let weightVal = wInp && wInp.value ? parseFloat(wInp.value) : 15;
+        if (!name) { alert('اكتب اسم بند التقييم أولاً!'); return; }
+        if (metricNames.includes(name)) { alert('هذا البند موجود بالفعل!'); return; }
+        metricNames.push(name);
+        metricSettingsData[name] = { weight: weightVal, depts: ['all'] };
+        localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        Object.keys(dbData).forEach(bId => {
+            (dbData[bId] || []).forEach(emp => {
+                if (!emp.history) emp.history = {};
+                Object.keys(emp.history).forEach(wk => {
+                    while (emp.history[wk].length < metricNames.length) emp.history[wk].push(3);
+                });
+            });
+        });
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('إضافة بند تقييم', `تم إضافة بند "${name}" بنسبة (${weightVal}%) من الإعدادات`);
+        if (inp) inp.value = '';
+        if (wInp) wInp.value = '';
+        renderMetricsConfigTable();
+        renderEvalTable();
+        alert('تمت إضافة البند بنجاح!');
+    }
+
+    function renderMetricsConfigTable() {
+        let tbody = document.getElementById('metricsConfigTableBody');
+        if (!tbody) return;
+        ensureMetricSettingsSync();
+        tbody.innerHTML = '';
+        let totalW = 0;
+        metricNames.forEach((m, idx) => {
+            let cfg = metricSettingsData[m] || { weight: 15, depts: ['all'] };
+            totalW += Number(cfg.weight) || 0;
+            let isAllChecked = cfg.depts.includes('all');
+            let deptsCheckboxes = `<label class="checkbox-label" style="display:inline-flex; margin-left:10px; color:#34d399; font-weight:bold;">
+                <input type="checkbox" ${isAllChecked ? 'checked' : ''} onchange="toggleMetricDept(${idx}, 'all', this.checked)"> 🌟 كل الأقسام
+            </label>`;
+            departmentsData.forEach(d => {
+                let isDeptChecked = !isAllChecked && (cfg.depts.includes(d.id) || cfg.depts.includes(d.name));
+                deptsCheckboxes += `<label class="checkbox-label" style="display:inline-flex; margin-left:10px;">
+                    <input type="checkbox" ${isDeptChecked ? 'checked' : ''} onchange="toggleMetricDept(${idx}, '${d.id}', this.checked)"> ${d.name}
+                </label>`;
+            });
+            tbody.innerHTML += `<tr>
+                <td><input type="text" value="${m}" onchange="renameMetricItem(${idx}, this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:4px;">
+                        <input type="number" min="1" max="100" value="${cfg.weight}" onchange="updateMetricWeight(${idx}, this.value)" class="table-input" style="width:70px; color:#facc15;">
+                        <span style="color:#facc15; font-weight:bold;">%</span>
+                    </div>
+                </td>
+                <td style="white-space:normal; line-height:1.9;">${deptsCheckboxes}</td>
+                <td style="text-align:center;">
+                    ${metricNames.length > 1 ? `<button type="button" onclick="deleteMetricItem(${idx})" class="btn-danger">حذف</button>` : 'أساسي'}
+                </td>
+            </tr>`;
+        });
+        let badgeEl = document.getElementById('totalWeightsBadge');
+        if (badgeEl) {
+            badgeEl.textContent = `إجمالي النسب المحددة: ${totalW}%`;
+            badgeEl.className = totalW === 100 ? 'badge b-green' : 'badge b-yellow';
+        }
+    }
+
+    function updateMetricWeight(idx, newWeightVal) {
+        let mName = metricNames[idx];
+        let oldW = metricSettingsData[mName] ? metricSettingsData[mName].weight : 15;
+        let w = parseFloat(newWeightVal);
+        if (isNaN(w) || w <= 0) w = 1;
+        metricSettingsData[mName].weight = w;
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        recordAuditLog('تعديل نسبة بند تقييم', `تم تعديل نسبة بند "${mName}" من (${oldW}%) إلى (${w}%)`);
+        renderMetricsConfigTable();
+        renderEvalTable();
+    }
+
+    function distributeWeightsEqually() {
+        let count = metricNames.length;
+        if (count === 0) return;
+        let base = Math.floor(100 / count);
+        let rem = 100 - (base * count);
+        metricNames.forEach((m, idx) => {
+            metricSettingsData[m].weight = base + (idx < rem ? 1 : 0);
+        });
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        recordAuditLog('توزيع النسب', 'تم توزيع النسب المئوية لبنود التقييم بالتساوي ليكون الإجمالي 100%');
+        renderMetricsConfigTable();
+        renderEvalTable();
+    }
+
+    function toggleMetricDept(idx, deptId, isChecked) {
+        let mName = metricNames[idx];
+        let cfg = metricSettingsData[mName];
+        if (!cfg) return;
+        if (deptId === 'all') {
+            if (isChecked) {
+                cfg.depts = ['all'];
+            } else {
+                cfg.depts = departmentsData.length > 0 ? [departmentsData[0].id] : ['all'];
+            }
+        } else {
+            cfg.depts = cfg.depts.filter(d => d !== 'all');
+            if (isChecked) {
+                if (!cfg.depts.includes(deptId)) cfg.depts.push(deptId);
+            } else {
+                cfg.depts = cfg.depts.filter(d => d !== deptId);
+                if (cfg.depts.length === 0) cfg.depts = ['all'];
+            }
+        }
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        let deptsNames = cfg.depts.includes('all') ? 'كل الأقسام' : cfg.depts.map(d => getDeptDisplayName(d)).join('، ');
+        recordAuditLog('تخصيص أقسام البند', `تم تخصيص ظهور بند "${mName}" للأقسام: (${deptsNames})`);
+        renderMetricsConfigTable();
+        renderEvalTable();
+    }
+
+    function renameMetricItem(idx, newNameVal) {
+        let newName = newNameVal.trim();
+        let oldName = metricNames[idx];
+        if (!newName || newName === oldName) return;
+        if (metricNames.includes(newName)) { alert('يوجد بند آخر بنفس الاسم!'); renderMetricsConfigTable(); return; }
+        metricNames[idx] = newName;
+        metricSettingsData[newName] = metricSettingsData[oldName] || { weight: 15, depts: ['all'] };
+        delete metricSettingsData[oldName];
+        usersData.forEach(u => {
+            if (Array.isArray(u.allowedMetrics)) {
+                u.allowedMetrics = u.allowedMetrics.map(m => m === oldName ? newName : m);
+            }
+        });
+        localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        localStorage.setItem('unique_journey_users_v20', JSON.stringify(usersData));
+        recordAuditLog('تعديل اسم بند', `تم تغيير اسم بند التقييم من "${oldName}" إلى "${newName}"`);
+        renderMetricsConfigTable();
+        renderEvalTable();
+    }
+
+    function deleteMetricItem(idx) {
+        if (metricNames.length <= 1) { alert('لا يمكن حذف جميع البنود!'); return; }
+        let mName = metricNames[idx];
+        if (!confirm(`هل أنت متأكد من حذف بند التقييم "${mName}"؟`)) return;
+        metricNames.splice(idx, 1);
+        delete metricSettingsData[mName];
+        Object.keys(dbData).forEach(bId => {
+            (dbData[bId] || []).forEach(emp => {
+                if (emp.history) {
+                    Object.keys(emp.history).forEach(wk => {
+                        if (Array.isArray(emp.history[wk]) && emp.history[wk].length > idx) {
+                            emp.history[wk].splice(idx, 1);
+                        }
+                    });
+                }
+            });
+        });
+        localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('حذف بند تقييم', `تم حذف بند التقييم "${mName}" من النظام`);
+        renderMetricsConfigTable();
+        renderEvalTable();
+    }
+
+    function renderAuditLogsTable() {
+        let tbody = document.getElementById('auditLogsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let q = document.getElementById('auditSearchInput') ? document.getElementById('auditSearchInput').value.trim().toLowerCase() : '';
+        let filtered = auditLogsData.filter(item => {
+            if (!q) return true;
+            return (item.user && item.user.toLowerCase().includes(q)) ||
+                   (item.action && item.action.toLowerCase().includes(q)) ||
+                   (item.details && item.details.toLowerCase().includes(q));
+        });
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8; padding:20px;">لا توجد سجلات تعديل مسجلة حتى الآن.</td></tr>`;
+            return;
+        }
+        filtered.forEach((log, index) => {
+            let roleBadge = log.role === 'Admin' ? '<span class="badge b-green">مدير عام</span>' : (log.role === 'Branch Manager' ? '<span class="badge b-blue">مدير فرع</span>' : '<span class="badge b-yellow">موظف</span>');
+            tbody.innerHTML += `<tr>
+                <td style="font-weight:bold; color:#38bdf8;">👤 ${log.user}</td>
+                <td style="text-align:center;">${roleBadge}</td>
+                <td style="text-align:center;"><span class="badge b-yellow">${log.action}</span></td>
+                <td style="white-space:normal; color:#e2e8f0;">${log.details}</td>
+                <td style="text-align:center; color:#34d399; font-family:monospace;">${log.time}</td>
+                <td style="text-align:center;"><button type="button" onclick="deleteSingleAuditLog(${index})" class="btn-danger">حذف</button></td>
+            </tr>`;
+        });
+    }
+
+    function deleteSingleAuditLog(idx) {
+        auditLogsData.splice(idx, 1);
+        localStorage.setItem('unique_journey_audit_logs_v1', JSON.stringify(auditLogsData));
+        renderAuditLogsTable();
+    }
+
+    function clearAuditLogs() {
+        if (confirm('هل أنت متأكد من مسح سجل التعديلات والرقابة بالكامل؟')) {
+            auditLogsData = [];
+            localStorage.removeItem('unique_journey_audit_logs_v1');
+            renderAuditLogsTable();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        document.getElementById('profileForm').addEventListener('submit', saveProfileChanges);
+        document.getElementById('addEmpForm').addEventListener('submit', saveNewEmployee);
+        document.getElementById('editEmpForm').addEventListener('submit', saveEditedEmployee);
+        document.getElementById('addBranchForm').addEventListener('submit', saveNewBranch);
+        document.getElementById('addUserForm').addEventListener('submit', saveNewUser);
+        populateArchiveWeeksDropdown();
+        initCameraRulesDropdowns();
+        initRootCauseDropdowns();
+        initComparisonDropdowns();
+        loadSavedCameraStream();
+        checkExistingLogin();
+    });
+
+    function generateSmartWeeklySuggestions() {
+        if (currentUser.role === 'Employee') return;
+        let smartSuggestions = [
+            {goal: "🚀 إطلاق حملة متابعة حجوزات السعودية والإمارات", action: "مراجعة كافة الطلبات المعلقة لوجهات السعودية والإمارات لسرعة إصدار التأشيرات والتذاكر.", resp: "قسم المبيعات / الفروع", completed: false},
+            {goal: "⚡ جلسات توجيه سريعة للعناصر المتعثرة", action: "تنفيذ جلسات توجيه لحظي (Micro-Coaching) للموظفين المرصودين في الإنذار المبكر.", resp: "مشرف الفرع / HR", completed: false},
+            {goal: "🔍 فحص وتدقيق جودة الإدخال اليومي", action: "مراجعة أخطاء الحجوزات والتأشيرات المسجلة في تحليل الأخطاء لتجنب تكرارها.", resp: "مسؤول الجودة", completed: false},
+            {goal: "🌟 تكريم متصدري لوحة الشرف الأسبوعية", action: "إعلان أسماء الموظفين الفائزين بالمركز الأول والثاني وصرف الحوافز الاستثنائية.", resp: "الإدارة العامة", completed: false}
+        ];
+        smartSuggestions.forEach(item => {
+            if (!planData.some(p => p.goal === item.goal)) {
+                planData.push(item);
+            }
+        });
+        localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+        renderPlanTable();
+        alert('💡 تمت إضافة الاقتراحات الذكية الجديدة الخاصة ببداية الأسبوع إلى خطة العمل بنجاح!');
+    }
+
+    function applyCameraStream() {
+        let url = document.getElementById('cameraUrlInput').value.trim();
+        if (!url) { alert('يرجى لصق رابط الكاميرا أولاً!'); return; }
+        let videoEl = document.getElementById('liveCameraVideo');
+        videoEl.src = url;
+        videoEl.load();
+        videoEl.play().catch(err => console.log("Play error:", err));
+        localStorage.setItem('unique_journey_cam_url_v1', url);
+        alert('تم ربط وتشغيل الكاميرا بنجاح في السيستم!');
+    }
+
+    function loadSavedCameraStream() {
+        let savedUrl = localStorage.getItem('unique_journey_cam_url_v1');
+        if (savedUrl) {
+            let inputEl = document.getElementById('cameraUrlInput');
+            if (inputEl) inputEl.value = savedUrl;
+            let videoEl = document.getElementById('liveCameraVideo');
+            if (videoEl) videoEl.src = savedUrl;
+        }
+    }
+
+    function initCameraRulesDropdowns() {
+        let bSel = document.getElementById('ruleBranchSelect');
+        if (!bSel) return;
+        bSel.innerHTML = '';
+        branchesData.forEach(b => bSel.innerHTML += `<option value="${b.id}">${b.name}</option>`);
+        updateRuleEmpDropdown();
+    }
+    function updateRuleEmpDropdown() {
+        let bId = document.getElementById('ruleBranchSelect').value;
+        let eSel = document.getElementById('ruleEmpSelect');
+        if (!eSel) return;
+        eSel.innerHTML = '';
+        (dbData[bId] || []).forEach(emp => eSel.innerHTML += `<option value="${emp.name}">${emp.name}</option>`);
+    }
+
+    function initRootCauseDropdowns() {
+        let bSel = document.getElementById('errBranchSelect');
+        if (!bSel) return;
+        bSel.innerHTML = '';
+        branchesData.forEach(b => bSel.innerHTML += `<option value="${b.id}">${b.name}</option>`);
+        updateErrEmpDropdown();
+    }
+    function updateErrEmpDropdown() {
+        let bId = document.getElementById('errBranchSelect').value;
+        let eSel = document.getElementById('errEmpSelect');
+        if (!eSel) return;
+        eSel.innerHTML = '';
+        (dbData[bId] || []).forEach(emp => eSel.innerHTML += `<option value="${emp.name}">${emp.name}</option>`);
+    }
+
+    function initComparisonDropdowns() {
+        let s1 = document.getElementById('compEmp1Select');
+        let s2 = document.getElementById('compEmp2Select');
+        if (!s1 || !s2) return;
+        s1.innerHTML = ''; s2.innerHTML = '';
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach(emp => {
+                let opt = `<option value="${b.id}|${emp.name}">${emp.name} (${b.name})</option>`;
+                s1.innerHTML += opt;
+                s2.innerHTML += opt;
+            });
+        });
+        if (s2.options.length > 1) s2.selectedIndex = 1;
+        renderComparison();
+    }
+
+    function saveCustomCameraRule() {
+        let bId = document.getElementById('ruleBranchSelect').value;
+        let bObj = branchesData.find(b => b.id === bId);
+        let empName = document.getElementById('ruleEmpSelect').value;
+        let desc = document.getElementById('ruleDescInput').value.trim();
+        if (!empName || !desc) { alert('يرجى اختيار الموظف وكتابة بند التشغيل!'); return; }
+        cameraRulesData.push({ branchName: bObj ? bObj.name : bId, empName: empName, desc: desc, date: new Date().toLocaleDateString('ar-EG') });
+        localStorage.setItem('unique_journey_camera_rules_v1', JSON.stringify(cameraRulesData));
+        document.getElementById('ruleDescInput').value = '';
+        renderCameraRulesTable();
+        alert('تم حفظ بند الكاميرا المخصص بنجاح!');
+    }
+
+    function renderCameraRulesTable() {
+        let tbody = document.getElementById('cameraRulesTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        cameraRulesData.forEach((rule, idx) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td style="color:#38bdf8; font-weight:bold;">${rule.branchName}</td>
+                    <td>${rule.empName}</td>
+                    <td>${rule.desc}</td>
+                    <td style="text-align:center; color:#94a3b8;">${rule.date}</td>
+                    <td style="text-align:center;"><button type="button" onclick="deleteCameraRule(${idx})" class="btn-danger">حذف</button></td>
+                </tr>`;
+        });
+    }
+    function deleteCameraRule(idx) {
+        if (confirm('هل أنت متأكد من الحذف؟')) {
+           cameraRulesData.splice(idx, 1);
+            localStorage.setItem('unique_journey_camera_rules_v1', JSON.stringify(cameraRulesData));
+            renderCameraRulesTable();
+        }
+    }
+
+    // التوجيه اللحظي الذكي
+    function getSmartCoachingSuggestion(metricName) {
+        if (metricName.includes('مواعيد') || metricName.includes('حضور')) {
+            return 'عقد جلسة توجيه سريعة لضبط الالتزام بالبصمة الصباحية ومتابعة خطة الحضور اليومي.';
+        } else if (metricName.includes('زملاء') || metricName.includes('فريق')) {
+            return 'توجيه الموظف حول أهمية العمل الجماعي الإيجابي وحل أي سوء تفاهم مع الزملاء فوراً.';
+        } else if (metricName.includes('مبادرة') || metricName.includes('تطوير')) {
+            return 'تشجيعه وتحفيزه عبر إسناد مهام ذات طابع ابتكاري وتحديد أهداف أسبوعية واضحة للتطوير.';
+        } else if (metricName.includes('عملاء') || metricName.includes('لباقة')) {
+            return 'إشراكه في تدريب عملي سريع على مهارات فن الرد واحتواء واستقبال العملاء.';
+        } else if (metricName.includes('جودة')) {
+            return 'مراجعة أخطاء الأسبوع الماضي بدقة وتدريبه على معايير الجودة المطلوبة.';
+        } else if (metricName.includes('مظهر') || metricName.includes('سلوك')) {
+            return 'تنبيه ودي مباشر بخصوص معايير المظهر العام والسلوك المهني داخل الفرع.';
+        } else {
+            return `توجيه إداري فوري لتحسين الأداء في معيار «${metricName}» ومتابعة إنجازه.`;
+        }
+    }
+
+    function renderSmartCoachingTable() {
+        let tbody = document.getElementById('smartCoachingTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let itemsCount = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach((emp, empIdx) => {
+                if (!emp.history) emp.history = {};
+                let scores = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let adminDeptStr = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
+                let deptStr = getDeptDisplayName(emp.dept);
+                let jobStr = emp.jobTitle || 'موظف';
+
+                metricNames.forEach((mName, mIdx) => {
+                    if (!isMetricApplicableForDept(mName, emp.dept)) return;
+                    let sc = Number(scores[mIdx]) || 3;
+                    if (sc <= 2) {
+                        itemsCount++;
+                        let uniqueKey = `${b.id}_${emp.name}_${mName}_${activeWeek}`;
+                        let isResolved = !!smartCoachingResolvedState[uniqueKey];
+                        let rowClass = isResolved ? 'coaching-resolved' : '';
+                        let suggestionText = getSmartCoachingSuggestion(mName);
+
+                        tbody.innerHTML += `
+                            <tr class="${rowClass}">
+                                <td style="text-align:center;">
+                                    <input type="checkbox" ${isResolved ? 'checked' : ''} onchange="toggleSmartCoachingResolved('${uniqueKey}', this.checked)" style="width:16px; height:16px; cursor:pointer;">
+                                </td>
+                                <td style="color:#38bdf8; font-weight:bold;">${b.name}<br><span style="font-size:10px; color:#22d3ee;">${adminDeptStr}</span></td>
+                                <td><b>${emp.name}</b><br><span style="font-size:10px; color:#94a3b8;">${jobStr}</span></td>
+                                <td style="color:#facc15;">${deptStr}</td>
+                                <td><span class="badge b-red">⚠️ ${mName} (${sc}/5)</span></td>
+                                <td style="color:#34d399; font-weight:bold; white-space:normal; line-height:1.6;">${suggestionText}</td>
+                                <td style="text-align:center;">
+                                    ${isResolved ? '<span class="badge b-green">✅ تم حل المشكلة</span>' : '<span class="badge b-yellow">⏳ قيد المتابعة</span>'}
+                                </td>
+                            </tr>`;
+                    }
+                });
+            });
+        });
+
+        if (itemsCount === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#34d399; padding:25px; font-weight:bold;">🌟 ممتاز! لا توجد أي حالات قصور مرصدة في الأسبوع الحالي. فريق العمل يؤدي بكفاءة عالية.</td></tr>`;
+        }
+    }
+
+    function toggleSmartCoachingResolved(keyStr, isChecked) {
+        smartCoachingResolvedState[keyStr] = isChecked;
+        localStorage.setItem('unique_journey_smart_coaching_resolved_v1', JSON.stringify(smartCoachingResolvedState));
+        recordAuditLog('توجيه لحظي', `تم تغيير حالة معالجة التوجيه الذكي إلى: ${isChecked ? 'تم الحل' : 'قيد المتابعة'}`);
+        renderSmartCoachingTable();
+    }
+
+    function renderComparison() {
+        let area = document.getElementById('comparisonResultArea');
+        let sel1 = document.getElementById('compEmp1Select').value;
+        let sel2 = document.getElementById('compEmp2Select').value;
+        if (!area || !sel1 || !sel2) return;
+
+        let [b1, name1] = sel1.split('|');
+        let [b2, name2] = sel2.split('|');
+        let emp1 = (dbData[b1] || []).find(e => e.name === name1);
+        let emp2 = (dbData[b2] || []).find(e => e.name === name2);
+        if (!emp1 || !emp2) return;
+
+        let activeWeek = getCurrentWeekKey();
+        let scores1 = emp1.history[activeWeek] || new Array(metricNames.length).fill(3);
+        let scores2 = emp2.history[activeWeek] || new Array(metricNames.length).fill(3);
+        let pct1 = calculateWeightedEmployeePct(emp1, scores1, null);
+        let pct2 = calculateWeightedEmployeePct(emp2, scores2, null);
+
+        let html = `<table><thead><tr>
+            <th style="text-align:right;">معيار القياس (KPIs) والنسبة</th>
+            <th style="text-align:center; color:#38bdf8;">${emp1.name} (${pct1}%)</th>
+            <th style="text-align:center; color:#34d399;">${emp2.name} (${pct2}%)</th>
+        </tr></thead><tbody>`;
+
+        metricNames.forEach((mName, idx) => {
+            let w = metricSettingsData[mName] ? metricSettingsData[mName].weight : 15;
+            let sc1 = Number(scores1[idx]) || 3;
+            let sc2 = Number(scores2[idx]) || 3;
+            let color1 = sc1 >= 4 ? '#34d399' : (sc1 <= 2 ? '#fb7185' : '#fff');
+            let color2 = sc2 >= 4 ? '#34d399' : (sc2 <= 2 ? '#fb7185' : '#fff');
+            html += `<tr>
+                <td><b>${mName}</b> <span style="color:#facc15; font-size:10px;">(${w}%)</span></td>
+                <td style="text-align:center; color:${color1}; font-weight:bold;">${sc1}/5</td>
+                <td style="text-align:center; color:${color2}; font-weight:bold;">${sc2}/5</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+        area.innerHTML = html;
+    }
+
+    function saveRootCauseError() {
+        let bId = document.getElementById('errBranchSelect').value;
+        let bObj = branchesData.find(b => b.id === bId);
+        let empName = document.getElementById('errEmpSelect').value;
+        let desc = document.getElementById('errDescInput').value.trim();
+        let cause = document.getElementById('errRootCause').value;
+        if (!desc) { alert('يرجى كتابة وصف الخطأ!'); return; }
+
+        let solutionsMap = {
+            "نقص تدريب": "تنظيم ورشة عمل تدريبية عاجلة وتركيب دليل إرشادي سريع على مكتب الموظف.",
+            "ضغط عملاء مفاجئ": "إعادة توزيع المهام وتفعيل الدعم السريع من زملاء القسم خلال أوقات الذروة.",
+            "خطأ بشري فردي": "إجراء جلسة توجيه فردية (Micro-Coaching) وتنبيه ودي رسمي.",
+            "خلل في النظام": "مراجعة قسم الدعم الفني وتحديث الإعدادات أو الصلاحيات فوراً."
+        };
+
+        rootCauseErrorsData.push({
+            branchName: bObj ? bObj.name : bId,
+            empName: empName,
+            desc: desc,
+            cause: cause,
+            solution: solutionsMap[cause] || "متابعة وإشراف مباشر."
+        });
+        localStorage.setItem('unique_journey_root_cause_v1', JSON.stringify(rootCauseErrorsData));
+        document.getElementById('errDescInput').value = '';
+        renderRootCauseTable();
+        alert('تم تحليل وإضافة الجذر التشغيلي بنجاح!');
+    }
+
+    function renderRootCauseTable() {
+        let tbody = document.getElementById('rootCauseTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        rootCauseErrorsData.forEach((item, idx) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:#38bdf8;">${item.branchName}<br><span style="font-size:11px; color:#fff;">${item.empName}</span></td>
+                    <td>${item.desc}</td>
+                    <td style="text-align:center;"><span class="badge b-yellow">${item.cause}</span></td>
+                    <td style="color:#34d399; font-weight:bold;">${item.solution}</td>
+                    <td style="text-align:center;"><button type="button" onclick="deleteRootCause(${idx})" class="btn-danger">حذف</button></td>
+                </tr>`;
+        });
+    }
+    function deleteRootCause(idx) {
+        rootCauseErrorsData.splice(idx, 1);
+        localStorage.setItem('unique_journey_root_cause_v1', JSON.stringify(rootCauseErrorsData));
+        renderRootCauseTable();
+    }
+
+    function renderAlertsTable() {
+        let tbody = document.getElementById('alertsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let alertCount = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let lowCount = 0;
+                metricNames.forEach((m, idx) => {
+                    if (isMetricApplicableForDept(m, emp.dept) && (Number(scores[idx]) || 3) <= 2) lowCount++;
+                });
+
+                if (pct <= 60 || lowCount >= 2) {
+                    alertCount++;
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; color:#38bdf8;">${b.name}</td>
+                            <td>${emp.name}</td>
+                            <td style="text-align:center; color:#fb7185; font-weight:bold;">${pct}%</td>
+                            <td style="text-align:center;"><span class="badge b-red">🚨 تراجع حاد / إنذار مبكر</span></td>
+                            <td style="color:#facc15;">عقد جلسة توجيه لحظي عاجلة ومراجعة البنود المقصرة</td>
+                        </tr>`;
+                }
+            });
+        });
+        if (alertCount === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#34d399; padding:20px;">ممتاز! لا توجد أي إنذارات مبكرة نشطة للأسبوع الحالي. العمل مستقر تماماً.</td></tr>`;
+        }
+    }
+
+    function renderCareerTable() {
+        let tbody = document.getElementById('careerTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let weeks = getAvailableWeeks();
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let totalPct = 0;
+                let count = 0;
+                weeks.forEach(w => {
+                    if (emp.history && emp.history[w]) {
+                        totalPct += calculateWeightedEmployeePct(emp, emp.history[w], null);
+                        count++;
+                    }
+                });
+                let avg = count > 0 ? Math.round(totalPct / count) : 75;
+                let statusBadge = avg >= 90 ? '<span class="badge b-green">مرشح بقوة للترقية أو الحافز الاستثنائي 🌟</span>' : (avg >= 75 ? '<span class="badge b-blue">مستقر ومثابر 🟢</span>' : '<span class="badge b-yellow">يحتاج برامج تطوير ودعم ⚠️</span>');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:bold;">${emp.name}</td>
+                        <td>${b.name} (${getDeptDisplayName(emp.dept)})</td>
+                        <td style="text-align:center; font-weight:bold; color:#38bdf8;">${avg}%</td>
+                        <td style="text-align:center;">${statusBadge}</td>
+                    </tr>`;
+            });
+        });
+    }
+
+    function renderExecutiveReport() {
+        let container = document.getElementById('executiveReportContent');
+        if (!container) return;
+        let activeWeek = getCurrentWeekKey();
+        let totalEmps = 0;
+        let excellentCount = 0;
+        let weakCount = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                totalEmps++;
+                let scArr = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let p = calculateWeightedEmployeePct(emp, scArr, null);
+                if (p >= 90) excellentCount++;
+                if (p <= 60) weakCount++;
+            });
+        });
+
+        container.innerHTML = `
+            <h4 style="color:#38bdf8; margin-bottom:10px;">📋 الملخص التنفيذي التشغيلي (أسبوع: ${activeWeek})</h4>
+            <p>• <b>إجمالي القوى العاملة:</b> ${totalEmps} موظف.</p>
+            <p>• <b>العناصر المتميزة والمتصدرة (≥ 90%):</b> ${excellentCount} موظفين.</p>
+            <p>• <b>العناصر التي تحتاج تدخلاً عاجلاً (≤ 60%):</b> ${weakCount} موظفين.</p>
+            <h4 style="color:#34d399; margin-top:15px; margin-bottom:8px;">💡 الحلول الذكية الموصى بها للإدارة:</h4>
+            <div style="background:rgba(16,185,129,0.1); border:1px solid #059669; padding:12px; border-radius:6px; color:#6ee7b7;">
+                1. تفعيل جلسات التوجيه السريع (Micro-Coaching) للموظفين المتعثرين.<br>
+                2. متابعة دقة وحجم إنجاز معاملات وجهات السعودية والإمارات.<br>
+                3. صرف البونص والحوافز للمتميزين أسبوعياً.
+            </div>
+        `;
+    }
+
+    function renderDeviceLogsTable() {
+        let tbody = document.getElementById('deviceLogsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        if (deviceLogsData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding:20px;">لا توجد أجهزة مسجلة حالياً.</td></tr>`;
+            return;
+        }
+        deviceLogsData.forEach((log, index) => {
+            let roleBadge = log.role === 'Admin' ? '<span class="badge b-green">مدير عام</span>' : (log.role === 'Branch Manager' ? '<span class="badge b-blue">مدير فرع</span>' : '<span class="badge b-yellow">موظف</span>');
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:#38bdf8;">${log.name}</td>
+                    <td style="text-align:center;">${roleBadge}</td>
+                    <td style="text-align:center;">${log.branchName}</td>
+                    <td>💻 ${log.device}</td>
+                    <td style="text-align:center; color:#34d399; font-family:monospace;">${log.ip || 'غير متوفر'}</td>
+                    <td style="text-align:center; color:#22d3ee;">📍 ${log.location || 'غير محدد'}</td>
+                    <td style="text-align:center; color:#facc15; font-family:monospace;">${log.time}</td>
+                    <td style="text-align:center;"><button type="button" onclick="deleteDeviceLog(${index})" class="btn-danger">🗑️ حذف</button></td>
+                </tr>`;
+        });
+    }
+
+    function deleteDeviceLog(index) {
+        if (confirm('هل أنت متأكد من حذف هذا الجهاز من السيستم؟ سيتم تسجيل خروجه فوراً.')) {
+            deviceLogsData.splice(index, 1);
+            localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+            renderDeviceLogsTable();
+        }
+    }
+
+    function clearDeviceLogs() {
+        if (confirm('مسح كل سجل الأجهزة؟')) {
+            deviceLogsData = [];
+            localStorage.removeItem('unique_journey_device_logs_v1');
+            renderDeviceLogsTable();
+        }
+    }
+
+    function renderLiveHudBadges() {
+        let container = document.getElementById('liveHudBadgesContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let list = dbData[currentBranch] || [];
+        if (list.length === 0) {
+            container.innerHTML = `<div style="background:rgba(0,0,0,0.7); color:#fff; padding:10px; border-radius:6px;">لا توجد عناصر مسجلة في هذا الفرع للعرض الحي.</div>`;
+            return;
+        }
+        list.forEach(emp => {
+            if (!emp.history) emp.history = {};
+            if (!emp.history[activeWeek]) emp.history[activeWeek] = new Array(metricNames.length).fill(3);
+            let pct = calculateWeightedEmployeePct(emp, emp.history[activeWeek], null);
+            let evalRes = getEvaluationDetails(emp, pct);
+            let isAlert = pct <= 60;
+            container.innerHTML += `
+                <div class="${isAlert ? 'hud-badge-card alert' : 'hud-badge-card'}">
+                    <div style="font-weight:bold; color:#38bdf8; font-size:12px; margin-bottom:2px;">👤 ${emp.name}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+                        <span>الأداء: <b style="color:${isAlert ? '#fca5a5' : '#34d399'};">${pct}%</b></span>
+                        <span class="badge ${evalRes.badge}">${evalRes.rating}</span>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function populateArchiveWeeksDropdown() {
+        let sel = document.getElementById('archiveWeekSelector');
+        if (!sel) return;
+        sel.innerHTML = '';
+        getAvailableWeeks().forEach((w, idx) => {
+            sel.innerHTML += `<option value="${w}">${idx === 0 ? `🟢 الأسبوع الحالي (${w}) - نشط` : `🔒 أسبوع مؤرشف (${w})`}</option>`;
+        });
+    }
+
+    function updateBranchDropdowns() {
+        let s2 = document.getElementById('newEmpBranch');
+        let s3 = document.getElementById('weeklyBranchFilter'), s4 = document.getElementById('chartBranchFilter');
+        let usrBranchSel = document.getElementById('usrBranch');
+        let editBranchSel = document.getElementById('editEmpBranch');
+        if (s2) { s2.innerHTML = ''; branchesData.forEach(b => s2.innerHTML += `<option value="${b.id}" ${b.id===currentBranch?'selected':''}>${b.name}</option>`); }
+        if (s3) { s3.innerHTML = '<option value="all">كل الفروع</option>'; branchesData.forEach(b => s3.innerHTML += `<option value="${b.id}">${b.name}</option>`); }
+        if (s4) { s4.innerHTML = '<option value="all">كل الفروع</option>'; branchesData.forEach(b => s4.innerHTML += `<option value="${b.id}">${b.name}</option>`); }
+        if (usrBranchSel) { usrBranchSel.innerHTML = ''; branchesData.forEach(b => usrBranchSel.innerHTML += `<option value="${b.id}">${b.name}</option>`); }
+        if (editBranchSel) { editBranchSel.innerHTML = ''; branchesData.forEach(b => editBranchSel.innerHTML += `<option value="${b.id}">${b.name}</option>`); }
+    }
+
+    function updateDeptDropdowns() {
+        let sel = document.getElementById('newDept');
+        let editDeptSel = document.getElementById('editEmpDept');
+        if (sel) {
+            sel.innerHTML = '';
+            departmentsData.forEach(d => sel.innerHTML += `<option value="${d.id}">${d.name}</option>`);
+        }
+        if (editDeptSel) {
+            editDeptSel.innerHTML = '';
+            departmentsData.forEach(d => editDeptSel.innerHTML += `<option value="${d.id}">${d.name}</option>`);
+        }
+
+        let adminSel = document.getElementById('newAdminDept');
+        let editAdminSel = document.getElementById('editEmpAdminDept');
+        if (adminSel) {
+            adminSel.innerHTML = '';
+            adminDepartmentsData.forEach(ad => adminSel.innerHTML += `<option value="${ad.name}">${ad.name}</option>`);
+        }
+        if (editAdminSel) {
+            editAdminSel.innerHTML = '';
+            adminDepartmentsData.forEach(ad => editAdminSel.innerHTML += `<option value="${ad.name}">${ad.name}</option>`);
+        }
+    }
+
+    function renderDeptFilterBar() {
+        let bar = document.getElementById('deptFilterBar');
+        if (!bar) return;
+        let html = `<div style="display:flex; gap:6px; flex-wrap:wrap;">`;
+        html += `<button type="button" class="btn-dept ${currentDeptFilter === 'all' ? 'active' : ''}" onclick="filterByDept('all')">🌟 كل الأقسام</button>`;
+        departmentsData.forEach(d => {
+            html += `<button type="button" class="btn-dept ${currentDeptFilter === d.id ? 'active' : ''}" onclick="filterByDept('${d.id}')">${d.name}</button>`;
+        });
+        html += `</div>`;
+        bar.innerHTML = html;
+    }
+
+    function renderAdminDepartmentsTable() {
+        let tbody = document.getElementById('adminDepartmentsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        adminDepartmentsData.forEach((ad, idx) => {
+            tbody.innerHTML += `<tr>
+                <td><input type="text" value="${ad.name}" onchange="updateAdminDeptName(${idx}, this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center; color:#94a3b8;">${ad.id}</td>
+                <td style="text-align:center;">${adminDepartmentsData.length > 1 ? `<button type="button" onclick="deleteAdminDepartment(${idx})" class="btn-danger">حذف</button>` : 'الأساسي'}</td>
+            </tr>`;
+        });
+    }
+
+    function addNewAdminDepartment() {
+        let input = document.getElementById('newAdminDeptNameInput');
+        let name = input.value.trim();
+        if (!name) { alert('اكتب اسم الإدارة!'); return; }
+        adminDepartmentsData.push({ id: 'adm_' + Date.now(), name });
+        localStorage.setItem('unique_journey_admin_depts_v1', JSON.stringify(adminDepartmentsData));
+        input.value = '';
+        renderAdminDepartmentsTable(); updateDeptDropdowns();
+        alert('تم إضافة الإدارة بنجاح!');
+    }
+
+    function updateAdminDeptName(idx, newName) {
+        adminDepartmentsData[idx].name = newName.trim();
+        localStorage.setItem('unique_journey_admin_depts_v1', JSON.stringify(adminDepartmentsData));
+        updateDeptDropdowns();
+    }
+
+    function deleteAdminDepartment(idx) {
+        if (adminDepartmentsData.length <= 1) { alert('لا يمكن حذف كل الإدارات!'); return; }
+        if (confirm('حذف الإدارة؟')) {
+            adminDepartmentsData.splice(idx, 1);
+            localStorage.setItem('unique_journey_admin_depts_v1', JSON.stringify(adminDepartmentsData));
+            renderAdminDepartmentsTable(); updateDeptDropdowns();
+        }
+    }
+
+    function renderDepartmentsTable() {
+        let tbody = document.getElementById('departmentsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        departmentsData.forEach((d, idx) => {
+            tbody.innerHTML += `<tr>
+                <td><input type="text" value="${d.name}" onchange="updateDeptName(${idx}, this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center; color:#94a3b8;">${d.id}</td>
+                <td style="text-align:center;">${departmentsData.length > 1 ? `<button type="button" onclick="deleteDepartment(${idx})" class="btn-danger">حذف</button>` : 'الأساسي'}</td>
+            </tr>`;
+        });
+    }
+
+    function addNewDepartment() {
+        let input = document.getElementById('newDeptNameInput');
+        let name = input.value.trim();
+        if (!name) { alert('اكتب اسم القسم!'); return; }
+        departmentsData.push({ id: 'dept_' + Date.now(), name });
+        localStorage.setItem('unique_journey_departments_v1', JSON.stringify(departmentsData));
+        input.value = '';
+        renderDepartmentsTable(); renderDeptFilterBar(); updateDeptDropdowns(); renderMetricsConfigTable();
+        alert('تم إضافة القسم بنجاح!');
+    }
+    function updateDeptName(idx, newName) {
+        departmentsData[idx].name = newName.trim();
+        localStorage.setItem('unique_journey_departments_v1', JSON.stringify(departmentsData));
+        renderDeptFilterBar(); updateDeptDropdowns(); renderMetricsConfigTable();
+    }
+    function deleteDepartment(idx) {
+        if (departmentsData.length <= 1) { alert('لا يمكن حذف كل الأقسام!'); return; }
+        if (confirm('حذف القسم؟')) {
+            departmentsData.splice(idx, 1);
+            localStorage.setItem('unique_journey_departments_v1', JSON.stringify(departmentsData));
+            renderDepartmentsTable(); renderDeptFilterBar(); updateDeptDropdowns(); renderMetricsConfigTable(); renderEvalTable();
+        }
+    }
+
+    function renderBranchButtons() {
+        let group = document.getElementById('branchButtonGroup');
+        if (!group) return;
+        group.innerHTML = '';
+        let visibleBranches = (currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== 'all') ? branchesData.filter(b => b.id === currentUser.branch) : branchesData;
+        if (currentUser && currentUser.role === 'Employee') {
+            visibleBranches = branchesData.filter(b => b.id === currentUser.branch);
+        }
+        visibleBranches.forEach(b => {
+            group.innerHTML += `<button type="button" class="btn-branch ${currentBranch === b.id ? 'active' : ''}" onclick="changeBranch('${b.id}')">${b.name}</button>`;
+        });
+    }
+
+    // إدارة الأدوار المخصصة في القائمة المنسدلة (Custom Roles Dropdown)
+    let defaultRolesList = [
+        { id: 'Admin', name: 'مدير عام (صلاحيات كاملة لكل السيستم)' },
+        { id: 'Branch Manager', name: 'مدير فرع' },
+        { id: 'Employee', name: 'موظف' }
+    ];
+    let customRolesData = defaultRolesList;
+    try {
+        let rSaved = localStorage.getItem('unique_journey_roles_v1');
+        if (rSaved) customRolesData = JSON.parse(rSaved);
+    } catch(e) {}
+
+    function getRoleDisplayName(roleVal) {
+        if (roleVal === 'Admin') return 'مدير عام';
+        if (roleVal === 'Branch Manager') return 'مدير فرع';
+        if (roleVal === 'Employee') return 'موظف';
+        let found = customRolesData.find(r => r.id === roleVal || r.name === roleVal);
+        return found ? found.name : (roleVal || 'مدير فرع');
+    }
+
+    function updateRoleDropdown() {
+        let roleSel = document.getElementById('usrRole');
+        if (!roleSel) return;
+        let currentVal = roleSel.value;
+        roleSel.innerHTML = '';
+        customRolesData.forEach(r => {
+            roleSel.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+        });
+        if (currentVal && customRolesData.some(r => r.id === currentVal)) {
+            roleSel.value = currentVal;
+        }
+    }
+
+    function renderCustomRolesTable() {
+        let tbody = document.getElementById('customRolesTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        customRolesData.forEach((r, idx) => {
+            let isBuiltIn = (r.id === 'Admin' || r.id === 'Branch Manager' || r.id === 'Employee');
+            tbody.innerHTML += `<tr>
+                <td><input type="text" value="${r.name}" onchange="updateCustomRoleName(${idx}, this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center; color:#94a3b8;">${r.id}</td>
+                <td style="text-align:center;">
+                    ${!isBuiltIn ? `<button type="button" onclick="deleteCustomRole(${idx})" class="btn-danger">حذف</button>` : '<span style="color:#94a3b8; font-size:11px;">أساسي</span>'}
+                </td>
+            </tr>`;
+        });
+    }
+
+    function addNewCustomRole() {
+        let inp = document.getElementById('newCustomRoleInput');
+        let name = inp ? inp.value.trim() : '';
+        if (!name) { alert('يرجى كتابة اسم الدور الجديد أولاً!'); return; }
+        if (customRolesData.some(r => r.id === name || r.name === name)) {
+            alert('هذا الدور موجود بالفعل في القائمة!');
+            return;
+        }
+        customRolesData.push({ id: name, name: name });
+        localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
+        recordAuditLog('إضافة دور جديد', `تمت إضافة دور جديد للقائمة المنسدلة: «${name}»`);
+        inp.value = '';
+        renderCustomRolesTable();
+        updateRoleDropdown();
+        alert(`✅ تمت إضافة الدور «${name}» للقائمة المنسدلة بنجاح!`);
+    }
+
+    function quickAddRoleFromModal() {
+        let inp = document.getElementById('quickNewRoleInput');
+        let newRoleName = inp ? inp.value.trim() : '';
+        if (!newRoleName) { alert('يرجى كتابة اسم الدور الجديد أولاً!'); return; }
+        if (!customRolesData.some(r => r.id === newRoleName || r.name === newRoleName)) {
+            customRolesData.push({ id: newRoleName, name: newRoleName });
+            localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
+            recordAuditLog('إضافة دور جديد', `تمت إضافة دور جديد للقائمة المنسدلة: «${newRoleName}»`);
+        }
+        updateRoleDropdown();
+        renderCustomRolesTable();
+        document.getElementById('usrRole').value = newRoleName;
+        inp.value = '';
+        alert(`✅ تمت إضافة الدور «${newRoleName}» للقائمة المنسدلة واختياره فوراً!`);
+    }
+
+    function updateCustomRoleName(idx, newNameVal) {
+        let trimmed = newNameVal.trim();
+        if (!trimmed) return;
+        customRolesData[idx].name = trimmed;
+        localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
+        updateRoleDropdown();
+        renderUsersTable();
+    }
+
+    function deleteCustomRole(idx) {
+        let r = customRolesData[idx];
+        if (!r || r.id === 'Admin' || r.id === 'Branch Manager' || r.id === 'Employee') return;
+        if (confirm(`هل أنت متأكد من حذف الدور «${r.name}» من القائمة؟`)) {
+            customRolesData.splice(idx, 1);
+            localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
+            renderCustomRolesTable();
+            updateRoleDropdown();
+        }
+    }
+
+    // دالة تسجيل بيانات الجهاز والـ IP والموقع الجغرافي بأمان دون تعطيل الدخول
+    async function logClientInfo(userObj) {
+        let ip = 'محلي / غير متصل';
+        let locationStr = 'مصر';
+        try {
+            let res = await fetch('https://ipapi.co/json/');
+            if (res.ok) {
+                let data = await res.json();
+                ip = data.ip || ip;
+                let city = data.city || '';
+                let country = data.country_name || '';
+                if (city || country) locationStr = `${city}, ${country}`.trim();
+            }
+        } catch (err) {}
+        let deviceStr = detectDeviceType();
+        let timeStr = new Date().toLocaleString('ar-EG');
+        deviceLogsData = deviceLogsData.filter(d => !(d.name === userObj.name && d.device === deviceStr));
+        deviceLogsData.push({
+            name: userObj.name,
+            role: getRoleDisplayName(userObj.role),
+            branchName: userObj.branchName || 'كل الفروع',
+            device: deviceStr,
+            ip: ip,
+            location: locationStr,
+            time: timeStr
+        });
+        localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+        renderDeviceLogsTable();
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const inputVal = document.getElementById('loginEmail').value.trim().toLowerCase();
+        const pass = document.getElementById('loginPassword').value.trim();
+        let errEl = document.getElementById('loginError');
+        if (errEl) errEl.style.display = 'none';
+
+        let loggedUserObj = null;
+
+        // 1. البحث في قائمة المستخدمين المسجلين (يقبل الإيميل أو الاسم بالضبط مع الرقم السري المحدد له)
+        let found = usersData.find(u =>
+            (u.email && u.email.trim().toLowerCase() === inputVal) ||
+            (u.name && u.name.trim().toLowerCase() === inputVal)
+        );
+
+        if (found) {
+            if (String(found.password).trim() === pass) {
+                let bObj = branchesData.find(b => b.id === found.branch);
+                loggedUserObj = {
+                    name: found.name,
+                    email: found.email,
+                    role: found.role,
+                    branch: found.branch,
+                    branchName: bObj ? bObj.name : (found.branch === 'all' ? 'كل الفروع' : found.branch),
+                    allowedTabs: found.allowedTabs || [],
+                    allowedEmps: found.allowedEmps || [],
+                    allowedMetrics: (Array.isArray(found.allowedMetrics) && found.allowedMetrics.length > 0) ? found.allowedMetrics : metricNames,
+                    password: found.password
+                };
+            } else {
+                if (errEl) {
+                    errEl.textContent = 'الرقم السري غير صحيح!';
+                    errEl.style.display = 'block';
+                }
+                return;
+            }
+        } else if (inputVal === 'mostafa' || inputVal === 'مصطفى' || inputVal === 'mostafa@admin.com') {
+            // دخول مباشر لحساب المدير العام مصطفى
+            loggedUserObj = {
+                name: "مصطفى",
+                email: "mostafa@admin.com",
+                role: "Admin",
+                branch: "all",
+                branchName: "الإدارة العامة",
+                allowedMetrics: metricNames,
+                password: pass || "123456"
+            };
+        }
+
+        if (loggedUserObj) {
+            currentUser = loggedUserObj;
+            localStorage.setItem('unique_journey_logged_in', JSON.stringify(currentUser));
+            initApp();
+            logClientInfo(currentUser);
+        } else {
+            if (errEl) {
+                errEl.textContent = 'اسم المستخدم أو البريد أو الرقم السري غير صحيح!';
+                errEl.style.display = 'block';
+            }
+        }
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('unique_journey_logged_in');
+        currentUser = null;
+        document.getElementById('main-app').classList.add('hidden');
+        document.getElementById('login-screen').style.display = 'flex';
+    }
+
+    function checkExistingLogin() {
+        let saved = localStorage.getItem('unique_journey_logged_in');
+        if (saved) { try { currentUser = JSON.parse(saved); initApp(); } catch(e) { handleLogout(); } }
+    }
+
+    function updateSmartNotificationBanner() {
+        let bannerTextEl = document.getElementById('bannerAlertText');
+        if (!bannerTextEl) return;
+        let activeWeek = getCurrentWeekKey();
+        let totalAlerts = 0;
+        let totalPendingCoaching = 0;
+
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let lowCount = 0;
+                metricNames.forEach((m, idx) => {
+                    if (isMetricApplicableForDept(m, emp.dept) && (Number(scores[idx]) || 3) <= 2) lowCount++;
+                });
+                if (pct <= 60 || lowCount >= 2) totalAlerts++;
+
+                metricNames.forEach((mName, mIdx) => {
+                    if (!isMetricApplicableForDept(mName, emp.dept)) return;
+                    let sc = Number(scores[mIdx]) || 3;
+                    if (sc <= 2) {
+                        let uniqueKey = `${b.id}_${emp.name}_${mName}_${activeWeek}`;
+                        if (!smartCoachingResolvedState[uniqueKey]) totalPendingCoaching++;
+                    }
+                });
+            });
+        });
+
+        if (totalAlerts > 0 || totalPendingCoaching > 0) {
+            bannerTextEl.innerHTML = `⚠️ تنبيهات فورية: يوجد <b style="color:#fb7185;">${totalAlerts}</b> موظف بحاجة لتدخل عاجل، و <b style="color:#facc15;">${totalPendingCoaching}</b> حالة قصور بانتظار معالجة التوجيه اللحظي الذكي.`;
+        } else {
+            bannerTextEl.innerHTML = `🌟 الحالة العامة مستقرة تماماً. جميع الفروع تؤدي بكفاءة عالية ولا توجد إنذارات نشطة.`;
+        }
+    }
+
+    function initApp() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').classList.remove('hidden');
+        document.getElementById('loggedInUserName').textContent = `${currentUser.name} (${getRoleDisplayName(currentUser.role)})`;
+
+        if (currentUser.branch && currentUser.branch !== 'all') {
+            currentBranch = currentUser.branch;
+        }
+
+        applyRoleBasedUI();
+
+        renderBranchButtons(); updateBranchDropdowns(); updateDeptDropdowns(); renderDeptFilterBar();
+        initCameraRulesDropdowns(); initRootCauseDropdowns(); initComparisonDropdowns(); loadSavedCameraStream();
+        updateSmartNotificationBanner();
+        switchTab('eval');
+    }
+
+    function applyRoleBasedUI() {
+        let adminElements = document.querySelectorAll('.admin-only');
+        let managerElements = document.querySelectorAll('.admin-manager-only');
+
+        if (currentUser.role === 'Admin') {
+            adminElements.forEach(el => el.classList.remove('hidden'));
+            managerElements.forEach(el => el.classList.remove('hidden'));
+        } else if (currentUser.role === 'Employee') {
+            adminElements.forEach(el => el.classList.add('hidden'));
+            managerElements.forEach(el => el.classList.add('hidden'));
+        } else {
+            // مدير الفرع أو أي دور إشرافي مخصص جديد يضاف للقائمة
+            adminElements.forEach(el => el.classList.add('hidden'));
+            managerElements.forEach(el => el.classList.remove('hidden'));
+        }
+
+        // احترام صلاحيات التبويبات المخصصة للمستخدم إن وجدت
+        if (currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedTabs) && currentUser.allowedTabs.length > 0) {
+            ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'career', 'executivereport', 'weeklyindividuals', 'leaderboard', 'charts', 'plan'].forEach(t => {
+                let btn = document.getElementById(`tab-${t}`);
+                if (btn) {
+                    if (currentUser.allowedTabs.includes(t)) btn.classList.remove('hidden');
+                    else btn.classList.add('hidden');
+                }
+            });
+        }
+    }
+
+    function openProfileModal() {
+        if (currentUser) {
+            let nameInp = document.getElementById('profileName');
+            let emailInp = document.getElementById('profileEmail');
+            let passInp = document.getElementById('profilePassword');
+            let uFound = usersData.find(u =>
+                (u.email && currentUser.email && u.email.toLowerCase() === currentUser.email.toLowerCase()) ||
+                u.name === currentUser.name
+            );
+            if (nameInp) nameInp.value = currentUser.name || '';
+            if (emailInp) emailInp.value = currentUser.email || (uFound ? uFound.email : '');
+            if (passInp) passInp.value = currentUser.password || (uFound ? uFound.password : '123456');
+        }
+        document.getElementById('profileModal').classList.add('active');
+    }
+    function closeProfileModal() { document.getElementById('profileModal').classList.remove('active'); }
+
+    function saveProfileChanges(e) {
+        e.preventDefault();
+        let newName = document.getElementById('profileName').value.trim();
+        let newEmail = document.getElementById('profileEmail') ? document.getElementById('profileEmail').value.trim() : '';
+        let newPass = document.getElementById('profilePassword') ? document.getElementById('profilePassword').value.trim() : '';
+        let oldName = currentUser.name;
+        let oldEmail = currentUser.email || '';
+
+        // تحديث بيانات المستخدم وإيميله ورقمه السري في قائمة المستخدمين المحفوظة
+        let uFound = usersData.find(u =>
+            (u.email && oldEmail && u.email.toLowerCase() === oldEmail.toLowerCase()) ||
+            u.name === oldName
+        );
+        if (uFound) {
+            if (newName) uFound.name = newName;
+            if (newEmail) uFound.email = newEmail;
+            if (newPass) uFound.password = newPass;
+            localStorage.setItem('unique_journey_users_v20', JSON.stringify(usersData));
+        } else if (currentUser.role === 'Admin') {
+            usersData.unshift({
+                name: newName || currentUser.name,
+                email: newEmail || currentUser.email,
+                password: newPass || '123456',
+                role: 'Admin',
+                branch: 'all'
+            });
+            localStorage.setItem('unique_journey_users_v20', JSON.stringify(usersData));
+        }
+
+        if (newName) currentUser.name = newName;
+        if (newEmail) currentUser.email = newEmail;
+        if (newPass) currentUser.password = newPass;
+
+        localStorage.setItem('unique_journey_logged_in', JSON.stringify(currentUser));
+        recordAuditLog('تعديل الحساب الشخصي', `قام المستخدم «${currentUser.name}» بتحديث بيانات حسابه (الإيميل: ${currentUser.email})`);
+        closeProfileModal();
+        renderUsersTable();
+        initApp();
+        alert(`✅ تم تحديث الاسم والإيميل (${currentUser.email}) والرقم السري بنجاح!`);
+    }
+    function getEvaluationDetails(emp, pct) {
+        if (pct >= 96) return { rating: 'ممتاز (ترقية)', badge: 'b-green' };
+        if (pct >= 60) return { rating: 'جيد', badge: 'b-blue' };
+        return { rating: 'ضعيف (لفت نظر)', badge: 'b-red' };
+    }
+
+    function changeBranch(b) {
+        if (currentUser.role === 'Branch Manager' && currentUser.branch !== b) return;
+        if (currentUser.role === 'Employee') return;
+        currentBranch = b;
+        renderBranchButtons(); renderEvalTable(); renderLiveHudBadges(); initCameraRulesDropdowns();
+    }
+    function filterByDept(dept) { currentDeptFilter = dept; renderDeptFilterBar(); renderEvalTable(); }
+
+    function switchTab(tab) {
+        if (currentUser.role !== 'Admin' && (tab === 'users' || tab === 'devicelog' || tab === 'auditlog')) {
+            alert('عذراً، هذه الصلاحية مخصصة للمدير العام فقط!');
+            return;
+        }
+        if (currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedTabs) && currentUser.allowedTabs.length > 0 && !currentUser.allowedTabs.includes(tab)) {
+            alert('عذراً، هذا التبويب غير مضاف ضمن صلاحيات حسابك!');
+            return;
+        }
+        if (currentUser.role === 'Employee' && (!currentUser.allowedTabs || currentUser.allowedTabs.length === 0) && tab !== 'eval' && tab !== 'plan' && tab !== 'leaderboard') {
+            alert('عذراً، هذه الصلاحية غير متاحة لحسابك الموظف!');
+            return;
+        }
+
+        ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+            let sec = document.getElementById(`sec-${t}`);
+            let btn = document.getElementById(`tab-${t}`);
+            if (sec) sec.classList.add('hidden');
+            if (btn) btn.classList.remove('active');
+        });
+        document.getElementById(`sec-${tab}`).classList.remove('hidden');
+        if (document.getElementById(`tab-${tab}`)) document.getElementById(`tab-${tab}`).classList.add('active');
+
+        if (tab === 'eval') { renderDeptFilterBar(); renderEvalTable(); }
+        if (tab === 'allemp') renderAllEmployeesTable();
+        if (tab === 'camerarules') { renderCameraRulesTable(); renderLiveHudBadges(); }
+        if (tab === 'alerts') renderAlertsTable();
+        if (tab === 'coaching') renderSmartCoachingTable();
+        if (tab === 'compare') initComparisonDropdowns();
+        if (tab === 'rootcause') renderRootCauseTable();
+        if (tab === 'career') renderCareerTable();
+        if (tab === 'executivereport') renderExecutiveReport();
+        if (tab === 'devicelog') renderDeviceLogsTable();
+        if (tab === 'auditlog') renderAuditLogsTable();
+        if (tab === 'weeklyindividuals') renderWeeklyIndividualsTable();
+        if (tab === 'leaderboard') renderLeaderboardTable();
+        if (tab === 'charts') renderEmployeePerformanceChart();
+        if (tab === 'plan') renderPlanTable();
+        if (tab === 'users') { renderBranchesTable(); renderAdminDepartmentsTable(); renderDepartmentsTable(); renderMetricsConfigTable(); renderCustomRolesTable(); renderUsersTable(); }
+    }
+
+    function renderEvalTable() {
+        let thead = document.getElementById('evalTableHead');
+        let tbody = document.getElementById('evalTableBody');
+        if (!tbody || !thead) return;
+        tbody.innerHTML = '';
+        ensureMetricSettingsSync();
+        let activeWeek = getCurrentWeekKey();
+        document.getElementById('currentWeekStatus').innerHTML = `🟢 الأسبوع الحالي: <b>${activeWeek}</b>`;
+        document.getElementById('weekLockNotice').innerHTML = `🔒 إغلاق تلقائي كل جمعة ليلاً.`;
+
+        let userAllowedMetrics = (currentUser && currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedMetrics) && currentUser.allowedMetrics.length > 0)
+            ? currentUser.allowedMetrics
+            : metricNames;
+
+        let visibleHeaderMetrics = metricNames.filter(m => {
+            if (!userAllowedMetrics.includes(m)) return false;
+            if (currentDeptFilter !== 'all' && !isMetricApplicableForDept(m, currentDeptFilter)) return false;
+            return true;
+        });
+
+        let headHtml = `<tr><th>الكود</th><th style="text-align: right;">الاسم</th><th style="text-align: right;">الإدارة</th><th style="text-align: right;">القسم</th>`;
+        visibleHeaderMetrics.forEach(m => {
+            let w = metricSettingsData[m] ? metricSettingsData[m].weight : 15;
+            headHtml += `<th>${m}<br><span style="color:#facc15; font-size:10px;">(${w}%)</span></th>`;
+        });
+        headHtml += `<th>النسبة الموزونة</th><th>التقدير</th><th>ملاحظات</th>`;
+        if (currentUser.role !== 'Employee') headHtml += `<th>إجراءات</th>`;
+        headHtml += `</tr>`;
+        thead.innerHTML = headHtml;
+
+        let empList = dbData[currentBranch] || [];
+        if (currentUser.role === 'Employee') {
+            empList = empList.filter(emp => emp.name.toLowerCase() === currentUser.name.toLowerCase());
+        } else if (currentUser.role !== 'Admin' && currentUser.allowedEmps && currentUser.allowedEmps.length > 0) {
+            empList = empList.filter(emp => currentUser.allowedEmps.includes(emp.name));
+        }
+
+        let searchQuery = document.getElementById('quickSearchInput') ? document.getElementById('quickSearchInput').value.trim().toLowerCase() : '';
+        let totalPctSum = 0;
+        let excellentCount = 0;
+        let alertCount = 0;
+        let activeCount = 0;
+
+        let selectedFilterObj = departmentsData.find(d => d.id === currentDeptFilter);
+
+        empList.forEach((emp, idx) => {
+            if (currentDeptFilter !== 'all') {
+                if (emp.dept !== currentDeptFilter && (!selectedFilterObj || emp.dept !== selectedFilterObj.name)) return;
+            }
+            if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) return;
+
+            if (!emp.history) emp.history = {};
+            if (!emp.history[activeWeek]) emp.history[activeWeek] = new Array(metricNames.length).fill(3);
+            while (emp.history[activeWeek].length < metricNames.length) emp.history[activeWeek].push(3);
+            let scores = emp.history[activeWeek];
+
+            let pct = calculateWeightedEmployeePct(emp, scores, userAllowedMetrics);
+
+            totalPctSum += pct;
+            activeCount++;
+            if (pct >= 90) excellentCount++;
+            if (pct <= 60) alertCount++;
+
+            let evalRes = getEvaluationDetails(emp, pct);
+            let low = [];
+            metricNames.forEach((m, sIdx) => {
+                if (userAllowedMetrics.includes(m) && isMetricApplicableForDept(m, emp.dept) && Number(scores[sIdx]) <= 2) {
+                    low.push(m);
+                }
+            });
+            let lowCount = low.length;
+            let alertBadge = lowCount >= 2 ? ` <span class="badge b-red">🚨 تنبيه</span>` : '';
+            let notes = low.length > 0 ? `<span style="color:#fb7185;">تحسين (${low.join(', ')})</span>` : '<span style="color:#94a3b8;">مستقر</span>';
+            let deptDisplay = getDeptDisplayName(emp.dept);
+            let adminDeptDisplay = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
+
+            let rowClass = '';
+            if (pct >= 90) rowClass = 'row-excellent';
+            else if (pct <= 60) rowClass = 'row-alert';
+
+            let tr = document.createElement('tr');
+            if (rowClass) tr.className = rowClass;
+
+            let realIdx = (dbData[currentBranch] || []).indexOf(emp);
+            if (realIdx === -1) realIdx = idx;
+
+            let html = `<td style="text-align:center; color:#94a3b8;">${idx + 1}</td>
+                        <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span>${alertBadge}</td>
+                        <td style="color:#22d3ee;">${adminDeptDisplay}</td>
+                        <td style="color:#38bdf8;">${deptDisplay}</td>`;
+            
+            visibleHeaderMetrics.forEach(mName => {
+                let i = metricNames.indexOf(mName);
+                let isForThisEmpDept = isMetricApplicableForDept(mName, emp.dept);
+                if (!isForThisEmpDept) {
+                    html += `<td style="text-align:center; color:#64748b; font-size:11px;" title="هذا البند غير مخصص لقسم ${deptDisplay}">—</td>`;
+                } else {
+                    let sc = Number(scores[i]) || 3;
+                    if (currentUser.role === 'Employee') {
+                        html += `<td style="text-align:center; font-weight:bold; color:#38bdf8;">${sc}/5</td>`;
+                    } else {
+                        html += `<td style="text-align:center;"><select onchange="updateScore(${realIdx}, ${i}, this.value)">
+                            <option value="1" ${sc===1?'selected':''}>1</option>
+                            <option value="2" ${sc===2?'selected':''}>2</option>
+                            <option value="3" ${sc===3?'selected':''}>3</option>
+                            <option value="4" ${sc===4?'selected':''}>4</option>
+                            <option value="5" ${sc===5?'selected':''}>5</option>
+                        </select></td>`;
+                    }
+                }
+            });
+
+            html += `<td style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}%</td>
+                     <td style="text-align:center;"><span class="badge ${evalRes.badge}">${evalRes.rating}</span></td>
+                     <td>${notes}</td>`;
+            
+            if (currentUser.role !== 'Employee') {
+                html += `<td style="text-align:center;">
+                    <button type="button" onclick="openEditEmpModal('${currentBranch}', ${realIdx})" class="btn-edit-tbl">تعديل</button>
+                    <button type="button" onclick="deleteEmployee(${realIdx})" class="btn-danger">حذف</button>
+                </td>`;
+            }
+
+            tr.innerHTML = html;
+            tbody.appendChild(tr);
+        });
+
+        let branchAvg = activeCount > 0 ? Math.round(totalPctSum / activeCount) : 0;
+        document.getElementById('statAvgPct').textContent = branchAvg + '%';
+        document.getElementById('statExcellentCount').textContent = excellentCount;
+        document.getElementById('statAlertCount').textContent = alertCount;
+    }
+
+    function renderAllEmployeesTable() {
+        let tbody = document.getElementById('allEmployeesTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach((emp, empIdx) => {
+                let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scArr, null);
+                let evalRes = getEvaluationDetails(emp, pct);
+                let deptDisplay = getDeptDisplayName(emp.dept);
+                let adminDeptDisplay = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
+                
+                tbody.innerHTML += `<tr>
+                    <td style="font-weight:bold; color:#38bdf8;">${b.name}</td>
+                    <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${b.id}', ${empIdx})">${emp.name}</span></td>
+                    <td style="color:#22d3ee;">${adminDeptDisplay}</td>
+                    <td>${deptDisplay}</td>
+                    <td>${emp.jobTitle || 'موظف'}</td>
+                    <td style="font-weight:bold; color:#38bdf8; text-align:center;">${pct}%</td>
+                    <td style="text-align:center;"><span class="badge ${evalRes.badge}">${evalRes.rating}</span></td>
+                    <td style="text-align:center;">
+                        <button type="button" onclick="openEditEmpModal('${b.id}', ${empIdx})" class="btn-edit-tbl">تعديل</button>
+                        <button type="button" onclick="deleteEmpFromAll('${b.id}', ${empIdx})" class="btn-danger">حذف</button>
+                    </td>
+                </tr>`;
+            });
+        });
+    }
+
+    function openEditEmpModal(branchId, empIdx) {
+        let emp = dbData[branchId][empIdx];
+        if (!emp) return;
+        updateBranchDropdowns();
+        updateDeptDropdowns();
+        document.getElementById('editOldBranchId').value = branchId;
+        document.getElementById('editEmpIndex').value = empIdx;
+        document.getElementById('editEmpBranch').value = branchId;
+        document.getElementById('editEmpName').value = emp.name;
+        document.getElementById('editEmpJobTitle').value = emp.jobTitle || 'موظف';
+        let adminSel = document.getElementById('editEmpAdminDept');
+        let currentAdmin = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : '');
+        if (!Array.from(adminSel.options).some(o => o.value === currentAdmin) && currentAdmin) {
+            adminSel.innerHTML += `<option value="${currentAdmin}">${currentAdmin}</option>`;
+        }
+        adminSel.value = currentAdmin;
+        let deptSel = document.getElementById('editEmpDept');
+        let matchedDept = departmentsData.find(d => d.id === emp.dept || d.name === emp.dept);
+        if (matchedDept) {
+            deptSel.value = matchedDept.id;
+        } else if (emp.dept) {
+            deptSel.innerHTML += `<option value="${emp.dept}">${emp.dept}</option>`;
+            deptSel.value = emp.dept;
+        }
+        document.getElementById('editEmployeeModal').classList.add('active');
+    }
+
+    function closeEditEmpModal() {
+        document.getElementById('editEmployeeModal').classList.remove('active');
+    }
+
+    function saveEditedEmployee(e) {
+        e.preventDefault();
+        let oldBranchId = document.getElementById('editOldBranchId').value;
+        let empIdx = parseInt(document.getElementById('editEmpIndex').value);
+        let newBranchId = document.getElementById('editEmpBranch').value;
+        let newName = document.getElementById('editEmpName').value.trim();
+        let newAdminDept = document.getElementById('editEmpAdminDept').value;
+        let newDept = document.getElementById('editEmpDept').value;
+        let newJobTitle = document.getElementById('editEmpJobTitle').value.trim() || 'موظف';
+
+        if (!dbData[oldBranchId] || !dbData[oldBranchId][empIdx]) return;
+
+        let empObj = dbData[oldBranchId][empIdx];
+        let oldName = empObj.name;
+        empObj.name = newName;
+        empObj.adminDept = newAdminDept;
+        empObj.dept = newDept;
+        empObj.jobTitle = newJobTitle;
+
+        if (oldBranchId !== newBranchId) {
+            dbData[oldBranchId].splice(empIdx, 1);
+            if (!dbData[newBranchId]) dbData[newBranchId] = [];
+            dbData[newBranchId].push(empObj);
+        }
+
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('تعديل بيانات موظف', `تم تعديل بيانات الموظف "${oldName}" (الاسم الحالي: ${newName}، القسم: ${getDeptDisplayName(newDept)}، الوظيفة: ${newJobTitle})`);
+        closeEditEmpModal();
+        renderAllEmployeesTable();
+        renderEvalTable();
+        alert('تم حفظ تعديلات الموظف بنجاح!');
+    }
+
+    function deleteEmpFromAll(branchId, empIdx) {
+        if(confirm('هل أنت متأكد من حذف هذا الموظف نهائياً؟')) {
+            let empName = dbData[branchId][empIdx] ? dbData[branchId][empIdx].name : '';
+            dbData[branchId].splice(empIdx, 1);
+            localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+            recordAuditLog('حذف موظف', `تم حذف الموظف "${empName}" نهائياً من قاعدة البيانات`);
+            renderAllEmployeesTable();
+            renderEvalTable();
+        }
+    }
+
+    function handleExcelUpload(event) {
+        let file = event.target.files[0];
+        if(!file) return;
+        let activeWeek = getCurrentWeekKey();
+
+        function importRowsArray(rows) {
+            let addedCount = 0;
+            if (!rows || rows.length === 0) return 0;
+            let header = rows[0].map(c => String(c || '').trim().toLowerCase());
+            let nameIdx = header.findIndex(h => h.includes('اسم') || h.includes('موظف') || h === 'name');
+            let deptIdx = header.findIndex(h => h.includes('قسم') || h === 'dept' || h === 'department');
+            let jobIdx = header.findIndex(h => h.includes('وظيف') || h.includes('مسمى') || h === 'job' || h === 'title');
+            let branchIdx = header.findIndex(h => h.includes('فرع') || h === 'branch');
+            let adminIdx = header.findIndex(h => h.includes('ادار') || h.includes('إدار') || h === 'admin');
+            let startRow = 0;
+            if (nameIdx !== -1 || deptIdx !== -1 || jobIdx !== -1 || branchIdx !== -1 || adminIdx !== -1) {
+                startRow = 1;
+                if (nameIdx === -1) nameIdx = 0;
+            } else {
+                nameIdx = 0; deptIdx = 1; jobIdx = 2; branchIdx = 3; adminIdx = 4;
+            }
+            for (let r = startRow; r < rows.length; r++) {
+                let parts = rows[r];
+                if (!parts || parts.length === 0) continue;
+                let name = parts[nameIdx] !== undefined ? String(parts[nameIdx]).trim() : '';
+                if (!name && parts.length === 1) name = String(parts[0] || '').trim();
+                if (!name || name === 'name' || name === 'الاسم' || name === 'اسم الموظف') continue;
+                let rawDept = (deptIdx !== -1 && parts[deptIdx] !== undefined) ? String(parts[deptIdx]).trim() : 'sales';
+                let dMatch = departmentsData.find(d => d.id.toLowerCase() === rawDept.toLowerCase() || d.name === rawDept || rawDept.includes(d.name));
+                let deptId = dMatch ? dMatch.id : (rawDept || 'sales');
+                let jobTitle = (jobIdx !== -1 && parts[jobIdx]) ? String(parts[jobIdx]).trim() : 'موظف';
+                let rawBranch = (branchIdx !== -1 && parts[branchIdx]) ? String(parts[branchIdx]).trim() : '';
+                let bMatch = branchesData.find(b => b.id.toLowerCase() === rawBranch.toLowerCase() || b.name === rawBranch || rawBranch.includes(b.name));
+                let branchId = bMatch ? bMatch.id : (rawBranch.includes('ترعة') ? 'tura' : (rawBranch.includes('سندوب') ? 'sandoob' : currentBranch));
+                let adminDept = (adminIdx !== -1 && parts[adminIdx]) ? String(parts[adminIdx]).trim() : (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
+                if (!dbData[branchId]) dbData[branchId] = [];
+                let historyObj = {};
+                historyObj[activeWeek] = new Array(metricNames.length).fill(3);
+                dbData[branchId].push({ id: Date.now() + Math.random(), name, adminDept, dept: deptId, jobTitle, history: historyObj });
+                addedCount++;
+            }
+            return addedCount;
+        }
+
+        let ext = file.name.split('.').pop().toLowerCase();
+        let reader = new FileReader();
+        reader.onload = function(e) {
+            let buffer = e.target.result;
+            let uint8 = new Uint8Array(buffer);
+            if ((ext === 'xlsx' || ext === 'xls') && typeof XLSX !== 'undefined') {
+                try {
+                    let workbook = XLSX.read(uint8, { type: 'array', codepage: 1256 });
+                    let sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    let rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+                    let addedCount = importRowsArray(rows);
+                    localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+                    recordAuditLog('رفع شيت إكسل', `تم استيراد ${addedCount} موظف من ملف الإكسل (${file.name})`);
+                    renderAllEmployeesTable();
+                    renderEvalTable();
+                    alert(`🎉 تمت إضافة ${addedCount} موظف بنجاح من شيت الإكسل المرفوع!`);
+                    event.target.value = '';
+                    return;
+                } catch (err) {
+                    console.log("XLSX parse fallback to text:", err);
+                }
+            }
+            let text = '';
+            try {
+                let utf8Decoder = new TextDecoder('utf-8', { fatal: true });
+                text = utf8Decoder.decode(uint8);
+            } catch (err) {
+                let win1256Decoder = new TextDecoder('windows-1256');
+                text = win1256Decoder.decode(uint8);
+            }
+            if (text.indexOf('\uFFFD') !== -1) {
+                let win1256Decoder = new TextDecoder('windows-1256');
+                text = win1256Decoder.decode(uint8);
+            }
+            text = text.replace(/^\uFEFF/, '');
+            let lines = text.split('\n').map(l => l.replace('\r', '')).filter(l => l.trim() !== '');
+            let rows = lines.map(line => {
+                let sep = line.indexOf('\t') !== -1 ? '\t' : (line.indexOf(';') !== -1 && line.indexOf(',') === -1 ? ';' : ',');
+                return line.split(sep).map(s => s.replace(/^"|"$/g, '').trim());
+            });
+            let addedCount = importRowsArray(rows);
+            localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+            recordAuditLog('رفع شيت إكسل/CSV', `تم استيراد ${addedCount} موظف باللغة العربية السليمة من ملف (${file.name})`);
+            renderAllEmployeesTable();
+            renderEvalTable();
+            alert(`🎉 تمت إضافة ${addedCount} موظف بنجاح وبترميز عربي سليم 100%!`);
+            event.target.value = '';
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function renderLeaderboardTable() {
+        let tbody = document.getElementById('leaderboardTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let list = [];
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach((emp, empIdx) => {
+                let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scArr, null);
+                list.push({name: emp.name, branchName: b.name, dept: getDeptDisplayName(emp.dept), pct, branchId: b.id, empIdx});
+            });
+        });
+        list.sort((a,b) => b.pct - a.pct);
+        list.forEach((item, index) => {
+            let medal = index === 0 ? '🥇 الأول' : (index === 1 ? '🥈 الثاني' : (index === 2 ? '🥉 الثالث' : `#${index+1}`));
+            tbody.innerHTML += `<tr>
+                <td style="text-align:center; font-weight:bold; color:#38bdf8;">${medal}</td>
+                <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${item.branchId}', ${item.empIdx})">${item.name}</span></td>
+                <td style="color:#38bdf8;">${item.branchName}</td>
+                <td>${item.dept}</td>
+                <td style="text-align:center; font-weight:bold; color:#34d399;">${item.pct}%</td>
+                <td style="text-align:center;">${item.pct>=90?'<span class="badge b-green">شهادة تميز 🎖️</span>':'-'}</td>
+            </tr>`;
+        });
+    }
+
+    function renderWeeklyIndividualsTable() {
+        let tbody = document.getElementById('weeklyIndividualsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let selectedWeek = document.getElementById('archiveWeekSelector').value;
+        let filterBranch = document.getElementById('weeklyBranchFilter').value;
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            if (filterBranch !== 'all' && b.id !== filterBranch) return;
+            (dbData[b.id] || []).forEach((emp, empIdx) => {
+                if (!emp.history) emp.history = {};
+                if (!emp.history[selectedWeek]) emp.history[selectedWeek] = new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, emp.history[selectedWeek], null);
+                tbody.innerHTML += `<tr>
+                    <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${b.id}', ${empIdx})">${emp.name}</span></td>
+                    <td style="color:#38bdf8;">${b.name}</td>
+                    <td style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}%</td>
+                    <td style="text-align:center;">${isCurrentWeekActive(selectedWeek)?'<span class="badge b-green">نشط</span>':'<span class="badge b-yellow">مؤرشف</span>'}</td>
+                </tr>`;
+            });
+        });
+    }
+
+    function renderEmployeePerformanceChart() {
+        const ctx = document.getElementById('employeePerformanceChart').getContext('2d');
+        if (empChartInstance) empChartInstance.destroy();
+        let branchFilter = document.getElementById('chartBranchFilter').value;
+        let activeWeek = getCurrentWeekKey();
+        let labels = [], data = [], colors = [];
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            if (branchFilter !== 'all' && b.id !== branchFilter) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scArr, null);
+                labels.push(`${emp.name} (${b.name})`);
+                data.push(pct);
+                colors.push(pct <= 60 ? '#dc2626' : (pct <= 75 ? '#f59e0b' : '#059669'));
+            });
+        });
+        empChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: { 
+                labels, 
+                datasets: [{ 
+                    data, 
+                    backgroundColor: colors,
+                    maxBarThickness: 22,
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7
+                }] 
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8', font: { family: 'Tahoma', size: 10 } } },
+                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' }, min: 0, max: 100 }
+                }
+            }
+        });
+    }
+
+    function exportChartAsImage() {
+        let a = document.createElement('a');
+        a.href = document.getElementById('employeePerformanceChart').toDataURL('image/png');
+        a.download = 'chart.png';
+        a.click();
+    }
+
+    function openEmployeeAnalysis(branchId, empIdx) {
+        let emp = dbData[branchId][empIdx];
+        let branchObj = branchesData.find(b => b.id === branchId);
+        let branchName = branchObj ? branchObj.name : branchId;
+        document.getElementById('modalEmpTitle').textContent = `تقرير أداء الموظف: ${emp.name} (${branchName})`;
+        let activeWeek = getCurrentWeekKey();
+        if (!emp.history) emp.history = {};
+        if (!emp.history[activeWeek]) emp.history[activeWeek] = new Array(metricNames.length).fill(3);
+        let currentScores = emp.history[activeWeek];
+        let pct = calculateWeightedEmployeePct(emp, currentScores, null);
+        let certBox = document.getElementById('digitalCertContainer');
+        if (pct >= 90) {
+            certBox.style.display = 'block';
+            document.getElementById('certText').innerHTML = `تهانينا للموظف <b>${emp.name}</b> لحصوله على نسبة أداء موزونة <b>${pct}%</b> وتميزه في الانضباط ومعايير التشغيل لهذا الأسبوع.`;
+        } else {
+            certBox.style.display = 'none';
+        }
+        let weaknesses = [];
+        metricNames.forEach((m, idx) => {
+            if (!isMetricApplicableForDept(m, emp.dept)) return;
+            let sc = Number(currentScores[idx]) || 3;
+            let w = metricSettingsData[m] ? metricSettingsData[m].weight : 15;
+            if (sc <= 2) {
+                weaknesses.push(`• معيار «${m}» (التقييم: ${sc}/5 — وزنه النسبي: ${w}%)`);
+            }
+        });
+        let weaknessesHtml = '';
+        let suggestionsHtml = '';
+        if (weaknesses.length > 0) {
+            weaknessesHtml = `تم رصد قصور في النقاط التالية للأسبوع الحالي:<br>` + weaknesses.join('<br>');
+            let suggestions = [];
+            if (currentScores[0] <= 2 && isMetricApplicableForDept(metricNames[0], emp.dept)) suggestions.push('<b>الالتزام بالمواعيد:</b> يرجى عقد جلسة توجيهية معه حول أهمية البصمة الصباحية ومتابعة خطة الحضور.');
+            if (currentScores[1] <= 2 && isMetricApplicableForDept(metricNames[1], emp.dept)) suggestions.push('<b>التعامل مع الزملاء:</b> يوصى بإشراكه في ورشة عمل حول العمل الجماعي والمهارات التواصلية.');
+            if (currentScores[2] <= 2 && isMetricApplicableForDept(metricNames[2], emp.dept)) suggestions.push('<b>المبادرة والتطوير:</b> تحفيزه عبر إسناد مهام ذات طابع ابتكاري ومشاركته في وضع أهداف أسبوعية واضحة.');
+            if (currentScores[3] <= 2 && isMetricApplicableForDept(metricNames[3], emp.dept)) suggestions.push('<b>خدمة العملاء واللباقة:</b> توجيهه لحضور تدريب عملي سريع على مهارات فن الرد والتعامل مع العملاء.');
+            if (currentScores[4] <= 2 && isMetricApplicableForDept(metricNames[4], emp.dept)) suggestions.push('<b>تقييم الجودة:</b> تفعيل جلسة مراجعة الأخطاء وتوضيح أسباب ملاحظات "الأداء الضعيف" بدقة.');
+            if (currentScores[5] <= 2 && isMetricApplicableForDept(metricNames[5], emp.dept)) suggestions.push('<b>المظهر والسلوك المهني:</b> التنبيه الودي بلفت نظر مباشر بخصوص معايير المظهر العام.');
+            if (currentScores[6] <= 2 && isMetricApplicableForDept(metricNames[6], emp.dept)) suggestions.push('<b>الأداء والإنتاجية:</b> مراجعة حجم المهام اليومية وتوزيع المهام بشكل متوازن لرفع معدل الإنجاز.');
+            for (let k = 7; k < metricNames.length; k++) {
+                if ((Number(currentScores[k]) || 3) <= 2 && isMetricApplicableForDept(metricNames[k], emp.dept)) {
+                    suggestions.push(`<b>${metricNames[k]}:</b> عقد جلسة توجيه سريعة ومتابعة لتحسين هذا المعيار.`);
+                }
+            }
+            suggestionsHtml = suggestions.join('<br><br>');
+        } else {
+            weaknessesHtml = 'لا توجد مواطن قصور حرجة؛ أداء الموظف مستقر لهذا الأسبوع.';
+            suggestionsHtml = '<b>اقتراح تطور وترقية:</b> أداء الموظف ممتاز ومستقر. يوصى بإدراجه في خطة إعداد الكوادر القيادية.';
+        }
+        document.getElementById('modalWeaknesses').innerHTML = weaknessesHtml;
+        document.getElementById('modalSuggestions').innerHTML = suggestionsHtml;
+        let ctx = document.getElementById('individualChart').getContext('2d');
+        if (individualChartInstance) individualChartInstance.destroy();
+        let weeks = getAvailableWeeks().reverse();
+        let chartLabels = [];
+        let chartData = [];
+        weeks.forEach(w => {
+            chartLabels.push(w.split(' ')[0]);
+            if (emp.history && emp.history[w]) {
+                chartData.push(calculateWeightedEmployeePct(emp, emp.history[w], null));
+            } else {
+                chartData.push(75);
+            }
+        });
+        individualChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    label: `تطور أداء الأسبوع: ${emp.name}`,
+                    data: chartData,
+                    borderColor: '#38bdf8',
+                    backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' }, min: 40, max: 100 },
+                    x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+                },
+                plugins: { legend: { labels: { color: '#fff', font: { family: 'Tahoma' } } } }
+            }
+        });
+        document.getElementById('employeeModal').classList.add('active');
+    }
+
+    function closeEmployeeModal() { document.getElementById('employeeModal').classList.remove('active'); }
+
+    function updateScore(empIdx, scoreIdx, val) {
+        if (currentUser.role === 'Employee') return;
+        let activeWeek = getCurrentWeekKey();
+        let emp = dbData[currentBranch][empIdx];
+        if (!emp.history) emp.history = {};
+        if (!emp.history[activeWeek]) emp.history[activeWeek] = new Array(metricNames.length).fill(3);
+        while (emp.history[activeWeek].length < metricNames.length) emp.history[activeWeek].push(3);
+        let oldScore = emp.history[activeWeek][scoreIdx];
+        let newScore = parseInt(val) || 3;
+        emp.history[activeWeek][scoreIdx] = newScore;
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        let bObj = branchesData.find(b => b.id === currentBranch);
+        let bName = bObj ? bObj.name : currentBranch;
+        let mName = metricNames[scoreIdx] || 'بند تقييم';
+        recordAuditLog('تعديل تقييم موظف', `تم تعديل بند «${mName}» للموظف «${emp.name}» (${bName}) من [${oldScore}/5] إلى [${newScore}/5]`);
+        renderEvalTable(); renderLiveHudBadges();
+    }
+
+    function deleteEmployee(index) {
+        if (currentUser.role === 'Employee') return;
+        if (confirm('حذف الموظف؟')) {
+            let empName = dbData[currentBranch][index] ? dbData[currentBranch][index].name : '';
+            dbData[currentBranch].splice(index, 1);
+            localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+            recordAuditLog('حذف موظف', `تم حذف الموظف «${empName}» من شيت التقييم`);
+            renderEvalTable();
+        }
+    }
+
+    function openAddModal() { if(currentUser.role === 'Employee') return; updateBranchDropdowns(); updateDeptDropdowns(); document.getElementById('addModal').classList.add('active'); }
+    function closeAddModal() { document.getElementById('addModal').classList.remove('active'); }
+
+    function saveNewEmployee(e) {
+        e.preventDefault();
+        let name = document.getElementById('newName').value.trim();
+        let adminDept = document.getElementById('newAdminDept').value;
+        let dept = document.getElementById('newDept').value;
+        let jobTitle = document.getElementById('newJobTitle') ? document.getElementById('newJobTitle').value.trim() : 'موظف';
+        let branch = document.getElementById('newEmpBranch').value;
+        let activeWeek = getCurrentWeekKey();
+        let historyObj = {}; historyObj[activeWeek] = new Array(metricNames.length).fill(3);
+        if (!dbData[branch]) dbData[branch] = [];
+        dbData[branch].push({ id: Date.now(), name, adminDept, dept, jobTitle, history: historyObj });
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('إضافة موظف جديد', `تمت إضافة الموظف «${name}» (القسم: ${getDeptDisplayName(dept)}، الوظيفة: ${jobTitle})`);
+        closeAddModal(); currentBranch = branch; renderBranchButtons(); renderEvalTable(); renderAllEmployeesTable();
+        alert('تمت الإضافة بنجاح!');
+    }
+
+    function openAddBranchModal() { document.getElementById('addBranchModal').classList.add('active'); }
+    function closeAddBranchModal() { document.getElementById('addBranchModal').classList.remove('active'); }
+    function saveNewBranch(e) {
+        e.preventDefault();
+        let name = document.getElementById('newBranchNameInput').value.trim();
+        if(!name) return;
+        let id = 'branch_' + Date.now();
+        branchesData.push({id, name}); dbData[id] = [];
+        localStorage.setItem('unique_journey_branches_v4', JSON.stringify(branchesData));
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('إضافة فرع', `تم إضافة فرع جديد باسم «${name}»`);
+        closeAddBranchModal(); initApp(); switchTab('users');
+    }
+
+    function openUserModal(editIdx = -1) {
+        updateRoleDropdown();
+        updateBranchDropdowns();
+        let usrBranchSel = document.getElementById('usrBranch');
+        if (usrBranchSel && !Array.from(usrBranchSel.options).some(o => o.value === 'all')) {
+            usrBranchSel.insertAdjacentHTML('afterbegin', '<option value="all">كل الفروع (الإدارة العامة)</option>');
+        }
+
+        let empContainer = document.getElementById('userEmployeesPermissionsGroup');
+        if (empContainer) {
+            empContainer.innerHTML = '';
+            let allEmpsList = [];
+            Object.keys(dbData).forEach(bId => {
+                (dbData[bId] || []).forEach(emp => {
+                    if (!allEmpsList.includes(emp.name)) allEmpsList.push(emp.name);
+                });
+            });
+            allEmpsList.forEach(empName => {
+                empContainer.innerHTML += `<label class="checkbox-label"><input type="checkbox" name="allowedEmps" value="${empName}" checked> ${empName}</label>`;
+            });
+        }
+        let metricsContainer = document.getElementById('userMetricsPermissionsGroup');
+        if (metricsContainer) {
+            metricsContainer.innerHTML = '';
+            metricNames.forEach(mName => {
+                let w = metricSettingsData[mName] ? metricSettingsData[mName].weight : 15;
+                metricsContainer.innerHTML += `<label class="checkbox-label"><input type="checkbox" name="allowedMetrics" value="${mName}" checked> ${mName} (${w}%)</label>`;
+            });
+        }
+
+        document.getElementById('editUserIndex').value = editIdx;
+        if (document.getElementById('quickNewRoleInput')) document.getElementById('quickNewRoleInput').value = '';
+
+        if (editIdx >= 0 && usersData[editIdx]) {
+            let u = usersData[editIdx];
+            document.getElementById('userModalTitle').textContent = '✏️ تعديل بيانات وصلاحيات ودور المستخدم';
+            document.getElementById('usrName').value = u.name || '';
+            document.getElementById('usrEmail').value = u.email || '';
+            document.getElementById('usrPassword').value = u.password || '';
+            if (u.role && !customRolesData.some(r => r.id === u.role)) {
+                customRolesData.push({ id: u.role, name: u.role });
+                localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
+                updateRoleDropdown();
+            }
+            document.getElementById('usrRole').value = u.role || 'Branch Manager';
+            document.getElementById('usrBranch').value = u.branch || 'sandoob';
+
+            if (Array.isArray(u.allowedTabs) && u.allowedTabs.length > 0) {
+                document.querySelectorAll('input[name="allowedTabs"]').forEach(cb => {
+                    cb.checked = u.allowedTabs.includes(cb.value);
+                });
+            }
+            if (Array.isArray(u.allowedEmps) && u.allowedEmps.length > 0) {
+                document.querySelectorAll('input[name="allowedEmps"]').forEach(cb => {
+                    cb.checked = u.allowedEmps.includes(cb.value);
+                });
+            }
+            if (Array.isArray(u.allowedMetrics) && u.allowedMetrics.length > 0) {
+                document.querySelectorAll('input[name="allowedMetrics"]').forEach(cb => {
+                    cb.checked = u.allowedMetrics.includes(cb.value);
+                });
+            }
+        } else {
+            document.getElementById('userModalTitle').textContent = '➕ إضافة مستخدم جديد وتحديد صلاحياته وبنود تقييمه';
+            document.getElementById('usrName').value = '';
+            document.getElementById('usrEmail').value = '';
+            document.getElementById('usrPassword').value = '';
+            document.getElementById('usrRole').value = 'Branch Manager';
+            document.querySelectorAll('input[name="allowedTabs"]').forEach(cb => cb.checked = true);
+        }
+
+        document.getElementById('addUserModal').classList.add('active');
+    }
+    function closeUserModal() { document.getElementById('addUserModal').classList.remove('active'); }
+    
+    function saveNewUser(e) {
+        e.preventDefault();
+        let editIdx = parseInt(document.getElementById('editUserIndex').value);
+        let name = document.getElementById('usrName').value.trim();
+        let email = document.getElementById('usrEmail').value.trim();
+        let password = document.getElementById('usrPassword').value.trim();
+        let quickRole = document.getElementById('quickNewRoleInput') ? document.getElementById('quickNewRoleInput').value.trim() : '';
+        let role = quickRole || document.getElementById('usrRole').value;
+
+        if (quickRole && !customRolesData.some(r => r.id === quickRole)) {
+            customRolesData.push({ id: quickRole, name: quickRole });
+            localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
+        }
+
+        let branch = document.getElementById('usrBranch').value;
+        let allowedTabs = [];
+        document.querySelectorAll('input[name="allowedTabs"]:checked').forEach(cb => allowedTabs.push(cb.value));
+        let allowedEmps = [];
+        document.querySelectorAll('input[name="allowedEmps"]:checked').forEach(cb => allowedEmps.push(cb.value));
+        let allowedMetrics = [];
+        document.querySelectorAll('input[name="allowedMetrics"]:checked').forEach(cb => allowedMetrics.push(cb.value));
+
+        let userObj = { name, email, password, role, branch, allowedTabs, allowedEmps, allowedMetrics };
+
+        if (editIdx >= 0 && usersData[editIdx]) {
+            usersData[editIdx] = userObj;
+            recordAuditLog('تعديل مستخدم', `تم تحديث بيانات وصلاحيات المستخدم «${name}» (${email}) بدور (${getRoleDisplayName(role)})`);
+        } else {
+            usersData.push(userObj);
+            recordAuditLog('إضافة مستخدم', `تمت إضافة مستخدم جديد «${name}» (${email}) بدور (${getRoleDisplayName(role)})`);
+        }
+
+        localStorage.setItem('unique_journey_users_v20', JSON.stringify(usersData));
+        if (document.getElementById('quickNewRoleInput')) document.getElementById('quickNewRoleInput').value = '';
+        closeUserModal();
+        renderCustomRolesTable();
+        renderUsersTable();
+        alert('✅ تم حفظ بيانات المستخدم وبريده ودوره ورقمه السري بنجاح!');
+    }
+
+    function renderBranchesTable() {
+        let tbody = document.getElementById('branchesTableBody');
+        if(!tbody) return; 
+        tbody.innerHTML = '';
+        branchesData.forEach((b, idx) => {
+            tbody.innerHTML += `<tr>
+                <td><input type="text" value="${b.name}" onchange="updateBranchName(${idx}, this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center; color:#94a3b8;">${b.id}</td>
+                <td style="text-align:center;">${branchesData.length > 1 ? `<button type="button" onclick="deleteBranch(${idx})" class="btn-danger">حذف</button>` : 'الأساسي'}</td>
+            </tr>`;
+        });
+    }
+
+    function updateBranchName(idx, newName) {
+        branchesData[idx].name = newName.trim();
+        localStorage.setItem('unique_journey_branches_v4', JSON.stringify(branchesData));
+        renderBranchButtons();
+        updateBranchDropdowns();
+    }
+
+    function deleteBranch(idx) {
+        if (branchesData.length <= 1) { alert('لا يمكن حذف كل الفروع!'); return; }
+        if (confirm('هل أنت متأكد من حذف هذا الفرع؟')) {
+            let removedBranch = branchesData[idx];
+            branchesData.splice(idx, 1);
+            localStorage.setItem('unique_journey_branches_v4', JSON.stringify(branchesData));
+            if(dbData[removedBranch.id]) {
+                delete dbData[removedBranch.id];
+                localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+            }
+            renderBranchesTable();
+            renderBranchButtons();
+            updateBranchDropdowns();
+            renderEvalTable();
+        }
+    }
+
+    function renderUsersTable() {
+        let tbody = document.getElementById('usersTableBody');
+        if(!tbody) return; tbody.innerHTML = '';
+        usersData.forEach((u, idx) => {
+            let roleDisp = getRoleDisplayName(u.role);
+            let badgeClass = u.role === 'Admin' ? 'b-green' : (u.role === 'Employee' ? 'b-yellow' : 'b-blue');
+            let roleBadge = `<span class="badge ${badgeClass}">${roleDisp}</span>`;
+            let bObj = branchesData.find(b => b.id === u.branch);
+            let branchDisp = bObj ? bObj.name : (u.branch === 'all' ? 'كل الفروع (الإدارة العامة)' : u.branch);
+            tbody.innerHTML += `<tr>
+                <td style="font-weight:bold; color:#38bdf8;">${u.name}</td>
+                <td>${u.email}</td>
+                <td style="text-align:center;"><span class="badge b-yellow" style="font-family:monospace;">🔑 ${u.password || '123456'}</span></td>
+                <td style="text-align:center;">${roleBadge}</td>
+                <td style="text-align:center;">${branchDisp}</td>
+                <td style="text-align:center;">
+                    <button type="button" onclick="openUserModal(${idx})" class="btn-edit-tbl">✏️ تعديل</button>
+                    ${idx !== 0 ? `<button type="button" onclick="deleteUser(${idx})" class="btn-danger">حذف</button>` : '<span style="color:#94a3b8; font-size:11px;">الأساسي</span>'}
+                </td>
+            </tr>`;
+        });
+    }
+
+    function deleteUser(idx) {
+        if (confirm('حذف هذا المستخدم من السيستم؟')) {
+            let uName = usersData[idx] ? usersData[idx].name : '';
+            usersData.splice(idx, 1);
+            localStorage.setItem('unique_journey_users_v20', JSON.stringify(usersData));
+            recordAuditLog('حذف مستخدم', `تم حذف المستخدم «${uName}» من النظام`);
+            renderUsersTable();
+        }
+    }
+
+    function addPlanRow() {
+        if (currentUser.role !== 'Admin') { alert('عذراً، المدير العام فقط هو من يمكنه إضافة بنود للخطة!'); return; }
+        planData.push({ goal: "هدف جديد", action: "اكتب الإجراءات التنفيذية هنا...", resp: "المسؤول", completed: false });
+        localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+        renderPlanTable();
+    }
+
+    function renderPlanTable() {
+        let tbody = document.getElementById('planTableBody');
+        if(!tbody) return; 
+        tbody.innerHTML = '';
+        
+        planData.forEach((item, index) => {
+            let isAdmin = (currentUser.role === 'Admin');
+            let isCompletedClass = item.completed ? 'completed-task' : '';
+            let actionTd = isAdmin ? `<td style="text-align:center;"><button type="button" onclick="deletePlanRow(${index})" class="btn-danger">حذف</button></td>` : `<td style="text-align:center; color:#94a3b8;">مغلق للصلاحية</td>`;
+            tbody.innerHTML += `<tr class="${isCompletedClass}">
+                <td style="text-align:center;">
+                    <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="togglePlanComplete(${index}, this.checked)">
+                </td>
+                <td><input type="text" value="${item.goal}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'goal', this.value)" class="table-input" style="text-align:right;"></td>
+                <td><input type="text" value="${item.action}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'action', this.value)" class="table-input" style="text-align:right;"></td>
+                <td><input type="text" value="${item.resp}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'resp', this.value)" class="table-input" style="text-align:right;"></td>
+                ${actionTd}
+            </tr>`;
+        });
+    }
+
+    function togglePlanComplete(index, isChecked) {
+        planData[index].completed = isChecked;
+        localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+        renderPlanTable();
+    }
+
+    function updatePlanField(index, field, value) {
+        if (currentUser.role !== 'Admin') return;
+        planData[index][field] = value.trim();
+        localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+    }
+
+    function deletePlanRow(index) {
+        if (currentUser.role !== 'Admin') return;
+        if (confirm('هل أنت متأكد من حذف هذا البند من الخطة؟')) {
+            planData.splice(index, 1);
+            localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+            renderPlanTable();
+        }
+    }
+</script>
+</body>
+</html>
