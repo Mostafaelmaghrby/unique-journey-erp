@@ -2,7 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#090d16">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="الرحلة الفريدة">
+    <link id="dynamicManifestLink" rel="manifest" href="">
     <title>الرحلة الفريدة - نظام KPIs والتشغيل المتكامل</title>
     <!-- Chart.js for performance graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -276,6 +281,224 @@
                 font-size: 13px;
             }
         }
+
+        /* ☀️ الوضع النهاري (Light Mode) */
+        body.light-mode {
+            --bg-main: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-sidebar: #f8fafc;
+            --bg-elevated: #e2e8f0;
+            --border-color: #cbd5e1;
+            --accent-blue: #0284c7;
+            --accent-blue-dark: #0369a1;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+        }
+        body.light-mode th { background: #e2e8f0; color: #0369a1; }
+        body.light-mode td { color: #1e293b; border-bottom-color: #e2e8f0; }
+        body.light-mode select, body.light-mode input.table-input, body.light-mode .form-input {
+            background: #f8fafc; color: #0f172a; border-color: #cbd5e1;
+        }
+        body.light-mode .brand-text h2 { color: #0f172a; }
+        body.light-mode .btn-tab:hover { color: #0284c7; background: rgba(2, 132, 199, 0.08); }
+        body.light-mode .sidebar-footer { background: #f1f5f9; }
+        body.light-mode .stat-card { background: linear-gradient(135deg, #ffffff, #f8fafc); }
+        body.light-mode .dept-filter-bar { background: #f8fafc; }
+        body.light-mode .welcome-motivation-banner {
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.1) 0%, #ffffff 55%, rgba(16, 185, 129, 0.1) 100%);
+        }
+        body.light-mode .welcome-user-greeting { color: #0f172a; }
+        body.light-mode .motivational-quote-text { color: #047857; }
+        body.light-mode #smartNotificationBanner {
+            background: linear-gradient(135deg, #ffffff, #f0f9ff) !important;
+        }
+        body.light-mode #bannerAlertText { color: #334155 !important; }
+        body.light-mode .btn-import-backup { background: #e2e8f0; color: #0369a1; }
+
+        /* 🔔 إشعارات عصرية (Toast Notifications) */
+        #toastContainer {
+            position: fixed;
+            bottom: 22px;
+            left: 22px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+            pointer-events: none;
+        }
+        .toast-item {
+            background: rgba(17, 24, 39, 0.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            border-right: 4px solid #38bdf8;
+            color: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 10px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.45);
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: auto;
+            animation: toastSlideIn 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .toast-item.toast-success { border-right-color: #10b981; border-color: rgba(16, 185, 129, 0.45); }
+        .toast-item.toast-error { border-right-color: #ef4444; border-color: rgba(239, 68, 68, 0.45); }
+        .toast-item.toast-warn { border-right-color: #f59e0b; border-color: rgba(245, 158, 11, 0.45); }
+        @keyframes toastSlideIn {
+            from { opacity: 0; transform: translateX(-25px) scale(0.96); }
+            to { opacity: 1; transform: translateX(0) scale(1); }
+        }
+
+        /* ⌨️ شريط الأوامر السريع (Ctrl + K Command Palette) */
+        #cmdPaletteModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            backdrop-filter: blur(5px);
+            z-index: 5000;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10vh;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+        #cmdPaletteModal.active { display: flex; }
+        .cmd-box {
+            width: 100%;
+            max-width: 580px;
+            background: var(--bg-card);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
+        }
+        .cmd-input-wrap {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            gap: 10px;
+        }
+        .cmd-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: bold;
+            outline: none;
+        }
+        .cmd-kbd {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .cmd-results {
+            max-height: 360px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        .cmd-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-main);
+            transition: background 0.15s;
+        }
+        .cmd-item:hover {
+            background: rgba(56, 189, 248, 0.14);
+            color: var(--accent-blue);
+        }
+        .cmd-item-tag {
+            font-size: 10px;
+            color: var(--text-muted);
+            background: var(--bg-main);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* 🛡️ نبض التذكير الذكي بالنسخ الاحتياطي */
+        @keyframes backupPulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+        .backup-needs-save {
+            background: linear-gradient(135deg, #d97706, #f59e0b) !important;
+            color: #fff !important;
+            animation: backupPulseGlow 1.8s infinite;
+        }
+
+        /* 💬 زر واتساب ومؤشر اتجاه الأداء */
+        .btn-whatsapp {
+            background: rgba(34, 197, 94, 0.18);
+            color: #4ade80;
+            border: 1px solid #22c55e;
+            padding: 4px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-whatsapp:hover { background: #16a34a; color: #fff; }
+        .trend-up { color: #34d399; font-size: 10px; font-weight: bold; margin-right: 4px; }
+        .trend-down { color: #fb7185; font-size: 10px; font-weight: bold; margin-right: 4px; }
+        .trend-flat { color: #94a3b8; font-size: 10px; margin-right: 4px; }
+
+        /* 📱 عرض البطاقات التفاعلي على الهاتف (Mobile Card View) لشيت التقييم */
+        @media (max-width: 768px) {
+            #sec-eval table, #sec-eval thead, #sec-eval tbody, #sec-eval tr, #sec-eval td {
+                display: block;
+                width: 100%;
+                white-space: normal;
+            }
+            #sec-eval thead { display: none; }
+            #sec-eval tbody tr {
+                background: var(--bg-main);
+                border: 1px solid var(--border-color);
+                border-right: 3px solid var(--accent-blue);
+                border-radius: 12px;
+                padding: 10px 12px;
+                margin-bottom: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            }
+            #sec-eval tbody td {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 7px 4px;
+                border-bottom: 1px dashed rgba(148, 163, 184, 0.18);
+                text-align: left !important;
+                gap: 10px;
+            }
+            #sec-eval tbody td:last-child { border-bottom: none; padding-top: 10px; justify-content: flex-end; }
+            #sec-eval tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                color: var(--text-muted);
+                font-size: 11px;
+                text-align: right;
+                flex-shrink: 0;
+            }
+            #sec-eval tbody td select { width: 85px; padding: 6px; }
+        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -364,8 +587,11 @@
                 </div>
                 <div class="header-left">
                     <div class="branch-group" id="branchButtonGroup"></div>
+                    <button type="button" onclick="openCommandPalette()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:7px 10px;" title="بحث سريع وأوامر (Ctrl+K)">🔍 بحث <span class="cmd-kbd">Ctrl+K</span></button>
+                    <button type="button" id="btnThemeToggle" onclick="toggleThemeMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="تبديل الوضع الليلي / النهاري">☀️</button>
+                    <button type="button" id="btnInstallPwa" onclick="installPwaApp()" class="btn-action hidden" style="background:#7c3aed; padding:7px 10px;" title="تثبيت التطبيق على جهازك">📲 تثبيت التطبيق</button>
                     <button type="button" id="btnAddBranchHeader" onclick="openAddBranchModal()" class="btn-action btn-add hidden" style="background:#059669;">➕ فرع جديد</button>
-                    <button type="button" onclick="exportDatabaseBackup()" class="btn-action" style="background:#059669; padding:7px 12px;">💾 حفظ وتصدير البيانات</button>
+                    <button type="button" id="headerBackupBtn" onclick="exportDatabaseBackup()" class="btn-action" style="background:#059669; padding:7px 12px;">💾 حفظ وتصدير <span id="backupPulseCount" style="display:none; background:rgba(0,0,0,0.3); padding:1px 6px; border-radius:10px; margin-right:4px; font-size:10px;"></span></button>
                     <button type="button" onclick="window.print()" class="btn-action" style="background:#475569; padding:7px 12px;">🖨️ طباعة PDF</button>
                     <div class="user-badge">
                         <span id="loggedInUserName">المستخدم</span>
@@ -726,8 +952,15 @@
                     <option value="all">كل الفروع</option>
                 </select>
             </div>
-            <div style="background:#0f172a; padding:15px; border-radius:8px; height:340px;">
-                <canvas id="employeePerformanceChart"></canvas>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                <div style="background:var(--bg-main); border:1px solid var(--border-color); padding:15px; border-radius:10px; height:360px;">
+                    <h4 style="color:var(--accent-blue); font-size:13px; margin-bottom:10px;">📊 مقارنة أداء الموظفين (%)</h4>
+                    <div style="height:295px;"><canvas id="employeePerformanceChart"></canvas></div>
+                </div>
+                <div style="background:var(--bg-main); border:1px solid var(--border-color); padding:15px; border-radius:10px; height:360px;">
+                    <h4 style="color:#34d399; font-size:13px; margin-bottom:10px;">🕸️ مخطط الرادار لمقارنة الفروع في كل معيار</h4>
+                    <div style="height:295px;"><canvas id="branchRadarChart"></canvas></div>
+                </div>
             </div>
         </div>
         <!-- 7. خطة العمل -->
@@ -891,7 +1124,11 @@
             </div>
             <div id="digitalCertContainer" style="margin-bottom: 15px; display: none; background: linear-gradient(135deg, #065f46, #047857); border: 2px solid #34d399; padding: 15px; border-radius: 10px; text-align: center;">
                 <h4 style="color: #fef08a; font-size: 15px; margin-bottom: 4px;">🏆 شهادة تميز وانضباط رقمية</h4>
-                <p id="certText" style="font-size: 11px; color: #d1fae5;"></p>
+                <p id="certText" style="font-size: 11px; color: #d1fae5; margin-bottom: 10px;"></p>
+                <div style="display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+                    <button type="button" onclick="exportCertificateAsImage()" class="btn-action" style="background:#eab308; color:#0f172a; padding:6px 14px;">🖼️ تحميل الشهادة كصورة (PNG)</button>
+                    <button type="button" onclick="sendCurrentModalWhatsApp()" class="btn-whatsapp" style="background:#16a34a; color:#fff;">💬 إرسال تهنئة واتساب</button>
+                </div>
             </div>
             <div style="margin-bottom: 15px;">
                 <h4 style="color:#fb7185; font-size:13px; margin-bottom:6px;">مواطن القصور والتنبيهات المبكرة:</h4>
@@ -1156,6 +1393,21 @@
         </div>
     </div>
 
+    <!-- 🔔 حاوية الإشعارات العصرية (Toast Notifications) -->
+    <div id="toastContainer"></div>
+
+    <!-- ⌨️ شريط الأوامر والبحث السريع (Ctrl + K Command Palette) -->
+    <div id="cmdPaletteModal" onclick="if(event.target===this) closeCommandPalette()">
+        <div class="cmd-box">
+            <div class="cmd-input-wrap">
+                <span style="font-size:16px;">🔍</span>
+                <input type="text" id="cmdSearchInput" class="cmd-input" placeholder="ابحث عن موظف، تبويب، أو أمر سريع (مثال: تصدير، سندوب، كاميرات)..." oninput="renderCommandPaletteResults(this.value)">
+                <span class="cmd-kbd">ESC</span>
+            </div>
+            <div class="cmd-results" id="cmdResultsList"></div>
+        </div>
+    </div>
+
 <script>
     let metricNames = ["الالتزام بالمواعيد", "التعامل مع الزملاء", "المبادرة والتطوير", "خدمة العملاء واللباقة", "تقييم الجودة", "المظهر والسلوك المهني", "الأداء والإنتاجية"];
     try {
@@ -1219,6 +1471,9 @@
         });
         if (auditLogsData.length > 500) auditLogsData.pop();
         localStorage.setItem('unique_journey_audit_logs_v1', JSON.stringify(auditLogsData));
+        if (actionType !== 'تصدير نسخة احتياطية' && actionType !== 'استعادة نسخة احتياطية') {
+            incrementUnsavedBackupCounter();
+        }
     }
 
     function getCurrentWeekKey() {
@@ -1432,7 +1687,7 @@
     }
 
     function addInlineNewMetric() {
-        if (currentUser && currentUser.role !== 'Admin') { alert('المدير العام فقط يمكنه إضافة بند تقييم جديد!'); return; }
+        if (currentUser && currentUser.role !== 'Admin') { showToast('المدير العام فقط يمكنه إضافة بند تقييم جديد!'); return; }
         let inp = document.getElementById('inlineNewMetricInput');
         let wInp = document.getElementById('inlineNewMetricWeight');
         let name = inp ? inp.value.trim() : '';
@@ -1442,7 +1697,7 @@
             if (name) name = name.trim();
         }
         if (!name) return;
-        if (metricNames.includes(name)) { alert('هذا البند موجود بالفعل!'); return; }
+        if (metricNames.includes(name)) { showToast('هذا البند موجود بالفعل!'); return; }
         if (!weightVal || weightVal <= 0) {
             let pW = prompt('اكتب النسبة المئوية لهذا البند (%) مثل 15 أو 20:', '15');
             weightVal = parseFloat(pW) || 15;
@@ -1465,7 +1720,7 @@
         if (wInp) wInp.value = '';
         renderEvalTable();
         renderMetricsConfigTable();
-        alert(`تمت إضافة بند التقييم الجديد: ${name} (النسبة: ${weightVal}%)`);
+        showToast(`تمت إضافة بند التقييم الجديد: ${name} (النسبة: ${weightVal}%)`);
     }
 
     function addMetricFromSettings() {
@@ -1473,8 +1728,8 @@
         let wInp = document.getElementById('settingsNewMetricWeight');
         let name = inp ? inp.value.trim() : '';
         let weightVal = wInp && wInp.value ? parseFloat(wInp.value) : 15;
-        if (!name) { alert('اكتب اسم بند التقييم أولاً!'); return; }
-        if (metricNames.includes(name)) { alert('هذا البند موجود بالفعل!'); return; }
+        if (!name) { showToast('اكتب اسم بند التقييم أولاً!'); return; }
+        if (metricNames.includes(name)) { showToast('هذا البند موجود بالفعل!'); return; }
         metricNames.push(name);
         metricSettingsData[name] = { weight: weightVal, depts: ['all'] };
         localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
@@ -1493,7 +1748,7 @@
         if (wInp) wInp.value = '';
         renderMetricsConfigTable();
         renderEvalTable();
-        alert('تمت إضافة البند بنجاح!');
+        showToast('تمت إضافة البند بنجاح!');
     }
 
     function renderMetricsConfigTable() {
@@ -1592,7 +1847,7 @@
         let newName = newNameVal.trim();
         let oldName = metricNames[idx];
         if (!newName || newName === oldName) return;
-        if (metricNames.includes(newName)) { alert('يوجد بند آخر بنفس الاسم!'); renderMetricsConfigTable(); return; }
+        if (metricNames.includes(newName)) { showToast('يوجد بند آخر بنفس الاسم!'); renderMetricsConfigTable(); return; }
         metricNames[idx] = newName;
         metricSettingsData[newName] = metricSettingsData[oldName] || { weight: 15, depts: ['all'] };
         delete metricSettingsData[oldName];
@@ -1610,7 +1865,7 @@
     }
 
     function deleteMetricItem(idx) {
-        if (metricNames.length <= 1) { alert('لا يمكن حذف جميع البنود!'); return; }
+        if (metricNames.length <= 1) { showToast('لا يمكن حذف جميع البنود!'); return; }
         let mName = metricNames[idx];
         if (!confirm(`هل أنت متأكد من حذف بند التقييم "${mName}"؟`)) return;
         metricNames.splice(idx, 1);
@@ -1760,7 +2015,7 @@
     function addCustomMotivationalQuote() {
         let inp = document.getElementById('newMotivationalQuoteInput');
         let text = inp ? inp.value.trim() : '';
-        if (!text) { alert('يرجى كتابة الجملة التحفيزية أولاً!'); return; }
+        if (!text) { showToast('يرجى كتابة الجملة التحفيزية أولاً!'); return; }
         motivationalQuotesData.unshift(text);
         localStorage.setItem('unique_journey_quotes_v1', JSON.stringify(motivationalQuotesData));
         inp.value = '';
@@ -1843,7 +2098,7 @@
 
     function openBrandingModal() {
         if (currentUser && currentUser.role === 'Employee') {
-            alert('عذراً، تعديل هوية وشعار الشركة متاح للإدارة فقط!');
+            showToast('عذراً، تعديل هوية وشعار الشركة متاح للإدارة فقط!');
             return;
         }
         tempBrandLogoData = brandingData.logo || "🚀";
@@ -1926,7 +2181,7 @@
         applyBrandingToUI();
         recordAuditLog('تعديل هوية الشركة', `تم تحديث اسم وشعار الشركة إلى «${brandingData.companyName}»`);
         closeBrandingModal();
-        alert('✅ تم حفظ صورة الشعار واسم الشركة والتفاصيل بنجاح!');
+        showToast('✅ تم حفظ صورة الشعار واسم الشركة والتفاصيل بنجاح!');
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -1962,18 +2217,18 @@
         });
         localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
         renderPlanTable();
-        alert('💡 تمت إضافة الاقتراحات الذكية الجديدة الخاصة ببداية الأسبوع إلى خطة العمل بنجاح!');
+        showToast('💡 تمت إضافة الاقتراحات الذكية الجديدة الخاصة ببداية الأسبوع إلى خطة العمل بنجاح!');
     }
 
     function applyCameraStream() {
         let url = document.getElementById('cameraUrlInput').value.trim();
-        if (!url) { alert('يرجى لصق رابط الكاميرا أولاً!'); return; }
+        if (!url) { showToast('يرجى لصق رابط الكاميرا أولاً!'); return; }
         let videoEl = document.getElementById('liveCameraVideo');
         videoEl.src = url;
         videoEl.load();
         videoEl.play().catch(err => console.log("Play error:", err));
         localStorage.setItem('unique_journey_cam_url_v1', url);
-        alert('تم ربط وتشغيل الكاميرا بنجاح في السيستم!');
+        showToast('تم ربط وتشغيل الكاميرا بنجاح في السيستم!');
     }
 
     function loadSavedCameraStream() {
@@ -2037,12 +2292,12 @@
         let bObj = branchesData.find(b => b.id === bId);
         let empName = document.getElementById('ruleEmpSelect').value;
         let desc = document.getElementById('ruleDescInput').value.trim();
-        if (!empName || !desc) { alert('يرجى اختيار الموظف وكتابة بند التشغيل!'); return; }
+        if (!empName || !desc) { showToast('يرجى اختيار الموظف وكتابة بند التشغيل!'); return; }
         cameraRulesData.push({ branchName: bObj ? bObj.name : bId, empName: empName, desc: desc, date: new Date().toLocaleDateString('ar-EG') });
         localStorage.setItem('unique_journey_camera_rules_v1', JSON.stringify(cameraRulesData));
         document.getElementById('ruleDescInput').value = '';
         renderCameraRulesTable();
-        alert('تم حفظ بند الكاميرا المخصص بنجاح!');
+        showToast('تم حفظ بند الكاميرا المخصص بنجاح!');
     }
 
     function renderCameraRulesTable() {
@@ -2125,6 +2380,9 @@
                                 <td style="color:#34d399; font-weight:bold; white-space:normal; line-height:1.6;">${suggestionText}</td>
                                 <td style="text-align:center;">
                                     ${isResolved ? '<span class="badge b-green">✅ تم حل المشكلة</span>' : '<span class="badge b-yellow">⏳ قيد المتابعة</span>'}
+                                    <div style="margin-top:5px;">
+                                        <button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', 0, 'coaching', '${mName.replace(/'/g, '')}')" class="btn-whatsapp">💬 توجيه واتساب</button>
+                                    </div>
                                 </td>
                             </tr>`;
                     }
@@ -2190,7 +2448,7 @@
         let empName = document.getElementById('errEmpSelect').value;
         let desc = document.getElementById('errDescInput').value.trim();
         let cause = document.getElementById('errRootCause').value;
-        if (!desc) { alert('يرجى كتابة وصف الخطأ!'); return; }
+        if (!desc) { showToast('يرجى كتابة وصف الخطأ!'); return; }
 
         let solutionsMap = {
             "نقص تدريب": "تنظيم ورشة عمل تدريبية عاجلة وتركيب دليل إرشادي سريع على مكتب الموظف.",
@@ -2209,7 +2467,7 @@
         localStorage.setItem('unique_journey_root_cause_v1', JSON.stringify(rootCauseErrorsData));
         document.getElementById('errDescInput').value = '';
         renderRootCauseTable();
-        alert('تم تحليل وإضافة الجذر التشغيلي بنجاح!');
+        showToast('تم تحليل وإضافة الجذر التشغيلي بنجاح!');
     }
 
     function renderRootCauseTable() {
@@ -2258,7 +2516,10 @@
                             <td>${emp.name}</td>
                             <td style="text-align:center; color:#fb7185; font-weight:bold;">${pct}%</td>
                             <td style="text-align:center;"><span class="badge b-red">🚨 تراجع حاد / إنذار مبكر</span></td>
-                            <td style="color:#facc15;">عقد جلسة توجيه لحظي عاجلة ومراجعة البنود المقصرة</td>
+                            <td style="color:#facc15;">
+                                عقد جلسة توجيه لحظي عاجلة
+                                <button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', ${pct}, 'alert', '')" class="btn-whatsapp" style="margin-right:8px;">💬 واتساب</button>
+                            </td>
                         </tr>`;
                 }
             });
@@ -2472,12 +2733,12 @@
     function addNewAdminDepartment() {
         let input = document.getElementById('newAdminDeptNameInput');
         let name = input.value.trim();
-        if (!name) { alert('اكتب اسم الإدارة!'); return; }
+        if (!name) { showToast('اكتب اسم الإدارة!'); return; }
         adminDepartmentsData.push({ id: 'adm_' + Date.now(), name });
         localStorage.setItem('unique_journey_admin_depts_v1', JSON.stringify(adminDepartmentsData));
         input.value = '';
         renderAdminDepartmentsTable(); updateDeptDropdowns();
-        alert('تم إضافة الإدارة بنجاح!');
+        showToast('تم إضافة الإدارة بنجاح!');
     }
 
     function updateAdminDeptName(idx, newName) {
@@ -2487,7 +2748,7 @@
     }
 
     function deleteAdminDepartment(idx) {
-        if (adminDepartmentsData.length <= 1) { alert('لا يمكن حذف كل الإدارات!'); return; }
+        if (adminDepartmentsData.length <= 1) { showToast('لا يمكن حذف كل الإدارات!'); return; }
         if (confirm('حذف الإدارة؟')) {
             adminDepartmentsData.splice(idx, 1);
             localStorage.setItem('unique_journey_admin_depts_v1', JSON.stringify(adminDepartmentsData));
@@ -2511,12 +2772,12 @@
     function addNewDepartment() {
         let input = document.getElementById('newDeptNameInput');
         let name = input.value.trim();
-        if (!name) { alert('اكتب اسم القسم!'); return; }
+        if (!name) { showToast('اكتب اسم القسم!'); return; }
         departmentsData.push({ id: 'dept_' + Date.now(), name });
         localStorage.setItem('unique_journey_departments_v1', JSON.stringify(departmentsData));
         input.value = '';
         renderDepartmentsTable(); renderDeptFilterBar(); updateDeptDropdowns(); renderMetricsConfigTable();
-        alert('تم إضافة القسم بنجاح!');
+        showToast('تم إضافة القسم بنجاح!');
     }
     function updateDeptName(idx, newName) {
         departmentsData[idx].name = newName.trim();
@@ -2524,7 +2785,7 @@
         renderDeptFilterBar(); updateDeptDropdowns(); renderMetricsConfigTable();
     }
     function deleteDepartment(idx) {
-        if (departmentsData.length <= 1) { alert('لا يمكن حذف كل الأقسام!'); return; }
+        if (departmentsData.length <= 1) { showToast('لا يمكن حذف كل الأقسام!'); return; }
         if (confirm('حذف القسم؟')) {
             departmentsData.splice(idx, 1);
             localStorage.setItem('unique_journey_departments_v1', JSON.stringify(departmentsData));
@@ -2597,9 +2858,9 @@
     function addNewCustomRole() {
         let inp = document.getElementById('newCustomRoleInput');
         let name = inp ? inp.value.trim() : '';
-        if (!name) { alert('يرجى كتابة اسم الدور الجديد أولاً!'); return; }
+        if (!name) { showToast('يرجى كتابة اسم الدور الجديد أولاً!'); return; }
         if (customRolesData.some(r => r.id === name || r.name === name)) {
-            alert('هذا الدور موجود بالفعل في القائمة!');
+            showToast('هذا الدور موجود بالفعل في القائمة!');
             return;
         }
         customRolesData.push({ id: name, name: name });
@@ -2608,13 +2869,13 @@
         inp.value = '';
         renderCustomRolesTable();
         updateRoleDropdown();
-        alert(`✅ تمت إضافة الدور «${name}» للقائمة المنسدلة بنجاح!`);
+        showToast(`✅ تمت إضافة الدور «${name}» للقائمة المنسدلة بنجاح!`);
     }
 
     function quickAddRoleFromModal() {
         let inp = document.getElementById('quickNewRoleInput');
         let newRoleName = inp ? inp.value.trim() : '';
-        if (!newRoleName) { alert('يرجى كتابة اسم الدور الجديد أولاً!'); return; }
+        if (!newRoleName) { showToast('يرجى كتابة اسم الدور الجديد أولاً!'); return; }
         if (!customRolesData.some(r => r.id === newRoleName || r.name === newRoleName)) {
             customRolesData.push({ id: newRoleName, name: newRoleName });
             localStorage.setItem('unique_journey_roles_v1', JSON.stringify(customRolesData));
@@ -2624,7 +2885,7 @@
         renderCustomRolesTable();
         document.getElementById('usrRole').value = newRoleName;
         inp.value = '';
-        alert(`✅ تمت إضافة الدور «${newRoleName}» للقائمة المنسدلة واختياره فوراً!`);
+        showToast(`✅ تمت إضافة الدور «${newRoleName}» للقائمة المنسدلة واختياره فوراً!`);
     }
 
     function updateCustomRoleName(idx, newNameVal) {
@@ -2887,7 +3148,7 @@
         closeProfileModal();
         renderUsersTable();
         initApp();
-        alert(`✅ تم تحديث الاسم والإيميل (${currentUser.email}) والرقم السري بنجاح!`);
+        showToast(`✅ تم تحديث الاسم والإيميل (${currentUser.email}) والرقم السري بنجاح!`);
     }
     function getEvaluationDetails(emp, pct) {
         if (pct >= 96) return { rating: 'ممتاز (ترقية)', badge: 'b-green' };
@@ -2920,15 +3181,15 @@
     function switchTab(tab) {
         closeMobileSidebar();
         if (currentUser.role !== 'Admin' && (tab === 'users' || tab === 'devicelog' || tab === 'auditlog')) {
-            alert('عذراً، هذه الصلاحية مخصصة للمدير العام فقط!');
+            showToast('عذراً، هذه الصلاحية مخصصة للمدير العام فقط!');
             return;
         }
         if (currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedTabs) && currentUser.allowedTabs.length > 0 && !currentUser.allowedTabs.includes(tab)) {
-            alert('عذراً، هذا التبويب غير مضاف ضمن صلاحيات حسابك!');
+            showToast('عذراً، هذا التبويب غير مضاف ضمن صلاحيات حسابك!');
             return;
         }
         if (currentUser.role === 'Employee' && (!currentUser.allowedTabs || currentUser.allowedTabs.length === 0) && tab !== 'eval' && tab !== 'plan' && tab !== 'leaderboard') {
-            alert('عذراً، هذه الصلاحية غير متاحة لحسابك الموظف!');
+            showToast('عذراً، هذه الصلاحية غير متاحة لحسابك الموظف!');
             return;
         }
 
@@ -3045,22 +3306,23 @@
             let realIdx = (dbData[currentBranch] || []).indexOf(emp);
             if (realIdx === -1) realIdx = idx;
 
-            let html = `<td style="text-align:center; color:#94a3b8;">${idx + 1}</td>
-                        <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span>${alertBadge}</td>
-                        <td style="color:#22d3ee;">${adminDeptDisplay}</td>
-                        <td style="color:#38bdf8;">${deptDisplay}</td>`;
+            let trendHtml = getEmployeeTrendHtml(emp, pct, activeWeek, userAllowedMetrics);
+            let html = `<td data-label="الكود" style="text-align:center; color:#94a3b8;">${idx + 1}</td>
+                        <td data-label="الموظف"><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span>${alertBadge}</td>
+                        <td data-label="الإدارة" style="color:#22d3ee;">${adminDeptDisplay}</td>
+                        <td data-label="القسم" style="color:#38bdf8;">${deptDisplay}</td>`;
             
             visibleHeaderMetrics.forEach(mName => {
                 let i = metricNames.indexOf(mName);
                 let isForThisEmpDept = isMetricApplicableForDept(mName, emp.dept);
                 if (!isForThisEmpDept) {
-                    html += `<td style="text-align:center; color:#64748b; font-size:11px;" title="هذا البند غير مخصص لقسم ${deptDisplay}">—</td>`;
+                    html += `<td data-label="${mName}" style="text-align:center; color:#64748b; font-size:11px;" title="هذا البند غير مخصص لقسم ${deptDisplay}">—</td>`;
                 } else {
                     let sc = Number(scores[i]) || 3;
                     if (currentUser.role === 'Employee') {
-                        html += `<td style="text-align:center; font-weight:bold; color:#38bdf8;">${sc}/5</td>`;
+                        html += `<td data-label="${mName}" style="text-align:center; font-weight:bold; color:#38bdf8;">${sc}/5</td>`;
                     } else {
-                        html += `<td style="text-align:center;"><select onchange="updateScore(${realIdx}, ${i}, this.value)">
+                        html += `<td data-label="${mName}" style="text-align:center;"><select onchange="updateScore(${realIdx}, ${i}, this.value)">
                             <option value="1" ${sc===1?'selected':''}>1</option>
                             <option value="2" ${sc===2?'selected':''}>2</option>
                             <option value="3" ${sc===3?'selected':''}>3</option>
@@ -3071,12 +3333,12 @@
                 }
             });
 
-            html += `<td style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}%</td>
-                     <td style="text-align:center;"><span class="badge ${evalRes.badge}">${evalRes.rating}</span></td>
-                     <td>${notes}</td>`;
+            html += `<td data-label="النسبة والاتجاه" style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}% ${trendHtml}</td>
+                     <td data-label="التقدير" style="text-align:center;"><span class="badge ${evalRes.badge}">${evalRes.rating}</span></td>
+                     <td data-label="ملاحظات">${notes}</td>`;
             
             if (currentUser.role !== 'Employee') {
-                html += `<td style="text-align:center;">
+                html += `<td data-label="إجراءات" style="text-align:center;">
                     <button type="button" onclick="openEditEmpModal('${currentBranch}', ${realIdx})" class="btn-edit-tbl">تعديل</button>
                     <button type="button" onclick="deleteEmployee(${realIdx})" class="btn-danger">حذف</button>
                 </td>`;
@@ -3184,7 +3446,7 @@
         closeEditEmpModal();
         renderAllEmployeesTable();
         renderEvalTable();
-        alert('تم حفظ تعديلات الموظف بنجاح!');
+        showToast('تم حفظ تعديلات الموظف بنجاح!');
     }
 
     function deleteEmpFromAll(branchId, empIdx) {
@@ -3257,7 +3519,7 @@
                     recordAuditLog('رفع شيت إكسل', `تم استيراد ${addedCount} موظف من ملف الإكسل (${file.name})`);
                     renderAllEmployeesTable();
                     renderEvalTable();
-                    alert(`🎉 تمت إضافة ${addedCount} موظف بنجاح من شيت الإكسل المرفوع!`);
+                    showToast(`🎉 تمت إضافة ${addedCount} موظف بنجاح من شيت الإكسل المرفوع!`);
                     event.target.value = '';
                     return;
                 } catch (err) {
@@ -3287,7 +3549,7 @@
             recordAuditLog('رفع شيت إكسل/CSV', `تم استيراد ${addedCount} موظف باللغة العربية السليمة من ملف (${file.name})`);
             renderAllEmployeesTable();
             renderEvalTable();
-            alert(`🎉 تمت إضافة ${addedCount} موظف بنجاح وبترميز عربي سليم 100%!`);
+            showToast(`🎉 تمت إضافة ${addedCount} موظف بنجاح وبترميز عربي سليم 100%!`);
             event.target.value = '';
         };
         reader.readAsArrayBuffer(file);
@@ -3316,7 +3578,10 @@
                 <td style="color:#38bdf8;">${item.branchName}</td>
                 <td>${item.dept}</td>
                 <td style="text-align:center; font-weight:bold; color:#34d399;">${item.pct}%</td>
-                <td style="text-align:center;">${item.pct>=90?'<span class="badge b-green">شهادة تميز 🎖️</span>':'-'}</td>
+                <td style="text-align:center;">
+                    ${item.pct>=90?'<span class="badge b-green">شهادة تميز 🎖️</span>':'-'}
+                    <button type="button" onclick="sendWhatsAppMessage('${item.name.replace(/'/g, '')}', '${item.branchName.replace(/'/g, '')}', ${item.pct}, 'congrats', '')" class="btn-whatsapp" style="margin-right:6px;">💬 تهنئة</button>
+                </td>
             </tr>`;
         });
     }
@@ -3361,6 +3626,7 @@
                 colors.push(pct <= 60 ? '#dc2626' : (pct <= 75 ? '#f59e0b' : '#059669'));
             });
         });
+        renderBranchRadarChart();
         empChartInstance = new Chart(ctx, {
             type: 'bar',
             data: { 
@@ -3392,6 +3658,7 @@
         a.click();
     }
 
+    let currentModalEmpContext = null;
     function openEmployeeAnalysis(branchId, empIdx) {
         let emp = dbData[branchId][empIdx];
         let branchObj = branchesData.find(b => b.id === branchId);
@@ -3402,6 +3669,7 @@
         if (!emp.history[activeWeek]) emp.history[activeWeek] = new Array(metricNames.length).fill(3);
         let currentScores = emp.history[activeWeek];
         let pct = calculateWeightedEmployeePct(emp, currentScores, null);
+        currentModalEmpContext = { name: emp.name, branchName: branchName, deptName: getDeptDisplayName(emp.dept), pct: pct, week: activeWeek };
         let certBox = document.getElementById('digitalCertContainer');
         if (pct >= 90) {
             certBox.style.display = 'block';
@@ -3530,7 +3798,7 @@
         localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
         recordAuditLog('إضافة موظف جديد', `تمت إضافة الموظف «${name}» (القسم: ${getDeptDisplayName(dept)}، الوظيفة: ${jobTitle})`);
         closeAddModal(); currentBranch = branch; renderBranchButtons(); renderEvalTable(); renderAllEmployeesTable();
-        alert('تمت الإضافة بنجاح!');
+        showToast('تمت الإضافة بنجاح!');
     }
 
     function openAddBranchModal() { document.getElementById('addBranchModal').classList.add('active'); }
@@ -3659,7 +3927,7 @@
         closeUserModal();
         renderCustomRolesTable();
         renderUsersTable();
-        alert('✅ تم حفظ بيانات المستخدم وبريده ودوره ورقمه السري بنجاح!');
+        showToast('✅ تم حفظ بيانات المستخدم وبريده ودوره ورقمه السري بنجاح!');
     }
 
     function renderBranchesTable() {
@@ -3683,7 +3951,7 @@
     }
 
     function deleteBranch(idx) {
-        if (branchesData.length <= 1) { alert('لا يمكن حذف كل الفروع!'); return; }
+        if (branchesData.length <= 1) { showToast('لا يمكن حذف كل الفروع!'); return; }
         if (confirm('هل أنت متأكد من حذف هذا الفرع؟')) {
             let removedBranch = branchesData[idx];
             branchesData.splice(idx, 1);
@@ -3733,7 +4001,7 @@
     }
 
     function addPlanRow() {
-        if (currentUser.role !== 'Admin') { alert('عذراً، المدير العام فقط هو من يمكنه إضافة بنود للخطة!'); return; }
+        if (currentUser.role !== 'Admin') { showToast('عذراً، المدير العام فقط هو من يمكنه إضافة بنود للخطة!'); return; }
         planData.push({ goal: "هدف جديد", action: "اكتب الإجراءات التنفيذية هنا...", resp: "المسؤول", completed: false });
         localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
         renderPlanTable();
@@ -3812,8 +4080,9 @@
         downloadAnchor.click();
         downloadAnchor.remove();
         URL.revokeObjectURL(url);
+        resetUnsavedBackupCounter();
         recordAuditLog('تصدير نسخة احتياطية', 'تم تصدير وحفظ نسخة احتياطية كاملة من قاعدة البيانات والإعدادات');
-        alert("✅ تم تصدير وتحميل ملف قاعدة البيانات الاحتياطي (JSON) بنجاح على جهازك!");
+        showToast("✅ تم تصدير وتحميل ملف قاعدة البيانات الاحتياطي (JSON) بنجاح!", "success");
     }
 
     // 📂 دالة استعادة نسخة احتياطية محفوظة (Import Backup)
@@ -3870,14 +4139,383 @@
                 }
                 recordAuditLog('استعادة نسخة احتياطية', `تم استعادة قاعدة البيانات من الملف (${file.name})`);
                 initApp();
-                alert("🎉 تمت استعادة كافة البيانات والموظفين والتقييمات بنجاح!");
+                showToast("🎉 تمت استعادة كافة البيانات والموظفين والتقييمات بنجاح!");
             } catch (err) {
-                alert("⚠️ خطأ في قراءة ملف النسخة الاحتياطية! تأكد من أنه ملف JSON صحيح.");
+                showToast("⚠️ خطأ في قراءة ملف النسخة الاحتياطية! تأكد من أنه ملف JSON صحيح.");
             }
             event.target.value = '';
         };
         reader.readAsText(file);
     }
+
+
+    // =========================================================================
+    // 🚀 حزمة الإضافات المتطورة (Toast, Ctrl+K, Light/Dark, PWA, Radar, WhatsApp, Trend, Cert PNG, Backup Pulse)
+    // =========================================================================
+
+    // 1. 🔔 نظام الإشعارات العصرية (Toast Notifications)
+    function showToast(message, type = 'info') {
+        let container = document.getElementById('toastContainer');
+        if (!container) return;
+        let text = String(message || '');
+        if (type === 'info') {
+            if (text.includes('✅') || text.includes('🎉') || text.includes('بنجاح')) type = 'success';
+            else if (text.includes('⚠️') || text.includes('خطأ') || text.includes('عذراً') || text.includes('لا يمكن')) type = 'error';
+            else if (text.includes('💡') || text.includes('تذكير')) type = 'warn';
+        }
+        let icon = type === 'success' ? '✅' : (type === 'error' ? '⚠️' : (type === 'warn' ? '🔔' : 'ℹ️'));
+        let toast = document.createElement('div');
+        toast.className = `toast-item toast-${type}`;
+        toast.innerHTML = `<span style="font-size:15px;">${icon}</span><span style="line-height:1.5;">${text.replace(/^[✅🎉⚠️💡]\s*/, '')}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-20px)';
+            setTimeout(() => toast.remove(), 320);
+        }, 3600);
+    }
+
+    // 2. ☀️/🌙 التبديل بين الوضع الليلي والنهاري
+    function applySavedTheme() {
+        let savedTheme = localStorage.getItem('unique_journey_theme_v1') || 'dark';
+        let btn = document.getElementById('btnThemeToggle');
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-mode');
+            if (btn) btn.textContent = '🌙';
+        } else {
+            document.body.classList.remove('light-mode');
+            if (btn) btn.textContent = '☀️';
+        }
+    }
+    function toggleThemeMode() {
+        let isLight = document.body.classList.toggle('light-mode');
+        localStorage.setItem('unique_journey_theme_v1', isLight ? 'light' : 'dark');
+        let btn = document.getElementById('btnThemeToggle');
+        if (btn) btn.textContent = isLight ? '🌙' : '☀️';
+        showToast(isLight ? 'تم تفعيل الوضع النهاري المشرق ☀️' : 'تم تفعيل الوضع الليلي الاحترافي 🌙', 'info');
+    }
+
+    // 3. ⌨️ شريط الأوامر والبحث السريع (Ctrl + K Command Palette)
+    function openCommandPalette() {
+        let modal = document.getElementById('cmdPaletteModal');
+        let inp = document.getElementById('cmdSearchInput');
+        if (!modal || !inp) return;
+        modal.classList.add('active');
+        inp.value = '';
+        renderCommandPaletteResults('');
+        setTimeout(() => inp.focus(), 50);
+    }
+    function closeCommandPalette() {
+        let modal = document.getElementById('cmdPaletteModal');
+        if (modal) modal.classList.remove('active');
+    }
+    function renderCommandPaletteResults(query) {
+        let listEl = document.getElementById('cmdResultsList');
+        if (!listEl) return;
+        let q = (query || '').trim().toLowerCase();
+        let items = [];
+
+        // الأوامر السريعة
+        let quickActions = [
+            { title: '➕ إضافة موظف جديد', tag: 'أمر سريع', fn: () => { closeCommandPalette(); openAddModal(); } },
+            { title: '📥 تصدير وحفظ قاعدة البيانات (JSON)', tag: 'نسخ احتياطي', fn: () => { closeCommandPalette(); exportDatabaseBackup(); } },
+            { title: '🌓 تبديل الوضع الليلي / النهاري', tag: 'مظهر', fn: () => { closeCommandPalette(); toggleThemeMode(); } },
+            { title: '🏢 تعديل شعار واسم الشركة', tag: 'الهوية', fn: () => { closeCommandPalette(); openBrandingModal(); } },
+            { title: '🔄 عرض حكمة تحفيزية جديدة', tag: 'تحفيز', fn: () => { closeCommandPalette(); refreshMotivationalQuote(true); } }
+        ];
+        // التبويبات
+        let tabsList = [
+            { id: 'eval', title: '📊 شيت التقييم الأسبوعي' },
+            { id: 'allemp', title: '👥 قاعدة بيانات الموظفين' },
+            { id: 'camerarules', title: '🎥 غرفة الكاميرات الحية' },
+            { id: 'alerts', title: '🚨 مركز الإنذار المبكر' },
+            { id: 'coaching', title: '⚡ التوجيه اللحظي الذكي' },
+            { id: 'compare', title: '⚔️ مقارنة حية بين موظفين' },
+            { id: 'rootcause', title: '🔍 تحليل جذور الأخطاء' },
+            { id: 'career', title: '🌱 النمو الوظيفي' },
+            { id: 'executivereport', title: '📊 التقرير التنفيذي الذكي' },
+            { id: 'leaderboard', title: '🏆 لوحة الشرف التنافسية' },
+            { id: 'charts', title: '📈 الرسوم البيانية ومخطط الرادار' },
+            { id: 'plan', title: '📋 خطة العمل التشغيلية' },
+            { id: 'auditlog', title: '🛡️ سجل التعديلات والرقابة' },
+            { id: 'users', title: '⚙️ الإعدادات والصلاحيات' }
+        ];
+        tabsList.forEach(t => {
+            items.push({ title: t.title, tag: 'تبويب', fn: () => { closeCommandPalette(); switchTab(t.id); } });
+        });
+        quickActions.forEach(a => items.push(a));
+
+        // الموظفين
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach((emp, idx) => {
+                items.push({
+                    title: `👤 ${emp.name} (${b.name})`,
+                    tag: getDeptDisplayName(emp.dept),
+                    fn: () => { closeCommandPalette(); openEmployeeAnalysis(b.id, idx); }
+                });
+            });
+        });
+
+        let filtered = items.filter(it => !q || it.title.toLowerCase().includes(q) || it.tag.toLowerCase().includes(q)).slice(0, 14);
+        listEl.innerHTML = '';
+        if (filtered.length === 0) {
+            listEl.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted); font-size:12px;">لا توجد نتائج مطابقة لـ «${q}»</div>`;
+            return;
+        }
+        window.__cmdCallbacks = filtered.map(f => f.fn);
+        filtered.forEach((it, idx) => {
+            listEl.innerHTML += `<div class="cmd-item" onclick="window.__cmdCallbacks[${idx}]()">
+                <span>${it.title}</span>
+                <span class="cmd-item-tag">${it.tag}</span>
+            </div>`;
+        });
+    }
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            if (currentUser) openCommandPalette();
+        } else if (e.key === 'Escape') {
+            closeCommandPalette();
+        }
+    });
+
+    // 4. 📈 مؤشر اتجاه الأداء (Performance Trend Arrows)
+    function getEmployeeTrendHtml(emp, currentPct, activeWeek, allowedMetrics) {
+        if (!emp || !emp.history) return `<span class="trend-flat" title="لا يوجد سجل سابق">•</span>`;
+        let weeks = Object.keys(emp.history).filter(w => w !== activeWeek).sort().reverse();
+        if (weeks.length === 0) return `<span class="trend-flat" title="أول أسبوع تقييم">• جديد</span>`;
+        let prevPct = calculateWeightedEmployeePct(emp, emp.history[weeks[0]], allowedMetrics);
+        let diff = currentPct - prevPct;
+        if (diff > 0) return `<span class="trend-up" title="تحسن مقارنة بالأسبوع السابق (${prevPct}%)">▲ +${diff}%</span>`;
+        if (diff < 0) return `<span class="trend-down" title="تراجع مقارنة بالأسبوع السابق (${prevPct}%)">▼ ${diff}%</span>`;
+        return `<span class="trend-flat" title="نفس مستوى الأسبوع السابق">• 0%</span>`;
+    }
+
+    // 5. 💬 زر الإرسال المباشر على واتساب (One-Click WhatsApp Action)
+    function sendWhatsAppMessage(empName, branchName, pct, mode, extraMetric) {
+        let comp = brandingData.companyName || 'الرحلة الفريدة';
+        let msg = '';
+        if (mode === 'congrats') {
+            msg = `🏆 *تهنئة بالتميز - ${comp}*\n\nتحية طيبة للأستاذ/ة *${empName}* (${branchName}) 🌟\nنشكرك على أدائك الاستثنائي هذا الأسبوع وحصولك على نسبة تقييم *${pct}%* في لوحة الشرف. استمر في هذا التألق! 👏🚀`;
+        } else if (mode === 'alert') {
+            msg = `🚨 *متابعة وتطوير الأداء - ${comp}*\n\nمرحباً *${empName}* (${branchName})،\nتم رصد انخفاض في نسبة التقييم الأسبوعي إلى *${pct}%*. نرغب في عقد جلسة دعم وتوجيه سريعة معك لمساعدتك في تجاوز أي تحديات ورفع الأداء للأفضل. 🤝`;
+        } else if (mode === 'coaching') {
+            let tip = getSmartCoachingSuggestion(extraMetric || '');
+            msg = `⚡ *توجيه لحظي سريع - ${comp}*\n\nمرحباً *${empName}* (${branchName})،\nبخصوص معيار *«${extraMetric}»* هذا الأسبوع:\n💡 *التوصية:* ${tip}\nنثق بقدرتك على التطوير السريع، بالتوفيق! 🌟`;
+        } else {
+            msg = `تقرير أداء *${empName}* (${branchName}) في ${comp}: *${pct}%*`;
+        }
+        let waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, '_blank');
+        showToast('تم تجهيز رسالة واتساب وفتحها في نافذة جديدة 💬', 'success');
+    }
+    function sendCurrentModalWhatsApp() {
+        if (!currentModalEmpContext) return;
+        sendWhatsAppMessage(currentModalEmpContext.name, currentModalEmpContext.branchName, currentModalEmpContext.pct, currentModalEmpContext.pct >= 90 ? 'congrats' : 'alert', '');
+    }
+
+    // 6. 🕸️ مخطط الرادار لمقارنة الفروع (Branch vs. Branch Radar Chart)
+    let branchRadarInstance = null;
+    function renderBranchRadarChart() {
+        let canvasEl = document.getElementById('branchRadarChart');
+        if (!canvasEl) return;
+        if (branchRadarInstance) branchRadarInstance.destroy();
+        let activeWeek = getCurrentWeekKey();
+        let palette = [
+            { border: '#38bdf8', bg: 'rgba(56, 189, 248, 0.22)' },
+            { border: '#10b981', bg: 'rgba(16, 185, 129, 0.22)' },
+            { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.22)' },
+            { border: '#a855f7', bg: 'rgba(168, 85, 247, 0.22)' }
+        ];
+        let datasets = branchesData.map((b, bIdx) => {
+            let emps = dbData[b.id] || [];
+            let dataPoints = metricNames.map((m, mIdx) => {
+                if (emps.length === 0) return 0;
+                let sum = 0;
+                emps.forEach(emp => {
+                    let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                    sum += ((Number(scArr[mIdx]) || 3) / 5) * 100;
+                });
+                return Math.round(sum / emps.length);
+            });
+            let c = palette[bIdx % palette.length];
+            return {
+                label: b.name,
+                data: dataPoints,
+                borderColor: c.border,
+                backgroundColor: c.bg,
+                borderWidth: 2,
+                pointBackgroundColor: c.border
+            };
+        });
+        branchRadarInstance = new Chart(canvasEl.getContext('2d'), {
+            type: 'radar',
+            data: { labels: metricNames, datasets: datasets },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        min: 0, max: 100,
+                        grid: { color: 'rgba(148, 163, 184, 0.2)' },
+                        angleLines: { color: 'rgba(148, 163, 184, 0.2)' },
+                        pointLabels: { color: '#94a3b8', font: { family: 'Tahoma', size: 10 } },
+                        ticks: { display: false }
+                    }
+                },
+                plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Tahoma', size: 11 } } } }
+            }
+        });
+    }
+
+    // 7. 🖼️ تصدير شهادة التميز الرقمية كصورة PNG عالية الجودة
+    function exportCertificateAsImage() {
+        if (!currentModalEmpContext) return;
+        let canvas = document.createElement('canvas');
+        canvas.width = 1200;
+        canvas.height = 800;
+        let ctx = canvas.getContext('2d');
+
+        // خلفية متدرجة فخمة
+        let grad = ctx.createLinearGradient(0, 0, 1200, 800);
+        grad.addColorStop(0, '#090d16');
+        grad.addColorStop(0.5, '#0f172a');
+        grad.addColorStop(1, '#064e3b');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 1200, 800);
+
+        // إطار ذهبي مزدوج
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(30, 30, 1140, 740);
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(48, 48, 1104, 704);
+
+        ctx.direction = 'rtl';
+        ctx.textAlign = 'center';
+
+        // اسم الشركة
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 34px Tahoma, Arial';
+        ctx.fillText(brandingData.companyName || 'الرحلة الفريدة', 600, 130);
+
+        // عنوان الشهادة
+        ctx.fillStyle = '#fef08a';
+        ctx.font = 'bold 54px Tahoma, Arial';
+        ctx.fillText('🏆 شهادة تميز وانضباط مهني', 600, 225);
+
+        // نص التقدير
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = '26px Tahoma, Arial';
+        ctx.fillText('تتشرف الإدارة العامة بتقديم خالص الشكر والتقدير إلى', 600, 315);
+
+        // اسم الموظف
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 58px Tahoma, Arial';
+        ctx.fillText(currentModalEmpContext.name, 600, 415);
+
+        // التفاصيل والنسبة
+        ctx.fillStyle = '#34d399';
+        ctx.font = 'bold 32px Tahoma, Arial';
+        ctx.fillText(`الفرع: ${currentModalEmpContext.branchName}  |  القسم: ${currentModalEmpContext.deptName}`, 600, 495);
+
+        ctx.fillStyle = '#38bdf8';
+        ctx.font = 'bold 42px Tahoma, Arial';
+        ctx.fillText(`نسبة الأداء الموزونة: ${currentModalEmpContext.pct}%`, 600, 575);
+
+        // التاريخ والتوقيع
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '22px Tahoma, Arial';
+        ctx.fillText(`الأسبوع: ${currentModalEmpContext.week}`, 600, 665);
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 24px Tahoma, Arial';
+        ctx.fillText('اعتماد الإدارة العامة — نظام إدارة الأداء الذكي', 600, 720);
+
+        let a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = `شهادة_تميز_${currentModalEmpContext.name}.png`;
+        a.click();
+        showToast('🎉 تم تصدير شهادة التميز كصورة PNG عالية الجودة جاهزة للنشر!', 'success');
+    }
+
+    // 8. 🛡️ مؤشر التذكير الذكي بالنسخ الاحتياطي (Smart Backup Pulse)
+    function incrementUnsavedBackupCounter() {
+        let count = parseInt(localStorage.getItem('unique_journey_unsaved_edits') || '0') + 1;
+        localStorage.setItem('unique_journey_unsaved_edits', String(count));
+        updateBackupPulseUI();
+    }
+    function resetUnsavedBackupCounter() {
+        localStorage.setItem('unique_journey_unsaved_edits', '0');
+        localStorage.setItem('unique_journey_last_backup_ts', String(Date.now()));
+        updateBackupPulseUI();
+    }
+    function updateBackupPulseUI() {
+        let count = parseInt(localStorage.getItem('unique_journey_unsaved_edits') || '0');
+        let lastTs = parseInt(localStorage.getItem('unique_journey_last_backup_ts') || '0');
+        let daysSince = lastTs ? (Date.now() - lastTs) / (1000 * 60 * 60 * 24) : 0;
+        let btn = document.getElementById('headerBackupBtn');
+        let badge = document.getElementById('backupPulseCount');
+        if (!btn || !badge) return;
+        if (count >= 10 || (lastTs > 0 && daysSince >= 7)) {
+            btn.classList.add('backup-needs-save');
+            badge.style.display = 'inline-block';
+            badge.textContent = count >= 10 ? `${count} تعديل` : 'مضى أسبوع';
+        } else {
+            btn.classList.remove('backup-needs-save');
+            if (count > 0) {
+                badge.style.display = 'inline-block';
+                badge.textContent = `${count}`;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    }
+
+    // 9. 📲 دعم التثبيت كتطبيق هاتف حقيقي (PWA Manifest + Install Prompt)
+    let deferredPwaPrompt = null;
+    function setupDynamicPwaManifest() {
+        try {
+            let manifestObj = {
+                name: brandingData.companyName || "الرحلة الفريدة",
+                short_name: brandingData.companyName || "الرحلة الفريدة",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#090d16",
+                theme_color: "#090d16",
+                dir: "rtl",
+                lang: "ar"
+            };
+            let blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+            let link = document.getElementById('dynamicManifestLink');
+            if (link) link.setAttribute('href', URL.createObjectURL(blob));
+        } catch(e) {}
+    }
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPwaPrompt = e;
+        let btn = document.getElementById('btnInstallPwa');
+        if (btn) btn.classList.remove('hidden');
+    });
+    function installPwaApp() {
+        if (deferredPwaPrompt) {
+            deferredPwaPrompt.prompt();
+            deferredPwaPrompt.userChoice.then(() => {
+                deferredPwaPrompt = null;
+                let btn = document.getElementById('btnInstallPwa');
+                if (btn) btn.classList.add('hidden');
+            });
+        } else {
+            showToast('لتثبيت التطبيق على هاتفك: اضغط على قائمة المتصفح واختر «إضافة إلى الشاشة الرئيسية» 📲', 'info');
+        }
+    }
+
+    // تفعيل الميزات الجديدة فور تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        applySavedTheme();
+        updateBackupPulseUI();
+        setupDynamicPwaManifest();
+    });
 
 </script>
 </body>
