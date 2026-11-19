@@ -1088,6 +1088,267 @@
         @media print {
             .floating-action-dock, .dynamic-smart-island, #zenExitPill { display: none !important; }
         }
+
+        /* ===================================================================
+           🌌 v11 QUANTUM OS — HYPER-FUTURISTIC UI, BENTO MISSION CONTROL & TABS
+           =================================================================== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 42px 42px;
+        }
+        body.light-mode::before {
+            background-image:
+                linear-gradient(rgba(2, 132, 199, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(2, 132, 199, 0.04) 1px, transparent 1px);
+        }
+        .app-shell, #login-screen { position: relative; z-index: 1; }
+
+        /* ✨ حركة انتقال ناعمة لكل تبويب (VisionOS Tab Lift) */
+        @keyframes tabFadeLift {
+            from { opacity: 0; transform: translateY(10px) scale(0.992); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .card:not(.hidden) {
+            animation: tabFadeLift 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        /* 🎛️ القائمة الجانبية المتطورة: أقسام قابلة للطي + شارات حية + وضع الشريط النحيف */
+        .tech-sidebar {
+            transition: width 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), min-width 0.26s cubic-bezier(0.2, 0.8, 0.2, 1), right 0.3s;
+            background: linear-gradient(180deg, rgba(11, 17, 32, 0.96) 0%, rgba(9, 13, 22, 0.98) 100%);
+            backdrop-filter: blur(20px);
+        }
+        body.light-mode .tech-sidebar {
+            background: rgba(248, 250, 252, 0.96);
+        }
+        .nav-section-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 6px;
+            margin-top: 4px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .nav-section-label:hover {
+            background: rgba(56, 189, 248, 0.08);
+            color: #38bdf8;
+        }
+        .nav-section-chevron {
+            font-size: 9px;
+            transition: transform 0.2s;
+            opacity: 0.7;
+        }
+        .nav-section-label.collapsed-sec .nav-section-chevron {
+            transform: rotate(90deg);
+        }
+        .btn-tab.sec-collapsed-item {
+            display: none !important;
+        }
+        .btn-tab {
+            position: relative;
+            justify-content: space-between;
+        }
+        .btn-tab-inner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .nav-live-badge {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 1px 6px;
+            border-radius: 10px;
+            min-width: 20px;
+            text-align: center;
+            display: none;
+        }
+        .nav-live-badge.show { display: inline-block; }
+        .nav-live-badge.badge-danger {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.35);
+        }
+        .nav-live-badge.badge-amber {
+            background: rgba(245, 158, 11, 0.22);
+            color: #fde047;
+            border: 1px solid rgba(245, 158, 11, 0.55);
+        }
+        .sidebar-collapse-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            width: 26px;
+            height: 26px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: auto;
+            transition: 0.2s;
+        }
+        .sidebar-collapse-btn:hover { background: #0284c7; color: #fff; }
+        @media (min-width: 901px) {
+            .tech-sidebar.slim-rail {
+                width: 72px;
+                min-width: 72px;
+            }
+            .tech-sidebar.slim-rail .brand-text,
+            .tech-sidebar.slim-rail .nav-section-label,
+            .tech-sidebar.slim-rail .sidebar-footer,
+            .tech-sidebar.slim-rail .nav-live-badge {
+                display: none !important;
+            }
+            .tech-sidebar.slim-rail .sidebar-brand {
+                padding: 14px 10px;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .tech-sidebar.slim-rail .sidebar-collapse-btn { margin-right: 0; }
+            .tech-sidebar.slim-rail .btn-tab {
+                justify-content: center;
+                padding: 10px 6px;
+                font-size: 17px;
+                overflow: hidden;
+            }
+            .tech-sidebar.slim-rail .btn-tab { font-size: 0; }
+            .tech-sidebar.slim-rail .btn-tab::first-letter { font-size: 18px; }
+        }
+
+        /* 💎 بطاقات الإحصاء المستقبلية مع حلقات SVG المضيئة */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.85), rgba(17, 24, 39, 0.92));
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow: 0 12px 26px -6px rgba(2, 132, 199, 0.28);
+        }
+        .radial-gauge-wrap {
+            width: 52px;
+            height: 52px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .radial-gauge-svg {
+            width: 52px;
+            height: 52px;
+            transform: rotate(-90deg);
+        }
+        .radial-gauge-bg {
+            fill: none;
+            stroke: rgba(148, 163, 184, 0.16);
+            stroke-width: 5;
+        }
+        .radial-gauge-fg {
+            fill: none;
+            stroke-width: 5;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .radial-gauge-icon {
+            position: absolute;
+            font-size: 16px;
+        }
+
+        /* 🛰️ شبكة مركز القيادة الشامل (Bento Mission Control Grid) */
+        .bento-mission-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 14px;
+        }
+        .bento-tile {
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.86), rgba(9, 13, 22, 0.92));
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 16px;
+            padding: 16px 18px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 14px 30px -10px rgba(0, 0, 0, 0.55);
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        body.light-mode .bento-tile {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-color: rgba(2, 132, 199, 0.22);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+        }
+        .bento-tile:hover {
+            border-color: rgba(56, 189, 248, 0.48);
+        }
+        .bento-col-4 { grid-column: span 4; }
+        .bento-col-6 { grid-column: span 6; }
+        .bento-col-8 { grid-column: span 8; }
+        .bento-col-12 { grid-column: span 12; }
+        @media (max-width: 960px) {
+            .bento-col-4, .bento-col-6, .bento-col-8 { grid-column: span 12; }
+        }
+        .mc-health-ring-box {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+        .mc-progress-track {
+            width: 100%;
+            height: 9px;
+            border-radius: 10px;
+            background: rgba(148, 163, 184, 0.16);
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .mc-progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #0284c7, #38bdf8, #10b981);
+            transition: width 0.6s ease;
+        }
+        .mc-launch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .mc-launch-btn {
+            background: rgba(30, 41, 59, 0.65);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 12px;
+            padding: 12px 10px;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: transform 0.18s, background 0.18s, border-color 0.18s;
+        }
+        body.light-mode .mc-launch-btn { background: #f1f5f9; }
+        .mc-launch-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(2, 132, 199, 0.22);
+            border-color: #38bdf8;
+        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -1123,18 +1384,20 @@
                     <h2 id="sidebarBrandName">الرحلة الفريدة</h2>
                     <span id="sidebarBrandTagline">Enterprise KPIs & ERP</span>
                 </div>
+                <button type="button" class="sidebar-collapse-btn" onclick="event.stopPropagation(); toggleSlimSidebarRail();" title="تصغير / توسيع القائمة الجانبية">⇄</button>
             </div>
 
             <div class="sidebar-nav" id="appTabsContainer">
                 <div class="nav-section-label">التشغيل الأساسي</div>
+                <button type="button" onclick="switchTab('missioncontrol')" id="tab-missioncontrol" class="btn-tab admin-manager-only" style="background:linear-gradient(90deg, rgba(14,165,233,0.18), rgba(139,92,246,0.14)); border-color:rgba(56,189,248,0.35); color:#7dd3fc;">🛰️ مركز القيادة الشامل (Bento OS)</button>
                 <button type="button" onclick="openAddModal()" id="tab-addemp" class="btn-tab btn-add admin-only">➕ إضافة موظف جديد</button>
                 <button type="button" onclick="switchTab('eval')" id="tab-eval" class="btn-tab active">📊 شيت التقييم الأسبوعي</button>
                 <button type="button" onclick="switchTab('allemp')" id="tab-allemp" class="btn-tab admin-manager-only">👥 قاعدة بيانات الموظفين</button>
                 <button type="button" onclick="switchTab('camerarules')" id="tab-camerarules" class="btn-tab admin-manager-only">🎥 غرفة الكاميرات الحية</button>
 
                 <div class="nav-section-label">الذكاء والرقابة اللحظية</div>
-                <button type="button" onclick="switchTab('alerts')" id="tab-alerts" class="btn-tab admin-manager-only" style="color:#fca5a5;">🚨 مركز الإنذار المبكر</button>
-                <button type="button" onclick="switchTab('coaching')" id="tab-coaching" class="btn-tab admin-manager-only">⚡ التوجيه اللحظي الذكي</button>
+                <button type="button" onclick="switchTab('alerts')" id="tab-alerts" class="btn-tab admin-manager-only" style="color:#fca5a5;"><span class="btn-tab-inner">🚨 مركز الإنذار المبكر</span><span id="navBadgeAlerts" class="nav-live-badge badge-danger">0</span></button>
+                <button type="button" onclick="switchTab('coaching')" id="tab-coaching" class="btn-tab admin-manager-only"><span class="btn-tab-inner">⚡ التوجيه اللحظي الذكي</span><span id="navBadgeCoaching" class="nav-live-badge badge-amber">0</span></button>
                 <button type="button" onclick="switchTab('compare')" id="tab-compare" class="btn-tab admin-manager-only">⚔️ مقارنة حية بين موظفين</button>
                 <button type="button" onclick="switchTab('rootcause')" id="tab-rootcause" class="btn-tab admin-manager-only">🔍 تحليل جذور الأخطاء</button>
 
@@ -1246,6 +1509,66 @@
                         </div>
                     </div>
                 </div>
+        <!-- 🛰️ مركز القيادة الشامل (Executive Mission Control — Bento OS) -->
+        <div id="sec-missioncontrol" class="card hidden" style="background:transparent; border:none; box-shadow:none; padding:0;">
+            <div class="bento-mission-grid">
+                <!-- Tile 1: Company Live Health Ring -->
+                <div class="bento-tile bento-col-4">
+                    <div style="font-size:12px; color:var(--accent-blue); font-weight:800; margin-bottom:10px;">🛰️ مؤشر الصحة المؤسسية اللحظي</div>
+                    <div class="mc-health-ring-box">
+                        <div style="position:relative; width:104px; height:104px; display:flex; align-items:center; justify-content:center;">
+                            <svg width="104" height="104" style="transform:rotate(-90deg);">
+                                <circle cx="52" cy="52" r="44" fill="none" stroke="rgba(148,163,184,0.16)" stroke-width="9"></circle>
+                                <circle id="mcHealthRingFg" cx="52" cy="52" r="44" fill="none" stroke="#38bdf8" stroke-width="9" stroke-linecap="round" stroke-dasharray="276.46" stroke-dashoffset="70" style="transition:stroke-dashoffset 0.8s ease;"></circle>
+                            </svg>
+                            <div style="position:absolute; text-align:center;">
+                                <div id="mcHealthPct" style="font-size:22px; font-weight:800; color:#38bdf8;">0%</div>
+                                <div style="font-size:9px; color:var(--text-muted);">المتوسط العام</div>
+                            </div>
+                        </div>
+                        <div style="flex:1; min-width:130px; font-size:12px; line-height:1.9;">
+                            <div>👥 إجمالي الفريق: <b id="mcTotalEmps" style="color:#fff;">0</b></div>
+                            <div>🌟 متميزون (≥90%): <b id="mcExcCount" style="color:#34d399;">0</b></div>
+                            <div>🚨 حالات تدخل: <b id="mcAlertCount" style="color:#fb7185;">0</b></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tile 2: Branch-vs-Branch Live Race -->
+                <div class="bento-tile bento-col-4">
+                    <div style="font-size:12px; color:#34d399; font-weight:800; margin-bottom:10px;">🏢 سباق أداء الفروع المباشر</div>
+                    <div id="mcBranchesRaceList" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+
+                <!-- Tile 3: Top 3 Stars Podium -->
+                <div class="bento-tile bento-col-4">
+                    <div style="font-size:12px; color:#facc15; font-weight:800; margin-bottom:10px;">🏆 منصة نجوم الأسبوع (Top 3)</div>
+                    <div id="mcTopStarsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+
+                <!-- Tile 4: World-Class Daily Leadership Briefing -->
+                <div class="bento-tile bento-col-8">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                        <div style="font-size:13px; color:#c4b5fd; font-weight:800;">🌍 التوصية القيادية اليومية (بناءً على بياناتك ومصادر عالمية)</div>
+                        <button type="button" onclick="openMorningHuddleModal()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:5px 12px;">☀️ افتح اجتماع الصباح</button>
+                    </div>
+                    <div id="mcWorldInsightBox" style="font-size:12px; color:var(--text-main); line-height:1.85;"></div>
+                </div>
+
+                <!-- Tile 5: Urgent Action Radar -->
+                <div class="bento-tile bento-col-4">
+                    <div style="font-size:12px; color:#fb7185; font-weight:800; margin-bottom:8px;">🚨 رادار التدخل العاجل</div>
+                    <div id="mcUrgentRadarList" style="display:flex; flex-direction:column; gap:7px; font-size:11px;"></div>
+                </div>
+
+                <!-- Tile 6: Quantum Quick-Launch Hub -->
+                <div class="bento-tile bento-col-12">
+                    <div style="font-size:12px; color:#38bdf8; font-weight:800;">⚡ الإطلاق السريع للوحدات الذكية</div>
+                    <div class="mc-launch-grid" id="mcQuickLaunchGrid"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- 🌌 12. خريطة المجرة التفاعلية للشركة (Live Constellation Map) -->
         <div id="sec-constellation" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
@@ -1420,21 +1743,39 @@
                         <h4>متوسط أداء الفرع</h4>
                         <div class="val" id="statAvgPct">0%</div>
                     </div>
-                    <span style="font-size: 20px;">📈</span>
+                    <div class="radial-gauge-wrap">
+                        <svg class="radial-gauge-svg" viewBox="0 0 52 52">
+                            <circle class="radial-gauge-bg" cx="26" cy="26" r="21"></circle>
+                            <circle id="ringAvgCircle" class="radial-gauge-fg" cx="26" cy="26" r="21" stroke="#38bdf8" stroke-dasharray="131.95" stroke-dashoffset="131.95"></circle>
+                        </svg>
+                        <span class="radial-gauge-icon">📈</span>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div>
                         <h4>المتميزون (≥ 90%)</h4>
                         <div class="val" id="statExcellentCount" style="color:#34d399;">0</div>
                     </div>
-                    <span style="font-size: 20px;">🌟</span>
+                    <div class="radial-gauge-wrap">
+                        <svg class="radial-gauge-svg" viewBox="0 0 52 52">
+                            <circle class="radial-gauge-bg" cx="26" cy="26" r="21"></circle>
+                            <circle id="ringExcCircle" class="radial-gauge-fg" cx="26" cy="26" r="21" stroke="#10b981" stroke-dasharray="131.95" stroke-dashoffset="131.95"></circle>
+                        </svg>
+                        <span class="radial-gauge-icon">🌟</span>
+                    </div>
                 </div>
                 <div class="stat-card">
                     <div>
                         <h4>تحتاج تدخلاً (≤ 60%)</h4>
                         <div class="val" id="statAlertCount" style="color:#fb7185;">0</div>
                     </div>
-                    <span style="font-size: 20px;">🚨</span>
+                    <div class="radial-gauge-wrap">
+                        <svg class="radial-gauge-svg" viewBox="0 0 52 52">
+                            <circle class="radial-gauge-bg" cx="26" cy="26" r="21"></circle>
+                            <circle id="ringAlertCircle" class="radial-gauge-fg" cx="26" cy="26" r="21" stroke="#ef4444" stroke-dasharray="131.95" stroke-dashoffset="131.95"></circle>
+                        </svg>
+                        <span class="radial-gauge-icon">🚨</span>
+                    </div>
                 </div>
             </div>
             <div class="dept-filter-bar">
@@ -1736,7 +2077,8 @@
                     <h3 style="color:#38bdf8; font-size:15px;">خطة العمل التشغيلية والأسبوعية</h3>
                 </div>
                 <div style="display:flex; gap:8px;">
-                    <button type="button" onclick="generateSmartWeeklySuggestions()" class="btn-tab admin-only" style="background:#0284c7; color:#fff;">💡 اقتراحات ذكية لخطة الأسبوع</button>
+                    <button type="button" onclick="generateSmartWeeklySuggestions()" class="btn-tab admin-only" style="background:#0284c7; color:#fff;">💡 اقتراحات عالمية لخطة الأسبوع</button>
+                    <button type="button" id="btnGeminiWeeklyPlan" onclick="generateGeminiLiveWeeklyPlan()" class="btn-tab admin-only" style="background:linear-gradient(135deg,#0284c7,#7c3aed); color:#fff;">✨ خطة حصرية بـ Gemini Live</button>
                     <button type="button" id="btnAddPlan" onclick="addPlanRow()" class="btn-tab btn-add admin-only">➕ إضافة بند للخطة</button>
                 </div>
             </div>
@@ -1927,8 +2269,12 @@
                 <div id="modalWeaknesses" style="background:rgba(220,38,38,0.1); border:1px solid #dc2626; padding:10px; border-radius:6px; font-size:12px; color:#fca5a5;"></div>
             </div>
             <div style="margin-bottom: 15px;">
-                <h4 style="color:#34d399; font-size:13px; margin-bottom:6px;">اقتراح ذكي وتوجيهي لتطوير هذا القصور:</h4>
-                <div id="modalSuggestions" style="background:rgba(16,185,129,0.1); border:1px solid #059669; padding:10px; border-radius:6px; font-size:12px; color:#6ee7b7; line-height: 1.6;"></div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; flex-wrap:wrap; gap:6px;">
+                    <h4 style="color:#34d399; font-size:13px;">🌍 توجيه ذكي من المدارس الإدارية العالمية:</h4>
+                    <button type="button" id="btnGeminiEmpModal" onclick="generateGeminiLiveEmpAdvice()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:4px 10px;">✨ استشارة Gemini Live لهذا الموظف</button>
+                </div>
+                <div id="modalSuggestions" style="background:rgba(16,185,129,0.1); border:1px solid #059669; padding:10px; border-radius:6px; font-size:12px; color:#6ee7b7; line-height: 1.75;"></div>
+                <div id="modalGeminiEmpOutput" style="margin-top:8px;"></div>
             </div>
             <div style="margin-bottom: 10px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1983,6 +2329,7 @@
                         </div>
                     </div>
                     <div class="checkbox-group" id="userTabsPermissionsGroup" style="max-height:220px;">
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="missioncontrol" checked> 🛰️ مركز القيادة الشامل (Bento OS)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="eval" checked> 📊 شيت التقييم الأسبوعي</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="allemp" checked> 👥 قاعدة بيانات الموظفين</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="camerarules" checked> 🎥 غرفة الكاميرات الحية</label>
@@ -3994,7 +4341,7 @@
     }
 
     const ALL_PERMISSION_KEYS = [
-        'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
+        'missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
         'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
         'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
         'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog', 'gemini_advisor'
@@ -4059,6 +4406,8 @@
         toggleEl('btnBannerCoaching', hasFeaturePermission('coaching'));
         toggleEl('btnDockMorningHuddle', hasFeaturePermission('morninghuddle'));
         toggleEl('btnGeminiHuddle', hasFeaturePermission('gemini_advisor'));
+        toggleEl('btnGeminiWeeklyPlan', hasFeaturePermission('gemini_advisor'));
+        toggleEl('btnGeminiEmpModal', hasFeaturePermission('gemini_advisor'));
         let bannerEl = document.getElementById('smartNotificationBanner');
         if (bannerEl) {
             if (!hasFeaturePermission('alerts') && !hasFeaturePermission('coaching')) bannerEl.classList.add('hidden');
@@ -4175,7 +4524,7 @@
             return;
         }
 
-        ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -4184,6 +4533,7 @@
         document.getElementById(`sec-${tab}`).classList.remove('hidden');
         if (document.getElementById(`tab-${tab}`)) document.getElementById(`tab-${tab}`).classList.add('active');
 
+        if (tab === 'missioncontrol') renderMissionControl();
         if (tab === 'eval') { renderDeptFilterBar(); renderEvalTable(); }
         if (tab === 'allemp') renderAllEmployeesTable();
         if (tab === 'camerarules') { renderCameraRulesTable(); renderLiveHudBadges(); }
@@ -5224,6 +5574,7 @@
         ];
         // التبويبات
         let tabsList = [
+            { id: 'missioncontrol', title: '🛰️ مركز القيادة الشامل (Bento OS)' },
             { id: 'eval', title: '📊 شيت التقييم الأسبوعي' },
             { id: 'allemp', title: '👥 قاعدة بيانات الموظفين' },
             { id: 'camerarules', title: '🎥 غرفة الكاميرات الحية' },
@@ -7005,6 +7356,418 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         updateGeminiKeyStatusUI();
+    });
+
+
+    // =========================================================================
+    // 🌌 v11 QUANTUM OS — COMPLETE WORLD-SOURCE INTELLIGENCE + BENTO MISSION CONTROL
+    // =========================================================================
+
+    // 1. 🎛️ شريط القائمة الجانبية النحيف (Slim Rail) + طي الأقسام (Accordion Nav)
+    function toggleSlimSidebarRail() {
+        let sb = document.getElementById('techSidebarEl');
+        if (!sb) return;
+        let isSlim = sb.classList.toggle('slim-rail');
+        localStorage.setItem('unique_journey_slim_sidebar_v1', isSlim ? '1' : '0');
+        playTechChime(isSlim ? 560 : 720, 0.06);
+    }
+
+    function initCollapsibleSidebarSections() {
+        let nav = document.getElementById('appTabsContainer');
+        if (!nav || nav.dataset.accordionReady === '1') return;
+        nav.dataset.accordionReady = '1';
+        let children = Array.from(nav.children);
+        children.forEach((el, idx) => {
+            if (el.classList.contains('nav-section-label')) {
+                if (!el.querySelector('.nav-section-chevron')) {
+                    el.innerHTML = `<span>${el.textContent}</span><span class="nav-section-chevron">▾</span>`;
+                }
+                el.addEventListener('click', function() {
+                    let isCollapsed = el.classList.toggle('collapsed-sec');
+                    for (let j = idx + 1; j < children.length; j++) {
+                        if (children[j].classList.contains('nav-section-label')) break;
+                        if (isCollapsed) children[j].classList.add('sec-collapsed-item');
+                        else children[j].classList.remove('sec-collapsed-item');
+                    }
+                });
+            }
+        });
+        if (localStorage.getItem('unique_journey_slim_sidebar_v1') === '1') {
+            let sb = document.getElementById('techSidebarEl');
+            if (sb) sb.classList.add('slim-rail');
+        }
+    }
+
+    // 2. 💎 تحديث الحلقات المضيئة (SVG Radial Gauges) وشارات القائمة الجانبية الحية
+    const _origRenderEvalTableV10 = renderEvalTable;
+    renderEvalTable = function() {
+        _origRenderEvalTableV10();
+        let avgPct = parseInt(document.getElementById('statAvgPct')?.textContent) || 0;
+        let exc = parseInt(document.getElementById('statExcellentCount')?.textContent) || 0;
+        let alrt = parseInt(document.getElementById('statAlertCount')?.textContent) || 0;
+        let total = Math.max(1, (dbData[currentBranch] || []).length);
+        let circ = 131.95;
+        let setRing = (id, ratio) => {
+            let el = document.getElementById(id);
+            if (el) el.style.strokeDashoffset = String(circ * (1 - Math.max(0, Math.min(1, ratio))));
+        };
+        setRing('ringAvgCircle', avgPct / 100);
+        setRing('ringExcCircle', exc / total);
+        setRing('ringAlertCircle', alrt / total);
+        updateSmartNotificationBanner();
+    };
+
+    const _origUpdateBannerV10 = updateSmartNotificationBanner;
+    updateSmartNotificationBanner = function() {
+        _origUpdateBannerV10();
+        let activeWeek = getCurrentWeekKey();
+        let totalAlerts = 0, totalPendingCoaching = 0;
+        branchesData.forEach(b => {
+            if (currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let lowCount = 0;
+                metricNames.forEach((m, idx) => {
+                    if (isMetricApplicableForDept(m, emp.dept) && (Number(scores[idx]) || 3) <= 2) lowCount++;
+                });
+                if (pct <= 60 || lowCount >= 2) totalAlerts++;
+                metricNames.forEach((mName, mIdx) => {
+                    if (!isMetricApplicableForDept(mName, emp.dept)) return;
+                    if ((Number(scores[mIdx]) || 3) <= 2) {
+                        let k = `${b.id}_${emp.name}_${mName}_${activeWeek}`;
+                        if (!smartCoachingResolvedState[k]) totalPendingCoaching++;
+                    }
+                });
+            });
+        });
+        let bAlerts = document.getElementById('navBadgeAlerts');
+        let bCoach = document.getElementById('navBadgeCoaching');
+        if (bAlerts) { bAlerts.textContent = totalAlerts; bAlerts.classList.toggle('show', totalAlerts > 0); }
+        if (bCoach) { bCoach.textContent = totalPendingCoaching; bCoach.classList.toggle('show', totalPendingCoaching > 0); }
+    };
+
+    // 3. 🌍 ترقية الاقتراح #1: خطة العمل الأسبوعية الذكية من بياناتك الفعلية + مدارس عالمية (OKR, McKinsey, Toyota, Gallup)
+    generateSmartWeeklySuggestions = function() {
+        if (currentUser.role === 'Employee') return;
+        let ctx = getMorningHuddleContextData();
+        let activeWeek = getCurrentWeekKey();
+        let alertCount = 0;
+        (dbData[currentBranch] || []).forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [];
+            if (calculateWeightedEmployeePct(emp, sc, null) <= 60) alertCount++;
+        });
+
+        let worldSuggestions = [
+            {
+                goal: `🎯 [OKR] رفع معيار «${ctx.focusMetric}» في ${ctx.bName} (+15%)`,
+                action: `تطبيق ورشة تحسين عملي (20 دقيقة) + قائمة فحص Poka-Yoke من 3 خطوات قبل تسليم كل معاملة. [المصدر: Google OKRs & Toyota Kaizen]`,
+                resp: `مدير ${ctx.bName} / الجودة`,
+                completed: false
+            },
+            {
+                goal: `⚡ [SBI & GROW] جلسات إنقاذ فردية (${alertCount} حالة مرصودة)`,
+                action: `تنفيذ جلسات توجيه لحظي فردية (10 دقائق) تعتمد على نموذج SBI (الموقف-السلوك-الأثر) وإزالة العوائق التشغيلية. [المصدر: CCL & Sir John Whitmore]`,
+                resp: `مشرف الفرع / HR`,
+                completed: false
+            },
+            {
+                goal: `🏆 [Gallup Q12] تكريم علني لنجوم الأسبوع: ${ctx.stars}`,
+                action: `إبراز قصة نجاح المتصدرين في اجتماع الصباح العالمي (Ritz-Carlton Line-Up) وإصدار شهادات التميز الرقمية لرفع الولاء بنسبة 21%. [المصدر: Gallup Q12]`,
+                resp: `الإدارة العامة`,
+                completed: false
+            },
+            {
+                goal: `🛡️ [McKinsey OHI] مراجعة معايرة التقييمات ونبض ضغط العمل`,
+                action: `فحص لوحة كاشف التحيز ونبض المزاج السري نهاية الأسبوع لضمان عدالة التقييم والأمان النفسي للفريق. [المصدر: McKinsey OHI & Google Project Aristotle]`,
+                resp: `الإدارة العليا / HR`,
+                completed: false
+            }
+        ];
+
+        let added = 0;
+        worldSuggestions.forEach(item => {
+            if (!planData.some(p => p.goal === item.goal)) {
+                planData.unshift(item);
+                added++;
+            }
+        });
+        localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+        renderPlanTable();
+        showToast(added > 0 ? `🌍 تمت إضافة ${added} أهداف أسبوعية ذكية مبنية على بيانات فرعك ومدارس عالمية!` : 'الخطة محدثة بالفعل بأحدث التوصيات العالمية!', 'success');
+    };
+
+    async function generateGeminiLiveWeeklyPlan() {
+        if (!hasFeaturePermission('gemini_advisor')) { showToast('عذراً، هذه الميزة غير مفعلة لحسابك!', 'error'); return; }
+        let ctx = getMorningHuddleContextData();
+        if (!getSavedGeminiKey()) {
+            generateSmartWeeklySuggestions();
+            showToast('💡 تم توليد خطة بالمحرك العالمي المدمج — أضف مفتاح Gemini API في الإعدادات للتوليد الحصري الحي!', 'info');
+            return;
+        }
+        showToast('🧠 جاري توليد خطة عمل أسبوعية حصرية عبر Gemini Live...', 'info');
+        let prompt = `أنت مستشار إداري عالمي (McKinsey & OKRs). اكتب 3 أهداف أسبوعية عملية لشركة «${ctx.comp}» (${ctx.bName}، عدد الموظفين: ${ctx.empCount}، أضعف مؤشر: «${ctx.focusMetric}»، المتصدرون: ${ctx.stars}).
+أرجع النتيجة بصيغة 3 أسطر فقط، كل سطر بهذا الشكل بالضبط:
+الهدف | الإجراء التنفيذي مع ذكر المصدر العالمي | المسؤول`;
+        let res = await callGeminiLiveAPI(prompt);
+        if (res) {
+            let lines = res.split('\n').map(l => l.trim()).filter(l => l.includes('|'));
+            let added = 0;
+            lines.slice(0, 4).forEach(line => {
+                let parts = line.split('|').map(p => p.replace(/^[\d\-\*\.\s]+/, '').trim());
+                if (parts.length >= 2) {
+                    planData.unshift({ goal: `✨ ${parts[0]}`, action: parts[1], resp: parts[2] || 'الإدارة', completed: false });
+                    added++;
+                }
+            });
+            if (added > 0) {
+                localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+                renderPlanTable();
+                showToast(`✨ تمت إضافة ${added} بنود حصرية مولّدة الآن عبر Gemini Live إلى خطة العمل!`, 'success');
+            }
+        }
+    }
+
+    // 4. 🌍 ترقية الاقتراح #2: توجيهات نافذة تحليل الموظف بالمصادر العالمية + استشارة Gemini Live لكل موظف
+    const _origOpenEmpAnalysisV10 = openEmployeeAnalysis;
+    openEmployeeAnalysis = function(branchId, empIdx) {
+        _origOpenEmpAnalysisV10(branchId, empIdx);
+        let emp = dbData[branchId][empIdx];
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        let currentScores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+        let sugEl = document.getElementById('modalSuggestions');
+        let outGemini = document.getElementById('modalGeminiEmpOutput');
+        if (outGemini) outGemini.innerHTML = '';
+
+        let weakItems = [];
+        metricNames.forEach((m, idx) => {
+            if (isMetricApplicableForDept(m, emp.dept) && (Number(currentScores[idx]) || 3) <= 2) {
+                weakItems.push({ name: m, score: Number(currentScores[idx]) || 1 });
+            }
+        });
+        if (sugEl) {
+            if (weakItems.length > 0) {
+                sugEl.innerHTML = weakItems.map(w => `<div style="margin-bottom:10px; padding-bottom:8px; border-bottom:1px dashed rgba(16,185,129,0.25);"><b style="color:#facc15;">🎯 ${w.name} (${w.score}/5):</b><br>${getSmartCoachingSuggestion(w.name)}</div>`).join('');
+            } else {
+                sugEl.innerHTML = `<b>🌟 مسار إعداد القيادات (High-Potential Track):</b> أداء الموظف متميز ومستقر — يوصى بتكليفه بدور «مرشد زميل» (Peer Mentor) وإسناد مشروع تطويري مستقل لرفع ارتباطه الوظيفي.<br><span class="world-source-tag">📚 المصدر: Harvard Business Review (9-Box Talent Grid) & Gallup Strengths</span>`;
+            }
+        }
+        window.__currentModalEmpData = { emp, scores: currentScores, branchId, weakNames: weakItems.map(w => w.name) };
+    };
+
+    async function generateGeminiLiveEmpAdvice() {
+        if (!hasFeaturePermission('gemini_advisor')) { showToast('عذراً، هذه الميزة غير مفعلة لحسابك!', 'error'); return; }
+        let out = document.getElementById('modalGeminiEmpOutput');
+        let ctx = window.__currentModalEmpData;
+        if (!out || !ctx) return;
+        if (!getSavedGeminiKey()) {
+            showToast('💡 أضف مفتاح Gemini API من «الإعدادات والصلاحيات» لتفعيل الاستشارة الفردية الحية!', 'warn');
+            return;
+        }
+        out.innerHTML = `<div style="background:rgba(56,189,248,0.1); border:1px solid #38bdf8; padding:10px; border-radius:8px; font-size:11px; color:#7dd3fc;">🧠 جاري تحضير استشارة قيادية حصرية للموظف «${ctx.emp.name}»...</div>`;
+        let weakStr = ctx.weakNames.length ? ctx.weakNames.join('، ') : 'لا يوجد قصور حرج (موظف متميز)';
+        let prompt = `أنت كوتش قيادي معتمد (ICF / Harvard Business Review). قدّم نصيحة توجيهية حصرية ومختصرة جداً (4 أسطر) للمدير حول كيفية تطوير الموظف «${ctx.emp.name}» (القسم: ${getDeptDisplayName(ctx.emp.dept)}، نقاط القصور: ${weakStr}) مع ذكر اسم منهجية عالمية حقيقية مستخدمة.`;
+        let res = await callGeminiLiveAPI(prompt);
+        if (res) {
+            out.innerHTML = `<div style="background:rgba(139,92,246,0.14); border:1px solid rgba(167,139,250,0.45); padding:12px; border-radius:8px; font-size:12px; color:#f8fafc; white-space:pre-line; line-height:1.8;"><b style="color:#c4b5fd;">✨ استشارة Gemini Live الحصرية:</b>\n${res.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+        } else {
+            out.innerHTML = '';
+        }
+    }
+
+    // 5. 🌍 ترقية الاقتراح #3: رادار الاحتراق الوظيفي ببروتوكول Maslach (MBI) + Google Project Aristotle
+    renderBurnoutRadar = function() {
+        let tbody = document.getElementById('burnoutRadarTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let flagged = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let prevWeeks = Object.keys(emp.history || {}).filter(w => w !== activeWeek).sort().reverse();
+                let prevPct = prevWeeks.length ? calculateWeightedEmployeePct(emp, emp.history[prevWeeks[0]], null) : pct;
+                let drop = prevPct - pct;
+                let punctualityDrop = (Number(scores[0]) || 3) <= 2;
+                let teamworkDrop = (Number(scores[1]) || 3) <= 2;
+
+                if (drop >= 10 || (punctualityDrop && teamworkDrop) || (pct <= 60 && punctualityDrop)) {
+                    flagged++;
+                    let highRisk = (drop >= 15 || (punctualityDrop && teamworkDrop));
+                    let riskLevel = highRisk ? '<span class="badge b-red">🔴 خطر احتراق مرتفع</span>' : '<span class="badge b-yellow">🟠 إجهاد مهني مبكر</span>';
+                    let reason = drop >= 10 ? `تراجع حاد (-${drop}%) عن الأسبوع السابق.` : 'انخفاض متزامن في الالتزام والتفاعل الجماعي (مؤشر استنزاف عاطفي).';
+                    let protocol = highRisk
+                        ? `<b>بروتوكول التدخل:</b> جلسة أمان نفسي فردية (Stay Interview) وإعادة توزيع عبء المهام 48 ساعة.<br><span class="world-source-tag">📚 المصدر: Maslach Burnout Inventory (MBI) & Google Project Aristotle</span>`
+                        : `<b>بروتوكول الوقاية:</b> تطبيق سؤال Gallup Q12 («هل تملك الأدوات والدعم اللازم لإنجاز عملك؟») مع تقدير فوري.<br><span class="world-source-tag">📚 المصدر: Gallup Q12 & Harvard Business Review</span>`;
+
+                    tbody.innerHTML += `<tr>
+                        <td><b>${emp.name}</b><br><span style="font-size:10px; color:#38bdf8;">${b.name}</span></td>
+                        <td style="text-align:center; font-weight:bold; color:#fb7185;">${pct}%</td>
+                        <td style="text-align:center;">${riskLevel}</td>
+                        <td style="white-space:normal; line-height:1.6;">${reason}<br><span style="color:#34d399; font-size:11px;">${protocol}</span></td>
+                        <td style="text-align:center;"><button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', ${pct}, 'alert', '')" class="btn-whatsapp">💬 تواصل ودي</button></td>
+                    </tr>`;
+                }
+            });
+        });
+        if (flagged === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#34d399; padding:20px; font-weight:bold;">💚 ممتاز! لا توجد مؤشرات احتراق وظيفي وفق معايير Maslach (MBI) في الفروع حالياً.</td></tr>`;
+        }
+    };
+
+    // 6. 🌍 ترقية الاقتراح #4: مركز الإنذار المبكر بتدخل مخصص لكل موظف + Toyota Andon Cord
+    renderAlertsTable = function() {
+        let tbody = document.getElementById('alertsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let alertCount = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let weakMetric = null, minSc = 6, lowCount = 0;
+                metricNames.forEach((m, idx) => {
+                    if (isMetricApplicableForDept(m, emp.dept)) {
+                        let s = Number(scores[idx]) || 3;
+                        if (s <= 2) lowCount++;
+                        if (s < minSc) { minSc = s; weakMetric = m; }
+                    }
+                });
+
+                if (pct <= 60 || lowCount >= 2) {
+                    alertCount++;
+                    let actionHtml = weakMetric
+                        ? `<b>إيقاف التراجع فوراً (Andon Cord):</b> معالجة قصور «${weakMetric}» (${minSc}/5) اليوم بجلسة SBI فردية مدتها 7 دقائق.<br><span class="world-source-tag">📚 المصدر: Toyota Andon Cord & CCL SBI Framework</span>`
+                        : `عقد جلسة تشخيص عاجلة وفق نموذج GROW.<br><span class="world-source-tag">📚 المصدر: Sir John Whitmore (GROW)</span>`;
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; color:#38bdf8;">${b.name}</td>
+                            <td><b>${emp.name}</b></td>
+                            <td style="text-align:center; color:#fb7185; font-weight:bold;">${pct}%</td>
+                            <td style="text-align:center;"><span class="badge b-red">🚨 إنذار حرج (${lowCount} قصور)</span></td>
+                            <td style="color:#facc15; white-space:normal; line-height:1.6;">
+                                ${actionHtml}
+                                <div style="margin-top:6px;"><button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', ${pct}, 'alert', '')" class="btn-whatsapp">💬 إرسال متابعة واتساب</button></div>
+                            </td>
+                        </tr>`;
+                }
+            });
+        });
+        if (alertCount === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#34d399; padding:20px;">ممتاز! لا توجد أي إنذارات مبكرة نشطة للأسبوع الحالي. العمل مستقر تماماً.</td></tr>`;
+        }
+    };
+
+    // 7. 🛰️ محرك مركز القيادة الشامل (Executive Bento Mission Control)
+    function renderMissionControl() {
+        let activeWeek = getCurrentWeekKey();
+        let totalEmps = 0, sumPct = 0, exc = 0, alrt = 0;
+        let allRanked = [];
+        let urgentList = [];
+        let branchStats = [];
+        let metricTotals = new Array(metricNames.length).fill(0);
+
+        branchesData.forEach(b => {
+            if (currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            let emps = dbData[b.id] || [];
+            let bSum = 0;
+            emps.forEach((emp, eIdx) => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let p = calculateWeightedEmployeePct(emp, sc, null);
+                totalEmps++; sumPct += p; bSum += p;
+                if (p >= 90) exc++;
+                if (p <= 60) { alrt++; urgentList.push({ name: emp.name, branch: b.name, pct: p, bId: b.id, idx: eIdx }); }
+                allRanked.push({ name: emp.name, branch: b.name, pct: p, bId: b.id, idx: eIdx });
+                sc.forEach((v, i) => { if (i < metricTotals.length) metricTotals[i] += (Number(v) || 3); });
+            });
+            branchStats.push({ name: b.name, id: b.id, avg: emps.length ? Math.round(bSum / emps.length) : 0, count: emps.length });
+        });
+
+        let overallAvg = totalEmps ? Math.round(sumPct / totalEmps) : 0;
+        let ringEl = document.getElementById('mcHealthRingFg');
+        if (ringEl) {
+            ringEl.style.strokeDashoffset = String(276.46 * (1 - overallAvg / 100));
+            ringEl.style.stroke = overallAvg >= 80 ? '#10b981' : (overallAvg >= 65 ? '#38bdf8' : '#ef4444');
+        }
+        let setTxt = (id, v) => { let e = document.getElementById(id); if (e) e.textContent = v; };
+        setTxt('mcHealthPct', `${overallAvg}%`);
+        setTxt('mcTotalEmps', totalEmps);
+        setTxt('mcExcCount', exc);
+        setTxt('mcAlertCount', alrt);
+
+        // سباق الفروع
+        let brEl = document.getElementById('mcBranchesRaceList');
+        if (brEl) {
+            brEl.innerHTML = branchStats.sort((a, b) => b.avg - a.avg).map(bs => `
+                <div style="cursor:pointer;" onclick="changeBranch('${bs.id}'); switchTab('eval');">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
+                        <span>🏢 ${bs.name} (${bs.count})</span>
+                        <span style="color:#38bdf8;">${bs.avg}%</span>
+                    </div>
+                    <div class="mc-progress-track"><div class="mc-progress-fill" style="width:${bs.avg}%;"></div></div>
+                </div>`).join('');
+        }
+
+        // منصة النجوم Top 3
+        allRanked.sort((a, b) => b.pct - a.pct);
+        let topEl = document.getElementById('mcTopStarsList');
+        if (topEl) {
+            let medals = ['🥇', '🥈', '🥉'];
+            topEl.innerHTML = allRanked.slice(0, 3).map((it, i) => `
+                <div onclick="openEmployeeAnalysis('${it.bId}', ${it.idx})" style="display:flex; justify-content:space-between; align-items:center; background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.2); padding:7px 10px; border-radius:10px; cursor:pointer;">
+                    <span style="font-size:12px; font-weight:700;">${medals[i]} ${it.name} <span style="font-size:10px; color:var(--text-muted);">(${it.branch})</span></span>
+                    <span class="badge b-green">${it.pct}%</span>
+                </div>`).join('') || '<div style="color:var(--text-muted); font-size:11px;">لا توجد بيانات بعد.</div>';
+        }
+
+        // رادار التدخل العاجل
+        let urgEl = document.getElementById('mcUrgentRadarList');
+        if (urgEl) {
+            urgEl.innerHTML = urgentList.slice(0, 4).map(u => `
+                <div onclick="openEmployeeAnalysis('${u.bId}', ${u.idx})" style="display:flex; justify-content:space-between; align-items:center; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); padding:6px 10px; border-radius:8px; cursor:pointer;">
+                    <span>🚨 <b>${u.name}</b> (${u.branch})</span>
+                    <span style="color:#fca5a5; font-weight:800;">${u.pct}%</span>
+                </div>`).join('') || '<div style="color:#34d399; font-weight:700; padding:10px 0;">🌟 لا توجد حالات حرجة — جميع المؤشرات آمنة!</div>';
+        }
+
+        // التوصية القيادية اليومية بمصادر عالمية
+        let worstIdx = 0, minT = 999999;
+        metricTotals.forEach((t, i) => { if (t < minT) { minT = t; worstIdx = i; } });
+        let focusM = metricNames[worstIdx] || 'الأداء والإنتاجية';
+        let insEl = document.getElementById('mcWorldInsightBox');
+        if (insEl) {
+            insEl.innerHTML = `بناءً على المسح اللحظي لـ <b>${totalEmps}</b> موظف، أكبر رافعة لقفز متوسط المؤسسة (<b>${overallAvg}%</b>) هذا الأسبوع هي التركيز على معيار <b style="color:#facc15;">«${focusM}»</b>.<br>
+            💡 <b>القرار المرشّح:</b> ابدأ يومك باجتماع 5 دقائق بنظام <b>Ritz-Carlton Line-Up</b> لتكريم المتصدرين، ثم طبّق قائمة فحص <b>Toyota Poka-Yoke</b> لمعالجة «${focusM}».<br>
+            <span class="world-source-tag">📚 المصادر: McKinsey OHI • The Ritz-Carlton • Toyota Production System • Gallup Q12</span>`;
+        }
+
+        // شبكة الإطلاق السريع (تحترم الصلاحيات 100%)
+        let qlEl = document.getElementById('mcQuickLaunchGrid');
+        if (qlEl) {
+            let tiles = [
+                { perm: 'eval', icon: '📊', label: 'شيت التقييم', fn: "switchTab('eval')" },
+                { perm: 'speedeval', icon: '⚡', label: 'تقييم بيد واحدة', fn: "openSpeedEvalModal()" },
+                { perm: 'heatmap', icon: '🔥', label: 'الخريطة الحرارية', fn: "switchTab('heatmap')" },
+                { perm: 'constellation', icon: '🌌', label: 'خريطة المجرة', fn: "switchTab('constellation')" },
+                { perm: 'timemachine', icon: '⏳', label: 'آلة الزمن', fn: "switchTab('timemachine')" },
+                { perm: 'simulator', icon: '🎛️', label: 'محاكي ماذا لو', fn: "switchTab('simulator')" },
+                { perm: 'burnout', icon: '🩺', label: 'رادار الاحتراق', fn: "switchTab('burnout')" },
+                { perm: 'warroom', icon: '📺', label: 'غرفة القيادة TV', fn: "openWarRoomMode()" }
+            ].filter(t => hasFeaturePermission(t.perm));
+            qlEl.innerHTML = tiles.map(t => `<button type="button" class="mc-launch-btn" onclick="${t.fn}"><span style="font-size:20px;">${t.icon}</span><span>${t.label}</span></button>`).join('');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        initCollapsibleSidebarSections();
     });
 
 </script>
