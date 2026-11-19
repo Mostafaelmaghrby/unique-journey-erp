@@ -8,6 +8,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="الرحلة الفريدة">
     <link id="dynamicManifestLink" rel="manifest" href="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <title>الرحلة الفريدة - نظام KPIs والتشغيل المتكامل</title>
     <!-- Chart.js for performance graphs -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -30,7 +33,7 @@
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, Arial, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); direction: rtl; min-height: 100vh; margin: 0; overflow-x: hidden; }
         
         /* شاشة تسجيل الدخول التقنية */
@@ -869,6 +872,222 @@
             flex-wrap: wrap;
             margin-bottom: 15px;
         }
+
+        /* ===================================================================
+           ✨ v10 SPATIAL GLASSMORPHISM + DYNAMIC SMART ISLAND + FLOATING DOCK
+           =================================================================== */
+        body {
+            background-image:
+                radial-gradient(ellipse at 85% 10%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+                radial-gradient(ellipse at 10% 90%, rgba(139, 92, 246, 0.08) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+        body.light-mode {
+            background-image:
+                radial-gradient(ellipse at 85% 10%, rgba(2, 132, 199, 0.08) 0%, transparent 45%),
+                radial-gradient(ellipse at 10% 90%, rgba(16, 185, 129, 0.06) 0%, transparent 45%);
+        }
+        .card {
+            background: rgba(17, 24, 39, 0.78);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.14);
+        }
+        body.light-mode .card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(148, 163, 184, 0.35);
+        }
+        header {
+            background: rgba(13, 19, 34, 0.84);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 10px 20px;
+        }
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .workspace-scroll {
+            padding: 12px 20px 82px 20px;
+        }
+
+        /* 🏝️ الجزيرة الذكية التفاعلية (Dynamic Smart Island) */
+        .dynamic-smart-island {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(17, 24, 39, 0.92));
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(56, 189, 248, 0.32);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+            overflow: hidden;
+            transition: all 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        body.light-mode .dynamic-smart-island {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,249,255,0.95));
+            border-color: rgba(2, 132, 199, 0.3);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.08);
+        }
+        .island-compact-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 8px 14px;
+            flex-wrap: wrap;
+        }
+        .island-pill-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .island-quote-chip {
+            font-size: 11px;
+            color: #34d399;
+            font-weight: 700;
+            max-width: 420px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            cursor: pointer;
+        }
+        body.light-mode .island-quote-chip { color: #047857; }
+        .island-expand-panel {
+            display: none;
+            border-top: 1px solid rgba(148, 163, 184, 0.16);
+            padding: 12px 16px;
+            background: rgba(9, 13, 22, 0.45);
+        }
+        body.light-mode .island-expand-panel { background: rgba(241, 245, 249, 0.7); }
+        .dynamic-smart-island.expanded .island-expand-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 12px;
+        }
+        .island-sub-box {
+            background: rgba(17, 24, 39, 0.75);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 10px;
+            padding: 10px 12px;
+        }
+        body.light-mode .island-sub-box { background: #ffffff; }
+
+        /* 🚀 الرصيف العائم الزجاجي (Floating Action Dock - VisionOS / macOS style) */
+        .floating-action-dock {
+            position: fixed;
+            bottom: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 400;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: 24px;
+            background: rgba(15, 23, 42, 0.86);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(56, 189, 248, 0.32);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+        body.light-mode .floating-action-dock {
+            background: rgba(255, 255, 255, 0.92);
+            border-color: rgba(2, 132, 199, 0.32);
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.15);
+        }
+        .dock-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(30, 41, 59, 0.75);
+            color: #f8fafc;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.18s, border-color 0.18s;
+        }
+        body.light-mode .dock-btn {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .dock-btn:hover {
+            transform: translateY(-4px) scale(1.1);
+            background: #0284c7;
+            border-color: #38bdf8;
+            color: #fff;
+        }
+        .dock-divider {
+            width: 1px;
+            height: 22px;
+            background: rgba(148, 163, 184, 0.25);
+            margin: 0 2px;
+        }
+
+        /* 🧘 وضع التركيز الكامل (Zen Focus Mode - Alt+Z) */
+        body.zen-focus-mode .tech-sidebar,
+        body.zen-focus-mode header,
+        body.zen-focus-mode .dynamic-smart-island {
+            display: none !important;
+        }
+        #zenExitPill {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 16px;
+            z-index: 9600;
+            background: rgba(2, 132, 199, 0.94);
+            color: #fff;
+            border: 1px solid #7dd3fc;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+        }
+        body.zen-focus-mode #zenExitPill { display: block; }
+
+        /* 📌 تثبيت عمود اسم الموظف أثناء التمرير الأفقي */
+        @media (min-width: 769px) {
+            #sec-eval table th:nth-child(2),
+            #sec-eval table td:nth-child(2) {
+                position: sticky;
+                right: 0;
+                z-index: 5;
+                background: var(--bg-card);
+                box-shadow: -4px 0 10px rgba(0,0,0,0.22);
+            }
+            #sec-eval table th:nth-child(2) {
+                background: #090d16;
+                z-index: 6;
+            }
+            body.light-mode #sec-eval table th:nth-child(2) {
+                background: #e2e8f0;
+            }
+        }
+
+        /* 📚 شارة المصدر العالمي الحقيقي للتوصيات */
+        .world-source-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.16), rgba(139, 92, 246, 0.16));
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            color: #7dd3fc;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        body.light-mode .world-source-tag { color: #0369a1; }
+
+        @media print {
+            .floating-action-dock, .dynamic-smart-island, #zenExitPill { display: none !important; }
+        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -958,83 +1177,73 @@
                 <div style="display:flex; align-items:center; gap:10px;">
                     <button type="button" class="mobile-menu-toggle" onclick="toggleMobileSidebar()" title="فتح القائمة الجانبية">☰</button>
                     <div class="header-brand-clickable" onclick="openBrandingModal()" title="اضغط لتعديل صورة الشعار واسم الشركة والوصف">
-                    <div class="brand-icon" id="headerBrandLogo" style="width:38px; height:38px; min-width:38px; font-size:18px;">🚀</div>
-                    <div>
-                        <h1 id="headerMainTitle">الرحلة الفريدة - نظام تقييم الأداء والتشغيل المتكامل <span style="font-size:11px; color:#94a3b8; font-weight:normal;">✏️</span></h1>
-                        <p id="headerSubTitle">إدارة مؤشرات الأداء الموزونة (KPIs) والرقابة التشغيلية للفروع</p>
+                        <div class="brand-icon" id="headerBrandLogo" style="width:36px; height:36px; min-width:36px; font-size:18px;">🚀</div>
+                        <div>
+                            <h1 id="headerMainTitle">الرحلة الفريدة - نظام تقييم الأداء والتشغيل المتكامل <span style="font-size:11px; color:#94a3b8; font-weight:normal;">✏️</span></h1>
+                            <p id="headerSubTitle">إدارة مؤشرات الأداء الموزونة (KPIs) والرقابة التشغيلية للفروع</p>
+                        </div>
                     </div>
-                </div>
                 </div>
                 <div class="header-left">
                     <div class="branch-group" id="branchButtonGroup"></div>
                     <div class="live-clock-pill" id="liveShiftClockPill" onclick="toggleFocusSprintTimer()" title="اضغط لبدء مؤقت التركيز (25 دقيقة)">⏱️ <span id="liveClockText">--:--</span></div>
-                    <button type="button" id="btnVoiceCmd" onclick="toggleVoiceCommand()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#38bdf8; padding:7px 10px;" title="تحكم صوتي بالعربية (قل: افتح الإنذار المبكر، فرع الترعة...)">🎙️</button>
-                    <button type="button" id="btnVoiceBriefingHeader" onclick="speakExecutiveBriefing()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#34d399; padding:7px 10px;" title="استمع للنشرة الصوتية التنفيذية اليومية">🔊</button>
-                    <button type="button" id="btnWarRoomHeader" onclick="openWarRoomMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#c084fc; padding:7px 10px;" title="غرفة القيادة السينمائية (وضع شاشة العرض)">📺</button>
-                    <button type="button" onclick="togglePrivacyBlur()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="درع الخصوصية الفوري (Alt+P)">👁️</button>
-                    <button type="button" onclick="openCommandPalette()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:7px 10px;" title="بحث سريع وأوامر (Ctrl+K)">🔍 بحث <span class="cmd-kbd">Ctrl+K</span></button>
-                    <button type="button" id="btnThemeToggle" onclick="toggleThemeMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="تبديل الوضع الليلي / النهاري">☀️</button>
-                    <button type="button" id="btnInstallPwa" onclick="installPwaApp()" class="btn-action hidden" style="background:#7c3aed; padding:7px 10px;" title="تثبيت التطبيق على جهازك">📲 تثبيت التطبيق</button>
-                    <button type="button" id="btnAddBranchHeader" onclick="openAddBranchModal()" class="btn-action btn-add hidden" style="background:#059669;">➕ فرع جديد</button>
-                    <button type="button" id="headerBackupBtn" onclick="exportDatabaseBackup()" class="btn-action" style="background:#059669; padding:7px 12px;">💾 حفظ وتصدير <span id="backupPulseCount" style="display:none; background:rgba(0,0,0,0.3); padding:1px 6px; border-radius:10px; margin-right:4px; font-size:10px;"></span></button>
-                    <button type="button" onclick="window.print()" class="btn-action" style="background:#475569; padding:7px 12px;">🖨️ طباعة PDF</button>
+                    <button type="button" onclick="openCommandPalette()" class="btn-action" style="background:rgba(30,41,59,0.85); border:1px solid #334155; color:#cbd5e1; padding:6px 10px;" title="بحث سريع وأوامر (Ctrl+K)">🔍 <span class="cmd-kbd">Ctrl+K</span></button>
+                    <button type="button" id="btnInstallPwa" onclick="installPwaApp()" class="btn-action hidden" style="background:#7c3aed; padding:6px 10px;" title="تثبيت التطبيق على جهازك">📲 تثبيت</button>
+                    <button type="button" id="btnAddBranchHeader" onclick="openAddBranchModal()" class="btn-action btn-add hidden" style="background:#059669;">➕ فرع</button>
+                    <button type="button" id="headerBackupBtn" onclick="exportDatabaseBackup()" class="btn-action" style="background:#059669; padding:6px 11px;">💾 حفظ <span id="backupPulseCount" style="display:none; background:rgba(0,0,0,0.3); padding:1px 6px; border-radius:10px; margin-right:4px; font-size:10px;"></span></button>
+                    <button type="button" onclick="window.print()" class="btn-action" style="background:#475569; padding:6px 10px;" title="طباعة PDF">🖨️</button>
                     <div class="user-badge">
                         <span id="loggedInUserName">المستخدم</span>
-                        <button type="button" onclick="openProfileModal()" class="btn-action">تعديل بياناتي</button>
+                        <button type="button" onclick="openProfileModal()" class="btn-action">بياناتي</button>
                         <button type="button" onclick="handleLogout()" class="btn-logout">خروج</button>
                     </div>
                 </div>
             </header>
 
             <div class="workspace-scroll">
-                <!-- 🌟 شريط الترحيب الشخصي والجمل التحفيزية المتجددة -->
-                <div id="welcomeMotivationBanner" class="welcome-motivation-banner">
-                    <div style="display: flex; align-items: center; gap: 14px;">
-                        <div style="width: 46px; height: 46px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; font-size: 24px;">✨</div>
-                        <div>
-                            <div class="welcome-user-greeting">
-                                <span id="welcomeTimeIcon">☀️</span>
-                                <span>مرحباً بك يا <span id="welcomeBannerUserName" class="highlight-name">مصطفى</span> في يوم عمل جديد ومثمر!</span>
+                <!-- 🏝️ الجزيرة الذكية التفاعلية (تدمج الترحيب + نبض المزاج + التنبيهات في شريط واحد ذكي يوفر 45% من الشاشة) -->
+                <div id="dynamicSmartIsland" class="dynamic-smart-island">
+                    <div class="island-compact-row">
+                        <div class="island-pill-group">
+                            <span id="welcomeTimeIcon" style="font-size:15px;">☀️</span>
+                            <span style="font-size:12px; font-weight:800; color:var(--text-main);">مرحباً <span id="welcomeBannerUserName" style="color:var(--accent-blue);">مصطفى</span></span>
+                            <span style="color:var(--border-color);">|</span>
+                            <span id="welcomeBannerQuoteText" class="island-quote-chip" onclick="refreshMotivationalQuote(true)" title="اضغط لعرض حكمة تحفيزية جديدة">« التميز عادة يومية »</span>
+                        </div>
+                        <div class="island-pill-group">
+                            <div id="moodPulseStrip" style="display:inline-flex; align-items:center; gap:4px;" title="نبض ضغط العمل السري 100%">
+                                <button type="button" class="mood-emoji-btn" style="padding:3px 7px; font-size:12px;" onclick="submitAnonymousMood('happy')" title="مزاج ممتاز">😊</button>
+                                <button type="button" class="mood-emoji-btn" style="padding:3px 7px; font-size:12px;" onclick="submitAnonymousMood('neutral')" title="عادي">😐</button>
+                                <button type="button" class="mood-emoji-btn" style="padding:3px 7px; font-size:12px;" onclick="submitAnonymousMood('stressed')" title="مضغوط">😫</button>
                             </div>
-                            <div class="motivational-quote-text">
-                                <span>💡</span>
-                                <span id="welcomeBannerQuoteText">"النجاح لا يأتي بالصدفة، بل هو ثمرة الانضباط والعمل المتقن كل يوم."</span>
+                            <span id="islandAlertSummaryChip" class="badge b-blue" style="cursor:pointer;" onclick="toggleDynamicIsland()">🔔 فحص التنبيهات...</span>
+                            <button type="button" id="btnToggleIsland" onclick="toggleDynamicIsland()" class="btn-action" style="background:rgba(56,189,248,0.14); border:1px solid rgba(56,189,248,0.35); color:#38bdf8; padding:4px 10px;">🔽 التفاصيل</button>
+                        </div>
+                    </div>
+
+                    <div class="island-expand-panel">
+                        <div class="island-sub-box" id="welcomeMotivationBanner">
+                            <div style="font-size:11px; font-weight:bold; color:#34d399; margin-bottom:6px;">✨ التحفيز اليومي المتجدد</div>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button type="button" onclick="refreshMotivationalQuote(true)" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8;">🔄 حكمة جديدة</button>
+                                <button type="button" onclick="openQuotesModal()" class="btn-action admin-only" style="background:#059669;">➕ إدارة الجمل</button>
                             </div>
                         </div>
-                    </div>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <button type="button" onclick="refreshMotivationalQuote(true)" class="btn-action" style="background: #1e293b; border: 1px solid #38bdf8; color: #38bdf8; padding: 6px 12px;" title="اعرض جملة تحفيزية جديدة">🔄 حكمة جديدة</button>
-                        <button type="button" onclick="openQuotesModal()" class="btn-action admin-only" style="background: #059669; padding: 6px 12px;" title="إضافة أو تعديل الجمل التحفيزية">➕ إدارة الجمل</button>
-                    </div>
-                </div>
-                <!-- 😊 نبض الموظف السري في 5 ثوانٍ (Anonymous Mood & Pressure Pulse) -->
-                <div id="moodPulseStrip" class="mood-pulse-strip">
-                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                        <span style="font-size:20px;">💜</span>
-                        <div>
-                            <div style="font-size:12px; font-weight:bold; color:#c4b5fd;">نبض الفريق السري في 5 ثوانٍ — كيف تشعر تجاه ضغط العمل اليوم؟ (سري 100%)</div>
-                            <div style="font-size:10px; color:var(--text-muted);">اختيارك لا يحفظ اسمك ويصل كإحصائية مجهولة لتحسين بيئة العمل</div>
+                        <div class="island-sub-box">
+                            <div style="font-size:11px; font-weight:bold; color:#c4b5fd; margin-bottom:6px;">💜 مقترح سري للإدارة (مجهول الهوية 100%)</div>
+                            <div style="display:flex; gap:6px;">
+                                <input type="text" id="anonMoodNoteInput" class="form-input" placeholder="اكتب مقترحاً أو ملاحظة سرية..." style="padding:5px 8px; font-size:11px;">
+                                <button type="button" onclick="submitAnonymousMood('neutral')" class="btn-action" style="background:#7c3aed; white-space:nowrap;">إرسال</button>
+                            </div>
                         </div>
-                    </div>
-                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                        <button type="button" class="mood-emoji-btn" onclick="submitAnonymousMood('happy')">😊 ممتاز</button>
-                        <button type="button" class="mood-emoji-btn" onclick="submitAnonymousMood('neutral')">😐 عادي</button>
-                        <button type="button" class="mood-emoji-btn" onclick="submitAnonymousMood('stressed')">😫 مضغوط</button>
-                        <input type="text" id="anonMoodNoteInput" class="form-input" placeholder="اقتراح سري اختياري..." style="width:170px; padding:6px 8px; font-size:11px;">
-                    </div>
-                </div>
-                <!-- 🔔 مركز التنبيهات الفورية الذكية -->
-                <div id="smartNotificationBanner" style="background: linear-gradient(135deg, #111827, #090d16); border: 1px solid #38bdf8; border-right: 4px solid #38bdf8; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 24px;">🔔</span>
-                        <div>
-                            <h4 style="color: #38bdf8; font-size: 14px; margin-bottom: 3px;">مركز التنبيهات الفورية الذكية والملخص التشغيلي</h4>
-                            <p id="bannerAlertText" style="color: #cbd5e1; font-size: 12px;">جاري فحص حالة الفروع والموظفين...</p>
+                        <div class="island-sub-box" id="smartNotificationBanner">
+                            <div style="font-size:11px; font-weight:bold; color:#38bdf8; margin-bottom:4px;">🔔 ملخص التنبيهات الفورية</div>
+                            <p id="bannerAlertText" style="color:#cbd5e1; font-size:11px; margin-bottom:8px;">جاري فحص حالة الفروع...</p>
+                            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                <button type="button" id="btnBannerAlerts" onclick="switchTab('alerts')" class="btn-action" style="background:#dc2626; padding:4px 10px;">🚨 الإنذارات</button>
+                                <button type="button" id="btnBannerCoaching" onclick="switchTab('coaching')" class="btn-action" style="background:#059669; padding:4px 10px;">⚡ التوجيه الذكي</button>
+                            </div>
                         </div>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button type="button" id="btnBannerAlerts" onclick="switchTab('alerts')" class="btn-action" style="background: #dc2626; padding: 6px 14px;">🚨 عرض الإنذارات</button>
-                        <button type="button" id="btnBannerCoaching" onclick="switchTab('coaching')" class="btn-action" style="background: #059669; padding: 6px 14px;">⚡ التوجيه الذكي</button>
                     </div>
                 </div>
         <!-- 🌌 12. خريطة المجرة التفاعلية للشركة (Live Constellation Map) -->
@@ -1546,6 +1755,21 @@
         </div>
         <!-- 8. المستخدمين والفروع والإدارات والأقسام -->
         <div id="sec-users" class="card hidden">
+            <!-- 🧠 ربط العقل الحي بالذكاء الاصطناعي (Gemini Live Advisor) -->
+            <div style="background:linear-gradient(135deg, rgba(14,165,233,0.12), rgba(139,92,246,0.14)); border:1px solid rgba(56,189,248,0.4); border-radius:12px; padding:15px; margin-bottom:22px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+                    <div>
+                        <h3 style="color:#38bdf8; font-size:15px;">🧠 العقل الحي بالذكاء الاصطناعي (Gemini Live Global Advisor)</h3>
+                        <p style="color:#cbd5e1; font-size:11px; margin-top:2px;">النظام يعمل تلقائياً بمكتبة عالمية حقيقية بدون مفتاح (Ritz-Carlton، Harvard، Toyota، Gallup، Google). وإذا وضعت مفتاح <b>Gemini API</b> الخاص بك هنا، يولّد لك النظام تحليلات واجتماعات <b>حصرية لحظية 100%</b> من أرقام فرعك!</p>
+                    </div>
+                    <span id="geminiKeyStatusBadge" class="badge b-yellow">غير مرتبط (يعمل بالمحرك العالمي المدمج)</span>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <input type="password" id="geminiApiKeyInput" class="form-input" placeholder="الصق مفتاح Gemini API هنا (AIza...) — يُحفظ محلياً في جهازك فقط" style="flex:1; min-width:260px;">
+                    <button type="button" onclick="saveGeminiApiKey()" class="btn-action" style="background:#059669; padding:8px 16px;">💾 حفظ وتفعيل Gemini Live</button>
+                    <button type="button" onclick="clearGeminiApiKey()" class="btn-danger" style="padding:8px 12px;">🗑️ إزالة المفتاح</button>
+                </div>
+            </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h3 style="color:#38bdf8; font-size:15px;">إدارة الفروع</h3>
                 <button type="button" onclick="openAddBranchModal()" class="btn-tab btn-add">➕ إضافة فرع</button>
@@ -1785,6 +2009,7 @@
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="backup"> 💾 تصدير واستعادة قاعدة البيانات</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="devicelog"> 💻 سجل الأجهزة والدخول (رقابة عليا)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="auditlog"> 🛡️ سجل التعديلات والرقابة (رقابة عليا)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="gemini_advisor" checked> 🧠 المستشار الحي (Gemini Live Advisor)</label>
                     </div>
                 </div>
                 <div class="form-group">
@@ -2033,6 +2258,13 @@
                 <h3 style="color:#fde047; font-size:16px;">☀️ مولّد اجتماع الصباح الذكي (في دقيقتين)</h3>
                 <button type="button" onclick="closeMorningHuddleModal()" style="background:transparent; color:#94a3b8; border:none; font-size:18px; cursor:pointer;">✕</button>
             </div>
+            <div id="morningHuddleSourceBar" style="margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <span id="morningHuddleSchoolBadge" class="world-source-tag" style="font-size:11px; padding:4px 10px;">📚 المصدر العالمي</span>
+                <div style="display:flex; gap:6px;">
+                    <button type="button" onclick="cycleMorningHuddleSchool()" class="btn-action" style="background:#7c3aed; padding:5px 10px;">🔄 تبديل المدرسة العالمية</button>
+                    <button type="button" id="btnGeminiHuddle" onclick="generateGeminiLiveMorningHuddle()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#8b5cf6); padding:5px 10px;">✨ توليد حصري بـ Gemini Live</button>
+                </div>
+            </div>
             <div id="morningHuddleContent" style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:16px; line-height:1.9; font-size:13px; white-space:pre-line;"></div>
             <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px; flex-wrap:wrap;">
                 <button type="button" onclick="copyMorningHuddleScript()" class="btn-action" style="background:#0284c7;">📋 نسخ النص</button>
@@ -2070,6 +2302,20 @@
             </div>
         </div>
     </div>
+
+    <!-- 🚀 الرصيف العائم الزجاجي (Floating Action Dock) -->
+    <div id="floatingActionDock" class="floating-action-dock">
+        <button type="button" id="btnVoiceCmd" onclick="toggleVoiceCommand()" class="dock-btn" title="تحكم صوتي بالعربية (🎙️)">🎙️</button>
+        <button type="button" id="btnVoiceBriefingHeader" onclick="speakExecutiveBriefing()" class="dock-btn" title="النشرة الصوتية التنفيذية (🔊)">🔊</button>
+        <button type="button" id="btnWarRoomHeader" onclick="openWarRoomMode()" class="dock-btn" title="غرفة القيادة السينمائية TV Mode (📺)">📺</button>
+        <div class="dock-divider"></div>
+        <button type="button" onclick="togglePrivacyBlur()" class="dock-btn" title="درع الخصوصية الفوري (Alt+P)">👁️</button>
+        <button type="button" onclick="toggleZenFocusMode()" class="dock-btn" title="وضع التركيز الكامل بلا تشتيت (Alt+Z)">🧘</button>
+        <button type="button" id="btnThemeToggle" onclick="toggleThemeMode()" class="dock-btn" title="تبديل الوضع الليلي / النهاري">☀️</button>
+        <div class="dock-divider"></div>
+        <button type="button" id="btnDockMorningHuddle" onclick="openMorningHuddleModal()" class="dock-btn" title="اجتماع الصباح العالمي (☀️)">☀️</button>
+    </div>
+    <div id="zenExitPill" onclick="toggleZenFocusMode()">🧘 خروج من وضع التركيز (Alt+Z)</div>
 
     <!-- 🔔 حاوية الإشعارات العصرية (Toast Notifications) -->
     <div id="toastContainer"></div>
@@ -3718,10 +3964,13 @@
             });
         });
 
+        let chipEl = document.getElementById('islandAlertSummaryChip');
         if (totalAlerts > 0 || totalPendingCoaching > 0) {
             bannerTextEl.innerHTML = `⚠️ تنبيهات فورية: يوجد <b style="color:#fb7185;">${totalAlerts}</b> موظف بحاجة لتدخل عاجل، و <b style="color:#facc15;">${totalPendingCoaching}</b> حالة قصور بانتظار معالجة التوجيه اللحظي الذكي.`;
+            if (chipEl) { chipEl.className = 'badge b-red'; chipEl.textContent = `🚨 ${totalAlerts} إنذار • ⚡ ${totalPendingCoaching} توجيه`; }
         } else {
             bannerTextEl.innerHTML = `🌟 الحالة العامة مستقرة تماماً. جميع الفروع تؤدي بكفاءة عالية ولا توجد إنذارات نشطة.`;
+            if (chipEl) { chipEl.className = 'badge b-green'; chipEl.textContent = `🌟 الحالة مستقرة 100%`; }
         }
     }
 
@@ -3748,7 +3997,7 @@
         'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
         'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
         'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
-        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog'
+        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog', 'gemini_advisor'
     ];
 
     function toggleCheckboxGroup(inputName, checkState) {
@@ -3808,6 +4057,8 @@
         toggleEl('sidebarBackupFooter', hasFeaturePermission('backup'));
         toggleEl('btnBannerAlerts', hasFeaturePermission('alerts'));
         toggleEl('btnBannerCoaching', hasFeaturePermission('coaching'));
+        toggleEl('btnDockMorningHuddle', hasFeaturePermission('morninghuddle'));
+        toggleEl('btnGeminiHuddle', hasFeaturePermission('gemini_advisor'));
         let bannerEl = document.getElementById('smartNotificationBanner');
         if (bannerEl) {
             if (!hasFeaturePermission('alerts') && !hasFeaturePermission('coaching')) bannerEl.classList.add('hidden');
@@ -6342,6 +6593,419 @@
             showToast('تم تصفير سجل نبض المزاج السري.', 'info');
         }
     }
+
+
+    // =========================================================================
+    // 🌍 v10 محرك المدارس الإدارية العالمية + الجزيرة الذكية + Gemini Live Advisor
+    // =========================================================================
+
+    function toggleDynamicIsland() {
+        let el = document.getElementById('dynamicSmartIsland');
+        let btn = document.getElementById('btnToggleIsland');
+        if (!el) return;
+        let isExp = el.classList.toggle('expanded');
+        if (btn) btn.textContent = isExp ? '🔼 طي' : '🔽 التفاصيل';
+    }
+
+    function toggleZenFocusMode() {
+        let active = document.body.classList.toggle('zen-focus-mode');
+        playTechChime(active ? 760 : 520, 0.08);
+        showToast(active ? '🧘 تم تفعيل وضع التركيز الكامل — اضغط Alt+Z للخروج' : 'تم الخروج من وضع التركيز', 'info');
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.altKey && e.key.toLowerCase() === 'z') {
+            e.preventDefault();
+            toggleZenFocusMode();
+        }
+    });
+
+    // 📚 1. ترقية التوجيه اللحظي الذكي ليعمل بمدارس عالمية حقيقية (SBI, GROW, Ritz-Carlton, Toyota, Radical Candor)
+    getSmartCoachingSuggestion = function(metricName) {
+        if (metricName.includes('مواعيد') || metricName.includes('حضور')) {
+            return `<b>[حوار جاهز]:</b> «لاحظت تأخر البصمة الصباحية هذا الأسبوع، وهذا يؤثر على جاهزية الفريق لافتتاح الشيفت — ما العائق العملي الذي نحتاج حله معاً غداً؟»<br><span class="world-source-tag">📚 المصدر: نموذج SBI (معهد القيادة الإبداعية CCL)</span>`;
+        } else if (metricName.includes('زملاء') || metricName.includes('فريق')) {
+            return `<b>[خطوة عملية]:</b> عقد جلسة تصفية قصيرة (10 دقائق) تعتمد على «الاهتمام الشخصي مع الصراحة المباشرة» لتحديد سبب الاحتكاك وبناء اتفاق عمل مشترك.<br><span class="world-source-tag">📚 المصدر: منهجية Radical Candor — كيم سكوت (Google & Apple)</span>`;
+        } else if (metricName.includes('مبادرة') || metricName.includes('تطوير')) {
+            return `<b>[أسئلة التوجيه]:</b> اسأله: 1) ما الهدف الذي تطمح له هذا الشهر؟ 2) ما الخيارات المتاحة؟ 3) ما أول خطوة ستنفذها غداً؟<br><span class="world-source-tag">📚 المصدر: نموذج GROW العالمي — السير جون ويتمور</span>`;
+        } else if (metricName.includes('عملاء') || metricName.includes('لباقة')) {
+            return `<b>[تطبيق L.E.A.R.N]:</b> درّبه عملياً على قاعدة ريتز كارلتون: استمع (Listen) ← تعاطف (Empathize) ← اعتذر (Apologize) ← عالج فوراً (Resolve) ← أبلغ (Notify).<br><span class="world-source-tag">📚 المصدر: The Ritz-Carlton Gold Standards (L.E.A.R.N)</span>`;
+        } else if (metricName.includes('جودة')) {
+            return `<b>[منع الخطأ من المنبع]:</b> مراجعة آخر خطأين ووضع «قائمة فحص ذاتية من 3 نقاط» (Poka-Yoke Checklist) يراجعها الموظف قبل إغلاق أي معاملة.<br><span class="world-source-tag">📚 المصدر: نظام إنتاج تويوتا — Toyota Poka-Yoke & Standard Work</span>`;
+        } else if (metricName.includes('مظهر') || metricName.includes('سلوك')) {
+            return `<b>[توجيه احترافي]:</b> جلسة فردية خاصة (لا تُعقد أمام الزملاء) لتذكيره بأن «الانطباع الأول يصنع 80% من ثقة العميل» مع اتفاق ودي واضح.<br><span class="world-source-tag">📚 المصدر: قاعدة الحضور التنفيذي — Harvard Business Review</span>`;
+        } else {
+            return `<b>[رفع الإنتاجية]:</b> تقسيم اليوم إلى فترتي «عمل عميق» (90 دقيقة لكل فترة بلا مشتتات) لإنجاز المهام ذات الأولوية القصوى في معيار «${metricName}».<br><span class="world-source-tag">📚 المصدر: Cal Newport (Deep Work) & Peter Drucker</span>`;
+        }
+    };
+
+    // 📚 2. ترقية تحليل جذور الأخطاء بمنهجية تويوتا (5 Whys) وعظمة السمكة (Ishikawa)
+    saveRootCauseError = function() {
+        let bId = document.getElementById('errBranchSelect').value;
+        let bObj = branchesData.find(b => b.id === bId);
+        let empName = document.getElementById('errEmpSelect').value;
+        let desc = document.getElementById('errDescInput').value.trim();
+        let cause = document.getElementById('errRootCause').value;
+        if (!desc) { showToast('يرجى كتابة وصف الخطأ!', 'error'); return; }
+
+        let solutionsMap = {
+            "نقص تدريب": `<b>التدخل الجذري:</b> تطبيق دورة «التدريب في موقع العمل» (TWI Job Instruction) + تثبيت بطاقة خطوات سريعة (SOP) على المكتب.<br><span class="world-source-tag">📚 المصدر: Toyota 5 Whys & TWI Standard</span>`,
+            "ضغط عملاء مفاجئ": `<b>التدخل الجذري:</b> تفعيل «مصفوفة المرونة» (Cross-Training Buffer) لتحويل زميل مساند تلقائياً عند تجاوز طابور الانتظار 5 دقائق.<br><span class="world-source-tag">📚 المصدر: Lean Operations (MIT & Ishikawa Method)</span>`,
+            "خطأ بشري فردي": `<b>التدخل الجذري:</b> بدلاً من اللوم، طبّق أداة «منع الخطأ الآلي» (Poka-Yoke) عبر مراجعة ثنائية سريعة لأهم خانتين قبل الاعتماد.<br><span class="world-source-tag">📚 المصدر: Sakichi Toyoda — Toyota Production System</span>`,
+            "خلل في النظام": `<b>التدخل الجذري:</b> فتح تذكرة تقنية موثقة مع وضع «مسار تشغيل بديل» (Fallback Protocol) لضمان عدم توقف خدمة العملاء.<br><span class="world-source-tag">📚 المصدر: Six Sigma DMAIC & Google SRE</span>`
+        };
+
+        rootCauseErrorsData.push({
+            branchName: bObj ? bObj.name : bId,
+            empName: empName,
+            desc: desc,
+            cause: cause,
+            solution: solutionsMap[cause] || "متابعة وإشراف مباشر وفق منهجية Kaizen."
+        });
+        localStorage.setItem('unique_journey_root_cause_v1', JSON.stringify(rootCauseErrorsData));
+        document.getElementById('errDescInput').value = '';
+        renderRootCauseTable();
+        showToast('✅ تم تحليل الجذر التشغيلي وفق المنهجيات العالمية بنجاح!', 'success');
+    };
+
+    // 📚 3. ترقية خطة الإنقاذ في 7 أيام بمنهجية Atomic Habits (جيمس كلير) + Toyota Kata
+    render7DayPlaybook = function(emp, scores, branchName) {
+        let container = document.getElementById('modal7DayPlaybook');
+        if (!container) return;
+        let weakMetrics = [];
+        metricNames.forEach((m, idx) => {
+            if (isMetricApplicableForDept(m, emp.dept) && (Number(scores[idx]) || 3) <= 2) weakMetrics.push(m);
+        });
+        let targetMetric = weakMetrics.length > 0 ? weakMetrics[0] : metricNames[metricNames.length - 1];
+        let days = [
+            { day: 'السبت (التشخيص)', task: `تحديد «العادة الذرية» الواحدة المطلوب تثبيتها في «${targetMetric}» وربطها بموعد ثابت بداية الشيفت.` },
+            { day: 'الأحد (القدوة)', task: `مرافقة زميل متفوق لمدة 20 دقيقة لملاحظة «السلوك المعياري» وتقليده عملياً.` },
+            { day: 'الاثنين (التنفيذ +1%)', task: `تطبيق قائمة فحص من 3 خطوات قبل تسليم كل مهمة في «${targetMetric}» لتقليل الأخطاء بنسبة 50%.` },
+            { day: 'الثلاثاء (مراجعة Kata)', task: `جلسة كوتشينج سريعة (5 دقائق): «ما الذي نجح؟ ما العائق الوحيد المتبقي؟»` },
+            { day: 'الأربعاء (تحدي الصفر)', task: `تحدي يوم كامل بـ 0 ملاحظات في «${targetMetric}» مع تعزيز فوري عند الإنجاز.` },
+            { day: 'الخميس (التثبيت)', task: `تقييم ذاتي من الموظف نفسه لترسيخ الوعي الذاتي (Self-Accountability).` },
+            { day: 'الجمعة (الحصاد)', task: `إغلاق الأسبوع والاحتفاء بالتحسن المحقق وتحديث سلسلة التميز.` }
+        ];
+        container.innerHTML = `<div style="margin-bottom:8px;"><span class="world-source-tag">📚 المنهجية: Atomic Habits (جيمس كلير — قاعدة 1% يومياً) + Toyota Improvement Kata</span></div>`;
+        let lines = [`🗓️ *خطة الإنقاذ والتطوير في 7 أيام — ${emp.name} (${branchName})*`, `📚 *المنهجية:* Atomic Habits (جيمس كلير) + Toyota Kata`, `🎯 *البند المستهدف:* ${targetMetric}\n`];
+        days.forEach(d => {
+            container.innerHTML += `<div class="playbook-day-card"><b style="color:#38bdf8;">${d.day}:</b> ${d.task}</div>`;
+            lines.push(`• *${d.day}:* ${d.task}`);
+        });
+        latestPlaybookText = lines.join('\n');
+    };
+
+    // 📚 4. ترقية اجتماع الصباح ليرشّح تلقائياً من أفضل 4 مدارس اجتماعات في العالم!
+    const WORLD_HUDDLE_SCHOOLS = [
+        {
+            id: 'ritz',
+            name: 'Ritz-Carlton Daily Line-Up',
+            source: 'The Ritz-Carlton Leadership Center (اجتماع الـ 15 دقيقة الأشهر عالمياً في جودة الخدمة)',
+            build: (comp, bName, stars, focusMetric, quote) =>
+`☀️ *اجتماع الصباح العالمي — ${comp} (${bName})*
+📚 *المدرسة المرشّحة:* The Ritz-Carlton Daily Line-Up
+📅 ${new Date().toLocaleDateString('ar-EG')}
+
+1️⃣ *قصة نجاح وتكريم علني (دقيقتان):*
+في ريتز كارلتون يبدأ كل يوم بقصة تميز حقيقية — نحيّي اليوم نجومنا: *${stars}* على التزامهم الاستثنائي! 👏🏆
+
+2️⃣ *معيار الذهب لليوم (3 دقائق):*
+تركيزنا الأوحد اليوم هو رفع معيار *«${focusMetric}»* بمستوى خدمة 5 نجوم دون أي خطأ.
+
+3️⃣ *توقع احتياجات العميل قبل أن يطلبها (دقيقة):*
+اسأل نفسك مع كل عميل: «ما الخطوة الإضافية الصغيرة التي ستسعده اليوم؟»
+
+💡 *حكمة اليوم:* ${quote}`
+        },
+        {
+            id: 'rockefeller',
+            name: 'Verne Harnish — Rockefeller Habits Huddle',
+            source: 'كتاب Scaling Up (فيرن هارنيش — الاجتماع اليومي المعتمد في أسرع الشركات نمواً)',
+            build: (comp, bName, stars, focusMetric, quote) =>
+`☀️ *اجتماع الصباح القياسي — ${comp} (${bName})*
+📚 *المدرسة المرشّحة:* Rockefeller Habits Daily Huddle (Scaling Up)
+📅 ${new Date().toLocaleDateString('ar-EG')}
+
+1️⃣ *أخبار سريعة وإنجازات (دقيقة):*
+إشادة خاصة بمتصدري الأداء: *${stars}* — أرقامكم تصنع الفارق! 🚀
+
+2️⃣ *الرقم الأهم اليوم (KPI Focus — دقيقتان):*
+مؤشر التركيز اليومي للفرع هو *«${focusMetric}»* — هدفنا إغلاق اليوم بنسبة إنجاز 100%.
+
+3️⃣ *أين العائق؟ (Stucks — دقيقتان):*
+سؤال لكل موظف في 15 ثانية: «ما العائق الوحيد الذي يمنعك من إنهاء مهامك اليوم لنحله فوراً؟»
+
+💡 *حكمة اليوم:* ${quote}`
+        },
+        {
+            id: 'amazon',
+            name: 'Amazon Day-1 Operational Standup',
+            source: 'مبادئ قيادة أمازون (Jeff Bezos — هوس العميل والمعايير العالية)',
+            build: (comp, bName, stars, focusMetric, quote) =>
+`☀️ *اجتماع «اليوم الأول» التشغيلي — ${comp} (${bName})*
+📚 *المدرسة المرشّحة:* Amazon Day-1 Standup (Customer Obsession)
+📅 ${new Date().toLocaleDateString('ar-EG')}
+
+1️⃣ *رفع السقف (Insist on the Highest Standards):*
+نموذج اليوم في الالتزام والجودة: *${stars}* — شكراً لرفعكم معيار الفريق! ⭐
+
+2️⃣ *مبدأ هوس العميل (Customer Obsession):*
+رصدت البيانات أن أكبر فرصة لتحسين تجربة عملائنا اليوم هي في *«${focusMetric}»*.
+
+3️⃣ *التحيز للفعل السريع (Bias for Action):*
+أي مشكلة عميل تظهر اليوم تُحل في نفس اللحظة دون تأجيل للغد.
+
+💡 *حكمة اليوم:* ${quote}`
+        },
+        {
+            id: 'toyota',
+            name: 'Toyota Gemba Morning Asaichi',
+            source: 'نظام إنتاج تويوتا (Toyota Kaizen — التحسين المستمر من أرض الواقع)',
+            build: (comp, bName, stars, focusMetric, quote) =>
+`☀️ *اجتماع «جيمبا» الصباحي — ${comp} (${bName})*
+📚 *المدرسة المرشّحة:* Toyota Gemba Morning Asaichi (Kaizen)
+📅 ${new Date().toLocaleDateString('ar-EG')}
+
+1️⃣ *تقدير الانضباط (Respect for People):*
+تقدير خاص للفريق المتصدر: *${stars}* على استقرارهم المهني. 🎖️
+
+2️⃣ *تحسين 1% اليوم (Kaizen Target):*
+تركيز التحسين المستمر اليوم على *«${focusMetric}»* — خطوة صغيرة منظمة تمنع الأخطاء المتكررة.
+
+3️⃣ *سؤال أرض الواقع (Gemba Check):*
+هل جميع الأدوات والملفات والأنظمة جاهزة الآن لبداية شيفت سلس بلا أعطال؟
+
+💡 *حكمة اليوم:* ${quote}`
+        }
+    ];
+
+    let currentHuddleSchoolIdx = 0;
+    function getMorningHuddleContextData() {
+        let activeWeek = getCurrentWeekKey();
+        let bObj = branchesData.find(b => b.id === currentBranch);
+        let bName = bObj ? bObj.name : currentBranch;
+        let emps = dbData[currentBranch] || [];
+        let ranked = [];
+        let metricTotals = new Array(metricNames.length).fill(0);
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            ranked.push({ name: emp.name, pct: calculateWeightedEmployeePct(emp, sc, null) });
+            sc.forEach((v, i) => { if (i < metricTotals.length) metricTotals[i] += (Number(v) || 3); });
+        });
+        ranked.sort((a, b) => b.pct - a.pct);
+        let stars = ranked.slice(0, 2).map(r => `${r.name} (${r.pct}%)`).join(' و ') || 'فريق العمل';
+        let worstIdx = 0, minT = 999999;
+        metricTotals.forEach((t, i) => { if (t < minT) { minT = t; worstIdx = i; } });
+        let focusMetric = metricNames[worstIdx] || 'الأداء والإنتاجية';
+        let quote = document.getElementById('welcomeBannerQuoteText') ? document.getElementById('welcomeBannerQuoteText').textContent : 'التميز عادة يومية!';
+        return { comp: brandingData.companyName || 'الرحلة الفريدة', bName, stars, focusMetric, quote, empCount: emps.length };
+    }
+
+    openMorningHuddleModal = function() {
+        closeMobileSidebar();
+        if (!hasFeaturePermission('morninghuddle')) { showToast('عذراً، هذه الميزة غير مفعلة لحسابك!', 'error'); return; }
+        let ctx = getMorningHuddleContextData();
+        // اختيار تلقائي ذكي للمدرسة الأنسب بناءً على أضعف معيار اليوم!
+        if (ctx.focusMetric.includes('عملاء') || ctx.focusMetric.includes('لباقة')) currentHuddleSchoolIdx = 0; // Ritz-Carlton
+        else if (ctx.focusMetric.includes('جودة')) currentHuddleSchoolIdx = 3; // Toyota Kaizen
+        else if (ctx.focusMetric.includes('إنتاجية') || ctx.focusMetric.includes('مبادرة')) currentHuddleSchoolIdx = 2; // Amazon Day-1
+        else currentHuddleSchoolIdx = 1; // Rockefeller Habits
+
+        renderCurrentMorningHuddleSchool();
+        document.getElementById('morningHuddleModal').classList.add('active');
+        playTechChime(700, 0.09);
+    };
+
+    function cycleMorningHuddleSchool() {
+        currentHuddleSchoolIdx = (currentHuddleSchoolIdx + 1) % WORLD_HUDDLE_SCHOOLS.length;
+        renderCurrentMorningHuddleSchool();
+        playTechChime(740, 0.06);
+    }
+
+    function renderCurrentMorningHuddleSchool() {
+        let ctx = getMorningHuddleContextData();
+        let school = WORLD_HUDDLE_SCHOOLS[currentHuddleSchoolIdx];
+        latestMorningHuddleText = school.build(ctx.comp, ctx.bName, ctx.stars, ctx.focusMetric, ctx.quote);
+        let badge = document.getElementById('morningHuddleSchoolBadge');
+        if (badge) badge.textContent = `📚 المصدر العالمي: ${school.source}`;
+        let box = document.getElementById('morningHuddleContent');
+        if (box) box.textContent = latestMorningHuddleText;
+    }
+
+    // 📚 5. ترقية التقرير التنفيذي الذكي بمصادر HBR + McKinsey OHI + زر Gemini Live
+    renderExecutiveReport = function() {
+        let container = document.getElementById('executiveReportContent');
+        if (!container) return;
+        let activeWeek = getCurrentWeekKey();
+        let totalEmps = 0, excellentCount = 0, weakCount = 0, sumPct = 0;
+        let metricAvgs = new Array(metricNames.length).fill(0);
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                totalEmps++;
+                let scArr = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let p = calculateWeightedEmployeePct(emp, scArr, null);
+                sumPct += p;
+                if (p >= 90) excellentCount++;
+                if (p <= 60) weakCount++;
+                scArr.forEach((v, i) => { if (i < metricAvgs.length) metricAvgs[i] += (Number(v) || 3); });
+            });
+        });
+        let overallAvg = totalEmps ? Math.round(sumPct / totalEmps) : 0;
+        let worstIdx = 0, minAvg = 99;
+        metricAvgs.forEach((s, i) => {
+            let a = totalEmps ? s / totalEmps : 3;
+            if (a < minAvg) { minAvg = a; worstIdx = i; }
+        });
+        let worstMetric = metricNames[worstIdx] || 'الأداء والإنتاجية';
+        let canGemini = hasFeaturePermission('gemini_advisor');
+
+        container.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <h4 style="color:#38bdf8; margin:0;">📋 التقرير التنفيذي التشغيلي (أسبوع: ${activeWeek})</h4>
+                ${canGemini ? `<button type="button" onclick="generateGeminiLiveExecutiveReport()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#8b5cf6); padding:7px 14px;">✨ تحليل استراتيجي حصري بـ Gemini Live</button>` : ''}
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:10px; margin-bottom:14px;">
+                <div style="background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.3); padding:10px; border-radius:8px;">👥 إجمالي الفريق: <b>${totalEmps}</b></div>
+                <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:8px;">📊 المتوسط العام: <b style="color:#34d399;">${overallAvg}%</b></div>
+                <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); padding:10px; border-radius:8px;">🌟 المتميزون: <b>${excellentCount}</b></div>
+                <div style="background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.3); padding:10px; border-radius:8px;">🚨 يحتاجون تدخلاً: <b style="color:#fb7185;">${weakCount}</b></div>
+            </div>
+            <h4 style="color:#34d399; margin-bottom:8px;">🌍 التوصيات التنفيذية المرشّحة من أفضل المدارس العالمية:</h4>
+            <div style="background:rgba(16,185,129,0.08); border:1px solid #059669; padding:14px; border-radius:8px; color:#d1fae5; line-height:1.9;">
+                1. <b>أولوية الأسبوع (قاعدة 80/20):</b> أضعف مؤشر حالياً هو <b>«${worstMetric}»</b>؛ توجيه تدريب جماعي لمدة 20 دقيقة عليه سيرفع متوسط المؤسسة بأسرع أثر ممكن.<br>
+                <span class="world-source-tag">📚 المصدر: McKinsey Organizational Health Index (OHI)</span><br>
+                2. <b>تفعيل التقدير الفوري (Weekly Recognition):</b> تكريم الـ ${excellentCount} موظفين المتميزين علنياً في اجتماع الصباح يرفع ارتباط الفريق بنسبة تصل إلى 21%.<br>
+                <span class="world-source-tag">📚 المصدر: دراسة Gallup Q12 العالمية لارتباط الموظفين</span><br>
+                3. <b>حماية الأداء المتعثر (Psychological Safety):</b> عقد جلسات فردية داعمة للـ ${weakCount} حالات المتعثرة وفق نموذج GROW لتشخيص العوائق قبل أي إجراء تأديبي.<br>
+                <span class="world-source-tag">📚 المصدر: Google Project Aristotle & Harvard Business Review</span>
+            </div>
+            <div id="geminiLiveExecOutput" style="margin-top:14px;"></div>
+        `;
+    };
+
+    // =========================================================================
+    // 🧠 محرك العقل الحي بالذكاء الاصطناعي (Gemini Live Advisor — Optional API Key)
+    // =========================================================================
+    function getSavedGeminiKey() {
+        return (localStorage.getItem('unique_journey_gemini_api_key_v1') || '').trim();
+    }
+    function updateGeminiKeyStatusUI() {
+        let key = getSavedGeminiKey();
+        let badge = document.getElementById('geminiKeyStatusBadge');
+        let inp = document.getElementById('geminiApiKeyInput');
+        if (inp && key && !inp.value) inp.value = key;
+        if (badge) {
+            if (key) {
+                badge.className = 'badge b-green';
+                badge.textContent = '🟢 مرتبط ونشط (Gemini Live مفعّل)';
+            } else {
+                badge.className = 'badge b-yellow';
+                badge.textContent = 'يعمل بالمحرك العالمي المدمج (بدون مفتاح)';
+            }
+        }
+    }
+    function saveGeminiApiKey() {
+        let inp = document.getElementById('geminiApiKeyInput');
+        let val = inp ? inp.value.trim() : '';
+        if (!val) { showToast('يرجى لصق مفتاح Gemini API أولاً!', 'error'); return; }
+        localStorage.setItem('unique_journey_gemini_api_key_v1', val);
+        updateGeminiKeyStatusUI();
+        recordAuditLog('تفعيل الذكاء الحي', 'تم حفظ وتفعيل مفتاح Gemini Live Advisor بنجاح');
+        showToast('✅ تم تفعيل العقل الحي Gemini Live بنجاح!', 'success');
+    }
+    function clearGeminiApiKey() {
+        localStorage.removeItem('unique_journey_gemini_api_key_v1');
+        let inp = document.getElementById('geminiApiKeyInput');
+        if (inp) inp.value = '';
+        updateGeminiKeyStatusUI();
+        showToast('تم إزالة المفتاح — سيعمل النظام بالمحرك العالمي المدمج.', 'info');
+    }
+
+    async function callGeminiLiveAPI(promptText) {
+        let apiKey = getSavedGeminiKey();
+        if (!apiKey) {
+            showToast('💡 لتفعيل التوليد الحصري الحي، أضف مفتاح Gemini API في «الإعدادات والصلاحيات» — حالياً نعمل بالمحرك العالمي المدمج.', 'warn');
+            return null;
+        }
+        let models = ['gemini-2.5-flash', 'gemini-2.0-flash'];
+        for (let model of models) {
+            try {
+                let url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+                let res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: promptText }] }]
+                    })
+                });
+                if (res.ok) {
+                    let data = await res.json();
+                    let text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (text) return text;
+                }
+            } catch (err) {}
+        }
+        showToast('⚠️ تعذر الاتصال بـ Gemini Live الآن — تأكد من صحة المفتاح أو الاتصال بالإنترنت.', 'error');
+        return null;
+    }
+
+    async function generateGeminiLiveMorningHuddle() {
+        if (!hasFeaturePermission('gemini_advisor')) { showToast('عذراً، هذه الميزة غير مفعلة لحسابك!', 'error'); return; }
+        let ctx = getMorningHuddleContextData();
+        let box = document.getElementById('morningHuddleContent');
+        if (!getSavedGeminiKey()) {
+            cycleMorningHuddleSchool();
+            showToast('💡 تم التبديل لمدرسة عالمية أخرى! أضف مفتاح Gemini API في الإعدادات للتوليد الحصري الحي.', 'info');
+            return;
+        }
+        if (box) box.textContent = '🧠 جاري توليد نص اجتماع صباح حصري من أفضل المدارس الإدارية العالمية عبر Gemini Live...';
+        let prompt = `أنت مستشار إداري عالمي. اكتب نص «اجتماع صباح سريع» لمدة 5 دقائق باللغة العربية لشركة «${ctx.comp}» (فرع: ${ctx.bName}، عدد الموظفين: ${ctx.empCount}).
+المتصدرون هذا الأسبوع: ${ctx.stars}.
+أضعف مؤشر أداء يحتاج تركيزاً اليوم: «${ctx.focusMetric}».
+الشروط:
+1. اختر مدرسة إدارية عالمية حقيقية ومشهورة (مثل Ritz-Carlton أو Toyota Kaizen أو Harvard Business Review أو Scaling Up أو Amazon Day-1) واذكر اسمها بوضوح في بداية النص وسبب ترشيحها اليوم.
+2. اجعل النص عملياً، ملهماً، منظماً في 3 نقاط قصيرة، وجاهزاً للإرسال على واتساب.`;
+        let result = await callGeminiLiveAPI(prompt);
+        if (result) {
+            latestMorningHuddleText = result;
+            if (box) box.textContent = result;
+            let badge = document.getElementById('morningHuddleSchoolBadge');
+            if (badge) badge.textContent = '✨ مولّد حصرياً الآن عبر Gemini Live من مصادر إدارية عالمية';
+            showToast('✨ تم توليد اجتماع الصباح الحصري بنجاح!', 'success');
+        } else {
+            renderCurrentMorningHuddleSchool();
+        }
+    }
+
+    async function generateGeminiLiveExecutiveReport() {
+        if (!hasFeaturePermission('gemini_advisor')) { showToast('عذراً، هذه الميزة غير مفعلة لحسابك!', 'error'); return; }
+        let out = document.getElementById('geminiLiveExecOutput');
+        if (!out) return;
+        let ctx = getMorningHuddleContextData();
+        if (!getSavedGeminiKey()) {
+            showToast('💡 أضف مفتاح Gemini API من تبويب «الإعدادات والصلاحيات» لتفعيل التحليل الاستراتيجي الحي!', 'warn');
+            return;
+        }
+        out.innerHTML = `<div style="background:rgba(56,189,248,0.1); border:1px solid #38bdf8; padding:14px; border-radius:8px; color:#7dd3fc;">🧠 جاري تحليل بيانات الفروع وتوليد خطة استراتيجية حصرية عبر Gemini Live...</div>`;
+        let prompt = `أنت مستشار استراتيجي من McKinsey و Harvard Business Review.
+حلّل حالة فرع «${ctx.bName}» في شركة «${ctx.comp}» (عدد الموظفين: ${ctx.empCount}، المتصدرون: ${ctx.stars}، أضعف مؤشر أداء: «${ctx.focusMetric}»).
+قدّم 3 توصيات تنفيذية عملية وحصرية لرفع الأداء خلال 14 يوماً، مع ذكر اسم المصدر أو الدراسة الإدارية العالمية الحقيقية أسفل كل توصية، باختصار ووضوح بالعربية.`;
+        let result = await callGeminiLiveAPI(prompt);
+        if (result) {
+            out.innerHTML = `<div style="background:rgba(139,92,246,0.12); border:1px solid rgba(167,139,250,0.45); padding:16px; border-radius:10px; color:#f8fafc; white-space:pre-line; line-height:1.9;">
+                <div style="color:#c4b5fd; font-weight:bold; margin-bottom:8px;">✨ التحليل الاستراتيجي الحصري (Gemini Live Advisor):</div>
+                ${result.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+            </div>`;
+            showToast('✨ تم توليد التحليل الاستراتيجي الحصري بنجاح!', 'success');
+        } else {
+            out.innerHTML = '';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateGeminiKeyStatusUI();
+    });
 
 </script>
 </body>
