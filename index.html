@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -17,6 +16,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SheetJS (XLSX) لدعم رفع شيت الإكسل (.xlsx / .xls / .csv) كما هو مباشرة -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
     <style>
         :root {
             --bg-main: #090d16;
@@ -1529,6 +1529,173 @@
         body.light-mode .kpi-mini-spark-wrap {
             background: rgba(255, 255, 255, 0.85);
         }
+        .constellation-wrap {
+            height: 540px !important;
+            background: radial-gradient(ellipse at 50% 45%, #0b132b 0%, #050814 55%, #02040a 100%) !important;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), inset 0 0 60px rgba(56, 189, 248, 0.1) !important;
+        }
+
+    
+        .cam-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            width: 100%;
+            padding: 10px;
+            background: #050810;
+        }
+        @media (max-width: 768px) {
+            .cam-grid-4 { grid-template-columns: 1fr; }
+        }
+        .cam-slot-box {
+            position: relative;
+            background: #000;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 210px;
+        }
+        .cam-slot-box video {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+            display: block;
+        }
+        .cam-slot-label {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(9, 13, 22, 0.82);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            color: #38bdf8;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        .tile-reorder-btns {
+            display: inline-flex;
+            gap: 4px;
+            float: left;
+        }
+        .tile-reorder-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #7dd3fc;
+            border-radius: 5px;
+            padding: 1px 6px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+        .tile-reorder-btn:hover { background: #0284c7; color: #fff; }
+
+    
+        /* ===================================================================
+           💓 ULTRA-REALISTIC HEARTBEAT / ECG PULSE PORTAL (#sec-kpicore)
+           =================================================================== */
+        @keyframes cardiacLubDub {
+            0%   { transform: scale(1);    box-shadow: 0 0 28px rgba(56, 189, 248, 0.45), inset 0 0 22px rgba(56, 189, 248, 0.25); }
+            12%  { transform: scale(1.075); box-shadow: 0 0 54px rgba(16, 185, 129, 0.78), inset 0 0 34px rgba(56, 189, 248, 0.45); }
+            22%  { transform: scale(1.01); box-shadow: 0 0 30px rgba(56, 189, 248, 0.48), inset 0 0 22px rgba(56, 189, 248, 0.28); }
+            34%  { transform: scale(1.055); box-shadow: 0 0 46px rgba(56, 189, 248, 0.72), inset 0 0 30px rgba(16, 185, 129, 0.4); }
+            48%  { transform: scale(1);    box-shadow: 0 0 26px rgba(56, 189, 248, 0.4),  inset 0 0 20px rgba(56, 189, 248, 0.24); }
+            100% { transform: scale(1);    box-shadow: 0 0 26px rgba(56, 189, 248, 0.4),  inset 0 0 20px rgba(56, 189, 248, 0.24); }
+        }
+        @keyframes cardiacRingWave {
+            0%   { transform: scale(0.92); opacity: 0.72; }
+            65%  { transform: scale(1.42); opacity: 0.14; }
+            100% { transform: scale(1.56); opacity: 0; }
+        }
+        @keyframes ecgLiveLedBlink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 10px currentColor; }
+            50%      { opacity: 0.3; box-shadow: 0 0 2px currentColor; }
+        }
+        .kpi-core-orb-wrapper {
+            position: relative;
+            width: 210px;
+            height: 210px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kpi-pulse-ring, .kpi-pulse-ring-2 {
+            position: absolute;
+            width: 178px;
+            height: 178px;
+            border-radius: 50%;
+            border: 2px solid rgba(56, 189, 248, 0.55);
+            pointer-events: none;
+            animation: cardiacRingWave 1.25s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+        }
+        .kpi-pulse-ring-2 {
+            border-color: rgba(16, 185, 129, 0.45);
+            animation-delay: 0.32s;
+        }
+        .kpi-core-orb {
+            position: relative;
+            z-index: 3;
+            animation: cardiacLubDub 1.25s ease-in-out infinite !important;
+        }
+        .kpi-core-orb.pulse-danger {
+            border-color: rgba(239, 68, 68, 0.85) !important;
+            background: radial-gradient(circle at 35% 30%, rgba(252, 165, 165, 0.35), rgba(220, 38, 38, 0.32) 55%, rgba(9, 13, 22, 0.96) 85%) !important;
+        }
+        .kpi-core-orb.pulse-healthy {
+            border-color: rgba(16, 185, 129, 0.85) !important;
+            background: radial-gradient(circle at 35% 30%, rgba(110, 231, 183, 0.36), rgba(5, 150, 105, 0.28) 55%, rgba(9, 13, 22, 0.96) 85%) !important;
+        }
+        .kpi-ecg-monitor-box {
+            margin-top: 18px;
+            background:
+                linear-gradient(rgba(16, 185, 129, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(16, 185, 129, 0.06) 1px, transparent 1px),
+                rgba(4, 8, 16, 0.94);
+            background-size: 20px 20px, 20px 20px, 100% 100%;
+            border: 1px solid rgba(16, 185, 129, 0.38);
+            border-radius: 14px;
+            padding: 12px 14px 10px;
+            box-shadow: inset 0 0 28px rgba(16, 185, 129, 0.08), 0 12px 30px rgba(0,0,0,0.45);
+        }
+        body.light-mode .kpi-ecg-monitor-box {
+            background:
+                linear-gradient(rgba(2, 132, 199, 0.07) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(2, 132, 199, 0.07) 1px, transparent 1px),
+                #09111f;
+            background-size: 20px 20px, 20px 20px, 100% 100%;
+        }
+        .kpi-ecg-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 11px;
+        }
+        .ecg-live-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            color: #10b981;
+            margin-left: 6px;
+            animation: ecgLiveLedBlink 1.1s infinite;
+        }
+        #kpiEcgCanvas {
+            width: 100%;
+            height: 118px;
+            display: block;
+            border-radius: 8px;
+        }
+        .mc-race-scroll {
+            max-height: 235px;
+            overflow-y: auto;
+            padding-left: 4px;
+        }
+        .mc-race-scroll::-webkit-scrollbar { width: 4px; }
+        .mc-race-scroll::-webkit-scrollbar-thumb { background: rgba(56,189,248,0.35); border-radius: 4px; }
 
     </style>
 </head>
@@ -1700,10 +1867,11 @@
                 </div>
         <!-- 🛰️ مركز القيادة الشامل (Executive Mission Control — Bento OS) -->
         <div id="sec-missioncontrol" class="card hidden" style="background:transparent; border:none; box-shadow:none; padding:0;">
-            <div class="bento-mission-grid">
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-bottom:10px; flex-wrap:wrap;"><button type="button" onclick="cycleMissionControlLayout()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8;">🔀 تبديل ترتيب بطاقات القيادة</button><button type="button" onclick="resetMissionControlLayout()" class="btn-action" style="background:#475569;">🔄 الترتيب الافتراضي</button></div>
+            <div class="bento-mission-grid" id="mcBentoGridContainer">
                 <!-- Tile 1: Company Live Health Ring -->
                 <div class="bento-tile bento-col-4">
-                    <div style="font-size:12px; color:var(--accent-blue); font-weight:800; margin-bottom:10px;">🛰️ مؤشر الصحة المؤسسية اللحظي</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><span style="font-size:12px; color:var(--accent-blue); font-weight:800;">🛰️ مؤشر الصحة المؤسسية اللحظي</span><span id="mcHealthDeltaBadge" class="badge b-blue" style="font-size:10px;">مقارنة أسبوعية</span></div>
                     <div class="mc-health-ring-box">
                         <div style="position:relative; width:104px; height:104px; display:flex; align-items:center; justify-content:center;">
                             <svg width="104" height="104" style="transform:rotate(-90deg);">
@@ -1723,10 +1891,13 @@
                     </div>
                 </div>
 
-                <!-- Tile 2: Branch-vs-Branch Live Race -->
+                <!-- Tile 2: Department-vs-Department Live Race -->
                 <div class="bento-tile bento-col-4">
-                    <div style="font-size:12px; color:#34d399; font-weight:800; margin-bottom:10px;">🏢 سباق أداء الفروع المباشر</div>
-                    <div id="mcBranchesRaceList" style="display:flex; flex-direction:column; gap:10px;"></div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span style="font-size:12px; color:#34d399; font-weight:800;">🏛️ سباق أداء الأقسام المباشر</span>
+                        <span class="badge b-green" style="font-size:9px;">مرتب بالأعلى %</span>
+                    </div>
+                    <div id="mcDeptsRaceList" class="mc-race-scroll" style="display:flex; flex-direction:column; gap:10px;"></div>
                 </div>
 
                 <!-- Tile 3: Top 3 Stars Podium -->
@@ -1735,8 +1906,17 @@
                     <div id="mcTopStarsList" style="display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
 
-                <!-- Tile 4: World-Class Daily Leadership Briefing -->
-                <div class="bento-tile bento-col-8">
+                <!-- Tile 4: Employee-vs-Employee Live Race -->
+                <div class="bento-tile bento-col-6">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <span style="font-size:12px; color:#38bdf8; font-weight:800;">🏃 سباق أداء الموظفين المباشر</span>
+                        <span class="badge b-blue" style="font-size:9px;">اضغط على أي موظف للتحليل</span>
+                    </div>
+                    <div id="mcEmpsRaceList" class="mc-race-scroll" style="display:flex; flex-direction:column; gap:9px;"></div>
+                </div>
+
+                <!-- Tile 5: World-Class Daily Leadership Briefing -->
+                <div class="bento-tile bento-col-6">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
                         <div style="font-size:13px; color:#c4b5fd; font-weight:800;">🌍 التوصية القيادية اليومية (بناءً على بياناتك ومصادر عالمية)</div>
                         <button type="button" onclick="openMorningHuddleModal()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:5px 12px;">☀️ افتح اجتماع الصباح</button>
@@ -1744,60 +1924,87 @@
                     <div id="mcWorldInsightBox" style="font-size:12px; color:var(--text-main); line-height:1.85;"></div>
                 </div>
 
-                <!-- Tile 5: Urgent Action Radar -->
+                <!-- Tile 6: Urgent Action Radar -->
                 <div class="bento-tile bento-col-4">
                     <div style="font-size:12px; color:#fb7185; font-weight:800; margin-bottom:8px;">🚨 رادار التدخل العاجل</div>
                     <div id="mcUrgentRadarList" style="display:flex; flex-direction:column; gap:7px; font-size:11px;"></div>
                 </div>
 
-                <!-- Tile 6: Quantum Quick-Launch Hub -->
-                <div class="bento-tile bento-col-12">
+                <!-- Tile 7: Quantum Quick-Launch Hub -->
+                <div class="bento-tile bento-col-8">
                     <div style="font-size:12px; color:#38bdf8; font-weight:800;">⚡ الإطلاق السريع للوحدات الذكية</div>
                     <div class="mc-launch-grid" id="mcQuickLaunchGrid"></div>
                 </div>
             </div>
         </div>
-        <!-- 💠 بوابة نبض KPI الذكية (KPI Telemetry Core — تبويب مستقل بالكامل) -->
+        <!-- 💓 بوابة نبض KPI الذكية (Realistic Cardiac ECG Telemetry Core) -->
         <div id="sec-kpicore" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
                 <div>
-                    <h3 style="color:#38bdf8; font-size:16px;">💠 بوابة نبض مؤشرات الأداء (KPI Telemetry Core)</h3>
-                    <p style="color:var(--text-muted); font-size:11px;">تبويب مستقل يعرض نبض مؤشرات الأداء والتقييم والتوجيه وخطة العمل في نظامك.</p>
+                    <h3 style="color:#38bdf8; font-size:16px;">💓 بوابة نبض مؤشرات الأداء الحية (Live Cardiac KPI Core)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">رصد حي لنبض المنظومة بتخطيط قلب واقعي (ECG) متزامن مع نسب الأداء الحقيقية ومعايير التقييم والتوجيه.</p>
                 </div>
-                <button type="button" onclick="renderKpiTelemetryCore()" class="btn-action" style="background:#0284c7;">🔄 تحديث النبض</button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <span id="kcorePulseStatusBadge" class="badge b-green">💚 نبض تشغيلي صحي</span>
+                    <button type="button" onclick="exportKpiCoreSnapshotPng()" class="btn-action" style="background:#059669;">📸 تصدير لقطة النبض (PNG)</button>
+                    <button type="button" onclick="renderKpiTelemetryCore()" class="btn-action" style="background:#0284c7;">🔄 تحديث النبض</button>
+                </div>
             </div>
             <div class="kpi-topology-stage">
                 <div class="kpi-topology-grid">
                     <div class="kpi-node-col">
                         <div class="kpi-sys-node" onclick="switchTab('eval')">
                             <div style="font-size:12px; font-weight:800; color:#38bdf8;">📊 مؤشر التقييم النشط</div>
-                            <div id="kcoreEvalMetric" style="font-size:18px; font-weight:800; margin-top:4px;">0%</div>
+                            <div id="kcoreEvalMetric" style="font-size:20px; font-weight:800; margin-top:4px;">0%</div>
                             <div style="font-size:10px; color:var(--text-muted);">اضغط للانتقال إلى شيت التقييم الأسبوعي</div>
                         </div>
                         <div class="kpi-sys-node" onclick="switchTab('coaching')">
                             <div style="font-size:12px; font-weight:800; color:#34d399;">⚡ التوجيه اللحظي</div>
-                            <div id="kcoreCoachingMetric" style="font-size:18px; font-weight:800; margin-top:4px;">0</div>
+                            <div id="kcoreCoachingMetric" style="font-size:20px; font-weight:800; margin-top:4px;">0</div>
                             <div style="font-size:10px; color:var(--text-muted);">حالات موصى بتوجيهها حسب معايير KPI</div>
                         </div>
                     </div>
-                    <div class="kpi-core-orb">
-                        <div style="font-size:11px; letter-spacing:1px; color:#7dd3fc; font-weight:800;">KPI CORE</div>
-                        <div id="kcoreCenterPct" style="font-size:32px; font-weight:800; color:#fff; margin:4px 0;">0%</div>
-                        <div style="font-size:10px; color:#bae6fd;">نبض الأداء العام</div>
+
+                    <div class="kpi-core-orb-wrapper">
+                        <div class="kpi-pulse-ring" id="kcorePulseRing1"></div>
+                        <div class="kpi-pulse-ring-2" id="kcorePulseRing2"></div>
+                        <div class="kpi-core-orb" id="kcoreOrbEl">
+                            <div style="font-size:10px; letter-spacing:1.2px; color:#7dd3fc; font-weight:800;">💓 LIVE KPI PULSE</div>
+                            <div id="kcoreCenterPct" style="font-size:36px; font-weight:800; color:#fff; margin:2px 0; line-height:1.1;">0%</div>
+                            <div id="kcoreTrendBadge" style="font-size:11px; color:#34d399; font-weight:bold; margin-top:2px;">• مستقر</div>
+                            <div id="kcoreBpmReadout" style="font-size:10px; color:#bae6fd; font-family:monospace; margin-top:3px;">72 BPM • إيقاع متزن</div>
+                        </div>
                     </div>
+
                     <div class="kpi-node-col">
                         <div class="kpi-sys-node" onclick="switchTab('charts')">
                             <div style="font-size:12px; font-weight:800; color:#c4b5fd;">📈 أضعف معيار تشغيلي</div>
-                            <div id="kcoreWeakestMetric" style="font-size:14px; font-weight:800; margin-top:4px;">—</div>
+                            <div id="kcoreWeakestMetric" style="font-size:15px; font-weight:800; margin-top:4px;">—</div>
                             <div style="font-size:10px; color:var(--text-muted);">اضغط لعرض الرسوم والتحليلات</div>
                         </div>
                         <div class="kpi-sys-node" onclick="switchTab('plan')">
                             <div style="font-size:12px; font-weight:800; color:#facc15;">📋 خطة العمل التشغيلية</div>
-                            <div id="kcorePlanMetric" style="font-size:18px; font-weight:800; margin-top:4px;">0/0</div>
+                            <div id="kcorePlanMetric" style="font-size:20px; font-weight:800; margin-top:4px;">0/0</div>
                             <div style="font-size:10px; color:var(--text-muted);">مهام منجزة ضمن الخطة التشغيلية</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- 💓 شاشة تخطيط ضربات القلب الحية (Real-Time Moving ECG Waveform) -->
+                <div class="kpi-ecg-monitor-box">
+                    <div class="kpi-ecg-header">
+                        <div style="display:flex; align-items:center; color:#34d399; font-weight:800;">
+                            <span class="ecg-live-dot" id="ecgLiveDot"></span>
+                            <span>مخطط نبض الأداء اللحظي (LIVE ECG TELEMETRY)</span>
+                        </div>
+                        <div style="display:flex; gap:12px; font-family:monospace; color:#7dd3fc;">
+                            <span id="ecgHeaderRate">HR: 72 BPM</span>
+                            <span id="ecgHeaderStatus">STATUS: OPTIMAL</span>
+                        </div>
+                    </div>
+                    <canvas id="kpiEcgCanvas"></canvas>
+                </div>
+
                 <div class="kpi-mini-spark-wrap">
                     <canvas id="kpiTelemetrySparkChart"></canvas>
                 </div>
@@ -1812,7 +2019,7 @@
                     <h3 style="color:#38bdf8; font-size:16px;">💬 محرك «اسأل بياناتك» باللغة الطبيعية (Ask Your Data AI)</h3>
                     <p style="color:var(--text-muted); font-size:11px;">اسأل أي سؤال بالعربية عن الموظفين، الفروع، أضعف المعايير، أو المتصدرين — يحلل النظام قاعدة البيانات لحظياً ويجيبك بالأرقام الدقيقة (ويدعم Gemini Live).</p>
                 </div>
-                <button type="button" onclick="clearAskDataChat()" class="btn-danger">🗑️ مسح المحادثة</button>
+                <div style="display:flex; gap:8px;"><button type="button" onclick="exportAskDataReport()" class="btn-action" style="background:#059669;">📥 تصدير التحليل</button><button type="button" onclick="clearAskDataChat()" class="btn-danger">🗑️ مسح المحادثة</button></div>
             </div>
             <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
                 <button type="button" class="quick-prompt-chip" onclick="runAskDataQuery('من هم أفضل 3 موظفين في الشركة؟')">🏆 أفضل 3 موظفين؟</button>
@@ -1848,6 +2055,7 @@
                 </select>
                 <button type="button" onclick="startRoleplaySession()" class="btn-action" style="background:#7c3aed; padding:8px 16px;">🎬 بدء البروفة</button>
                 <button type="button" onclick="evaluateRoleplaySession()" class="btn-action" style="background:#059669; padding:8px 14px;">📊 تقييم أسلوبي القيادي</button>
+                <button type="button" onclick="exportRoleplayReport()" class="btn-action" style="background:#0284c7; padding:8px 14px;">📥 تصدير تقرير البروفة</button>
             </div>
             <div id="roleplayChatBox" class="ai-chat-box">
                 <div class="chat-msg chat-msg-ai">اختر الموظف والسيناريو بالأعلى ثم اضغط «🎬 بدء البروفة» لتبدأ المحاكاة التدريبية.</div>
@@ -1926,6 +2134,7 @@
         <div id="sec-roijournal" class="card hidden">
             <h3 style="color:#34d399; font-size:16px; margin-bottom:6px;">📈 سجل عائد القرارات الإدارية (Management ROI Journal)</h3>
             <p style="color:var(--text-muted); font-size:11px; margin-bottom:14px;">سجّل أي قرار إداري تتخذه (تدريب، كوتشينج، نقل قسم، تكريم)، وسيقارن النظام تلقائياً أداء الموظف «قبل القرار» و«الآن» ليحسب لك العائد الحقيقي لقراراتك.</p>
+            <div id="roiAggregateSummaryGrid" class="summary-cards-grid" style="margin-bottom:14px;"></div>
             <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:14px; margin-bottom:16px; display:flex; gap:8px; flex-wrap:wrap;">
                 <select id="roiEmpSelect" class="form-input" style="max-width:220px;"></select>
                 <select id="roiTypeSelect" class="form-input" style="max-width:180px;">
@@ -1943,14 +2152,23 @@
                 <tbody id="roiJournalTableBody"></tbody>
             </table>
         </div>
-        <!-- 🌌 12. خريطة المجرة التفاعلية للشركة (Live Constellation Map) -->
+        <!-- 🌌 12. خريطة المجرة التفاعلية الواقعية للشركة (Ultra-Realistic Live Galaxy Map) -->
         <div id="sec-constellation" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
                 <div>
-                    <h3 style="color:#38bdf8; font-size:16px;">🌌 خريطة المجرة التفاعلية للشركة (Live Constellation Map)</h3>
-                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">الفروع تظهر ككواكب والموظفون كأقمار تدور حولها — الأقرب للمركز والمتوهج بالأخضر هو الأعلى أداءً، والأبعد بالأحمر يحتاج تدخلاً. <b>اضغط على أي قمر لفتح ملف الموظف فوراً!</b></p>
+                    <h3 style="color:#38bdf8; font-size:16px;">🌌 خريطة المجرة التفاعلية الواقعية (Deep-Space Live Galaxy OS)</h3>
+                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">مجرة ثلاثية الأبعاد بمدارات إهليلجية وسُدُم كونية — الفروع ككواكب مضيئة والموظفون كأقمار بذيول ضوئية. <b>مرّر الماوس للتصويب واضغط على أي قمر لفتح ملف الموظف فوراً!</b></p>
                 </div>
-                <button type="button" onclick="renderConstellationMap()" class="btn-action" style="background:#0284c7;">🔄 تحديث المدارات</button>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                    <button type="button" id="btnConstellationPause" onclick="toggleConstellationMotion()" class="btn-action" style="background:#7c3aed;">⏸️ إيقاف الدوران</button>
+                    <button type="button" onclick="toggleConstellationOrbits()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8;">🌀 المدارات</button>
+                    <button type="button" onclick="renderConstellationMap()" class="btn-action" style="background:#0284c7;">🔄 تحديث المجرة</button>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; font-size:11px;">
+                <span class="badge b-green">🌟 نجم متفوق (≥ 90% • مدار داخلي)</span>
+                <span class="badge b-blue">🪐 كوكب مستقر (61% – 89% • مدار أوسط)</span>
+                <span class="badge b-red">☄️ قزم أحمر حرج (≤ 60% • مدار خارجي نابض)</span>
             </div>
             <div class="constellation-wrap">
                 <canvas id="constellationCanvas"></canvas>
@@ -1978,10 +2196,12 @@
                     <div style="display:flex; gap:8px; align-items:center;">
                         <span id="tmSelectedWeekBadge" class="badge b-blue" style="font-size:12px;">الأسبوع الحالي</span>
                         <button type="button" id="btnTmPlay" onclick="toggleTimeMachineAutoPlay()" class="btn-action" style="background:#7c3aed;">▶ تشغيل آلة الزمن</button>
+                        <button type="button" onclick="exportTimeMachineReport()" class="btn-action" style="background:#059669;">📥 تصدير تقرير المسار الشهري</button>
                     </div>
                 </div>
                 <input type="range" id="timeMachineSlider" class="timemachine-slider" min="0" max="3" step="1" value="3" oninput="renderTimeMachineSnapshot(this.value)">
                 <div id="tmWeekStatsRow" style="display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:#cbd5e1; margin-top:6px;"></div>
+                <div id="tmBestWorstSummary" style="margin-top:8px; font-size:11px; display:flex; gap:10px; flex-wrap:wrap;"></div>
             </div>
             <table>
                 <thead id="tmTableHead"></thead>
@@ -2002,6 +2222,7 @@
                 </div>
                 <button type="button" onclick="clearMoodPulseData()" class="btn-danger admin-only">🗑️ تصفير النبض</button>
             </div>
+            <div id="moodWeeklyTrendBox" style="background:var(--bg-main); border:1px solid var(--border-color); border-right:4px solid #a855f7; border-radius:10px; padding:10px 14px; margin-bottom:12px; font-size:12px;"></div>
             <div class="summary-cards-grid" style="margin-bottom:16px;">
                 <div class="stat-card"><div><h4>😊 ممتاز / مرتاح</h4><div class="val" id="moodCountHappy" style="color:#34d399;">0</div></div><span style="font-size:22px;">😊</span></div>
                 <div class="stat-card"><div><h4>😐 عادي / مستقر</h4><div class="val" id="moodCountNeutral" style="color:#38bdf8;">0</div></div><span style="font-size:22px;">😐</span></div>
@@ -2028,6 +2249,7 @@
                     <span class="heat-cell heat-1" style="padding:3px 8px !important;">1 حرج</span>
                 </div>
             </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;"><select id="heatmapDeptFilter" onchange="renderThermalHeatmap()" class="form-input" style="max-width:200px; padding:6px 10px; font-size:11px;"><option value="all">🌟 كل الأقسام</option></select><label class="checkbox-label" style="font-size:12px; color:#38bdf8;"><input type="checkbox" id="heatmapComparePrevToggle" onchange="renderThermalHeatmap()"> 🔄 مقارنة حرارية مع الأسبوع السابق (▲/▼)</label></div>
             <div id="heatmapAutoDiagnosis" style="background:var(--bg-main); border:1px solid var(--border-color); border-right:4px solid #f59e0b; border-radius:10px; padding:12px 15px; margin-bottom:15px; font-size:12px; line-height:1.7;"></div>
             <table>
                 <thead id="heatmapTableHead"></thead>
@@ -2075,7 +2297,7 @@
                     <h3 style="color:#38bdf8; font-size:16px;">🎛️ محاكي القرارات الاستراتيجية «ماذا لو؟» (What-If Simulator)</h3>
                     <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">حرّك المنزلقات لاختبار أثر تدريب الفريق في أي معيار على متوسط أداء الفرع وعدد الإنذارات دون تعديل البيانات الحقيقية.</p>
                 </div>
-                <button type="button" onclick="resetSimulatorSliders()" class="btn-action" style="background:#475569;">🔄 إعادة ضبط المحاكي</button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;"><button type="button" onclick="saveCurrentSimulatorScenario()" class="btn-action" style="background:#059669;">💾 حفظ السيناريو للمقارنة (حتى 3)</button><button type="button" onclick="resetSimulatorSliders()" class="btn-action" style="background:#475569;">🔄 إعادة ضبط</button></div>
             </div>
             <div class="summary-cards-grid" style="margin-bottom:18px;">
                 <div class="stat-card">
@@ -2096,6 +2318,7 @@
                 </div>
             </div>
             <div id="simulatorSlidersContainer"></div>
+            <div id="savedScenariosCompareBox" style="margin-top:16px;"></div>
         </div>
 
         <!-- 1. شيت التقييم -->
@@ -2107,6 +2330,7 @@
                     <input type="number" id="inlineNewMetricWeight" placeholder="النسبة % (مثلاً 20)" min="1" max="100" class="form-input admin-only" style="width:120px; padding:5px 8px; font-size:11px;">
                     <button type="button" onclick="addInlineNewMetric()" class="btn-action btn-add admin-only" style="background:#059669; padding:6px 12px;">➕ إضافة تقييم (بند جديد)</button>
                     <button type="button" id="btnSpeedEvalToolbar" onclick="openSpeedEvalModal()" class="btn-action admin-manager-only" style="background:#0284c7; padding:6px 12px;">⚡ التقييم السريع (بيد واحدة)</button>
+                    <button type="button" onclick="copyPreviousWeekScores()" class="btn-action admin-manager-only" style="background:#0f766e; padding:6px 12px;" title="نسخ درجات الأسبوع السابق كأساس سريع لهذا الأسبوع">📋 نسخ تقييم الأسبوع السابق</button>
                     <button type="button" onclick="switchTab('users')" class="btn-action admin-only" style="background:#7c3aed; padding:6px 12px;">⚖️ تخصيص الأقسام والنسب</button>
                     <div id="weekLockNotice" style="font-size:11px; color:#facc15;"></div>
                 </div>
@@ -2178,11 +2402,15 @@
             <table>
                 <thead>
                     <tr>
+                        <th style="text-align: center;">الكود الوظيفي</th>
                         <th style="text-align: right;">الفرع</th>
                         <th style="text-align: right;">اسم الموظف</th>
                         <th style="text-align: right;">الإدارة</th>
                         <th style="text-align: right;">القسم</th>
                         <th style="text-align: right;">الوظيفة</th>
+                        <th style="text-align: center;">رقم البطاقة الشخصية</th>
+                        <th style="text-align: center;">رقم الواتساب</th>
+                        <th style="text-align: center;">تاريخ التعيين</th>
                         <th style="text-align: center;">النسبة الحالية</th>
                         <th style="text-align: center;">التقدير</th>
                         <th style="text-align: center;">إجراءات</th>
@@ -2197,16 +2425,31 @@
                 <h3 style="color:#38bdf8; font-size:16px;">🎥 غرفة عمليات الكاميرات الحية ومعايير الأفراد اللحظية</h3>
             </div>
             <p style="color:#94a3b8; margin-bottom:15px; font-size:11px;">ضع رابط بث الكاميرا في الخانة أدناه ليعمل مباشرة، وفوقه ستظهر مؤشرات وتقييمات الموظفين الحية.</p>
-            <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap;">
-                <input type="text" id="cameraUrlInput" placeholder="أدخل رابط الكاميرا المباشر هنا..." class="form-input" style="flex:1; min-width:300px;">
-                <button type="button" onclick="applyCameraStream()" class="btn-tab btn-add" style="padding:8px 18px;">▶ تشغيل الكاميرا</button>
+            <div style="display:flex; gap:8px; margin-bottom:12px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap; align-items:center;">
+                <input type="text" id="cameraUrlInput" placeholder="رابط الكاميرا 1 (يدعم MP4 و HLS .m3u8)..." class="form-input" style="flex:1; min-width:220px;">
+                <button type="button" onclick="applyCameraStream()" class="btn-action" style="background:#059669; padding:8px 14px;">▶ تشغيل 1</button>
+                <button type="button" id="btnToggleCamGrid" onclick="toggleCameraGridMode()" class="btn-action" style="background:#7c3aed; padding:8px 14px;">🔲 عرض شبكي 2×2 (4 كاميرات)</button>
+                <button type="button" onclick="captureCameraSnapshot()" class="btn-action" style="background:#0284c7; padding:8px 14px;">📸 التقاط لقطة شاشة</button>
             </div>
-            <div class="camera-command-center" style="margin-bottom: 25px;">
-                <video id="liveCameraVideo" autoplay muted playsinline loop class="camera-video-bg">
+            <div id="multiCamUrlInputs" class="hidden" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:8px; margin-bottom:12px; background:#090d16; padding:10px; border-radius:8px; border:1px solid #334155;">
+                <input type="text" id="camUrlSlot2" class="form-input" placeholder="رابط الكاميرا 2 (.mp4 / .m3u8)">
+                <input type="text" id="camUrlSlot3" class="form-input" placeholder="رابط الكاميرا 3 (.mp4 / .m3u8)">
+                <input type="text" id="camUrlSlot4" class="form-input" placeholder="رابط الكاميرا 4 (.mp4 / .m3u8)">
+                <button type="button" onclick="applyAll4Cameras()" class="btn-action" style="background:#059669;">▶ تشغيل الـ 4 كاميرات معاً</button>
+            </div>
+            <div class="camera-command-center" id="singleCameraContainer" style="margin-bottom: 20px;">
+                <video id="liveCameraVideo" autoplay muted playsinline loop crossorigin="anonymous" class="camera-video-bg">
                     <source id="videoSourceTag" src="https://assets.mixkit.co/videos/preview/mixkit-busy-commercial-kitchen-cooking-41603-large.mp4" type="video/mp4">
                 </video>
                 <div class="hud-overlay" id="liveHudBadgesContainer"></div>
             </div>
+            <div id="gridCameraContainer" class="cam-grid-4 hidden" style="margin-bottom: 20px; border-radius:10px; border:1px solid #334155;">
+                <div class="cam-slot-box"><video id="gridCamVid1" autoplay muted playsinline loop crossorigin="anonymous"></video><span class="cam-slot-label">🎥 كاميرا 1</span></div>
+                <div class="cam-slot-box"><video id="gridCamVid2" autoplay muted playsinline loop crossorigin="anonymous"></video><span class="cam-slot-label">🎥 كاميرا 2</span></div>
+                <div class="cam-slot-box"><video id="gridCamVid3" autoplay muted playsinline loop crossorigin="anonymous"></video><span class="cam-slot-label">🎥 كاميرا 3</span></div>
+                <div class="cam-slot-box"><video id="gridCamVid4" autoplay muted playsinline loop crossorigin="anonymous"></video><span class="cam-slot-label">🎥 كاميرا 4</span></div>
+            </div>
+            <div id="cameraSnapshotsGallery" style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:15px;"></div>
             <div style="background:#0f172a; padding:15px; border-radius:8px; border:1px solid #334155; margin-bottom:20px;">
                 <h4 style="color:#34d399; font-size:13px; margin-bottom:10px;">➕ إضافة بند تشغيلي مخصص للكاميرا</h4>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
@@ -2238,7 +2481,7 @@
                         <th style="text-align: right;">الفرع</th>
                         <th style="text-align: right;">اسم الموظف</th>
                         <th style="text-align: center;">النسبة الحالية</th>
-                        <th style="text-align: center;">نوع الإنذار</th>
+                        <th style="text-align: center;">حالة التذكرة والعدّاد</th>
                         <th style="text-align: right;">الإجراء الفوري المقترح</th>
                     </tr>
                 </thead>
@@ -2265,7 +2508,7 @@
                         <th style="text-align: right;">القسم</th>
                         <th style="text-align: right;">القصور المرصد في الـ KPIs</th>
                         <th style="text-align: right;">التوجيه أو الحل الذكي المقترح</th>
-                        <th style="text-align: center;">الحالة</th>
+                        <th style="text-align: center;">توثيق الجلسة وإعادة التقييم</th>
                     </tr>
                 </thead>
                 <tbody id="smartCoachingTableBody"></tbody>
@@ -2284,23 +2527,25 @@
                     <select id="compEmp2Select" class="form-input" style="width:220px;" onchange="renderComparison()"></select>
                 </div>
             </div>
+            <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:14px; height:300px; margin-bottom:16px;"><canvas id="compareOverlayRadarChart"></canvas></div>
             <div id="comparisonResultArea"></div>
         </div>
         <!-- 🔍 تحليل الأخطاء -->
         <div id="sec-rootcause" class="card hidden">
-            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">🔍 تحليل جذور الأخطاء التشغيلية ومعالجتها</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px;"><h3 style="color:#38bdf8; font-size:16px;">🔍 تحليل جذور الأخطاء التشغيلية ومعالجتها</h3><span id="rootCauseTotalCostBadge" class="badge b-red" style="font-size:12px;">إجمالي تكلفة الأخطاء: 0 ج.م</span></div>
             <div style="background:#0f172a; padding:15px; border-radius:8px; border:1px solid #334155; margin-bottom:20px;">
                 <h4 style="color:#34d399; font-size:13px; margin-bottom:10px;">➕ تسجيل خطأ تشغيلي جديد مع السبب الجذري</h4>
                 <div style="display:flex; gap:10px; flex-wrap:wrap;">
                     <select id="errBranchSelect" onchange="updateErrEmpDropdown()" class="form-input" style="max-width:160px;"></select>
                     <select id="errEmpSelect" class="form-input" style="max-width:180px;"></select>
                     <input type="text" id="errDescInput" placeholder="وصف الخطأ" class="form-input" style="flex:1; min-width:200px;">
-                    <select id="errRootCause" class="form-input" style="max-width:180px;">
+                    <select id="errRootCause" class="form-input" style="max-width:165px;">
                         <option value="نقص تدريب">نقص تدريب</option>
                         <option value="ضغط عملاء مفاجئ">ضغط عملاء مفاجئ</option>
                         <option value="خطأ بشري فردي">خطأ بشري فردي</option>
                         <option value="خلل في النظام">خلل في النظام</option>
                     </select>
+                    <input type="number" id="errCostInput" min="0" placeholder="التكلفة التقديرية (ج.م)" class="form-input" style="max-width:155px;">
                     <button type="button" onclick="saveRootCauseError()" class="btn-tab btn-add" style="padding:8px 16px;">حفظ وتحليل</button>
                 </div>
             </div>
@@ -2309,7 +2554,7 @@
                     <tr>
                         <th style="text-align: right;">الفرع والموظف</th>
                         <th style="text-align: right;">وصف الخطأ</th>
-                        <th style="text-align: center;">السبب الجذري المصنف</th>
+                        <th style="text-align: center;">السبب والتكرار والتكلفة</th>
                         <th style="text-align: right;">التوجيه الإداري المقترح</th>
                         <th style="text-align: center;">إجراءات</th>
                     </tr>
@@ -2337,22 +2582,92 @@
             <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">📊 التقرير التنفيذي الذكي وحلول معالجة المشكلات</h3>
             <div id="executiveReportContent" style="background:#0f172a; padding:20px; border-radius:10px; border:1px solid #334155; line-height: 1.8; font-size: 13px;"></div>
         </div>
-        <!-- 💻 سجل الأجهزة والدخول -->
+        <!-- 💻 سجل الأجهزة والدخول المطوّر مع تتبع GPS ونطاق العمل -->
         <div id="sec-devicelog" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                <h3 style="color:#38bdf8; font-size:16px;">💻 سجل نشاط ودخول المستخدمين والأجهزة</h3>
-                <button type="button" onclick="clearDeviceLogs()" class="btn-danger">مسح السجل</button>
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">💻 سجل نشاط ودخول المستخدمين والأجهزة (GPS + نطاق العمل)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">يطلب النظام إذن الموقع الجغرافي (GPS) عند الدخول لتحديد هل يفتح المستخدم من <b>مقر العمل</b> أم من <b>مكان آخر</b> مع رابط مباشر على خرائط جوجل.</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <button type="button" onclick="requestLiveGpsForCurrentUser(true)" class="btn-action" style="background:#0284c7;">📍 تحديث موقعي GPS الآن</button>
+                    <button type="button" onclick="exportDeviceLogsJson()" class="btn-action" style="background:#059669;">📥 تصدير السجل</button>
+                    <button type="button" onclick="clearDeviceLogs()" class="btn-danger">🗑️ مسح السجل</button>
+                </div>
             </div>
+
+            <!-- 📍 إعداد إحداثيات مقر العمل (Geofencing) لكل فرع -->
+            <div style="background:rgba(14,165,233,0.08); border:1px solid rgba(56,189,248,0.35); border-radius:12px; padding:12px 14px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+                    <div style="font-size:12px; font-weight:800; color:#38bdf8;">🏢 ضبط موقع مقر العمل المعتمد (Geofence) للتحقق من مكان الدخول:</div>
+                    <span id="gpsPermissionStatusBadge" class="badge b-blue">📡 جاري التحقق من حالة GPS...</span>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <select id="geofenceBranchSelect" onchange="loadBranchGeofenceInputs()" class="form-input" style="max-width:190px; padding:6px 10px; font-size:11px;"></select>
+                    <input type="text" id="geofenceLatInput" placeholder="خط العرض (Lat)" class="form-input" style="max-width:130px; padding:6px 8px; font-size:11px; font-family:monospace;">
+                    <input type="text" id="geofenceLngInput" placeholder="خط الطول (Lng)" class="form-input" style="max-width:130px; padding:6px 8px; font-size:11px; font-family:monospace;">
+                    <input type="number" id="geofenceRadiusInput" value="250" min="30" max="5000" placeholder="النطاق (متر)" class="form-input" style="max-width:110px; padding:6px 8px; font-size:11px;" title="المسافة المسموحة بالمتر لاعتبار الدخول من مقر العمل">
+                    <button type="button" onclick="captureMyGpsAsBranchWorkLocation()" class="btn-action" style="background:#7c3aed; padding:7px 12px;">📌 تثبيت موقعي الحالي كمقر للفرع</button>
+                    <button type="button" onclick="saveBranchGeofenceManual()" class="btn-action" style="background:#059669; padding:7px 12px;">💾 حفظ الإحداثيات</button>
+                </div>
+            </div>
+
+            <div class="summary-cards-grid" style="margin-bottom:14px;">
+                <div class="stat-card">
+                    <div><h4>إجمالي الأجهزة / السجلات</h4><div class="val" id="dlogStatTotal">0</div></div>
+                    <span style="font-size:20px;">💻</span>
+                </div>
+                <div class="stat-card" style="border-color:#10b981;">
+                    <div><h4>جلسات نشطة الآن</h4><div class="val" id="dlogStatActive" style="color:#34d399;">0</div></div>
+                    <span style="font-size:20px;">🟢</span>
+                </div>
+                <div class="stat-card" style="border-color:#22c55e;">
+                    <div><h4>دخول من مقر العمل</h4><div class="val" id="dlogStatInOffice" style="color:#4ade80;">0</div></div>
+                    <span style="font-size:20px;">🏢</span>
+                </div>
+                <div class="stat-card" style="border-color:#ef4444;">
+                    <div><h4>دخول من خارج العمل</h4><div class="val" id="dlogStatOutOffice" style="color:#fb7185;">0</div></div>
+                    <span style="font-size:20px;">⚠️</span>
+                </div>
+                <div class="stat-card" style="border-color:#f59e0b;">
+                    <div><h4>إجمالي مرات الدخول</h4><div class="val" id="dlogStatVisits" style="color:#facc15;">0</div></div>
+                    <span style="font-size:20px;">🔁</span>
+                </div>
+            </div>
+
+            <div class="dept-filter-bar" style="gap:10px;">
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; flex:1;">
+                    <input type="text" id="deviceLogSearchInput" oninput="renderDeviceLogsTable()" placeholder="🔍 بحث بالاسم، IP، الجهاز، أو الموقع..." class="form-input" style="max-width:240px; padding:6px 10px; font-size:11px;">
+                    <select id="deviceLogStatusFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:155px; padding:6px 10px; font-size:11px;">
+                        <option value="all">كل الحالات</option>
+                        <option value="active">🟢 نشط الآن</option>
+                        <option value="logged_out">⚪ مسجل خروج</option>
+                    </select>
+                    <select id="deviceLogPlaceFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:175px; padding:6px 10px; font-size:11px;">
+                        <option value="all">كل أماكن الدخول</option>
+                        <option value="in_office">🏢 من مقر العمل</option>
+                        <option value="outside">⚠️ خارج مقر العمل</option>
+                        <option value="approx">📡 موقع تقريبي (IP)</option>
+                    </select>
+                    <select id="deviceLogTypeFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:160px; padding:6px 10px; font-size:11px;">
+                        <option value="all">كل أنواع الأجهزة</option>
+                        <option value="mobile">📱 هاتف محمول</option>
+                        <option value="desktop">🖥️ كمبيوتر مكتبي</option>
+                    </select>
+                </div>
+            </div>
+
             <table>
                 <thead>
                     <tr>
-                        <th style="text-align: right;">اسم المستخدم</th>
-                        <th style="text-align: center;">الدور / الصلاحية</th>
+                        <th style="text-align: right;">المستخدم</th>
+                        <th style="text-align: center;">الدور</th>
                         <th style="text-align: center;">الفرع</th>
-                        <th style="text-align: right;">اسم الجهاز ونظام التشغيل</th>
-                        <th style="text-align: center;">عنوان IP</th>
-                        <th style="text-align: center;">الموقع الجغرافي</th>
-                        <th style="text-align: center;">تاريخ ووقت الفتح</th>
+                        <th style="text-align: right;">الجهاز والمتصفح</th>
+                        <th style="text-align: center;">IP والشبكة</th>
+                        <th style="text-align: center;">الموقع الجغرافي ونطاق العمل</th>
+                        <th style="text-align: center;">الحالة وآخر نشاط</th>
+                        <th style="text-align: center;">الدخول</th>
                         <th style="text-align: center;">إجراءات</th>
                     </tr>
                 </thead>
@@ -2387,7 +2702,7 @@
         </div>
         <!-- 4. لوحة الشرف -->
         <div id="sec-leaderboard" class="card hidden">
-            <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">🏆 لوحة الشرف التنافسية</h3>
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;"><h3 style="color:#38bdf8; font-size:16px;">🏆 لوحة الشرف التنافسية</h3><button type="button" onclick="exportLeaderboardToExcel()" class="btn-action" style="background:#059669;">📊 تصدير لوحة الشرف Excel (.xlsx)</button></div>
             <table>
                 <thead>
                     <tr>
@@ -2411,6 +2726,7 @@
                     <select id="weeklyBranchFilter" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:150px;">
                         <option value="all">كل الفروع</option>
                     </select>
+                    <button type="button" onclick="exportWeeklyArchiveToExcel()" class="btn-action" style="background:#059669;">📊 تصدير الأرشيف Excel (.xlsx)</button>
                 </div>
             </div>
             <table>
@@ -2462,7 +2778,9 @@
                         <th style="width: 50px; text-align: center;">إنجاز</th>
                         <th style="width: 25%; text-align: right;">محور التطوير / الهدف</th>
                         <th style="width: 45%; text-align: right;">الإجراءات التنفيذية</th>
-                        <th style="width: 15%; text-align: right;">المسؤول</th>
+                        <th style="width: 14%; text-align: right;">المسؤول</th>
+                        <th style="width: 11%; text-align: center;">الأولوية</th>
+                        <th style="width: 14%; text-align: center;">تاريخ الاستحقاق</th>
                         <th style="text-align: center;">حذف</th>
                     </tr>
                 </thead>
@@ -2802,6 +3120,24 @@
                     <label class="form-label">المسمى الوظيفي</label>
                     <input type="text" id="newJobTitle" class="form-input" placeholder="مثال: مسؤول مبيعات أول">
                 </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px;">
+                    <div class="form-group">
+                        <label class="form-label">الكود الوظيفي</label>
+                        <input type="text" id="newEmpCode" class="form-input" placeholder="مثال: EMP-101">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم البطاقة الشخصية (الرقم القومي)</label>
+                        <input type="text" id="newEmpNationalId" maxlength="20" class="form-input" placeholder="مثال: 29901011201234" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الواتساب المباشر (مع كود الدولة)</label>
+                        <input type="text" id="newEmpPhone" class="form-input" placeholder="مثال: 201001234567" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">تاريخ التعيين</label>
+                        <input type="date" id="newEmpHireDate" class="form-input">
+                    </div>
+                </div>
                 <div class="form-group">
                     <label class="form-label">الفرع التابع له</label>
                     <select id="newEmpBranch" required class="form-input"></select>
@@ -2840,6 +3176,24 @@
                 <div class="form-group">
                     <label class="form-label">الوظيفة</label>
                     <input type="text" id="editEmpJobTitle" class="form-input">
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:8px;">
+                    <div class="form-group">
+                        <label class="form-label">الكود الوظيفي</label>
+                        <input type="text" id="editEmpCode" class="form-input" placeholder="EMP-101">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم البطاقة الشخصية (الرقم القومي)</label>
+                        <input type="text" id="editEmpNationalId" maxlength="20" class="form-input" placeholder="29901011201234" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الواتساب المباشر</label>
+                        <input type="text" id="editEmpPhone" class="form-input" placeholder="2010xxxxxxxx" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">تاريخ التعيين</label>
+                        <input type="date" id="editEmpHireDate" class="form-input">
+                    </div>
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
                     <button type="button" onclick="closeEditEmpModal()" style="background:#475569; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">إلغاء</button>
@@ -3149,8 +3503,20 @@
         return selectedWeekKey === getCurrentWeekKey();
     }
 
+    function detectBrowserName() {
+        let ua = navigator.userAgent || '';
+        if (/edg\//i.test(ua)) return 'Edge';
+        if (/opr\/|opera/i.test(ua)) return 'Opera';
+        if (/crios/i.test(ua)) return 'Chrome iOS';
+        if (/fxios/i.test(ua)) return 'Firefox iOS';
+        if (/chrome|chromium/i.test(ua)) return 'Chrome';
+        if (/firefox/i.test(ua)) return 'Firefox';
+        if (/safari/i.test(ua)) return 'Safari';
+        return 'متصفح ويب';
+    }
+
     function detectDeviceType() {
-        let ua = navigator.userAgent;
+        let ua = navigator.userAgent || '';
         let device = "كمبيوتر مكتبي (Desktop)";
         if (/android/i.test(ua)) device = "هاتف محمول (Android)";
         else if (/iphone|ipad|ipod/i.test(ua)) device = "هاتف محمول (iOS / iPhone)";
@@ -3163,7 +3529,86 @@
         else if (/android/i.test(ua)) os = "Android OS";
         else if (/like mac os x/i.test(ua)) os = "iOS";
 
-        return `${device} (${os})`;
+        return `${device} (${os}) • ${detectBrowserName()}`;
+    }
+
+    // 📍 إحداثيات مقار العمل لكل فرع (المنصورة - افتراضية وقابلة للتثبيت الفوري بضغطة زر)
+    let defaultBranchGeofences = {
+        sandoob: { lat: 31.0225, lng: 31.3785, radius: 300 },
+        tura: { lat: 31.0409, lng: 31.3785, radius: 300 }
+    };
+    let branchGeofencesData = { ...defaultBranchGeofences };
+    try {
+        let gfSaved = localStorage.getItem('unique_journey_branch_geo_v1');
+        if (gfSaved) branchGeofencesData = { ...defaultBranchGeofences, ...JSON.parse(gfSaved) };
+    } catch(e) {}
+
+    function calculateHaversineMeters(lat1, lng1, lat2, lng2) {
+        const R = 6371000;
+        const toRad = d => (d * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLng = toRad(lng2 - lng1);
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+    }
+
+    function evaluateWorkplaceGeofence(lat, lng, userBranchId) {
+        if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) {
+            return { placeStatus: 'approx', label: '📡 موقع تقريبي (بدون GPS)', distanceMeters: null, matchedBranch: null };
+        }
+        let targetBranches = (userBranchId && userBranchId !== 'all' && branchGeofencesData[userBranchId])
+            ? [userBranchId]
+            : Object.keys(branchGeofencesData);
+
+        let bestDist = Infinity;
+        let bestBranchId = null;
+        let bestRadius = 300;
+        targetBranches.forEach(bId => {
+            let gf = branchGeofencesData[bId];
+            if (!gf || isNaN(Number(gf.lat)) || isNaN(Number(gf.lng))) return;
+            let dist = calculateHaversineMeters(lat, lng, Number(gf.lat), Number(gf.lng));
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestBranchId = bId;
+                bestRadius = Number(gf.radius) || 300;
+            }
+        });
+        if (!bestBranchId || bestDist === Infinity) {
+            return { placeStatus: 'outside', label: '📍 موقع GPS مسجل (لم يُضبط مقر الفرع)', distanceMeters: null, matchedBranch: null };
+        }
+        let bObj = branchesData.find(b => b.id === bestBranchId);
+        let bName = bObj ? bObj.name : bestBranchId;
+        if (bestDist <= bestRadius) {
+            return { placeStatus: 'in_office', label: `🏢 من مقر العمل (${bName} • ${bestDist}م)`, distanceMeters: bestDist, matchedBranch: bName };
+        }
+        let distStr = bestDist >= 1000 ? `${(bestDist / 1000).toFixed(1)} كم` : `${bestDist} متر`;
+        return { placeStatus: 'outside', label: `⚠️ خارج مقر العمل (يبعد ${distStr} عن ${bName})`, distanceMeters: bestDist, matchedBranch: bName };
+    }
+
+    function requestBrowserGpsCoords(timeoutMs = 9000) {
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                resolve({ ok: false, reason: 'المتصفح لا يدعم GPS' });
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    resolve({
+                        ok: true,
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                        accuracy: Math.round(pos.coords.accuracy || 0)
+                    });
+                },
+                (err) => {
+                    let msg = err.code === 1 ? 'تم رفض إذن الموقع من المستخدم' : (err.code === 2 ? 'إشارة GPS غير متاحة' : 'انتهت مهلة تحديد الموقع');
+                    resolve({ ok: false, reason: msg });
+                },
+                { enableHighAccuracy: true, timeout: timeoutMs, maximumAge: 30000 }
+            );
+        });
     }
 
     let defaultDepartments = [
@@ -4246,27 +4691,117 @@
     }
 
     function renderDeviceLogsTable() {
+        initGeofenceControls();
         let tbody = document.getElementById('deviceLogsTableBody');
         if (!tbody) return;
         tbody.innerHTML = '';
-        if (deviceLogsData.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding:20px;">لا توجد أجهزة مسجلة حالياً.</td></tr>`;
+
+        let totalCount = deviceLogsData.length;
+        let activeCount = 0;
+        let inOfficeCount = 0;
+        let outOfficeCount = 0;
+        let totalVisits = 0;
+
+        deviceLogsData.forEach(d => {
+            let isAct = d.status === 'active' || (!d.status && currentUser && d.name === currentUser.name);
+            if (isAct) activeCount++;
+            if (d.placeStatus === 'in_office') inOfficeCount++;
+            else if (d.placeStatus === 'outside') outOfficeCount++;
+            totalVisits += (Number(d.loginCount) || 1);
+        });
+
+        let setT = (id, v) => { let el = document.getElementById(id); if (el) el.textContent = v; };
+        setT('dlogStatTotal', totalCount);
+        setT('dlogStatActive', activeCount);
+        setT('dlogStatInOffice', inOfficeCount);
+        setT('dlogStatOutOffice', outOfficeCount);
+        setT('dlogStatVisits', totalVisits);
+
+        let q = document.getElementById('deviceLogSearchInput') ? document.getElementById('deviceLogSearchInput').value.trim().toLowerCase() : '';
+        let stFilter = document.getElementById('deviceLogStatusFilter') ? document.getElementById('deviceLogStatusFilter').value : 'all';
+        let plFilter = document.getElementById('deviceLogPlaceFilter') ? document.getElementById('deviceLogPlaceFilter').value : 'all';
+        let tpFilter = document.getElementById('deviceLogTypeFilter') ? document.getElementById('deviceLogTypeFilter').value : 'all';
+
+        let indexed = deviceLogsData.map((log, origIdx) => ({ log, origIdx })).filter(({ log }) => {
+            let isAct = log.status === 'active' || (!log.status && currentUser && log.name === currentUser.name);
+            let isMob = /هاتف|android|iphone|ipad|mobile/i.test(log.device || '');
+            let pSt = log.placeStatus || 'approx';
+            if (stFilter === 'active' && !isAct) return false;
+            if (stFilter === 'logged_out' && isAct) return false;
+            if (plFilter !== 'all' && pSt !== plFilter) return false;
+            if (tpFilter === 'mobile' && !isMob) return false;
+            if (tpFilter === 'desktop' && isMob) return false;
+            if (!q) return true;
+            let hay = `${log.name || ''} ${log.email || ''} ${log.role || ''} ${log.branchName || ''} ${log.device || ''} ${log.ip || ''} ${log.isp || ''} ${log.location || ''} ${log.placeLabel || ''}`.toLowerCase();
+            return hay.includes(q);
+        });
+
+        if (indexed.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#94a3b8; padding:20px;">لا توجد سجلات مطابقة لمعايير البحث أو الفلترة الحالية.</td></tr>`;
             return;
         }
-        deviceLogsData.forEach((log, index) => {
-            let roleBadge = log.role === 'Admin' ? '<span class="badge b-green">مدير عام</span>' : (log.role === 'Branch Manager' ? '<span class="badge b-blue">مدير فرع</span>' : '<span class="badge b-yellow">موظف</span>');
+
+        indexed.forEach(({ log, origIdx }) => {
+            let isAct = log.status === 'active' || (!log.status && currentUser && log.name === currentUser.name);
+            let isMob = /هاتف|android|iphone|ipad|mobile/i.test(log.device || '');
+            let devIcon = isMob ? '📱' : '🖥️';
+            let roleBadge = log.role === 'مدير عام' ? '<span class="badge b-green">مدير عام</span>' : (log.role === 'مدير فرع' ? '<span class="badge b-blue">مدير فرع</span>' : `<span class="badge b-yellow">${log.role || 'مستخدم'}</span>`);
+            let statusBadge = isAct ? '<span class="badge b-green">🟢 نشط الآن</span>' : '<span class="badge b-yellow">⚪ مسجل خروج</span>';
+            let lastAct = log.lastActiveTime || log.time || '—';
+            let visits = Number(log.loginCount) || 1;
+            let ispLine = log.isp ? `<div style="font-size:10px; color:#94a3b8;">${log.isp}</div>` : '';
+            let emailLine = log.email ? `<div style="font-size:10px; color:#94a3b8;">${log.email}</div>` : '';
+
+            let placeBadgeClass = log.placeStatus === 'in_office' ? 'b-green' : (log.placeStatus === 'outside' ? 'b-red' : 'b-yellow');
+            let placeBadgeTxt = log.placeLabel || '📡 موقع تقريبي (IP)';
+            let mapLinkHtml = (typeof log.lat === 'number' && typeof log.lng === 'number')
+                ? `<div style="margin-top:4px;"><a href="https://www.google.com/maps?q=${log.lat},${log.lng}" target="_blank" style="color:#38bdf8; font-size:10px; text-decoration:underline; font-weight:bold;">🗺️ فتح الموقع على خرائط جوجل (${log.lat.toFixed(4)}, ${log.lng.toFixed(4)})</a></div>`
+                : `<div style="font-size:10px; color:#94a3b8; margin-top:3px;">📍 ${log.location || 'غير محدد'}</div>`;
+
             tbody.innerHTML += `
                 <tr>
-                    <td style="font-weight:bold; color:#38bdf8;">${log.name}</td>
+                    <td style="font-weight:bold; color:#38bdf8;">${log.name}${emailLine}</td>
                     <td style="text-align:center;">${roleBadge}</td>
                     <td style="text-align:center;">${log.branchName}</td>
-                    <td>💻 ${log.device}</td>
-                    <td style="text-align:center; color:#34d399; font-family:monospace;">${log.ip || 'غير متوفر'}</td>
-                    <td style="text-align:center; color:#22d3ee;">📍 ${log.location || 'غير محدد'}</td>
-                    <td style="text-align:center; color:#facc15; font-family:monospace;">${log.time}</td>
-                    <td style="text-align:center;"><button type="button" onclick="deleteDeviceLog(${index})" class="btn-danger">🗑️ حذف</button></td>
+                    <td style="white-space:normal;">${devIcon} ${log.device}</td>
+                    <td style="text-align:center; color:#34d399; font-family:monospace;">${log.ip || 'غير متوفر'}${ispLine}</td>
+                    <td style="text-align:center; white-space:normal;"><span class="badge ${placeBadgeClass}">${placeBadgeTxt}</span>${mapLinkHtml}</td>
+                    <td style="text-align:center;">${statusBadge}<div style="font-size:10px; color:#facc15; font-family:monospace; margin-top:3px;">${lastAct}</div></td>
+                    <td style="text-align:center;"><span class="badge b-blue">${visits}×</span></td>
+                    <td style="text-align:center;">
+                        ${isAct ? `<button type="button" onclick="forceTerminateDeviceSession(${origIdx})" class="btn-edit-tbl" style="border-color:#f59e0b; color:#fde047;">🔒 إنهاء</button>` : ''}
+                        <button type="button" onclick="deleteDeviceLog(${origIdx})" class="btn-danger">🗑️ حذف</button>
+                    </td>
                 </tr>`;
         });
+    }
+
+    function forceTerminateDeviceSession(index) {
+        if (!deviceLogsData[index]) return;
+        let target = deviceLogsData[index];
+        if (!confirm(`إنهاء جلسة الجهاز «${target.device}» للمستخدم «${target.name}»؟`)) return;
+        target.status = 'logged_out';
+        target.lastActiveTime = new Date().toLocaleString('ar-EG');
+        localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+        if (currentUser && target.name === currentUser.name && target.device === detectDeviceType()) {
+            handleLogout();
+            return;
+        }
+        renderDeviceLogsTable();
+        showToast('تم إنهاء جلسة الجهاز بنجاح 🔒', 'success');
+    }
+
+    function exportDeviceLogsJson() {
+        let blob = new Blob([JSON.stringify(deviceLogsData, null, 2)], { type: "application/json;charset=utf-8" });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        a.href = url;
+        a.download = `device_activity_log_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast('📥 تم تصدير سجل نشاط ودخول الأجهزة بنجاح!', 'success');
     }
 
     function deleteDeviceLog(index) {
@@ -4560,35 +5095,177 @@
         }
     }
 
-    // دالة تسجيل بيانات الجهاز والـ IP والموقع الجغرافي بأمان دون تعطيل الدخول
-    async function logClientInfo(userObj) {
+    // دالة تسجيل بيانات الجهاز + طلب موقع GPS الحقيقي + التحقق من مقر العمل
+    async function logClientInfo(userObj, notifyToast = false) {
         let ip = 'محلي / غير متصل';
+        let ispStr = '';
         let locationStr = 'مصر';
         try {
             let res = await fetch('https://ipapi.co/json/');
             if (res.ok) {
                 let data = await res.json();
                 ip = data.ip || ip;
+                ispStr = data.org || '';
                 let city = data.city || '';
                 let country = data.country_name || '';
                 if (city || country) locationStr = `${city}, ${country}`.trim();
             }
         } catch (err) {}
+
+        // طلب اتصال مباشر بموقع GPS الحقيقي للمستخدم
+        let gpsRes = await requestBrowserGpsCoords(9000);
+        let lat = gpsRes.ok ? gpsRes.lat : null;
+        let lng = gpsRes.ok ? gpsRes.lng : null;
+        let accuracy = gpsRes.ok ? gpsRes.accuracy : null;
+        let geoEval = gpsRes.ok
+            ? evaluateWorkplaceGeofence(lat, lng, userObj.branch)
+            : { placeStatus: 'approx', label: `📡 ${gpsRes.reason || 'بدون GPS'}`, distanceMeters: null, matchedBranch: null };
+
+        let statusBadgeEl = document.getElementById('gpsPermissionStatusBadge');
+        if (statusBadgeEl) {
+            if (gpsRes.ok) {
+                statusBadgeEl.className = geoEval.placeStatus === 'in_office' ? 'badge b-green' : 'badge b-yellow';
+                statusBadgeEl.textContent = geoEval.label;
+            } else {
+                statusBadgeEl.className = 'badge b-red';
+                statusBadgeEl.textContent = `⚠️ ${gpsRes.reason}`;
+            }
+        }
+
         let deviceStr = detectDeviceType();
-        let timeStr = new Date().toLocaleString('ar-EG');
-        deviceLogsData = deviceLogsData.filter(d => !(d.name === userObj.name && d.device === deviceStr));
-        deviceLogsData.push({
+        let now = new Date();
+        let timeStr = now.toLocaleString('ar-EG');
+        let existingIdx = deviceLogsData.findIndex(d => d.name === userObj.name && d.device === deviceStr);
+        let prevCount = (existingIdx !== -1 && deviceLogsData[existingIdx].loginCount) ? Number(deviceLogsData[existingIdx].loginCount) : 0;
+        let firstSeen = (existingIdx !== -1 && deviceLogsData[existingIdx].firstSeen) ? deviceLogsData[existingIdx].firstSeen : timeStr;
+
+        if (existingIdx !== -1) deviceLogsData.splice(existingIdx, 1);
+        deviceLogsData.unshift({
             name: userObj.name,
+            email: userObj.email || '',
             role: getRoleDisplayName(userObj.role),
+            branchId: userObj.branch || 'all',
             branchName: userObj.branchName || 'كل الفروع',
             device: deviceStr,
             ip: ip,
+            isp: ispStr,
             location: locationStr,
-            time: timeStr
+            lat: lat,
+            lng: lng,
+            accuracy: accuracy,
+            placeStatus: geoEval.placeStatus,
+            placeLabel: geoEval.label,
+            time: timeStr,
+            firstSeen: firstSeen,
+            lastActiveTime: timeStr,
+            lastActiveTs: now.getTime(),
+            status: 'active',
+            loginCount: prevCount + 1
+        });
+        if (deviceLogsData.length > 200) deviceLogsData.pop();
+        localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+        renderDeviceLogsTable();
+        if (notifyToast) {
+            showToast(gpsRes.ok ? `✅ تم تحديث الموقع: ${geoEval.label}` : `⚠️ لم يتم الحصول على GPS (${gpsRes.reason})`, gpsRes.ok ? 'success' : 'warn');
+        }
+    }
+
+    async function requestLiveGpsForCurrentUser(notifyToast = true) {
+        if (!currentUser) return;
+        showToast('📍 جاري طلب الإذن وتحديد موقعك الجغرافي الحقيقي (GPS)...', 'info');
+        await logClientInfo(currentUser, notifyToast);
+    }
+
+    function initGeofenceControls() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        let prev = sel.value;
+        sel.innerHTML = '';
+        branchesData.forEach(b => {
+            sel.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+        });
+        if (prev && branchesData.some(b => b.id === prev)) sel.value = prev;
+        loadBranchGeofenceInputs();
+    }
+
+    function loadBranchGeofenceInputs() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        let bId = sel.value;
+        let gf = branchGeofencesData[bId] || { lat: 31.0409, lng: 31.3785, radius: 300 };
+        let latEl = document.getElementById('geofenceLatInput');
+        let lngEl = document.getElementById('geofenceLngInput');
+        let radEl = document.getElementById('geofenceRadiusInput');
+        if (latEl) latEl.value = gf.lat || '';
+        if (lngEl) lngEl.value = gf.lng || '';
+        if (radEl) radEl.value = gf.radius || 300;
+    }
+
+    async function captureMyGpsAsBranchWorkLocation() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        let bId = sel.value;
+        showToast('📡 جاري التقاط إحداثيات GPS لموقعك الحالي لتثبيتها كمقر للفرع...', 'info');
+        let gps = await requestBrowserGpsCoords(10000);
+        if (!gps.ok) {
+            showToast(`⚠️ تعذر التقاط الموقع (${gps.reason}) — اسمح للمتصفح بالوصول للموقع وحاول مجدداً.`, 'error');
+            return;
+        }
+        let rad = parseInt(document.getElementById('geofenceRadiusInput').value) || 250;
+        branchGeofencesData[bId] = { lat: Number(gps.lat.toFixed(6)), lng: Number(gps.lng.toFixed(6)), radius: rad };
+        localStorage.setItem('unique_journey_branch_geo_v1', JSON.stringify(branchGeofencesData));
+        loadBranchGeofenceInputs();
+        recalculateAllDeviceLogGeofences();
+        showToast('✅ تم تثبيت موقعك الحالي كمقر عمل معتمد لهذا الفرع بنجاح!', 'success');
+    }
+
+    function saveBranchGeofenceManual() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        let bId = sel.value;
+        let lat = parseFloat(document.getElementById('geofenceLatInput').value);
+        let lng = parseFloat(document.getElementById('geofenceLngInput').value);
+        let rad = parseInt(document.getElementById('geofenceRadiusInput').value) || 250;
+        if (isNaN(lat) || isNaN(lng)) {
+            showToast('⚠️ يرجى إدخال إحداثيات صحيحة أو الضغط على زر تثبيت موقعي الحالي.', 'error');
+            return;
+        }
+        branchGeofencesData[bId] = { lat, lng, radius: rad };
+        localStorage.setItem('unique_journey_branch_geo_v1', JSON.stringify(branchGeofencesData));
+        recalculateAllDeviceLogGeofences();
+        showToast('💾 تم حفظ إحداثيات ونطاق مقر العمل بنجاح!', 'success');
+    }
+
+    function recalculateAllDeviceLogGeofences() {
+        deviceLogsData.forEach(log => {
+            if (typeof log.lat === 'number' && typeof log.lng === 'number') {
+                let ev = evaluateWorkplaceGeofence(log.lat, log.lng, log.branchId || 'all');
+                log.placeStatus = ev.placeStatus;
+                log.placeLabel = ev.label;
+            }
         });
         localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
         renderDeviceLogsTable();
     }
+
+    function markCurrentDeviceLogStatus(statusVal) {
+        if (!currentUser) return;
+        let deviceStr = detectDeviceType();
+        let now = new Date();
+        let timeStr = now.toLocaleString('ar-EG');
+        let idx = deviceLogsData.findIndex(d => d.name === currentUser.name && d.device === deviceStr);
+        if (idx !== -1) {
+            deviceLogsData[idx].status = statusVal;
+            deviceLogsData[idx].lastActiveTime = timeStr;
+            deviceLogsData[idx].lastActiveTs = now.getTime();
+            localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+            renderDeviceLogsTable();
+        }
+    }
+
+    setInterval(() => {
+        if (currentUser) markCurrentDeviceLogStatus('active');
+    }, 60000);
 
     async function handleLogin(e) {
         e.preventDefault();
@@ -4653,6 +5330,7 @@
     }
 
     function handleLogout() {
+        markCurrentDeviceLogStatus('logged_out');
         localStorage.removeItem('unique_journey_logged_in');
         currentUser = null;
         document.getElementById('main-app').classList.add('hidden');
@@ -4661,7 +5339,7 @@
 
     function checkExistingLogin() {
         let saved = localStorage.getItem('unique_journey_logged_in');
-        if (saved) { try { currentUser = JSON.parse(saved); initApp(); } catch(e) { handleLogout(); } }
+        if (saved) { try { currentUser = JSON.parse(saved); initApp(); logClientInfo(currentUser, false); } catch(e) { handleLogout(); } }
     }
 
     function updateSmartNotificationBanner() {
@@ -4880,7 +5558,7 @@
         if (currentUser.role === 'Branch Manager' && currentUser.branch !== b) return;
         if (currentUser.role === 'Employee') return;
         currentBranch = b;
-        renderBranchButtons(); renderEvalTable(); renderLiveHudBadges(); initCameraRulesDropdowns();
+        renderBranchButtons(); renderEvalTable(); renderLiveHudBadges(); if (typeof executeAllWorkflowRules === 'function') executeAllWorkflowRules(false); initCameraRulesDropdowns();
     }
     function filterByDept(dept) { currentDeptFilter = dept; renderDeptFilterBar(); renderEvalTable(); }
 
@@ -5060,7 +5738,12 @@
 
             html += `<td data-label="النسبة والاتجاه" style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}% ${trendHtml}</td>
                      <td data-label="التقدير" style="text-align:center;"><span class="badge ${evalRes.badge}">${evalRes.rating}</span></td>
-                     <td data-label="ملاحظات">${notes}</td>`;
+                     <td data-label="ملاحظات" style="min-width:170px;">
+                        <div style="margin-bottom:4px;">${notes}</div>
+                        ${currentUser.role !== 'Employee'
+                            ? `<input type="text" value="${((emp.notes && emp.notes[activeWeek]) || '').replace(/"/g, '&quot;')}" onchange="updateEmployeeWeeklyNote('${currentBranch}', ${realIdx}, this.value)" placeholder="📝 ملاحظة خاصة للأسبوع..." class="table-input" style="text-align:right; font-size:10px; padding:4px 6px;">`
+                            : (emp.notes && emp.notes[activeWeek] ? `<div style="font-size:10px; color:#fde047;">📝 ${emp.notes[activeWeek]}</div>` : '')}
+                    </td>`;
             
             if (currentUser.role !== 'Employee') {
                 html += `<td data-label="إجراءات" style="text-align:center;">
@@ -5094,12 +5777,30 @@
                 let deptDisplay = getDeptDisplayName(emp.dept);
                 let adminDeptDisplay = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
                 
+                let cleanPhone = emp.phone ? String(emp.phone).replace(/[^0-9]/g, '') : '';
+                let phoneCell = emp.phone
+                    ? `<a href="https://wa.me/${cleanPhone}" target="_blank" style="color:#4ade80; font-family:monospace; font-weight:bold; text-decoration:none;" title="فتح محادثة واتساب مباشرة">📱 ${emp.phone}</a>`
+                    : '<span style="color:#64748b;">—</span>';
+                let codeCell = emp.empCode
+                    ? `<span class="badge b-blue" style="font-family:monospace;">${emp.empCode}</span>`
+                    : `<span style="color:#64748b; font-family:monospace;">#${empIdx + 1}</span>`;
+                let nidCell = emp.nationalId
+                    ? `<span style="color:#fde047; font-family:monospace; letter-spacing:0.5px;">🪪 ${emp.nationalId}</span>`
+                    : '<span style="color:#64748b;">—</span>';
+                let hireCell = emp.hireDate
+                    ? `<span style="color:#cbd5e1; font-family:monospace;">📅 ${emp.hireDate}</span>`
+                    : '<span style="color:#64748b;">—</span>';
+
                 tbody.innerHTML += `<tr>
+                    <td style="text-align:center;">${codeCell}</td>
                     <td style="font-weight:bold; color:#38bdf8;">${b.name}</td>
                     <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${b.id}', ${empIdx})">${emp.name}</span></td>
                     <td style="color:#22d3ee;">${adminDeptDisplay}</td>
                     <td>${deptDisplay}</td>
                     <td>${emp.jobTitle || 'موظف'}</td>
+                    <td style="text-align:center;">${nidCell}</td>
+                    <td style="text-align:center;">${phoneCell}</td>
+                    <td style="text-align:center;">${hireCell}</td>
                     <td style="font-weight:bold; color:#38bdf8; text-align:center;">${pct}%</td>
                     <td style="text-align:center;"><span class="badge ${evalRes.badge}">${evalRes.rating}</span></td>
                     <td style="text-align:center;">
@@ -5121,6 +5822,10 @@
         document.getElementById('editEmpBranch').value = branchId;
         document.getElementById('editEmpName').value = emp.name;
         document.getElementById('editEmpJobTitle').value = emp.jobTitle || 'موظف';
+        if (document.getElementById('editEmpPhone')) document.getElementById('editEmpPhone').value = emp.phone || '';
+        if (document.getElementById('editEmpHireDate')) document.getElementById('editEmpHireDate').value = emp.hireDate || '';
+        if (document.getElementById('editEmpCode')) document.getElementById('editEmpCode').value = emp.empCode || '';
+        if (document.getElementById('editEmpNationalId')) document.getElementById('editEmpNationalId').value = emp.nationalId || '';
         let adminSel = document.getElementById('editEmpAdminDept');
         let currentAdmin = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : '');
         if (!Array.from(adminSel.options).some(o => o.value === currentAdmin) && currentAdmin) {
@@ -5160,6 +5865,10 @@
         empObj.adminDept = newAdminDept;
         empObj.dept = newDept;
         empObj.jobTitle = newJobTitle;
+        if (document.getElementById('editEmpPhone')) empObj.phone = document.getElementById('editEmpPhone').value.trim();
+        if (document.getElementById('editEmpHireDate')) empObj.hireDate = document.getElementById('editEmpHireDate').value;
+        if (document.getElementById('editEmpCode')) empObj.empCode = document.getElementById('editEmpCode').value.trim();
+        if (document.getElementById('editEmpNationalId')) empObj.nationalId = document.getElementById('editEmpNationalId').value.trim();
 
         if (oldBranchId !== newBranchId) {
             dbData[oldBranchId].splice(empIdx, 1);
@@ -5200,6 +5909,10 @@
             let jobIdx = header.findIndex(h => h.includes('وظيف') || h.includes('مسمى') || h === 'job' || h === 'title');
             let branchIdx = header.findIndex(h => h.includes('فرع') || h === 'branch');
             let adminIdx = header.findIndex(h => h.includes('ادار') || h.includes('إدار') || h === 'admin');
+            let codeIdx = header.findIndex(h => h.includes('كود') || h === 'code' || h === 'id');
+            let nidIdx = header.findIndex(h => h.includes('بطاق') || h.includes('قومي') || h.includes('national'));
+            let phoneIdx = header.findIndex(h => h.includes('واتس') || h.includes('هاتف') || h.includes('موبايل') || h.includes('تليفون') || h.includes('phone') || h.includes('whatsapp'));
+            let hireIdx = header.findIndex(h => h.includes('تعيين') || h.includes('تاريخ') || h.includes('hire'));
             let startRow = 0;
             if (nameIdx !== -1 || deptIdx !== -1 || jobIdx !== -1 || branchIdx !== -1 || adminIdx !== -1) {
                 startRow = 1;
@@ -5224,7 +5937,11 @@
                 if (!dbData[branchId]) dbData[branchId] = [];
                 let historyObj = {};
                 historyObj[activeWeek] = new Array(metricNames.length).fill(3);
-                dbData[branchId].push({ id: Date.now() + Math.random(), name, adminDept, dept: deptId, jobTitle, history: historyObj });
+                let empCode = (codeIdx !== -1 && parts[codeIdx] !== undefined) ? String(parts[codeIdx]).trim() : '';
+                let nationalId = (nidIdx !== -1 && parts[nidIdx] !== undefined) ? String(parts[nidIdx]).trim() : '';
+                let phone = (phoneIdx !== -1 && parts[phoneIdx] !== undefined) ? String(parts[phoneIdx]).trim() : '';
+                let hireDate = (hireIdx !== -1 && parts[hireIdx] !== undefined) ? String(parts[hireIdx]).trim() : '';
+                dbData[branchId].push({ id: Date.now() + Math.random(), name, adminDept, dept: deptId, jobTitle, empCode, nationalId, phone, hireDate, notes: {}, history: historyObj });
                 addedCount++;
             }
             return addedCount;
@@ -5518,11 +6235,15 @@
         let adminDept = document.getElementById('newAdminDept').value;
         let dept = document.getElementById('newDept').value;
         let jobTitle = document.getElementById('newJobTitle') ? document.getElementById('newJobTitle').value.trim() : 'موظف';
+        let phone = document.getElementById('newEmpPhone') ? document.getElementById('newEmpPhone').value.trim() : '';
+        let hireDate = document.getElementById('newEmpHireDate') ? document.getElementById('newEmpHireDate').value : '';
+        let empCode = document.getElementById('newEmpCode') ? document.getElementById('newEmpCode').value.trim() : '';
+        let nationalId = document.getElementById('newEmpNationalId') ? document.getElementById('newEmpNationalId').value.trim() : '';
         let branch = document.getElementById('newEmpBranch').value;
         let activeWeek = getCurrentWeekKey();
         let historyObj = {}; historyObj[activeWeek] = new Array(metricNames.length).fill(3);
         if (!dbData[branch]) dbData[branch] = [];
-        dbData[branch].push({ id: Date.now(), name, adminDept, dept, jobTitle, history: historyObj });
+        dbData[branch].push({ id: Date.now(), name, adminDept, dept, jobTitle, phone, hireDate, empCode, nationalId, notes: {}, history: historyObj });
         localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
         recordAuditLog('إضافة موظف جديد', `تمت إضافة الموظف «${name}» (القسم: ${getDeptDisplayName(dept)}، الوظيفة: ${jobTitle})`);
         closeAddModal(); currentBranch = branch; renderBranchButtons(); renderEvalTable(); renderAllEmployeesTable();
@@ -5753,6 +6474,17 @@
                 <td><input type="text" value="${item.goal}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'goal', this.value)" class="table-input" style="text-align:right;"></td>
                 <td><input type="text" value="${item.action}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'action', this.value)" class="table-input" style="text-align:right;"></td>
                 <td><input type="text" value="${item.resp}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'resp', this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center;">
+                    <select ${!isAdmin ? 'disabled' : ''} onchange="updatePlanField(${index}, 'priority', this.value)" style="font-size:11px; padding:4px;">
+                        <option value="عاجل" ${(item.priority||'متوسط')==='عاجل'?'selected':''}>🔴 عاجل</option>
+                        <option value="متوسط" ${(item.priority||'متوسط')==='متوسط'?'selected':''}>🟡 متوسط</option>
+                        <option value="عادي" ${(item.priority||'متوسط')==='عادي'?'selected':''}>🟢 عادي</option>
+                    </select>
+                </td>
+                <td style="text-align:center;">
+                    <input type="date" value="${item.dueDate || ''}" ${!isAdmin ? 'readonly' : ''} onchange="updatePlanField(${index}, 'dueDate', this.value)" class="table-input" style="font-size:10px; padding:4px;">
+                    ${(!item.completed && item.dueDate && item.dueDate < new Date().toISOString().slice(0,10)) ? '<div style="margin-top:3px;"><span class="badge b-red" style="font-size:9px;">⏰ متأخرة</span></div>' : ''}
+                </td>
                 ${actionTd}
             </tr>`;
         });
@@ -6067,7 +6799,12 @@
         } else {
             msg = `تقرير أداء *${empName}* (${branchName}) في ${comp}: *${pct}%*`;
         }
-        let waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+        let matchedPhone = '';
+        Object.keys(dbData).forEach(bId => {
+            let f = (dbData[bId] || []).find(e => e.name === empName && e.phone);
+            if (f) matchedPhone = String(f.phone).replace(/[^0-9]/g, '');
+        });
+        let waUrl = matchedPhone ? `https://wa.me/${matchedPhone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
         window.open(waUrl, '_blank');
         showToast('تم تجهيز رسالة واتساب وفتحها في نافذة جديدة 💬', 'success');
     }
@@ -6832,8 +7569,7 @@
         return { title: 'العنصر المتوازن', icon: '🌟' };
     }
     function getEmployeeDnaPill(emp, scores) {
-        let dna = getEmployeeDnaArchetype(emp, scores);
-        return `<span class="dna-pill" title="البصمة المهنية التلقائية">${dna.icon} ${dna.title}</span>`;
+        return "";
     }
 
     // 🔥 2. محرك سلاسل الالتزام والأوسمة النادرة (Streaks & Rare Badges)
@@ -6883,7 +7619,7 @@
         let streak = calculateEmployeeStreak(emp);
         let rareBadges = getEmployeeRareBadges(emp, scores, activeWeek);
         if (bar) {
-            let html = `<span class="dna-pill" style="font-size:11px; padding:4px 10px;">${dna.icon} البصمة: ${dna.title}</span>`;
+            let html = "";
             if (streak > 0) html += `<span class="streak-pill" style="font-size:11px; padding:4px 10px;">🔥 سلسلة تميز: ${streak} أسبوع</span>`;
             rareBadges.forEach(b => html += `<span class="rare-badge-pill">${b}</span>`);
             bar.innerHTML = html;
@@ -6891,9 +7627,9 @@
         let qrSum = document.getElementById('qrPassportSummary');
         let qrImg = document.getElementById('modalQrCodeImg');
         let comp = brandingData.companyName || 'الرحلة الفريدة';
-        let passportText = `${comp} | ${emp.name} (${branchName}) | الأداء: ${pct}% | البصمة: ${dna.title} | الأسبوع: ${activeWeek}`;
+        let passportText = `${comp} | ${emp.name} (${branchName}) | الأداء: ${pct}% | الأسبوع: ${activeWeek}`;
         if (qrSum) {
-            qrSum.innerHTML = `امسح الرمز بكاميرا الهاتف لعرض بطاقة التميز الموثقة للموظف <b>${emp.name}</b> — البصمة: <b>${dna.title}</b> (${pct}%).`;
+            qrSum.innerHTML = `امسح الرمز بكاميرا الهاتف لعرض بطاقة التميز الموثقة للموظف <b>${emp.name}</b> (${pct}%).`;
         }
         if (qrImg) {
             qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=${encodeURIComponent(passportText)}`;
@@ -6916,7 +7652,7 @@
         ctx.fillStyle = '#ffffff'; ctx.font = 'bold 42px Tahoma, Arial';
         ctx.fillText(p.name, 840, 155);
         ctx.fillStyle = '#c4b5fd'; ctx.font = 'bold 24px Tahoma, Arial';
-        ctx.fillText(`البصمة المهنية: ${p.dna}`, 840, 215);
+        ctx.fillText(`القسم: ${p.deptName || ''}`, 840, 215);
         ctx.fillStyle = '#34d399'; ctx.font = 'bold 34px Tahoma, Arial';
         ctx.fillText(`النسبة الموزونة: ${p.pct}%  |  ${p.branchName}`, 840, 285);
         ctx.fillStyle = '#fde047'; ctx.font = '20px Tahoma, Arial';
@@ -6933,101 +7669,361 @@
     // 🌌 4. خريطة المجرة التفاعلية للشركة (Live Constellation Map)
     let constellationAnimFrame = null;
     let constellationNodes = [];
+    let constellationPaused = false;
+    let constellationShowOrbits = true;
+    let constellationHoveredNode = null;
+
+    function toggleConstellationMotion() {
+        constellationPaused = !constellationPaused;
+        let btn = document.getElementById('btnConstellationPause');
+        if (btn) btn.textContent = constellationPaused ? '▶ تشغيل الدوران' : '⏸️ إيقاف الدوران';
+    }
+
+    function toggleConstellationOrbits() {
+        constellationShowOrbits = !constellationShowOrbits;
+    }
+
     function renderConstellationMap() {
         let canvas = document.getElementById('constellationCanvas');
         let tooltip = document.getElementById('constellationTooltip');
         if (!canvas) return;
         let rect = canvas.parentElement.getBoundingClientRect();
-        canvas.width = Math.max(600, rect.width || 800);
-        canvas.height = 480;
+        canvas.width = Math.max(680, rect.width || 900);
+        canvas.height = 540;
         let ctx = canvas.getContext('2d');
         let activeWeek = getCurrentWeekKey();
 
-        let planets = branchesData.map((b, idx) => {
+        // تحضير الكواكب (الفروع) مع حساب متوسط كل فرع لتحديد الكوكب المتصدر ذو الحلقات
+        let branchStats = branchesData.map((b, idx) => {
+            let emps = dbData[b.id] || [];
+            let sum = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                sum += calculateWeightedEmployeePct(emp, sc, null);
+            });
+            let avg = emps.length ? Math.round(sum / emps.length) : 0;
             let cx = (canvas.width / (branchesData.length + 1)) * (idx + 1);
-            let cy = canvas.height / 2;
-            return { id: b.id, name: b.name, cx, cy, emps: dbData[b.id] || [] };
+            let cy = canvas.height * 0.52 + (branchesData.length > 1 ? (idx % 2 === 0 ? -12 : 12) : 0);
+            return { id: b.id, name: b.name, cx, cy, emps, avg };
         });
+        let topBranchAvg = Math.max(0, ...branchStats.map(b => b.avg));
+
+        // 240 نجمة خلفية متعددة الأعماق والألوان الحرارية الحقيقية
+        let starColors = ['#ffffff', '#dbeafe', '#bae6fd', '#fef3c7', '#fde68a', '#e9d5ff'];
+        let stars = [];
+        for (let s = 0; s < 240; s++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() < 0.14 ? (1.4 + Math.random() * 1.1) : (0.5 + Math.random() * 0.9),
+                alpha: 0.25 + Math.random() * 0.7,
+                phase: Math.random() * Math.PI * 2,
+                speed: 0.015 + Math.random() * 0.035,
+                color: starColors[s % starColors.length]
+            });
+        }
+
+        // شهاب عابر واقعي بين الحين والآخر
+        let shootingStar = { active: false, x: 0, y: 0, vx: 0, vy: 0, life: 0 };
 
         let angleOffset = 0;
+        let frameTick = 0;
         if (constellationAnimFrame) cancelAnimationFrame(constellationAnimFrame);
+
+        function drawRealisticPlanet(cx, cy, radius, palette, hasRing, label, avgPct) {
+            // هالة الغلاف الجوي
+            let atmo = ctx.createRadialGradient(cx, cy, radius * 0.7, cx, cy, radius * 2.05);
+            atmo.addColorStop(0, palette.glow);
+            atmo.addColorStop(0.55, palette.glowSoft);
+            atmo.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius * 2.05, 0, Math.PI * 2);
+            ctx.fillStyle = atmo;
+            ctx.fill();
+
+            // نصف الحلقة الخلفية لكوكب الفرع المتصدر
+            if (hasRing) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(-0.24);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, radius * 1.95, radius * 0.56, 0, Math.PI, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(250, 204, 21, 0.42)';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // جسم الكوكب ثلاثي الأبعاد (إضاءة علوية يسارية + ظل كروي)
+            let pGrad = ctx.createRadialGradient(cx - radius * 0.35, cy - radius * 0.35, radius * 0.12, cx, cy, radius);
+            pGrad.addColorStop(0, palette.light);
+            pGrad.addColorStop(0.55, palette.mid);
+            pGrad.addColorStop(1, palette.dark);
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fillStyle = pGrad;
+            ctx.fill();
+
+            // أحزمة غيوم خفيفة على سطح الكوكب
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.clip();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 3;
+            [-0.45, -0.1, 0.32].forEach(off => {
+                ctx.beginPath();
+                ctx.ellipse(cx, cy + radius * off, radius * 1.15, radius * 0.22, -0.18, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+            // ظل الهلال الجانبي للواقعية
+            let shadowGrad = ctx.createRadialGradient(cx + radius * 0.55, cy + radius * 0.45, radius * 0.1, cx, cy, radius * 1.2);
+            shadowGrad.addColorStop(0, 'rgba(2, 6, 23, 0.65)');
+            shadowGrad.addColorStop(0.7, 'rgba(2, 6, 23, 0.08)');
+            shadowGrad.addColorStop(1, 'rgba(2, 6, 23, 0)');
+            ctx.fillStyle = shadowGrad;
+            ctx.fillRect(cx - radius, cy - radius, radius * 2, radius * 2);
+            ctx.restore();
+
+            // نصف الحلقة الأمامية لكوكب الفرع المتصدر
+            if (hasRing) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(-0.24);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, radius * 1.95, radius * 0.56, 0, 0, Math.PI);
+                ctx.strokeStyle = 'rgba(253, 224, 71, 0.68)';
+                ctx.lineWidth = 4.5;
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // اسم الفرع ومتوسطه
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 12px Cairo, Tahoma, Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(label, cx, cy + radius + 17);
+            ctx.fillStyle = '#7dd3fc';
+            ctx.font = 'bold 10px Tahoma, Arial';
+            ctx.fillText(`${avgPct}%`, cx, cy + 4);
+        }
+
+        const planetPalettes = [
+            { light: '#bae6fd', mid: '#0284c7', dark: '#082f49', glow: 'rgba(56,189,248,0.45)', glowSoft: 'rgba(14,165,233,0.12)' },
+            { light: '#ddd6fe', mid: '#7c3aed', dark: '#2e1065', glow: 'rgba(167,139,250,0.45)', glowSoft: 'rgba(139,92,246,0.12)' },
+            { light: '#a7f3d0', mid: '#059669', dark: '#022c22', glow: 'rgba(52,211,153,0.45)', glowSoft: 'rgba(16,185,129,0.12)' },
+            { light: '#fde68a', mid: '#d97706', dark: '#451a03', glow: 'rgba(251,191,36,0.45)', glowSoft: 'rgba(245,158,11,0.12)' }
+        ];
 
         function drawFrame() {
             let sec = document.getElementById('sec-constellation');
             if (!sec || sec.classList.contains('hidden')) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            frameTick++;
 
-            // خلفية نجوم خافتة
-            ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
-            for (let s = 0; s < 45; s++) {
-                let sx = (s * 173) % canvas.width;
-                let sy = (s * 97) % canvas.height;
-                ctx.fillRect(sx, sy, 1.5, 1.5);
+            // 1. خلفية الفضاء العميق + السُدُم الكونية الحجمية (Volumetric Nebulae)
+            let bgGrad = ctx.createRadialGradient(canvas.width * 0.5, canvas.height * 0.45, 30, canvas.width * 0.5, canvas.height * 0.5, canvas.width * 0.78);
+            bgGrad.addColorStop(0, '#0d1730');
+            bgGrad.addColorStop(0.55, '#060b18');
+            bgGrad.addColorStop(1, '#02040a');
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // سديم أزرق-بنفسجي علوي
+            let neb1 = ctx.createRadialGradient(canvas.width * 0.25, canvas.height * 0.3, 10, canvas.width * 0.25, canvas.height * 0.3, 250);
+            neb1.addColorStop(0, 'rgba(56, 189, 248, 0.13)');
+            neb1.addColorStop(0.5, 'rgba(124, 58, 237, 0.06)');
+            neb1.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = neb1;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // سديم زمردي-أرجواني سفلي
+            let neb2 = ctx.createRadialGradient(canvas.width * 0.76, canvas.height * 0.68, 10, canvas.width * 0.76, canvas.height * 0.68, 260);
+            neb2.addColorStop(0, 'rgba(168, 85, 247, 0.12)');
+            neb2.addColorStop(0.5, 'rgba(16, 185, 129, 0.05)');
+            neb2.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = neb2;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. حقل النجوم المتلألئ الواقعي
+            stars.forEach(st => {
+                let tw = 0.55 + 0.45 * Math.sin(st.phase + frameTick * st.speed);
+                ctx.globalAlpha = st.alpha * tw;
+                ctx.fillStyle = st.color;
+                ctx.beginPath();
+                ctx.arc(st.x, st.y, st.r, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
+            // شهاب عابر كل فترة
+            if (!shootingStar.active && Math.random() < 0.008) {
+                shootingStar = {
+                    active: true,
+                    x: Math.random() * canvas.width * 0.8 + canvas.width * 0.1,
+                    y: Math.random() * canvas.height * 0.35,
+                    vx: -6 - Math.random() * 4,
+                    vy: 2.2 + Math.random() * 2,
+                    life: 28
+                };
+            }
+            if (shootingStar.active) {
+                let sGrad = ctx.createLinearGradient(shootingStar.x, shootingStar.y, shootingStar.x - shootingStar.vx * 8, shootingStar.y - shootingStar.vy * 8);
+                sGrad.addColorStop(0, 'rgba(255,255,255,0.9)');
+                sGrad.addColorStop(1, 'rgba(56,189,248,0)');
+                ctx.strokeStyle = sGrad;
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                ctx.moveTo(shootingStar.x, shootingStar.y);
+                ctx.lineTo(shootingStar.x - shootingStar.vx * 8, shootingStar.y - shootingStar.vy * 8);
+                ctx.stroke();
+                shootingStar.x += shootingStar.vx;
+                shootingStar.y += shootingStar.vy;
+                shootingStar.life--;
+                if (shootingStar.life <= 0) shootingStar.active = false;
             }
 
-            constellationNodes = [];
-            planets.forEach((pl, pIdx) => {
-                // رسم المدارات
-                [70, 125, 175].forEach(r => {
-                    ctx.beginPath();
-                    ctx.arc(pl.cx, pl.cy, r, 0, Math.PI * 2);
-                    ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
+            // جسر طاقة كوني خفيف يربط بين الكواكب (الفروع)
+            if (branchStats.length > 1) {
+                for (let i = 0; i < branchStats.length - 1; i++) {
+                    let a = branchStats[i], b = branchStats[i + 1];
+                    let linkGrad = ctx.createLinearGradient(a.cx, a.cy, b.cx, b.cy);
+                    linkGrad.addColorStop(0, 'rgba(56,189,248,0.16)');
+                    linkGrad.addColorStop(0.5, 'rgba(167,139,250,0.22)');
+                    linkGrad.addColorStop(1, 'rgba(56,189,248,0.16)');
+                    ctx.save();
+                    ctx.setLineDash([4, 6]);
+                    ctx.strokeStyle = linkGrad;
                     ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(a.cx, a.cy);
+                    ctx.lineTo(b.cx, b.cy);
                     ctx.stroke();
-                });
+                    ctx.restore();
+                }
+            }
 
-                // الكوكب (الفرع)
-                let pGrad = ctx.createRadialGradient(pl.cx, pl.cy, 6, pl.cx, pl.cy, 34);
-                pGrad.addColorStop(0, '#38bdf8');
-                pGrad.addColorStop(1, '#0369a1');
-                ctx.beginPath();
-                ctx.arc(pl.cx, pl.cy, 30, 0, Math.PI * 2);
-                ctx.fillStyle = pGrad;
-                ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 12px Tahoma, Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(pl.name, pl.cx, pl.cy + 4);
+            const tiltY = 0.62;
+            constellationNodes = [];
 
-                // الأقمار (الموظفون)
-                pl.emps.forEach((emp, eIdx) => {
+            branchStats.forEach((pl, pIdx) => {
+                let maxOrbitX = Math.min(188, (canvas.width / (branchStats.length + 0.6)) * 0.45);
+                let rInner = Math.max(68, maxOrbitX * 0.46);
+                let rMid = Math.max(112, maxOrbitX * 0.74);
+                let rOuter = Math.max(152, maxOrbitX);
+
+                // رسم المدارات الإهليلجية ثلاثية الأبعاد
+                if (constellationShowOrbits) {
+                    [
+                        { r: rInner, col: 'rgba(16, 185, 129, 0.22)' },
+                        { r: rMid, col: 'rgba(56, 189, 248, 0.16)' },
+                        { r: rOuter, col: 'rgba(239, 68, 68, 0.18)' }
+                    ].forEach(orb => {
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.ellipse(pl.cx, pl.cy, orb.r, orb.r * tiltY, 0, 0, Math.PI * 2);
+                        ctx.strokeStyle = orb.col;
+                        ctx.lineWidth = 1;
+                        ctx.setLineDash([3, 5]);
+                        ctx.stroke();
+                        ctx.restore();
+                    });
+                }
+
+                // حساب مواقع الأقمار وترتيبها حسب العمق (z-order: خلف الكوكب أولاً ثم أمامه)
+                let moons = pl.emps.map((emp, eIdx) => {
                     let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
                     let pct = calculateWeightedEmployeePct(emp, sc, null);
-                    let orbitR = pct >= 90 ? 72 : (pct >= 65 ? 122 : 172);
-                    let speed = (0.002 + (eIdx % 3) * 0.0007) * (pIdx % 2 === 0 ? 1 : -1);
-                    let theta = (Math.PI * 2 / Math.max(1, pl.emps.length)) * eIdx + angleOffset * speed * 60;
+                    let orbitR = pct >= 90 ? rInner : (pct > 60 ? rMid : rOuter);
+                    let speed = (0.0022 + (eIdx % 4) * 0.00055) * (pIdx % 2 === 0 ? 1 : -1);
+                    let theta = (Math.PI * 2 / Math.max(1, pl.emps.length)) * eIdx + angleOffset * speed * 52;
                     let mx = pl.cx + Math.cos(theta) * orbitR;
-                    let my = pl.cy + Math.sin(theta) * orbitR;
-                    let color = pct >= 90 ? '#10b981' : (pct > 60 ? '#38bdf8' : '#ef4444');
-                    let radius = pct >= 90 ? 11 : 9;
+                    let my = pl.cy + Math.sin(theta) * orbitR * tiltY;
+                    let depthScale = 0.85 + 0.28 * ((Math.sin(theta) + 1) / 2);
+                    return { emp, sc, pct, orbitR, theta, mx, my, depthScale, eIdx, speed };
+                });
 
-                    // خط الجاذبية
+                function drawMoon(m) {
+                    let baseR = (m.pct >= 90 ? 10.5 : (m.pct <= 60 ? 9.5 : 8.5)) * m.depthScale;
+                    let isHovered = constellationHoveredNode && constellationHoveredNode.emp.name === m.emp.name && constellationHoveredNode.branchId === pl.id;
+
+                    // ذيل مداري مضيء (Comet Motion Trail)
+                    let trailSteps = 6;
                     ctx.beginPath();
-                    ctx.moveTo(pl.cx, pl.cy);
-                    ctx.lineTo(mx, my);
-                    ctx.strokeStyle = pct <= 60 ? 'rgba(239,68,68,0.18)' : 'rgba(56,189,248,0.08)';
+                    for (let t = 0; t <= trailSteps; t++) {
+                        let backTheta = m.theta - (m.speed > 0 ? 1 : -1) * t * 0.085;
+                        let tx = pl.cx + Math.cos(backTheta) * m.orbitR;
+                        let ty = pl.cy + Math.sin(backTheta) * m.orbitR * tiltY;
+                        if (t === 0) ctx.moveTo(tx, ty);
+                        else ctx.lineTo(tx, ty);
+                    }
+                    ctx.strokeStyle = m.pct >= 90 ? 'rgba(52, 211, 153, 0.38)' : (m.pct <= 60 ? 'rgba(248, 113, 113, 0.38)' : 'rgba(56, 189, 248, 0.3)');
+                    ctx.lineWidth = Math.max(1.5, baseR * 0.38);
+                    ctx.lineCap = 'round';
                     ctx.stroke();
 
-                    // توهج القمر
+                    // هالة القمر النابضة (للمتميزين والحرجين)
+                    let pulse = (m.pct <= 60 || m.pct >= 90) ? (1 + 0.22 * Math.sin(frameTick * 0.09 + m.eIdx)) : 1;
+                    let auraR = baseR * 2.15 * pulse;
+                    let auraGrad = ctx.createRadialGradient(m.mx, m.my, baseR * 0.3, m.mx, m.my, auraR);
+                    if (m.pct >= 90) {
+                        auraGrad.addColorStop(0, 'rgba(52, 211, 153, 0.55)');
+                        auraGrad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+                    } else if (m.pct <= 60) {
+                        auraGrad.addColorStop(0, 'rgba(239, 68, 68, 0.65)');
+                        auraGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
+                    } else {
+                        auraGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+                        auraGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
+                    }
                     ctx.beginPath();
-                    ctx.arc(mx, my, radius + 4, 0, Math.PI * 2);
-                    ctx.fillStyle = pct >= 90 ? 'rgba(16,185,129,0.25)' : (pct <= 60 ? 'rgba(239,68,68,0.32)' : 'rgba(56,189,248,0.2)');
+                    ctx.arc(m.mx, m.my, auraR, 0, Math.PI * 2);
+                    ctx.fillStyle = auraGrad;
                     ctx.fill();
 
+                    // جسم القمر المظلل ثلاثي الأبعاد
+                    let mGrad = ctx.createRadialGradient(m.mx - baseR * 0.35, m.my - baseR * 0.35, 1, m.mx, m.my, baseR);
+                    if (m.pct >= 90) { mGrad.addColorStop(0, '#d1fae5'); mGrad.addColorStop(0.55, '#10b981'); mGrad.addColorStop(1, '#064e3b'); }
+                    else if (m.pct <= 60) { mGrad.addColorStop(0, '#fee2e2'); mGrad.addColorStop(0.55, '#ef4444'); mGrad.addColorStop(1, '#7f1d1d'); }
+                    else { mGrad.addColorStop(0, '#e0f2fe'); mGrad.addColorStop(0.55, '#38bdf8'); mGrad.addColorStop(1, '#0c4a6e'); }
                     ctx.beginPath();
-                    ctx.arc(mx, my, radius, 0, Math.PI * 2);
-                    ctx.fillStyle = color;
+                    ctx.arc(m.mx, m.my, baseR, 0, Math.PI * 2);
+                    ctx.fillStyle = mGrad;
                     ctx.fill();
 
-                    ctx.fillStyle = '#e2e8f0';
-                    ctx.font = '10px Tahoma, Arial';
-                    ctx.fillText(emp.name.split(' ')[0], mx, my - 13);
+                    // حلقة تصويب تفاعلية عند تمرير الماوس
+                    if (isHovered) {
+                        ctx.beginPath();
+                        ctx.arc(m.mx, m.my, baseR + 6, 0, Math.PI * 2);
+                        ctx.strokeStyle = '#fef08a';
+                        ctx.lineWidth = 1.8;
+                        ctx.stroke();
+                    }
 
-                    constellationNodes.push({ x: mx, y: my, r: radius + 6, emp, branchId: pl.id, branchName: pl.name, empIdx: eIdx, pct, dna: getEmployeeDnaArchetype(emp, sc) });
-                });
+                    ctx.fillStyle = isHovered ? '#fef08a' : '#e2e8f0';
+                    ctx.font = `${isHovered ? 'bold ' : ''}10px Cairo, Tahoma, Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(m.emp.name.split(' ')[0], m.mx, m.my - baseR - 6);
+
+                    constellationNodes.push({
+                        x: m.mx, y: m.my, r: baseR + 7,
+                        emp: m.emp, branchId: pl.id, branchName: pl.name,
+                        empIdx: m.eIdx, pct: m.pct, dna: getEmployeeDnaArchetype(m.emp, m.sc)
+                    });
+                }
+
+                // رسم الأقمار الخلفية أولاً (sin < 0)
+                moons.filter(m => Math.sin(m.theta) < 0).forEach(drawMoon);
+
+                // رسم الكوكب (الفرع) ثلاثي الأبعاد
+                let pal = planetPalettes[pIdx % planetPalettes.length];
+                let hasRing = (pl.avg > 0 && pl.avg === topBranchAvg);
+                drawRealisticPlanet(pl.cx, pl.cy, 34, pal, hasRing, pl.name, pl.avg);
+
+                // رسم الأقمار الأمامية (sin >= 0) لتبدو تدور فعلياً أمام وخلف الكوكب
+                moons.filter(m => Math.sin(m.theta) >= 0).forEach(drawMoon);
             });
 
-            angleOffset += 0.012;
+            if (!constellationPaused) angleOffset += 0.011;
             constellationAnimFrame = requestAnimationFrame(drawFrame);
         }
         drawFrame();
@@ -7037,14 +8033,20 @@
             let x = (e.clientX - r.left) * (canvas.width / r.width);
             let y = (e.clientY - r.top) * (canvas.height / r.height);
             let hit = constellationNodes.find(n => Math.hypot(n.x - x, n.y - y) <= n.r);
+            constellationHoveredNode = hit || null;
+            canvas.style.cursor = hit ? 'pointer' : 'crosshair';
             if (hit && tooltip) {
                 tooltip.style.display = 'block';
-                tooltip.style.left = Math.min(r.width - 190, Math.max(10, e.clientX - r.left + 12)) + 'px';
-                tooltip.style.top = Math.max(10, e.clientY - r.top - 50) + 'px';
-                tooltip.innerHTML = `<b style="color:#38bdf8;">${hit.emp.name}</b> (${hit.branchName})<br>الأداء: <b style="color:#34d399;">${hit.pct}%</b> | ${hit.dna.icon} ${hit.dna.title}<br><span style="color:#94a3b8; font-size:9px;">اضغط لفتح ملف التحليل الكامل</span>`;
+                tooltip.style.left = Math.min(r.width - 210, Math.max(10, e.clientX - r.left + 14)) + 'px';
+                tooltip.style.top = Math.max(10, e.clientY - r.top - 58) + 'px';
+                tooltip.innerHTML = `<b style="color:#38bdf8; font-size:12px;">${hit.emp.name}</b> <span style="color:#94a3b8;">(${hit.branchName})</span><br>الأداء الموزون: <b style="color:${hit.pct>=90?'#34d399':(hit.pct<=60?'#fb7185':'#38bdf8')};">${hit.pct}%</b><br><span style="color:#fde047; font-size:10px;">✨ اضغط لفتح ملف التحليل الكامل</span>`;
             } else if (tooltip) {
                 tooltip.style.display = 'none';
             }
+        };
+        canvas.onmouseleave = function() {
+            constellationHoveredNode = null;
+            if (tooltip) tooltip.style.display = 'none';
         };
         canvas.onclick = function(e) {
             let r = canvas.getBoundingClientRect();
@@ -8717,6 +9719,977 @@
             });
         }
     }
+
+
+    // =========================================================================
+    // 🚀 v12.3 COMPREHENSIVE ALL-TABS UPGRADE ENGINE (Local-Only, No Cloud Sync)
+    // =========================================================================
+
+    // --- A. Eval Sheet: Weekly Notes & Copy Previous Week ---
+    function updateEmployeeWeeklyNote(branchId, empIdx, val) {
+        let emp = (dbData[branchId] || [])[empIdx];
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        if (!emp.notes) emp.notes = {};
+        emp.notes[activeWeek] = val.trim();
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('ملاحظة أسبوعية', `تم تحديث ملاحظة الموظف «${emp.name}» للأسبوع ${activeWeek}`);
+    }
+
+    function copyPreviousWeekScores() {
+        if (currentUser && currentUser.role === 'Employee') return;
+        let weeks = getAvailableWeeks();
+        let activeWeek = weeks[0];
+        let prevWeek = weeks[1];
+        if (!prevWeek) { showToast('لا يوجد أسبوع سابق للنسخ منه!', 'warn'); return; }
+        if (!confirm(`نسخ تقييمات الأسبوع السابق (${prevWeek}) إلى الأسبوع الحالي لجميع موظفي الفرع؟`)) return;
+        let emps = dbData[currentBranch] || [];
+        let copied = 0;
+        emps.forEach(emp => {
+            if (!emp.history) emp.history = {};
+            if (emp.history[prevWeek] && emp.history[prevWeek].length > 0) {
+                emp.history[activeWeek] = [...emp.history[prevWeek]];
+                while (emp.history[activeWeek].length < metricNames.length) emp.history[activeWeek].push(3);
+                copied++;
+            }
+        });
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('نسخ تقييمات', `تم نسخ تقييمات الأسبوع السابق لعدد ${copied} موظف`);
+        renderEvalTable();
+        showToast(`✅ تم نسخ تقييمات الأسبوع السابق لـ ${copied} موظف بنجاح!`, 'success');
+    }
+
+    // --- B. Mission Control: Weekly Delta + Tile Reorder ---
+    let mcLayoutOrderIdx = 0;
+    function cycleMissionControlLayout() {
+        let grid = document.getElementById('mcBentoGridContainer');
+        if (!grid) return;
+        let tiles = Array.from(grid.children);
+        if (tiles.length > 1) {
+            grid.appendChild(tiles[0]);
+            mcLayoutOrderIdx++;
+            showToast('🔀 تم تبديل أولوية بطاقات مركز القيادة', 'info');
+        }
+    }
+    function resetMissionControlLayout() {
+        switchTab('missioncontrol');
+        showToast('🔄 تم تحديث ترتيب مركز القيادة', 'info');
+    }
+    const _origRenderMissionControl = renderMissionControl;
+    renderMissionControl = function() {
+        _origRenderMissionControl();
+        let badge = document.getElementById('mcHealthDeltaBadge');
+        if (!badge) return;
+        let weeks = getAvailableWeeks();
+        let curW = weeks[0], prevW = weeks[1];
+        let curSum = 0, prevSum = 0, cnt = 0;
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach(emp => {
+                let cSc = (emp.history && emp.history[curW]) ? emp.history[curW] : new Array(metricNames.length).fill(3);
+                let pSc = (emp.history && emp.history[prevW]) ? emp.history[prevW] : cSc;
+                curSum += calculateWeightedEmployeePct(emp, cSc, null);
+                prevSum += calculateWeightedEmployeePct(emp, pSc, null);
+                cnt++;
+            });
+        });
+        let diff = cnt ? (Math.round(curSum / cnt) - Math.round(prevSum / cnt)) : 0;
+        badge.className = diff > 0 ? 'badge b-green' : (diff < 0 ? 'badge b-red' : 'badge b-blue');
+        badge.textContent = diff > 0 ? `▲ +${diff}% عن الأسبوع الماضي` : (diff < 0 ? `▼ ${diff}% عن الأسبوع الماضي` : '• مستقر عن الأسبوع الماضي');
+    };
+
+    // --- C. KPI Telemetry Core: Live Trend + Export Snapshot PNG ---
+    const _origRenderKpiCore = renderKpiTelemetryCore;
+    renderKpiTelemetryCore = function() {
+        _origRenderKpiCore();
+        let badge = document.getElementById('kcoreTrendBadge');
+        if (!badge) return;
+        let weeks = getAvailableWeeks();
+        let emps = dbData[currentBranch] || [];
+        let cSum = 0, pSum = 0;
+        emps.forEach(emp => {
+            let cSc = (emp.history && emp.history[weeks[0]]) ? emp.history[weeks[0]] : new Array(metricNames.length).fill(3);
+            let pSc = (emp.history && emp.history[weeks[1]]) ? emp.history[weeks[1]] : cSc;
+            cSum += calculateWeightedEmployeePct(emp, cSc, null);
+            pSum += calculateWeightedEmployeePct(emp, pSc, null);
+        });
+        let diff = emps.length ? (Math.round(cSum / emps.length) - Math.round(pSum / emps.length)) : 0;
+        badge.style.color = diff > 0 ? '#34d399' : (diff < 0 ? '#fb7185' : '#7dd3fc');
+        badge.textContent = diff > 0 ? `▲ +${diff}% تحسن` : (diff < 0 ? `▼ ${diff}% تراجع` : '• مستقر');
+    };
+
+    function exportKpiCoreSnapshotPng() {
+        let canvas = document.createElement('canvas');
+        canvas.width = 1000; canvas.height = 520;
+        let ctx = canvas.getContext('2d');
+        let g = ctx.createLinearGradient(0, 0, 1000, 520);
+        g.addColorStop(0, '#090d16'); g.addColorStop(1, '#0f172a');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, 1000, 520);
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 4; ctx.strokeRect(18, 18, 964, 484);
+        ctx.direction = 'rtl'; ctx.textAlign = 'center';
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 28px Tahoma, Arial';
+        ctx.fillText(`💠 نبض مؤشرات الأداء — ${brandingData.companyName || 'الرحلة الفريدة'}`, 500, 75);
+        let pctTxt = document.getElementById('kcoreCenterPct') ? document.getElementById('kcoreCenterPct').textContent : '0%';
+        let trendTxt = document.getElementById('kcoreTrendBadge') ? document.getElementById('kcoreTrendBadge').textContent : '';
+        let coachTxt = document.getElementById('kcoreCoachingMetric') ? document.getElementById('kcoreCoachingMetric').textContent : '0';
+        let weakTxt = document.getElementById('kcoreWeakestMetric') ? document.getElementById('kcoreWeakestMetric').textContent : '—';
+        let planTxt = document.getElementById('kcorePlanMetric') ? document.getElementById('kcorePlanMetric').textContent : '0/0';
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 64px Tahoma, Arial'; ctx.fillText(pctTxt, 500, 185);
+        ctx.fillStyle = '#34d399'; ctx.font = 'bold 22px Tahoma, Arial'; ctx.fillText(trendTxt, 500, 230);
+        ctx.fillStyle = '#cbd5e1'; ctx.font = '20px Tahoma, Arial';
+        ctx.fillText(`⚡ حالات التوجيه اللحظي: ${coachTxt}   |   📋 خطة العمل: ${planTxt}`, 500, 315);
+        ctx.fillStyle = '#fb7185'; ctx.fillText(`📈 أضعف معيار تشغيلي حالياً: ${weakTxt}`, 500, 375);
+        ctx.fillStyle = '#94a3b8'; ctx.font = '16px Tahoma, Arial';
+        ctx.fillText(`الأسبوع: ${getCurrentWeekKey()}  •  ${new Date().toLocaleString('ar-EG')}`, 500, 455);
+        let a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = `kpi_pulse_${new Date().toISOString().slice(0,10)}.png`;
+        a.click();
+        showToast('📸 تم تصدير لقطة نبض KPI كصورة PNG بنجاح!', 'success');
+    }
+
+    // --- D. Camera Room: 2x2 Grid + HLS (.m3u8) + Snapshot Capture ---
+    let camGridMode = false;
+    function attachStreamToVideo(videoEl, url) {
+        if (!videoEl || !url) return;
+        if (url.toLowerCase().includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
+            let hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(videoEl);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => videoEl.play().catch(() => {}));
+        } else {
+            videoEl.src = url;
+            videoEl.load();
+            videoEl.play().catch(() => {});
+        }
+    }
+    applyCameraStream = function() {
+        let url = document.getElementById('cameraUrlInput').value.trim();
+        if (!url) { showToast('يرجى لصق رابط الكاميرا أولاً!', 'warn'); return; }
+        attachStreamToVideo(document.getElementById('liveCameraVideo'), url);
+        localStorage.setItem('unique_journey_cam_url_v1', url);
+        showToast('▶ تم تشغيل الكاميرا بنجاح (يدعم MP4 و HLS .m3u8)!', 'success');
+    };
+    function toggleCameraGridMode() {
+        camGridMode = !camGridMode;
+        let singleBox = document.getElementById('singleCameraContainer');
+        let gridBox = document.getElementById('gridCameraContainer');
+        let multiInputs = document.getElementById('multiCamUrlInputs');
+        let btn = document.getElementById('btnToggleCamGrid');
+        if (camGridMode) {
+            singleBox.classList.add('hidden');
+            gridBox.classList.remove('hidden');
+            multiInputs.classList.remove('hidden');
+            if (btn) btn.textContent = '🖥️ عرض كاميرا واحدة';
+            ['2','3','4'].forEach(n => {
+                let el = document.getElementById(`camUrlSlot${n}`);
+                if (el && !el.value) el.value = localStorage.getItem(`unique_journey_cam_url_${n}`) || '';
+            });
+            applyAll4Cameras(false);
+        } else {
+            singleBox.classList.remove('hidden');
+            gridBox.classList.add('hidden');
+            multiInputs.classList.add('hidden');
+            if (btn) btn.textContent = '🔲 عرض شبكي 2×2 (4 كاميرات)';
+        }
+    }
+    function applyAll4Cameras(notify = true) {
+        let u1 = (document.getElementById('cameraUrlInput') ? document.getElementById('cameraUrlInput').value.trim() : '') || localStorage.getItem('unique_journey_cam_url_v1') || 'https://assets.mixkit.co/videos/preview/mixkit-busy-commercial-kitchen-cooking-41603-large.mp4';
+        let u2 = document.getElementById('camUrlSlot2') ? document.getElementById('camUrlSlot2').value.trim() : '';
+        let u3 = document.getElementById('camUrlSlot3') ? document.getElementById('camUrlSlot3').value.trim() : '';
+        let u4 = document.getElementById('camUrlSlot4') ? document.getElementById('camUrlSlot4').value.trim() : '';
+        if (u2) localStorage.setItem('unique_journey_cam_url_2', u2);
+        if (u3) localStorage.setItem('unique_journey_cam_url_3', u3);
+        if (u4) localStorage.setItem('unique_journey_cam_url_4', u4);
+        attachStreamToVideo(document.getElementById('gridCamVid1'), u1);
+        if (u2) attachStreamToVideo(document.getElementById('gridCamVid2'), u2);
+        if (u3) attachStreamToVideo(document.getElementById('gridCamVid3'), u3);
+        if (u4) attachStreamToVideo(document.getElementById('gridCamVid4'), u4);
+        if (notify) showToast('🎥 تم تشغيل شبكة الكاميرات (2×2) بنجاح!', 'success');
+    }
+    function captureCameraSnapshot() {
+        let vid = camGridMode ? document.getElementById('gridCamVid1') : document.getElementById('liveCameraVideo');
+        if (!vid) return;
+        try {
+            let canvas = document.createElement('canvas');
+            canvas.width = vid.videoWidth || 640;
+            canvas.height = vid.videoHeight || 360;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
+            let dataUrl = canvas.toDataURL('image/png');
+            let empNote = prompt('اكتب اسم الموظف أو ملاحظة لربطها بهذه اللقطة (اختياري):', '') || 'لقطة رصد مباشر';
+            let gal = document.getElementById('cameraSnapshotsGallery');
+            if (gal) {
+                gal.insertAdjacentHTML('afterbegin', `<div style="background:#0f172a; border:1px solid #38bdf8; border-radius:8px; padding:6px; width:170px;">
+                    <img src="${dataUrl}" style="width:100%; height:90px; object-fit:cover; border-radius:4px;">
+                    <div style="font-size:10px; color:#38bdf8; margin-top:4px; font-weight:bold;">${empNote}</div>
+                    <div style="font-size:9px; color:#94a3b8;">${new Date().toLocaleTimeString('ar-EG')}</div>
+                    <a href="${dataUrl}" download="cam_snapshot_${Date.now()}.png" style="font-size:10px; color:#34d399; text-decoration:underline;">📥 حفظ الصورة</a>
+                </div>`);
+            }
+            recordAuditLog('لقطة كاميرا', `تم التقاط لقطة شاشة من غرفة الكاميرات (${empNote})`);
+            showToast('📸 تم التقاط لقطة الشاشة بنجاح!', 'success');
+        } catch (err) {
+            showToast('⚠️ تعذر التقاط اللقطة بسبب قيود CORS لمصدر البث الخارجي.', 'warn');
+        }
+    }
+
+    // --- E. Early Alerts: Follow-up Tickets + Escalation Countdown ---
+    let alertTicketsState = {};
+    try {
+        let ats = localStorage.getItem('unique_journey_alert_tickets_v1');
+        if (ats) alertTicketsState = JSON.parse(ats);
+    } catch(e) {}
+
+    renderAlertsTable = function() {
+        let tbody = document.getElementById('alertsTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let alertCount = 0;
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let lowCount = 0;
+                metricNames.forEach((m, idx) => {
+                    if (isMetricApplicableForDept(m, emp.dept) && (Number(scores[idx]) || 3) <= 2) lowCount++;
+                });
+                if (pct <= 60 || lowCount >= 2) {
+                    alertCount++;
+                    let tKey = `${b.id}_${emp.name}_${activeWeek}`;
+                    if (!alertTicketsState[tKey]) {
+                        alertTicketsState[tKey] = { status: 'مفتوحة', createdTs: Date.now() };
+                        localStorage.setItem('unique_journey_alert_tickets_v1', JSON.stringify(alertTicketsState));
+                    }
+                    let tk = alertTicketsState[tKey];
+                    let daysElapsed = Math.floor((Date.now() - (tk.createdTs || Date.now())) / 86400000);
+                    let daysLeft = Math.max(0, 3 - daysElapsed);
+                    let escHtml = tk.status === 'مغلقة'
+                        ? '<span class="badge b-green">✅ مغلقة</span>'
+                        : (daysLeft === 0 ? '<span class="badge b-red">🔥 تصعيد فوري للإدارة العليا!</span>' : `<span class="badge b-yellow">⏳ متبقي ${daysLeft} يوم قبل التصعيد</span>`);
+
+                    tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:bold; color:#38bdf8;">${b.name}</td>
+                            <td>${emp.name}</td>
+                            <td style="text-align:center; color:#fb7185; font-weight:bold;">${pct}%</td>
+                            <td style="text-align:center;">
+                                <select onchange="updateAlertTicketStatus('${tKey}', this.value)" style="max-width:130px; font-size:11px; margin-bottom:4px;">
+                                    <option value="مفتوحة" ${tk.status==='مفتوحة'?'selected':''}>🔴 مفتوحة</option>
+                                    <option value="قيد المعالجة" ${tk.status==='قيد المعالجة'?'selected':''}>🟡 قيد المعالجة</option>
+                                    <option value="مغلقة" ${tk.status==='مغلقة'?'selected':''}>🟢 مغلقة</option>
+                                </select>
+                                <div>${escHtml}</div>
+                            </td>
+                            <td style="color:#facc15;">
+                                عقد جلسة توجيه لحظي عاجلة
+                                <button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', ${pct}, 'alert', '')" class="btn-whatsapp" style="margin-right:8px;">💬 واتساب</button>
+                            </td>
+                        </tr>`;
+                }
+            });
+        });
+        if (alertCount === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#34d399; padding:20px;">ممتاز! لا توجد أي إنذارات مبكرة نشطة للأسبوع الحالي. العمل مستقر تماماً.</td></tr>`;
+        }
+    };
+    function updateAlertTicketStatus(tKey, st) {
+        if (!alertTicketsState[tKey]) alertTicketsState[tKey] = { createdTs: Date.now() };
+        alertTicketsState[tKey].status = st;
+        localStorage.setItem('unique_journey_alert_tickets_v1', JSON.stringify(alertTicketsState));
+        recordAuditLog('تحديث تذكرة إنذار', `تم تغيير حالة تذكرة الإنذار إلى «${st}»`);
+        renderAlertsTable();
+    }
+
+    // --- F. Smart Coaching: Session Date + Digital Sign-off + 7-Day Re-eval ---
+    let coachingMetaState = {};
+    try {
+        let cms = localStorage.getItem('unique_journey_coaching_meta_v1');
+        if (cms) coachingMetaState = JSON.parse(cms);
+    } catch(e) {}
+
+    renderSmartCoachingTable = function() {
+        let tbody = document.getElementById('smartCoachingTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let itemsCount = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                if (!emp.history) emp.history = {};
+                let scores = emp.history[activeWeek] || new Array(metricNames.length).fill(3);
+                let adminDeptStr = emp.adminDept || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
+                let deptStr = getDeptDisplayName(emp.dept);
+                let jobStr = emp.jobTitle || 'موظف';
+
+                metricNames.forEach((mName, mIdx) => {
+                    if (!isMetricApplicableForDept(mName, emp.dept)) return;
+                    let sc = Number(scores[mIdx]) || 3;
+                    if (sc <= 2) {
+                        itemsCount++;
+                        let uniqueKey = `${b.id}_${emp.name}_${mName}_${activeWeek}`;
+                        let isResolved = !!smartCoachingResolvedState[uniqueKey];
+                        let meta = coachingMetaState[uniqueKey] || { date: '', sign: '', reevalDate: '' };
+                        let rowClass = isResolved ? 'coaching-resolved' : '';
+                        let suggestionText = getSmartCoachingSuggestion(mName);
+
+                        tbody.innerHTML += `
+                            <tr class="${rowClass}">
+                                <td style="text-align:center;">
+                                    <input type="checkbox" ${isResolved ? 'checked' : ''} onchange="toggleSmartCoachingResolved('${uniqueKey}', this.checked)" style="width:16px; height:16px; cursor:pointer;">
+                                </td>
+                                <td style="color:#38bdf8; font-weight:bold;">${b.name}<br><span style="font-size:10px; color:#22d3ee;">${adminDeptStr}</span></td>
+                                <td><b>${emp.name}</b><br><span style="font-size:10px; color:#94a3b8;">${jobStr}</span></td>
+                                <td style="color:#facc15;">${deptStr}</td>
+                                <td><span class="badge b-red">⚠️ ${mName} (${sc}/5)</span></td>
+                                <td style="color:#34d399; font-weight:bold; white-space:normal; line-height:1.6;">${suggestionText}</td>
+                                <td style="text-align:center; min-width:190px;">
+                                    <div style="display:flex; flex-direction:column; gap:4px;">
+                                        <input type="date" value="${meta.date || ''}" onchange="updateCoachingMeta('${uniqueKey}', 'date', this.value)" class="table-input" style="font-size:10px; padding:3px;" title="تاريخ جلسة التوجيه">
+                                        <input type="text" value="${(meta.sign || '').replace(/"/g, '&quot;')}" onchange="updateCoachingMeta('${uniqueKey}', 'sign', this.value)" placeholder="✍️ توقيع المدير/الموظف..." class="table-input" style="font-size:10px; padding:3px;">
+                                        ${meta.reevalDate ? `<div style="font-size:10px; color:#fde047;">📅 إعادة التقييم: ${meta.reevalDate}</div>` : ''}
+                                        <div>
+                                            <button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', 0, 'coaching', '${mName.replace(/'/g, '')}')" class="btn-whatsapp">💬 واتساب</button>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>`;
+                    }
+                });
+            });
+        });
+
+        if (itemsCount === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#34d399; padding:25px; font-weight:bold;">🌟 ممتاز! لا توجد أي حالات قصور مرصدة في الأسبوع الحالي.</td></tr>`;
+        }
+    };
+    function updateCoachingMeta(key, field, val) {
+        if (!coachingMetaState[key]) coachingMetaState[key] = { date: '', sign: '', reevalDate: '' };
+        coachingMetaState[key][field] = val;
+        if (field === 'date' && val) {
+            let d = new Date(val);
+            d.setDate(d.getDate() + 7);
+            coachingMetaState[key].reevalDate = d.toISOString().slice(0, 10);
+        }
+        localStorage.setItem('unique_journey_coaching_meta_v1', JSON.stringify(coachingMetaState));
+        renderSmartCoachingTable();
+    }
+
+    // --- G. Compare Employees: Dual Overlay Radar Chart ---
+    let compareRadarInstance = null;
+    const _origRenderComparison = renderComparison;
+    renderComparison = function() {
+        _origRenderComparison();
+        let canvasEl = document.getElementById('compareOverlayRadarChart');
+        let sel1 = document.getElementById('compEmp1Select') ? document.getElementById('compEmp1Select').value : '';
+        let sel2 = document.getElementById('compEmp2Select') ? document.getElementById('compEmp2Select').value : '';
+        if (!canvasEl || !sel1 || !sel2 || typeof Chart === 'undefined') return;
+        let [b1, n1] = sel1.split('|'), [b2, n2] = sel2.split('|');
+        let e1 = (dbData[b1] || []).find(e => e.name === n1);
+        let e2 = (dbData[b2] || []).find(e => e.name === n2);
+        if (!e1 || !e2) return;
+        let activeWeek = getCurrentWeekKey();
+        let s1 = (e1.history && e1.history[activeWeek]) ? e1.history[activeWeek] : new Array(metricNames.length).fill(3);
+        let s2 = (e2.history && e2.history[activeWeek]) ? e2.history[activeWeek] : new Array(metricNames.length).fill(3);
+        if (compareRadarInstance) compareRadarInstance.destroy();
+        compareRadarInstance = new Chart(canvasEl.getContext('2d'), {
+            type: 'radar',
+            data: {
+                labels: metricNames,
+                datasets: [
+                    { label: e1.name, data: metricNames.map((_, i) => Number(s1[i]) || 3), borderColor: '#38bdf8', backgroundColor: 'rgba(56,189,248,0.22)', borderWidth: 2 },
+                    { label: e2.name, data: metricNames.map((_, i) => Number(s2[i]) || 3), borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.22)', borderWidth: 2 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { r: { min: 0, max: 5, ticks: { stepSize: 1, display: false }, grid: { color: 'rgba(148,163,184,0.2)' }, pointLabels: { color: '#94a3b8', font: { size: 10, family: 'Tahoma' } } } },
+                plugins: { legend: { labels: { color: '#cbd5e1', font: { family: 'Tahoma' } } } }
+            }
+        });
+    };
+
+    // --- H. Root Cause: Repeat Error Counter & Financial Cost ---
+    saveRootCauseError = function() {
+        let bId = document.getElementById('errBranchSelect').value;
+        let bObj = branchesData.find(b => b.id === bId);
+        let empName = document.getElementById('errEmpSelect').value;
+        let desc = document.getElementById('errDescInput').value.trim();
+        let cause = document.getElementById('errRootCause').value;
+        let cost = parseFloat(document.getElementById('errCostInput') ? document.getElementById('errCostInput').value : 0) || 0;
+        if (!desc) { showToast('يرجى كتابة وصف الخطأ!'); return; }
+        let solutionsMap = {
+            "نقص تدريب": "تنظيم ورشة عمل تدريبية عاجلة وتركيب دليل إرشادي سريع على مكتب الموظف.",
+            "ضغط عملاء مفاجئ": "إعادة توزيع المهام وتفعيل الدعم السريع من زملاء القسم خلال أوقات الذروة.",
+            "خطأ بشري فردي": "إجراء جلسة توجيه فردية (Micro-Coaching) وتنبيه ودي رسمي.",
+            "خلل في النظام": "مراجعة قسم الدعم الفني وتحديث الإعدادات أو الصلاحيات فوراً."
+        };
+        rootCauseErrorsData.push({
+            branchName: bObj ? bObj.name : bId, empName, desc, cause, cost,
+            solution: solutionsMap[cause] || "متابعة وإشراف مباشر."
+        });
+        localStorage.setItem('unique_journey_root_cause_v1', JSON.stringify(rootCauseErrorsData));
+        document.getElementById('errDescInput').value = '';
+        if (document.getElementById('errCostInput')) document.getElementById('errCostInput').value = '';
+        renderRootCauseTable();
+        showToast('تم تحليل وإضافة الخطأ وحساب الأثر المالي بنجاح!');
+    };
+    renderRootCauseTable = function() {
+        let tbody = document.getElementById('rootCauseTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let empCounts = {};
+        let totalCost = 0;
+        rootCauseErrorsData.forEach(it => {
+            empCounts[it.empName] = (empCounts[it.empName] || 0) + 1;
+            totalCost += (Number(it.cost) || 0);
+        });
+        let costBadge = document.getElementById('rootCauseTotalCostBadge');
+        if (costBadge) costBadge.textContent = `إجمالي تكلفة الأخطاء: ${totalCost.toLocaleString('ar-EG')} ج.م`;
+        rootCauseErrorsData.forEach((item, idx) => {
+            let rep = empCounts[item.empName] || 1;
+            let costVal = Number(item.cost) || 0;
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight:bold; color:#38bdf8;">${item.branchName}<br><span style="font-size:11px; color:#fff;">${item.empName}</span></td>
+                    <td style="white-space:normal;">${item.desc}</td>
+                    <td style="text-align:center;">
+                        <span class="badge b-yellow">${item.cause}</span>
+                        <div style="margin-top:4px; font-size:10px;">
+                            <span class="badge ${rep>=2?'b-red':'b-blue'}">تكرار الموظف: ${rep}×</span>
+                            ${costVal > 0 ? `<span class="badge b-red" style="margin-right:4px;">💰 ${costVal} ج.م</span>` : ''}
+                        </div>
+                    </td>
+                    <td style="color:#34d399; font-weight:bold; white-space:normal;">${item.solution}</td>
+                    <td style="text-align:center;"><button type="button" onclick="deleteRootCause(${idx})" class="btn-danger">حذف</button></td>
+                </tr>`;
+        });
+    };
+
+    // --- I. Heatmap: Department Filter + Previous Week Comparison ---
+    renderThermalHeatmap = function() {
+        let deptSel = document.getElementById('heatmapDeptFilter');
+        if (deptSel) {
+            let curVal = deptSel.value || 'all';
+            deptSel.innerHTML = '<option value="all">🌟 كل الأقسام</option>';
+            departmentsData.forEach(d => deptSel.innerHTML += `<option value="${d.id}">${d.name}</option>`);
+            deptSel.value = curVal;
+        }
+        let chosenDept = deptSel ? deptSel.value : 'all';
+        let comparePrev = document.getElementById('heatmapComparePrevToggle') ? document.getElementById('heatmapComparePrevToggle').checked : false;
+        let thead = document.getElementById('heatmapTableHead');
+        let tbody = document.getElementById('heatmapTableBody');
+        let diagEl = document.getElementById('heatmapAutoDiagnosis');
+        if (!thead || !tbody) return;
+        let weeks = getAvailableWeeks();
+        let activeWeek = weeks[0], prevWeek = weeks[1];
+        let emps = (dbData[currentBranch] || []).filter(e => chosenDept === 'all' || e.dept === chosenDept || getNormalizedDeptId(e.dept) === chosenDept);
+        let headHtml = `<tr><th style="text-align:right;">الموظف</th>`;
+        metricNames.forEach(m => headHtml += `<th>${m}</th>`);
+        headHtml += `<th>المتوسط</th></tr>`;
+        thead.innerHTML = headHtml;
+        let metricSums = new Array(metricNames.length).fill(0);
+        let metricLowCounts = new Array(metricNames.length).fill(0);
+        tbody.innerHTML = '';
+        emps.forEach((emp) => {
+            let realIdx = (dbData[currentBranch] || []).indexOf(emp);
+            let scores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            let prevScores = (emp.history && prevWeek && emp.history[prevWeek]) ? emp.history[prevWeek] : scores;
+            let pct = calculateWeightedEmployeePct(emp, scores, null);
+            let row = `<tr><td><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span></td>`;
+            metricNames.forEach((m, mIdx) => {
+                let sc = Number(scores[mIdx]) || 3;
+                let psc = Number(prevScores[mIdx]) || sc;
+                metricSums[mIdx] += sc;
+                if (sc <= 2) metricLowCounts[mIdx]++;
+                let dTag = '';
+                if (comparePrev) {
+                    if (sc > psc) dTag = ` <span style="font-size:10px; color:#34d399;">▲+${sc-psc}</span>`;
+                    else if (sc < psc) dTag = ` <span style="font-size:10px; color:#fca5a5;">▼${sc-psc}</span>`;
+                }
+                row += `<td><div class="heat-cell heat-${sc}">${sc}/5${dTag}</div></td>`;
+            });
+            row += `<td style="text-align:center; font-weight:bold; color:var(--accent-blue);">${pct}%</td></tr>`;
+            tbody.innerHTML += row;
+        });
+        if (diagEl && emps.length > 0) {
+            let worstIdx = 0, worstAvg = 99;
+            metricSums.forEach((s, i) => { let avg = s / emps.length; if (avg < worstAvg) { worstAvg = avg; worstIdx = i; } });
+            let isVertical = metricLowCounts[worstIdx] >= Math.max(2, Math.ceil(emps.length * 0.3));
+            diagEl.innerHTML = `<b>🧠 التشخيص الحراري التلقائي:</b><br>• أضعف بند حالياً هو <b style="color:#fb7185;">«${metricNames[worstIdx]}»</b> (بمتوسط ${worstAvg.toFixed(1)}/5).<br>• <b>النمط:</b> ${isVertical ? '<span class="badge b-red">خلل عمودي جماعي</span> — يوصى بتدريب جماعي.' : '<span class="badge b-green">أداء متوازن نسبياً</span> — معالجة فردية.'}`;
+        }
+    };
+
+    // --- J. Buddy Matcher: 3-Session Follow-up Tracker ---
+    let buddySessionsState = {};
+    try {
+        let bs = localStorage.getItem('unique_journey_buddy_sessions_v1');
+        if (bs) buddySessionsState = JSON.parse(bs);
+    } catch(e) {}
+    const _origRenderBuddyMatcher = renderBuddyMatcher;
+    renderBuddyMatcher = function() {
+        _origRenderBuddyMatcher();
+        let tbody = document.getElementById('buddyMatcherTableBody');
+        if (!tbody) return;
+        Array.from(tbody.querySelectorAll('tr')).forEach((tr, rIdx) => {
+            let tds = tr.querySelectorAll('td');
+            if (tds.length < 5) return;
+            let bKey = `buddy_${currentBranch}_${rIdx}`;
+            let st = buddySessionsState[bKey] || [false, false, false];
+            let trackerHtml = `<div style="margin-top:6px; display:flex; gap:6px; justify-content:center; font-size:10px; color:#cbd5e1;">
+                <label style="cursor:pointer;"><input type="checkbox" ${st[0]?'checked':''} onchange="toggleBuddySession('${bKey}',0,this.checked)"> ج1</label>
+                <label style="cursor:pointer;"><input type="checkbox" ${st[1]?'checked':''} onchange="toggleBuddySession('${bKey}',1,this.checked)"> ج2</label>
+                <label style="cursor:pointer;"><input type="checkbox" ${st[2]?'checked':''} onchange="toggleBuddySession('${bKey}',2,this.checked)"> ج3</label>
+            </div>`;
+            tds[4].insertAdjacentHTML('beforeend', trackerHtml);
+        });
+    };
+    function toggleBuddySession(bKey, sIdx, checked) {
+        if (!buddySessionsState[bKey]) buddySessionsState[bKey] = [false, false, false];
+        buddySessionsState[bKey][sIdx] = checked;
+        localStorage.setItem('unique_journey_buddy_sessions_v1', JSON.stringify(buddySessionsState));
+    }
+
+    // --- K. What-If Simulator: Save & Compare up to 3 Scenarios ---
+    let savedSimScenarios = [];
+    try {
+        let ss = localStorage.getItem('unique_journey_sim_scenarios_v1');
+        if (ss) savedSimScenarios = JSON.parse(ss);
+    } catch(e) {}
+    function saveCurrentSimulatorScenario() {
+        let name = prompt('اكتب اسماً لهذا السيناريو (مثال: تدريب خدمة العملاء):', `سيناريو ${savedSimScenarios.length + 1}`);
+        if (!name) return;
+        let realAvg = document.getElementById('simRealAvg') ? document.getElementById('simRealAvg').textContent : '0%';
+        let projAvg = document.getElementById('simProjAvg') ? document.getElementById('simProjAvg').textContent : '0%';
+        let delta = document.getElementById('simDeltaAvg') ? document.getElementById('simDeltaAvg').textContent : '+0%';
+        let savedAl = document.getElementById('simSavedAlerts') ? document.getElementById('simSavedAlerts').textContent : '0';
+        savedSimScenarios.unshift({ name: name.trim(), realAvg, projAvg, delta, savedAl });
+        if (savedSimScenarios.length > 3) savedSimScenarios.pop();
+        localStorage.setItem('unique_journey_sim_scenarios_v1', JSON.stringify(savedSimScenarios));
+        renderSavedSimScenarios();
+        showToast('💾 تم حفظ السيناريو للمقارنة!', 'success');
+    }
+    function deleteSimScenario(idx) {
+        savedSimScenarios.splice(idx, 1);
+        localStorage.setItem('unique_journey_sim_scenarios_v1', JSON.stringify(savedSimScenarios));
+        renderSavedSimScenarios();
+    }
+    function renderSavedSimScenarios() {
+        let box = document.getElementById('savedScenariosCompareBox');
+        if (!box) return;
+        if (savedSimScenarios.length === 0) { box.innerHTML = ''; return; }
+        let rows = savedSimScenarios.map((s, i) => `<tr>
+            <td style="font-weight:bold; color:#38bdf8;">${s.name}</td>
+            <td style="text-align:center;">${s.realAvg}</td>
+            <td style="text-align:center; color:#34d399; font-weight:bold;">${s.projAvg}</td>
+            <td style="text-align:center; color:#facc15; font-weight:bold;">${s.delta}</td>
+            <td style="text-align:center;">${s.savedAl}</td>
+            <td style="text-align:center;"><button type="button" onclick="deleteSimScenario(${i})" class="btn-danger">حذف</button></td>
+        </tr>`).join('');
+        box.innerHTML = `<h4 style="color:#facc15; font-size:13px; margin-bottom:8px;">⚖️ مقارنة السيناريوهات المحفوظة (أيهما يرفع المتوسط أسرع؟):</h4>
+            <table><thead><tr><th style="text-align:right;">اسم السيناريو</th><th>الحالي</th><th>المتوقع</th><th>القفزة</th><th>إنقاذ إنذارات</th><th>حذف</th></tr></thead><tbody>${rows}</tbody></table>`;
+    }
+    const _origRenderSim = renderWhatIfSimulator;
+    renderWhatIfSimulator = function() { _origRenderSim(); renderSavedSimScenarios(); };
+
+    // --- L. Time Machine: Best/Weakest Week Summary + Export Trajectory Report ---
+    const _origInitTimeMachine = initTimeMachineView;
+    initTimeMachineView = function() {
+        _origInitTimeMachine();
+        let box = document.getElementById('tmBestWorstSummary');
+        if (!box) return;
+        let weeks = getAvailableWeeks().reverse();
+        let emps = dbData[currentBranch] || [];
+        let stats = weeks.map(w => {
+            let sum = 0;
+            emps.forEach(e => sum += calculateWeightedEmployeePct(e, (e.history && e.history[w]) ? e.history[w] : new Array(metricNames.length).fill(3), null));
+            return { week: w, avg: emps.length ? Math.round(sum / emps.length) : 0 };
+        });
+        if (!stats.length) return;
+        let best = stats.reduce((a, b) => b.avg > a.avg ? b : a, stats[0]);
+        let worst = stats.reduce((a, b) => b.avg < a.avg ? b : a, stats[0]);
+        box.innerHTML = `<span class="badge b-green">🏆 أفضل أسبوع: ${best.week.split(' ')[0]} (${best.avg}%)</span> <span class="badge b-red">📉 أضعف أسبوع: ${worst.week.split(' ')[0]} (${worst.avg}%)</span>`;
+    };
+    function exportTimeMachineReport() {
+        let weeks = getAvailableWeeks().reverse();
+        let emps = dbData[currentBranch] || [];
+        let lines = [`تقرير مسار التطور الشهري — ${brandingData.companyName || 'الرحلة الفريدة'}`, `الفرع: ${currentBranch}`, '----------------------------------------'];
+        weeks.forEach(w => {
+            let sum = 0;
+            emps.forEach(e => sum += calculateWeightedEmployeePct(e, (e.history && e.history[w]) ? e.history[w] : new Array(metricNames.length).fill(3), null));
+            let avg = emps.length ? Math.round(sum / emps.length) : 0;
+            lines.push(`• الأسبوع ${w}: متوسط الأداء = ${avg}%`);
+        });
+        let blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a'); a.href = url; a.download = `monthly_trajectory_${currentBranch}.txt`;
+        a.click(); URL.revokeObjectURL(url);
+        showToast('📥 تم تصدير تقرير المسار الشهري بنجاح!', 'success');
+    }
+
+    // --- M. Mood Pulse: Weekly Trend Indicator ---
+    const _origRenderMood = renderMoodPulseDashboard;
+    renderMoodPulseDashboard = function() {
+        _origRenderMood();
+        let box = document.getElementById('moodWeeklyTrendBox');
+        if (!box) return;
+        let total = anonMoodLogsData.length;
+        if (total < 2) {
+            box.innerHTML = '📊 <b>اتجاه المزاج الأسبوعي:</b> اجمع مزيداً من النبضات السرية لإظهار مقارنة الضغط بين النصف الأول والأخير من الأسبوع.';
+            return;
+        }
+        let half = Math.ceil(total / 2);
+        let recent = anonMoodLogsData.slice(0, half);
+        let older = anonMoodLogsData.slice(half);
+        let rStress = Math.round((recent.filter(x => x.mood === 'stressed').length / recent.length) * 100);
+        let oStress = Math.round((older.filter(x => x.mood === 'stressed').length / Math.max(1, older.length)) * 100);
+        let diff = rStress - oStress;
+        box.innerHTML = diff > 0
+            ? `📈 <b>مؤشر الضغط يرتفع (+${diff}%):</b> نسبة الإجهاد ارتفعت مؤخراً إلى <b style="color:#fb7185;">${rStress}%</b> — راقب تراجع الأداء في الفروع المضغوطة.`
+            : (diff < 0
+                ? `📉 <b>مؤشر الضغط يتحسن (${diff}%):</b> نسبة الإجهاد انخفضت إلى <b style="color:#34d399;">${rStress}%</b> — بيئة العمل أكثر استقراراً.`
+                : `⚖️ <b>مؤشر الضغط مستقر (${rStress}%):</b> لا يوجد تغير حاد في ضغط العمل.`);
+    };
+
+    // --- N. Ask Data & Roleplay: Export Reports + Real Weak Metrics Feed ---
+    function exportAskDataReport() {
+        let box = document.getElementById('askDataChatBox');
+        if (!box) return;
+        let text = Array.from(box.querySelectorAll('.chat-msg')).map(m => (m.classList.contains('chat-msg-user') ? 'سؤال المدير: ' : 'تحليل النظام: ') + m.textContent).join('\n\n');
+        let blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a'); a.href = url; a.download = `ask_data_report_${new Date().toISOString().slice(0,10)}.txt`;
+        a.click(); URL.revokeObjectURL(url);
+        showToast('📥 تم تصدير محادثة تحليل البيانات بنجاح!', 'success');
+    }
+    function exportRoleplayReport() {
+        let box = document.getElementById('roleplayChatBox');
+        if (!box) return;
+        let text = Array.from(box.querySelectorAll('.chat-msg')).map(m => (m.classList.contains('chat-msg-user') ? 'رد المدير: ' : 'الموظف / التقييم: ') + m.textContent).join('\n\n');
+        let blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        let url = URL.createObjectURL(blob);
+        let a = document.createElement('a'); a.href = url; a.download = `roleplay_report_${new Date().toISOString().slice(0,10)}.txt`;
+        a.click(); URL.revokeObjectURL(url);
+        showToast('📥 تم تصدير تقرير بروفة الحوار القيادي بنجاح!', 'success');
+    }
+    const _origStartRoleplay = startRoleplaySession;
+    startRoleplaySession = function() {
+        _origStartRoleplay();
+        let sel = document.getElementById('rpEmpSelect');
+        let box = document.getElementById('roleplayChatBox');
+        if (!sel || !sel.value || !box) return;
+        let [bId, empName] = sel.value.split('|');
+        let emp = (dbData[bId] || []).find(e => e.name === empName);
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [];
+        let weakList = metricNames.filter((m, idx) => (Number(sc[idx]) || 3) <= 2);
+        if (weakList.length > 0) {
+            box.insertAdjacentHTML('beforeend', `<div class="chat-msg chat-msg-ai" style="border-color:#f59e0b;">📌 <b>تغذية تلقائية من بيانات ${empName}:</b> نقاط القصور الفعلية هذا الأسبوع هي (${weakList.join('، ')}). وجّه حوارك لمعالجتها مباشرة!</div>`);
+            box.scrollTop = box.scrollHeight;
+        }
+    };
+
+    // --- O. ROI Journal: Aggregate ROI Summary Cards ---
+    const _origRenderRoi = renderRoiJournalTable;
+    renderRoiJournalTable = function() {
+        _origRenderRoi();
+        let grid = document.getElementById('roiAggregateSummaryGrid');
+        if (!grid) return;
+        let activeWeek = getCurrentWeekKey();
+        let byType = {};
+        roiJournalData.forEach(item => {
+            let emp = (dbData[item.branchId] || []).find(e => e.name === item.empName);
+            let nowPct = emp ? calculateWeightedEmployeePct(emp, (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [], null) : item.beforePct;
+            let delta = nowPct - (Number(item.beforePct) || 0);
+            if (!byType[item.type]) byType[item.type] = { sum: 0, cnt: 0 };
+            byType[item.type].sum += delta;
+            byType[item.type].cnt++;
+        });
+        let types = Object.keys(byType);
+        if (types.length === 0) {
+            grid.innerHTML = `<div class="stat-card"><div><h4>ملخص عائد القرارات (ROI)</h4><div class="val" style="font-size:13px; color:#94a3b8;">سجّل قراراتك لحساب العائد التلقائي</div></div><span>📈</span></div>`;
+            return;
+        }
+        grid.innerHTML = types.slice(0, 4).map(t => {
+            let avg = Math.round(byType[t].sum / byType[t].cnt);
+            let col = avg > 0 ? '#34d399' : (avg < 0 ? '#fb7185' : '#38bdf8');
+            return `<div class="stat-card"><div><h4>متوسط أثر: ${t} (${byType[t].cnt})</h4><div class="val" style="color:${col};">${avg >= 0 ? '+' : ''}${avg}%</div></div><span style="font-size:18px;">📈</span></div>`;
+        }).join('');
+    };
+
+    // --- P. Export Weekly Archive & Leaderboard to Formatted Excel (.xlsx) ---
+    function exportLeaderboardToExcel() {
+        if (typeof XLSX === 'undefined') { showToast('مكتبة Excel غير متاحة حالياً!', 'error'); return; }
+        let activeWeek = getCurrentWeekKey();
+        let rows = [['المركز', 'اسم الموظف', 'الفرع', 'القسم', 'النسبة الموزونة (%)']];
+        let list = [];
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                list.push({ name: emp.name, branch: b.name, dept: getDeptDisplayName(emp.dept), pct: calculateWeightedEmployeePct(emp, sc, null) });
+            });
+        });
+        list.sort((a, b) => b.pct - a.pct);
+        list.forEach((it, i) => rows.push([i + 1, it.name, it.branch, it.dept, it.pct]));
+        let ws = XLSX.utils.aoa_to_sheet(rows);
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'لوحة الشرف');
+        XLSX.writeFile(wb, `leaderboard_${new Date().toISOString().slice(0, 10)}.xlsx`);
+        showToast('📊 تم تصدير لوحة الشرف إلى ملف Excel (.xlsx) بنجاح!', 'success');
+    }
+
+    function exportWeeklyArchiveToExcel() {
+        if (typeof XLSX === 'undefined') { showToast('مكتبة Excel غير متاحة حالياً!', 'error'); return; }
+        let selectedWeek = document.getElementById('archiveWeekSelector') ? document.getElementById('archiveWeekSelector').value : getCurrentWeekKey();
+        let filterBranch = document.getElementById('weeklyBranchFilter') ? document.getElementById('weeklyBranchFilter').value : 'all';
+        let rows = [['اسم الموظف', 'الفرع', 'القسم', ...metricNames, 'النسبة الموزونة (%)', 'ملاحظة الأسبوع']];
+        branchesData.forEach(b => {
+            if (filterBranch !== 'all' && b.id !== filterBranch) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let sc = (emp.history && emp.history[selectedWeek]) ? emp.history[selectedWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                let note = (emp.notes && emp.notes[selectedWeek]) ? emp.notes[selectedWeek] : '';
+                rows.push([emp.name, b.name, getDeptDisplayName(emp.dept), ...metricNames.map((_, i) => Number(sc[i]) || 3), pct, note]);
+            });
+        });
+        let ws = XLSX.utils.aoa_to_sheet(rows);
+        let wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'تقرير الأسبوع');
+        XLSX.writeFile(wb, `weekly_report_${selectedWeek.split(' ')[0]}.xlsx`);
+        showToast('📊 تم تصدير أرشيف الأسبوع إلى ملف Excel (.xlsx) بنجاح!', 'success');
+    }
+
+
+    // =========================================================================
+    // 🏛️ + 🏃 v12.4 DEPT RACE, EMP RACE & REALISTIC CARDIAC ECG PULSE ENGINE
+    // =========================================================================
+    const _v6RenderMissionControl = renderMissionControl;
+    renderMissionControl = function() {
+        _v6RenderMissionControl();
+        let activeWeek = getCurrentWeekKey();
+        let deptAgg = {};
+        let empList = [];
+
+        branchesData.forEach(b => {
+            if (currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach((emp, eIdx) => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                let dId = getNormalizedDeptId(emp.dept);
+                let dName = getDeptDisplayName(emp.dept);
+                if (!deptAgg[dId]) deptAgg[dId] = { id: dId, name: dName, sum: 0, count: 0 };
+                deptAgg[dId].sum += pct;
+                deptAgg[dId].count++;
+                empList.push({ name: emp.name, branchName: b.name, deptName: dName, pct, bId: b.id, idx: eIdx });
+            });
+        });
+
+        // 1. سباق أداء الأقسام المباشر
+        let deptsRanked = Object.values(deptAgg).map(d => ({
+            id: d.id,
+            name: d.name,
+            count: d.count,
+            avg: d.count ? Math.round(d.sum / d.count) : 0
+        })).sort((a, b) => b.avg - a.avg);
+
+        let dEl = document.getElementById('mcDeptsRaceList');
+        if (dEl) {
+            if (deptsRanked.length === 0) {
+                dEl.innerHTML = `<div style="color:#94a3b8; font-size:11px; text-align:center; padding:12px;">لا توجد أقسام مسجلة حالياً</div>`;
+            } else {
+                dEl.innerHTML = deptsRanked.map((ds, i) => {
+                    let badge = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${i+1}`));
+                    let barCol = ds.avg >= 85 ? 'linear-gradient(90deg,#059669,#34d399)' : (ds.avg >= 65 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : 'linear-gradient(90deg,#dc2626,#fb7185)');
+                    return `<div style="cursor:pointer;" onclick="filterByDept('${ds.id}'); switchTab('eval');">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
+                            <span>${badge} 🏛️ ${ds.name} <span style="color:#94a3b8; font-weight:normal;">(${ds.count} موظف)</span></span>
+                            <span style="color:${ds.avg>=85?'#34d399':(ds.avg<=60?'#fb7185':'#38bdf8')};">${ds.avg}%</span>
+                        </div>
+                        <div class="mc-progress-track"><div class="mc-progress-fill" style="width:${ds.avg}%; background:${barCol};"></div></div>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // 2. سباق أداء الموظفين المباشر
+        empList.sort((a, b) => b.pct - a.pct);
+        let eEl = document.getElementById('mcEmpsRaceList');
+        if (eEl) {
+            if (empList.length === 0) {
+                eEl.innerHTML = `<div style="color:#94a3b8; font-size:11px; text-align:center; padding:12px;">لا يوجد موظفون مسجلون حالياً</div>`;
+            } else {
+                eEl.innerHTML = empList.map((it, i) => {
+                    let medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${i+1}`));
+                    let barCol = it.pct >= 90 ? 'linear-gradient(90deg,#059669,#34d399)' : (it.pct > 60 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : 'linear-gradient(90deg,#dc2626,#fb7185)');
+                    return `<div style="cursor:pointer;" onclick="openEmployeeAnalysis('${it.bId}', ${it.idx})">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
+                            <span>${medal} ${it.name} <span style="color:#94a3b8; font-size:10px; font-weight:normal;">(${it.deptName} • ${it.branchName})</span></span>
+                            <span style="color:${it.pct>=90?'#34d399':(it.pct<=60?'#fb7185':'#38bdf8')};">${it.pct}%</span>
+                        </div>
+                        <div class="mc-progress-track"><div class="mc-progress-fill" style="width:${it.pct}%; background:${barCol};"></div></div>
+                    </div>`;
+                }).join('');
+            }
+        }
+    };
+
+    // --- 💓 Live Moving Cardiac ECG Waveform Engine ---
+    let kpiEcgAnimFrame = null;
+    let kpiEcgCurrentPct = 78;
+
+    function startLiveKpiEcgMonitor(avgPct) {
+        kpiEcgCurrentPct = Number(avgPct) || 0;
+        let canvas = document.getElementById('kpiEcgCanvas');
+        if (!canvas) return;
+        let rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = Math.max(520, Math.floor((rect.width || 720) - 28));
+        canvas.height = 118;
+        let ctx = canvas.getContext('2d');
+
+        // تحديد لون وإيقاع النبض حسب النسبة الفعلية
+        let isHealthy = kpiEcgCurrentPct >= 80;
+        let isDanger = kpiEcgCurrentPct <= 60;
+        let waveColor = isHealthy ? '#10b981' : (isDanger ? '#ef4444' : '#38bdf8');
+        let glowColor = isHealthy ? 'rgba(16, 185, 129, 0.85)' : (isDanger ? 'rgba(239, 68, 68, 0.85)' : 'rgba(56, 189, 248, 0.85)');
+        let bpm = isHealthy ? 72 : (isDanger ? 108 : 84);
+        let beatDur = (60 / bpm).toFixed(2) + 's';
+
+        // تحديث شارات وحالة القلب النابض
+        let orb = document.getElementById('kcoreOrbEl');
+        let r1 = document.getElementById('kcorePulseRing1');
+        let r2 = document.getElementById('kcorePulseRing2');
+        let dot = document.getElementById('ecgLiveDot');
+        let stBadge = document.getElementById('kcorePulseStatusBadge');
+        let bpmReadout = document.getElementById('kcoreBpmReadout');
+        let hrTxt = document.getElementById('ecgHeaderRate');
+        let stTxt = document.getElementById('ecgHeaderStatus');
+
+        if (orb) {
+            orb.classList.remove('pulse-healthy', 'pulse-danger');
+            if (isHealthy) orb.classList.add('pulse-healthy');
+            else if (isDanger) orb.classList.add('pulse-danger');
+            orb.style.animationDuration = beatDur;
+        }
+        if (r1) { r1.style.animationDuration = beatDur; r1.style.borderColor = glowColor; }
+        if (r2) { r2.style.animationDuration = beatDur; r2.style.borderColor = glowColor; }
+        if (dot) { dot.style.background = waveColor; dot.style.color = waveColor; }
+        if (stBadge) {
+            stBadge.className = isHealthy ? 'badge b-green' : (isDanger ? 'badge b-red' : 'badge b-blue');
+            stBadge.textContent = isHealthy ? '💚 نبض تشغيلي ممتاز ومتزن' : (isDanger ? '🚨 نبض متسارع — يحتاج تدخلاً' : '💙 نبض مستقر وجيد');
+        }
+        if (bpmReadout) bpmReadout.textContent = `${bpm} BPM • ${isHealthy ? 'إيقاع مثالي' : (isDanger ? 'إنذار إجهاد' : 'إيقاع مستقر')}`;
+        if (hrTxt) hrTxt.textContent = `HR: ${bpm} BPM`;
+        if (stTxt) stTxt.textContent = `STATUS: ${isHealthy ? 'OPTIMAL' : (isDanger ? 'CRITICAL' : 'STABLE')}`;
+
+        // دالة موجة ضربات القلب الحقيقية (P-Q-R-S-T Electrocardiogram)
+        function ecgWaveY(phase) {
+            // phase in [0, 1)
+            let p = phase % 1;
+            let amp = 0;
+            // P wave
+            if (p > 0.10 && p < 0.19) amp = 0.14 * Math.sin(((p - 0.10) / 0.09) * Math.PI);
+            // Q dip
+            else if (p >= 0.24 && p < 0.27) amp = -0.18 * Math.sin(((p - 0.24) / 0.03) * Math.PI);
+            // R sharp peak (النبضة الرئيسية)
+            else if (p >= 0.27 && p < 0.31) amp = 1.0 * Math.sin(((p - 0.27) / 0.04) * Math.PI);
+            // S deep dip
+            else if (p >= 0.31 && p < 0.35) amp = -0.34 * Math.sin(((p - 0.31) / 0.04) * Math.PI);
+            // T wave
+            else if (p >= 0.44 && p < 0.58) amp = 0.26 * Math.sin(((p - 0.44) / 0.14) * Math.PI);
+            return amp;
+        }
+
+        if (kpiEcgAnimFrame) cancelAnimationFrame(kpiEcgAnimFrame);
+
+        let points = [];
+        let scanX = 0;
+        let tPhase = 0;
+        const midY = canvas.height * 0.58;
+        const maxH = canvas.height * 0.46;
+        const speedPx = isDanger ? 3.2 : 2.3;
+        const phaseStep = (bpm / 60) * 0.0155;
+
+        function drawEcgStep() {
+            let sec = document.getElementById('sec-kpicore');
+            if (!sec || sec.classList.contains('hidden')) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // خط الأساس الخافت
+            ctx.strokeStyle = 'rgba(148, 163, 184, 0.12)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, midY);
+            ctx.lineTo(canvas.width, midY);
+            ctx.stroke();
+
+            // إضافة نقطة جديدة للموجة
+            let yVal = midY - ecgWaveY(tPhase) * maxH;
+            points.push({ x: scanX, y: yVal, age: 0 });
+            scanX += speedPx;
+            tPhase += phaseStep;
+            if (scanX >= canvas.width) {
+                scanX = 0;
+                points.push({ breakGap: true });
+            }
+
+            // الحفاظ على آخر 260 نقطة مع تلاشي فوسفوري تدريجي
+            if (points.length > 260) points.shift();
+            points.forEach(pt => { if (!pt.breakGap) pt.age++; });
+
+            // رسم الموجة المتوهجة
+            for (let i = 1; i < points.length; i++) {
+                let p1 = points[i - 1], p2 = points[i];
+                if (p1.breakGap || p2.breakGap || p2.x < p1.x) continue;
+                let alpha = Math.max(0.05, 1 - (p2.age / 240));
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = waveColor;
+                ctx.globalAlpha = alpha;
+                ctx.lineWidth = alpha > 0.7 ? 2.6 : 1.7;
+                ctx.shadowColor = glowColor;
+                ctx.shadowBlur = alpha > 0.7 ? 12 : 4;
+                ctx.stroke();
+            }
+
+            // نقطة المسح المضيئة في مقدمة النبضة (Scanner Head)
+            let lastPt = points[points.length - 1];
+            if (lastPt && !lastPt.breakGap) {
+                ctx.globalAlpha = 1;
+                ctx.shadowColor = glowColor;
+                ctx.shadowBlur = 16;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(lastPt.x, lastPt.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            ctx.shadowBlur = 0;
+            ctx.globalAlpha = 1;
+
+            kpiEcgAnimFrame = requestAnimationFrame(drawEcgStep);
+        }
+        drawEcgStep();
+    }
+
+    const _v6RenderKpiCore = renderKpiTelemetryCore;
+    renderKpiTelemetryCore = function() {
+        _v6RenderKpiCore();
+        let activeWeek = getCurrentWeekKey();
+        let emps = dbData[currentBranch] || [];
+        let sumPct = 0;
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            sumPct += calculateWeightedEmployeePct(emp, sc, null);
+        });
+        let avgPct = emps.length ? Math.round(sumPct / emps.length) : 0;
+        startLiveKpiEcgMonitor(avgPct);
+    };
 
 </script>
 </body>
