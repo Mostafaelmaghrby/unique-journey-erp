@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -1446,6 +1447,89 @@
             cursor: pointer;
         }
         .hidden { display: none !important; }
+    
+        /* ===================================================================
+           💠 KPI TELEMETRY CORE TOPOLOGY (#sec-kpicore) — STANDALONE TAB
+           =================================================================== */
+        .kpi-topology-stage {
+            position: relative;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.16) 0%, rgba(14, 165, 233, 0.05) 38%, rgba(9, 13, 22, 0.96) 78%),
+                linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 18px;
+            padding: 24px 18px;
+            overflow: hidden;
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55), inset 0 0 40px rgba(56, 189, 248, 0.08);
+        }
+        body.light-mode .kpi-topology-stage {
+            background:
+                radial-gradient(circle at 50% 50%, rgba(2, 132, 199, 0.12) 0%, rgba(240, 249, 255, 0.85) 65%),
+                linear-gradient(rgba(2, 132, 199, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(2, 132, 199, 0.06) 1px, transparent 1px);
+            background-size: 100% 100%, 36px 36px, 36px 36px;
+        }
+        .kpi-topology-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 18px;
+            position: relative;
+            z-index: 2;
+        }
+        @media (max-width: 900px) {
+            .kpi-topology-grid { grid-template-columns: 1fr; gap: 14px; }
+        }
+        .kpi-core-orb {
+            width: 176px;
+            height: 176px;
+            margin: 0 auto;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, rgba(125, 211, 252, 0.35), rgba(2, 132, 199, 0.25) 55%, rgba(9, 13, 22, 0.95) 85%);
+            border: 2px solid rgba(56, 189, 248, 0.75);
+            box-shadow: 0 0 36px rgba(56, 189, 248, 0.45), inset 0 0 24px rgba(56, 189, 248, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 12px;
+        }
+        .kpi-node-col {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .kpi-sys-node {
+            background: rgba(15, 23, 42, 0.86);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 14px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        }
+        body.light-mode .kpi-sys-node {
+            background: rgba(255, 255, 255, 0.92);
+        }
+        .kpi-sys-node:hover {
+            transform: translateY(-2px);
+            border-color: #38bdf8;
+            box-shadow: 0 10px 24px rgba(2, 132, 199, 0.28);
+        }
+        .kpi-mini-spark-wrap {
+            margin-top: 16px;
+            background: rgba(9, 13, 22, 0.72);
+            border: 1px solid rgba(56, 189, 248, 0.22);
+            border-radius: 12px;
+            padding: 12px 14px;
+            height: 155px;
+        }
+        body.light-mode .kpi-mini-spark-wrap {
+            background: rgba(255, 255, 255, 0.85);
+        }
+
     </style>
 </head>
 <body>
@@ -1486,6 +1570,7 @@
             <div class="sidebar-nav" id="appTabsContainer">
                 <div class="nav-section-label">التشغيل الأساسي</div>
                 <button type="button" onclick="switchTab('missioncontrol')" id="tab-missioncontrol" class="btn-tab admin-manager-only" style="background:linear-gradient(90deg, rgba(14,165,233,0.18), rgba(139,92,246,0.14)); border-color:rgba(56,189,248,0.35); color:#7dd3fc;">🛰️ مركز القيادة الشامل (Bento OS)</button>
+                <button type="button" onclick="switchTab('kpicore')" id="tab-kpicore" class="btn-tab admin-manager-only" style="color:#38bdf8;">💠 بوابة نبض KPI الذكية</button>
                 <button type="button" onclick="openAddModal()" id="tab-addemp" class="btn-tab btn-add admin-only">➕ إضافة موظف جديد</button>
                 <button type="button" onclick="switchTab('eval')" id="tab-eval" class="btn-tab active">📊 شيت التقييم الأسبوعي</button>
                 <button type="button" onclick="switchTab('allemp')" id="tab-allemp" class="btn-tab admin-manager-only">👥 قاعدة بيانات الموظفين</button>
@@ -1672,6 +1757,53 @@
                 </div>
             </div>
         </div>
+        <!-- 💠 بوابة نبض KPI الذكية (KPI Telemetry Core — تبويب مستقل بالكامل) -->
+        <div id="sec-kpicore" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">💠 بوابة نبض مؤشرات الأداء (KPI Telemetry Core)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">تبويب مستقل يعرض نبض مؤشرات الأداء والتقييم والتوجيه وخطة العمل في نظامك.</p>
+                </div>
+                <button type="button" onclick="renderKpiTelemetryCore()" class="btn-action" style="background:#0284c7;">🔄 تحديث النبض</button>
+            </div>
+            <div class="kpi-topology-stage">
+                <div class="kpi-topology-grid">
+                    <div class="kpi-node-col">
+                        <div class="kpi-sys-node" onclick="switchTab('eval')">
+                            <div style="font-size:12px; font-weight:800; color:#38bdf8;">📊 مؤشر التقييم النشط</div>
+                            <div id="kcoreEvalMetric" style="font-size:18px; font-weight:800; margin-top:4px;">0%</div>
+                            <div style="font-size:10px; color:var(--text-muted);">اضغط للانتقال إلى شيت التقييم الأسبوعي</div>
+                        </div>
+                        <div class="kpi-sys-node" onclick="switchTab('coaching')">
+                            <div style="font-size:12px; font-weight:800; color:#34d399;">⚡ التوجيه اللحظي</div>
+                            <div id="kcoreCoachingMetric" style="font-size:18px; font-weight:800; margin-top:4px;">0</div>
+                            <div style="font-size:10px; color:var(--text-muted);">حالات موصى بتوجيهها حسب معايير KPI</div>
+                        </div>
+                    </div>
+                    <div class="kpi-core-orb">
+                        <div style="font-size:11px; letter-spacing:1px; color:#7dd3fc; font-weight:800;">KPI CORE</div>
+                        <div id="kcoreCenterPct" style="font-size:32px; font-weight:800; color:#fff; margin:4px 0;">0%</div>
+                        <div style="font-size:10px; color:#bae6fd;">نبض الأداء العام</div>
+                    </div>
+                    <div class="kpi-node-col">
+                        <div class="kpi-sys-node" onclick="switchTab('charts')">
+                            <div style="font-size:12px; font-weight:800; color:#c4b5fd;">📈 أضعف معيار تشغيلي</div>
+                            <div id="kcoreWeakestMetric" style="font-size:14px; font-weight:800; margin-top:4px;">—</div>
+                            <div style="font-size:10px; color:var(--text-muted);">اضغط لعرض الرسوم والتحليلات</div>
+                        </div>
+                        <div class="kpi-sys-node" onclick="switchTab('plan')">
+                            <div style="font-size:12px; font-weight:800; color:#facc15;">📋 خطة العمل التشغيلية</div>
+                            <div id="kcorePlanMetric" style="font-size:18px; font-weight:800; margin-top:4px;">0/0</div>
+                            <div style="font-size:10px; color:var(--text-muted);">مهام منجزة ضمن الخطة التشغيلية</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="kpi-mini-spark-wrap">
+                    <canvas id="kpiTelemetrySparkChart"></canvas>
+                </div>
+            </div>
+        </div>
+
 
         <!-- 💬 v12-1. محرك «اسأل بياناتك» باللغة الطبيعية (Ask Your Data) -->
         <div id="sec-askdata" class="card hidden">
@@ -2572,6 +2704,7 @@
                     </div>
                     <div class="checkbox-group" id="userTabsPermissionsGroup" style="max-height:220px;">
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="missioncontrol" checked> 🛰️ مركز القيادة الشامل (Bento OS)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="kpicore" checked> 💠 بوابة نبض KPI الذكية</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="eval" checked> 📊 شيت التقييم الأسبوعي</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="allemp" checked> 👥 قاعدة بيانات الموظفين</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="camerarules" checked> 🎥 غرفة الكاميرات الحية</label>
@@ -4589,7 +4722,7 @@
     }
 
     const ALL_PERMISSION_KEYS = [
-        'missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
+        'missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
         'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
         'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
         'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog', 'gemini_advisor', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal'
@@ -4772,7 +4905,7 @@
             return;
         }
 
-        ['missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -4782,6 +4915,7 @@
         if (document.getElementById(`tab-${tab}`)) document.getElementById(`tab-${tab}`).classList.add('active');
 
         if (tab === 'missioncontrol') renderMissionControl();
+        if (tab === 'kpicore') renderKpiTelemetryCore();
         if (tab === 'roleplay') initRoleplayDropdowns();
         if (tab === 'blastradius') { initBlastRadiusView(); renderHiddenTalentRadar(); renderBridgewaterScores(); }
         if (tab === 'workflows') renderWorkflowRules();
@@ -5828,6 +5962,7 @@
         // التبويبات
         let tabsList = [
             { id: 'missioncontrol', title: '🛰️ مركز القيادة الشامل (Bento OS)' },
+            { id: 'kpicore', title: '💠 بوابة نبض KPI الذكية' },
             { id: 'eval', title: '📊 شيت التقييم الأسبوعي' },
             { id: 'allemp', title: '👥 قاعدة بيانات الموظفين' },
             { id: 'camerarules', title: '🎥 غرفة الكاميرات الحية' },
@@ -8510,6 +8645,77 @@
         roiJournalData.splice(idx, 1);
         localStorage.setItem('unique_journey_roi_v1', JSON.stringify(roiJournalData));
         renderRoiJournalTable();
+    }
+
+
+    // =========================================================================
+    // 💠 KPI TELEMETRY CORE TOPOLOGY (#sec-kpicore) — STANDALONE TAB
+    // =========================================================================
+    let kcoreSparkInstance = null;
+    function renderKpiTelemetryCore() {
+        let activeWeek = getCurrentWeekKey();
+        let emps = dbData[currentBranch] || [];
+        let sumPct = 0, lowCoachingCount = 0;
+        let metricSums = new Array(metricNames.length).fill(0);
+
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            sumPct += calculateWeightedEmployeePct(emp, sc, null);
+            metricNames.forEach((m, idx) => {
+                let v = Number(sc[idx]) || 3;
+                if (idx < metricSums.length) metricSums[idx] += v;
+                if (isMetricApplicableForDept(m, emp.dept) && v <= 2) lowCoachingCount++;
+            });
+        });
+
+        let avgPct = emps.length ? Math.round(sumPct / emps.length) : 0;
+        let worstIdx = 0, minVal = 999999;
+        metricSums.forEach((s, i) => { if (s < minVal) { minVal = s; worstIdx = i; } });
+        let weakestName = metricNames[worstIdx] || 'الأداء والإنتاجية';
+
+        let donePlan = (planData || []).filter(p => p.completed).length;
+        let totalPlan = (planData || []).length;
+
+        let setT = (id, val) => { let el = document.getElementById(id); if (el) el.textContent = val; };
+        setT('kcoreCenterPct', `${avgPct}%`);
+        setT('kcoreEvalMetric', `${avgPct}%`);
+        setT('kcoreCoachingMetric', `${lowCoachingCount}`);
+        setT('kcoreWeakestMetric', weakestName);
+        setT('kcorePlanMetric', `${donePlan}/${totalPlan}`);
+
+        let canvasEl = document.getElementById('kpiTelemetrySparkChart');
+        if (canvasEl && typeof Chart !== 'undefined') {
+            if (kcoreSparkInstance) kcoreSparkInstance.destroy();
+            let labels = metricNames;
+            let values = metricNames.map((_, idx) => {
+                if (!emps.length) return 0;
+                return Math.round(((metricSums[idx] || (emps.length * 3)) / (emps.length * 5)) * 100);
+            });
+            kcoreSparkInstance = new Chart(canvasEl.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'مؤشر كل معيار (%)',
+                        data: values,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.16)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.35
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: '#94a3b8', font: { family: 'Tahoma', size: 10 } }, grid: { color: 'rgba(56,189,248,0.08)' } },
+                        y: { min: 0, max: 100, ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(56,189,248,0.08)' } }
+                    }
+                }
+            });
+        }
     }
 
 </script>
