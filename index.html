@@ -690,6 +690,185 @@
             align-items: center;
             gap: 5px;
         }
+
+        /* 🧬 1. بصمة الموظف والأوسمة النادرة (DNA Archetype, Streaks & Rare Badges) */
+        .dna-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(139, 92, 246, 0.18);
+            border: 1px solid rgba(167, 139, 250, 0.45);
+            color: #c4b5fd;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        .streak-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(249, 115, 22, 0.2);
+            border: 1px solid rgba(251, 146, 60, 0.5);
+            color: #fdba74;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 4px;
+        }
+        .rare-badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            background: rgba(234, 179, 8, 0.18);
+            border: 1px solid rgba(250, 204, 21, 0.5);
+            color: #fde047;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin: 2px;
+        }
+
+        /* 🌌 2. خريطة المجرة التفاعلية (Live Constellation Map) */
+        .constellation-wrap {
+            position: relative;
+            width: 100%;
+            height: 480px;
+            background: radial-gradient(circle at center, #0f172a 0%, #050811 85%);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        #constellationCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #constellationTooltip {
+            position: absolute;
+            display: none;
+            pointer-events: none;
+            background: rgba(9, 13, 22, 0.94);
+            border: 1px solid #38bdf8;
+            color: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            line-height: 1.6;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+
+        /* ⏳ 3. آلة الزمن للأداء (Performance Time-Machine Scrubber) */
+        .timemachine-bar {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(139, 92, 246, 0.12));
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 18px;
+        }
+        .timemachine-slider {
+            width: 100%;
+            accent-color: #a855f7;
+            cursor: pointer;
+            height: 8px;
+            margin: 12px 0;
+        }
+
+        /* ⚡ 4. وضع التقييم السريع بالمسح (Speed-Focus Evaluation Mode) */
+        .speed-metric-row {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .star-btn-group {
+            display: flex;
+            gap: 6px;
+        }
+        .star-score-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: var(--bg-card);
+            color: var(--text-muted);
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .star-score-btn:hover { border-color: #38bdf8; color: #fff; transform: scale(1.06); }
+        .star-score-btn.selected {
+            background: linear-gradient(135deg, #0284c7, #38bdf8);
+            color: #fff;
+            border-color: #7dd3fc;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+        }
+        .star-score-btn.selected-low {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: #fff;
+            border-color: #fca5a5;
+        }
+        .star-score-btn.selected-high {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff;
+            border-color: #6ee7b7;
+        }
+
+        /* 😊 5. نبض الموظف السري في 5 ثوانٍ (Anonymous Mood Pulse) */
+        .mood-pulse-strip {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.14), rgba(17, 24, 39, 0.92));
+            border: 1px solid rgba(167, 139, 250, 0.35);
+            border-right: 4px solid #a855f7;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        body.light-mode .mood-pulse-strip {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), #ffffff);
+        }
+        .mood-emoji-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+        .mood-emoji-btn:hover { transform: translateY(-2px); border-color: #a855f7; }
+
+        /* 🪪 6. جواز الأداء الذكي عبر QR (Employee QR Passport) */
+        .qr-passport-card {
+            background: linear-gradient(135deg, #090d16, #111827);
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -744,7 +923,11 @@
                 <button type="button" onclick="switchTab('heatmap')" id="tab-heatmap" class="btn-tab admin-manager-only">🔥 الخريطة الحرارية للأداء</button>
                 <button type="button" onclick="switchTab('burnout')" id="tab-burnout" class="btn-tab admin-manager-only">🩺 رادار الاحتراق وتزاوج الكفاءات</button>
                 <button type="button" onclick="switchTab('simulator')" id="tab-simulator" class="btn-tab admin-manager-only">🎛️ محاكي القرارات (ماذا لو؟)</button>
-                <button type="button" onclick="openMorningHuddleModal()" class="btn-tab admin-manager-only" style="color:#fde047;">☀️ اجتماع الصباح في دقيقتين</button>
+                <button type="button" onclick="openMorningHuddleModal()" id="tab-morninghuddle" class="btn-tab admin-manager-only" style="color:#fde047;">☀️ اجتماع الصباح في دقيقتين</button>
+                <button type="button" onclick="switchTab('constellation')" id="tab-constellation" class="btn-tab admin-manager-only">🌌 خريطة المجرة التفاعلية</button>
+                <button type="button" onclick="switchTab('timemachine')" id="tab-timemachine" class="btn-tab admin-manager-only">⏳ آلة الزمن والتوقع الشهري</button>
+                <button type="button" onclick="switchTab('biaspulse')" id="tab-biaspulse" class="btn-tab admin-manager-only">⚖️ كاشف التحيّز ونبض المزاج</button>
+                <button type="button" onclick="openSpeedEvalModal()" id="tab-speedeval" class="btn-tab admin-manager-only" style="color:#38bdf8;">⚡ التقييم السريع بالمسح</button>
 
                 <div class="nav-section-label">التقارير والتطوير</div>
                 <button type="button" onclick="switchTab('career')" id="tab-career" class="btn-tab admin-manager-only">🌱 النمو الوظيفي</button>
@@ -760,7 +943,7 @@
                 <button type="button" onclick="switchTab('users')" id="tab-users" class="btn-tab admin-only">⚙️ الإعدادات والصلاحيات</button>
             </div>
 
-            <div class="sidebar-footer">
+            <div class="sidebar-footer" id="sidebarBackupFooter">
                 <button type="button" onclick="exportDatabaseBackup()" class="btn-export-backup">📥 تصدير وحفظ قاعدة البيانات</button>
                 <label class="btn-import-backup">
                     📂 استعادة نسخة احتياطية (JSON)
@@ -786,8 +969,8 @@
                     <div class="branch-group" id="branchButtonGroup"></div>
                     <div class="live-clock-pill" id="liveShiftClockPill" onclick="toggleFocusSprintTimer()" title="اضغط لبدء مؤقت التركيز (25 دقيقة)">⏱️ <span id="liveClockText">--:--</span></div>
                     <button type="button" id="btnVoiceCmd" onclick="toggleVoiceCommand()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#38bdf8; padding:7px 10px;" title="تحكم صوتي بالعربية (قل: افتح الإنذار المبكر، فرع الترعة...)">🎙️</button>
-                    <button type="button" onclick="speakExecutiveBriefing()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#34d399; padding:7px 10px;" title="استمع للنشرة الصوتية التنفيذية اليومية">🔊</button>
-                    <button type="button" onclick="openWarRoomMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#c084fc; padding:7px 10px;" title="غرفة القيادة السينمائية (وضع شاشة العرض)">📺</button>
+                    <button type="button" id="btnVoiceBriefingHeader" onclick="speakExecutiveBriefing()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#34d399; padding:7px 10px;" title="استمع للنشرة الصوتية التنفيذية اليومية">🔊</button>
+                    <button type="button" id="btnWarRoomHeader" onclick="openWarRoomMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#c084fc; padding:7px 10px;" title="غرفة القيادة السينمائية (وضع شاشة العرض)">📺</button>
                     <button type="button" onclick="togglePrivacyBlur()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="درع الخصوصية الفوري (Alt+P)">👁️</button>
                     <button type="button" onclick="openCommandPalette()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:7px 10px;" title="بحث سريع وأوامر (Ctrl+K)">🔍 بحث <span class="cmd-kbd">Ctrl+K</span></button>
                     <button type="button" id="btnThemeToggle" onclick="toggleThemeMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="تبديل الوضع الليلي / النهاري">☀️</button>
@@ -824,6 +1007,22 @@
                         <button type="button" onclick="openQuotesModal()" class="btn-action admin-only" style="background: #059669; padding: 6px 12px;" title="إضافة أو تعديل الجمل التحفيزية">➕ إدارة الجمل</button>
                     </div>
                 </div>
+                <!-- 😊 نبض الموظف السري في 5 ثوانٍ (Anonymous Mood & Pressure Pulse) -->
+                <div id="moodPulseStrip" class="mood-pulse-strip">
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                        <span style="font-size:20px;">💜</span>
+                        <div>
+                            <div style="font-size:12px; font-weight:bold; color:#c4b5fd;">نبض الفريق السري في 5 ثوانٍ — كيف تشعر تجاه ضغط العمل اليوم؟ (سري 100%)</div>
+                            <div style="font-size:10px; color:var(--text-muted);">اختيارك لا يحفظ اسمك ويصل كإحصائية مجهولة لتحسين بيئة العمل</div>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                        <button type="button" class="mood-emoji-btn" onclick="submitAnonymousMood('happy')">😊 ممتاز</button>
+                        <button type="button" class="mood-emoji-btn" onclick="submitAnonymousMood('neutral')">😐 عادي</button>
+                        <button type="button" class="mood-emoji-btn" onclick="submitAnonymousMood('stressed')">😫 مضغوط</button>
+                        <input type="text" id="anonMoodNoteInput" class="form-input" placeholder="اقتراح سري اختياري..." style="width:170px; padding:6px 8px; font-size:11px;">
+                    </div>
+                </div>
                 <!-- 🔔 مركز التنبيهات الفورية الذكية -->
                 <div id="smartNotificationBanner" style="background: linear-gradient(135deg, #111827, #090d16); border: 1px solid #38bdf8; border-right: 4px solid #38bdf8; border-radius: 12px; padding: 14px 18px; margin-bottom: 18px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
@@ -834,10 +1033,80 @@
                         </div>
                     </div>
                     <div style="display: flex; gap: 8px;">
-                        <button type="button" onclick="switchTab('alerts')" class="btn-action" style="background: #dc2626; padding: 6px 14px;">🚨 عرض الإنذارات</button>
-                        <button type="button" onclick="switchTab('coaching')" class="btn-action" style="background: #059669; padding: 6px 14px;">⚡ التوجيه الذكي</button>
+                        <button type="button" id="btnBannerAlerts" onclick="switchTab('alerts')" class="btn-action" style="background: #dc2626; padding: 6px 14px;">🚨 عرض الإنذارات</button>
+                        <button type="button" id="btnBannerCoaching" onclick="switchTab('coaching')" class="btn-action" style="background: #059669; padding: 6px 14px;">⚡ التوجيه الذكي</button>
                     </div>
                 </div>
+        <!-- 🌌 12. خريطة المجرة التفاعلية للشركة (Live Constellation Map) -->
+        <div id="sec-constellation" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">🌌 خريطة المجرة التفاعلية للشركة (Live Constellation Map)</h3>
+                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">الفروع تظهر ككواكب والموظفون كأقمار تدور حولها — الأقرب للمركز والمتوهج بالأخضر هو الأعلى أداءً، والأبعد بالأحمر يحتاج تدخلاً. <b>اضغط على أي قمر لفتح ملف الموظف فوراً!</b></p>
+                </div>
+                <button type="button" onclick="renderConstellationMap()" class="btn-action" style="background:#0284c7;">🔄 تحديث المدارات</button>
+            </div>
+            <div class="constellation-wrap">
+                <canvas id="constellationCanvas"></canvas>
+                <div id="constellationTooltip"></div>
+            </div>
+        </div>
+
+        <!-- ⏳ 13. آلة الزمن للأداء + رادار التوقع الشهري والزخم (Time-Machine & AI Forecasting) -->
+        <div id="sec-timemachine" class="card hidden">
+            <h3 style="color:#a78bfa; font-size:16px; margin-bottom:6px;">🚀 رادار التوقع الشهري والزخم (AI Forecasting & Momentum)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:14px;">يحلل النظام ميل منحنى الأداء عبر الأسابيع ليتوقع متوسط الفرع في نهاية الشهر قبل حدوثه.</p>
+            <div class="summary-cards-grid" style="margin-bottom:20px;">
+                <div class="stat-card"><div><h4>المتوسط الحالي للفرع</h4><div class="val" id="fcCurrentAvg">0%</div></div><span style="font-size:20px;">📍</span></div>
+                <div class="stat-card" style="border-color:#a855f7;"><div><h4>التوقع لنهاية الشهر</h4><div class="val" id="fcProjectedAvg" style="color:#c4b5fd;">0%</div></div><span style="font-size:20px;">🔮</span></div>
+                <div class="stat-card"><div><h4>حالة الزخم (Momentum)</h4><div class="val" id="fcMomentumStatus" style="font-size:15px;">مستقر</div></div><span style="font-size:20px;">⚡</span></div>
+                <div class="stat-card"><div><h4>صاحب أكبر قفزة أسبوعية</h4><div class="val" id="fcTopJumper" style="font-size:13px; color:#34d399;">—</div></div><span style="font-size:20px;">🏆</span></div>
+            </div>
+
+            <div class="timemachine-bar">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h3 style="color:#38bdf8; font-size:15px;">⏳ آلة الزمن للأداء (Performance Time-Machine Scrubber)</h3>
+                        <p style="color:var(--text-muted); font-size:11px;">اسحب الشريط الزمني للتنقل بين الأسابيع ومشاهدة تغير النسب والخريطة الحرارية أمام عينيك.</p>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <span id="tmSelectedWeekBadge" class="badge b-blue" style="font-size:12px;">الأسبوع الحالي</span>
+                        <button type="button" id="btnTmPlay" onclick="toggleTimeMachineAutoPlay()" class="btn-action" style="background:#7c3aed;">▶ تشغيل آلة الزمن</button>
+                    </div>
+                </div>
+                <input type="range" id="timeMachineSlider" class="timemachine-slider" min="0" max="3" step="1" value="3" oninput="renderTimeMachineSnapshot(this.value)">
+                <div id="tmWeekStatsRow" style="display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:#cbd5e1; margin-top:6px;"></div>
+            </div>
+            <table>
+                <thead id="tmTableHead"></thead>
+                <tbody id="tmTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- ⚖️ 14. كاشف تحيّز المديرين + لوحة نبض المزاج السري (Bias Detector & Mood Pulse Dashboard) -->
+        <div id="sec-biaspulse" class="card hidden">
+            <h3 style="color:#facc15; font-size:16px; margin-bottom:6px;">⚖️ كاشف تحيّز المديرين وتكرار التقييم (Manager Bias & Calibration Detector)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:14px;">أداة رقابية سرية للمدير العام تكشف تلقائياً المجاملة المفرطة (الكل 5/5)، أو القساوة غير المبررة، أو نسخ نفس الدرجات آلياً بين الأسابيع دون مراجعة.</p>
+            <div id="biasDetectorContainer" style="margin-bottom:25px;"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#c4b5fd; font-size:16px;">💜 لوحة نبض الفريق والمقترحات السرية (Anonymous Mood & Pressure Pulse)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">إحصائيات مجهولة الهوية لحالة ضغط العمل والمزاج العام مع صندوق المقترحات السرية.</p>
+                </div>
+                <button type="button" onclick="clearMoodPulseData()" class="btn-danger admin-only">🗑️ تصفير النبض</button>
+            </div>
+            <div class="summary-cards-grid" style="margin-bottom:16px;">
+                <div class="stat-card"><div><h4>😊 ممتاز / مرتاح</h4><div class="val" id="moodCountHappy" style="color:#34d399;">0</div></div><span style="font-size:22px;">😊</span></div>
+                <div class="stat-card"><div><h4>😐 عادي / مستقر</h4><div class="val" id="moodCountNeutral" style="color:#38bdf8;">0</div></div><span style="font-size:22px;">😐</span></div>
+                <div class="stat-card"><div><h4>😫 مضغوط / متعب</h4><div class="val" id="moodCountStressed" style="color:#fb7185;">0</div></div><span style="font-size:22px;">😫</span></div>
+            </div>
+            <table>
+                <thead><tr><th style="text-align:center; width:110px;">الحالة</th><th style="text-align:right;">المقترح / الملاحظة السرية</th><th style="text-align:center; width:150px;">الوقت</th></tr></thead>
+                <tbody id="anonMoodNotesTableBody"></tbody>
+            </table>
+        </div>
+
         <!-- 🔥 9. الخريطة الحرارية للأداء (Thermal KPI Heatmap) -->
         <div id="sec-heatmap" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
@@ -931,6 +1200,7 @@
                     <input type="text" id="inlineNewMetricInput" placeholder="اكتب اسم بند تقييم جديد..." class="form-input admin-only" style="width:170px; padding:5px 8px; font-size:11px;">
                     <input type="number" id="inlineNewMetricWeight" placeholder="النسبة % (مثلاً 20)" min="1" max="100" class="form-input admin-only" style="width:120px; padding:5px 8px; font-size:11px;">
                     <button type="button" onclick="addInlineNewMetric()" class="btn-action btn-add admin-only" style="background:#059669; padding:6px 12px;">➕ إضافة تقييم (بند جديد)</button>
+                    <button type="button" id="btnSpeedEvalToolbar" onclick="openSpeedEvalModal()" class="btn-action admin-manager-only" style="background:#0284c7; padding:6px 12px;">⚡ التقييم السريع (بيد واحدة)</button>
                     <button type="button" onclick="switchTab('users')" class="btn-action admin-only" style="background:#7c3aed; padding:6px 12px;">⚖️ تخصيص الأقسام والنسب</button>
                     <div id="weekLockNotice" style="font-size:11px; color:#facc15;"></div>
                 </div>
@@ -1406,6 +1676,17 @@
                 <h3 id="modalEmpTitle" style="color:#38bdf8; font-size:18px;">تقرير أداء الموظف</h3>
                 <button type="button" onclick="closeEmployeeModal()" style="background:transparent; color:#94a3b8; border:none; font-size:18px; cursor:pointer;">✕</button>
             </div>
+            <div id="modalDnaAndBadgesBar" style="margin-bottom: 12px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;"></div>
+            <div class="qr-passport-card" id="modalQrPassportBox">
+                <div style="flex:1; min-width:200px;">
+                    <h4 style="color:#38bdf8; font-size:13px; margin-bottom:4px;">🪪 جواز الأداء الذكي (Employee QR Passport)</h4>
+                    <p id="qrPassportSummary" style="color:#cbd5e1; font-size:11px; line-height:1.6; margin-bottom:8px;"></p>
+                    <button type="button" onclick="downloadQrPassportCard()" class="btn-action" style="background:#0284c7; padding:5px 12px;">📥 تحميل بطاقة الجواز (PNG)</button>
+                </div>
+                <div style="background:#fff; padding:6px; border-radius:8px; width:104px; height:104px; display:flex; align-items:center; justify-content:center;">
+                    <img id="modalQrCodeImg" src="" alt="QR Passport" style="width:92px; height:92px; display:block;">
+                </div>
+            </div>
             <div style="margin-bottom: 20px; background:#0f172a; padding:15px; border-radius:8px; height:200px;">
                 <canvas id="individualChart"></canvas>
             </div>
@@ -1470,28 +1751,48 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">التبويبات والأيقونات المسموح له برؤيتها والوصول إليها:</label>
-                    <div class="checkbox-group" id="userTabsPermissionsGroup">
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="eval" checked> شيت التقييم</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="allemp" checked> الموظفون</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="camerarules" checked> الكاميرات الحية</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="alerts" checked> الإنذار المبكر</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="coaching" checked> التوجيه اللحظي الذكي</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="compare" checked> مقارنة حية</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="rootcause" checked> تحليل الأخطاء</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="career" checked> النمو الوظيفي</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="executivereport" checked> التقرير التنفيذي</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="leaderboard" checked> لوحة الشرف</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="charts" checked> الرسوم البيانية</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="plan" checked> خطة العمل</label>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px; flex-wrap:wrap; gap:6px;">
+                        <label class="form-label" style="margin:0;">التبويبات والميزات المسموح له برؤيتها (لن يرى أي شيء غير المحدد هنا):</label>
+                        <div style="display:flex; gap:6px;">
+                            <button type="button" onclick="toggleCheckboxGroup('allowedTabs', true)" class="btn-action" style="background:#059669; padding:3px 8px; font-size:10px;">✅ تحديد الكل</button>
+                            <button type="button" onclick="toggleCheckboxGroup('allowedTabs', false)" class="btn-danger" style="padding:3px 8px; font-size:10px;">❌ إلغاء الكل</button>
+                        </div>
+                    </div>
+                    <div class="checkbox-group" id="userTabsPermissionsGroup" style="max-height:220px;">
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="eval" checked> 📊 شيت التقييم الأسبوعي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="allemp" checked> 👥 قاعدة بيانات الموظفين</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="camerarules" checked> 🎥 غرفة الكاميرات الحية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="alerts" checked> 🚨 مركز الإنذار المبكر</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="coaching" checked> ⚡ التوجيه اللحظي الذكي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="compare" checked> ⚔️ مقارنة حية بين موظفين</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="rootcause" checked> 🔍 تحليل جذور الأخطاء</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="heatmap" checked> 🔥 الخريطة الحرارية للأداء</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="burnout" checked> 🩺 رادار الاحتراق وتزاوج الكفاءات</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="simulator" checked> 🎛️ محاكي القرارات (ماذا لو؟)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="morninghuddle" checked> ☀️ اجتماع الصباح في دقيقتين</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="constellation" checked> 🌌 خريطة المجرة التفاعلية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="timemachine" checked> ⏳ آلة الزمن والتوقع الشهري</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="biaspulse" checked> ⚖️ كاشف التحيّز ونبض المزاج السري</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="speedeval" checked> ⚡ وضع التقييم السريع (بيد واحدة)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="career" checked> 🌱 النمو الوظيفي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="executivereport" checked> 📊 التقرير التنفيذي الذكي</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="weeklyindividuals" checked> 📅 أرشيف وتقارير الأسابيع</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="leaderboard" checked> 🏆 لوحة الشرف التنافسية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="charts" checked> 📈 الرسوم البيانية ومخطط الرادار</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="plan" checked> 📋 خطة العمل التشغيلية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="warroom"> 📺 غرفة القيادة السينمائية (TV Mode)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="voice"> 🎙️ التحكم الصوتي والنشرة الصوتية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="backup"> 💾 تصدير واستعادة قاعدة البيانات</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="devicelog"> 💻 سجل الأجهزة والدخول (رقابة عليا)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="auditlog"> 🛡️ سجل التعديلات والرقابة (رقابة عليا)</label>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">الأفراد والموظفين المسموح له برؤيتهم وتقييمهم:</label>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><label class="form-label" style="margin:0;">الأفراد والموظفين المسموح له برؤيتهم وتقييمهم:</label><div style="display:flex; gap:6px;"><button type="button" onclick="toggleCheckboxGroup('allowedEmps', true)" class="btn-action" style="background:#059669; padding:3px 8px; font-size:10px;">✅ الكل</button><button type="button" onclick="toggleCheckboxGroup('allowedEmps', false)" class="btn-danger" style="padding:3px 8px; font-size:10px;">❌ لا أحد</button></div></div>
                     <div class="checkbox-group" id="userEmployeesPermissionsGroup"></div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">معايير وبنود التقييم المسموح له برؤيتها وتقييمها:</label>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;"><label class="form-label" style="margin:0;">معايير وبنود التقييم المسموح له برؤيتها وتقييمها:</label><div style="display:flex; gap:6px;"><button type="button" onclick="toggleCheckboxGroup('allowedMetrics', true)" class="btn-action" style="background:#059669; padding:3px 8px; font-size:10px;">✅ الكل</button><button type="button" onclick="toggleCheckboxGroup('allowedMetrics', false)" class="btn-danger" style="padding:3px 8px; font-size:10px;">❌ لا أحد</button></div></div>
                     <div class="checkbox-group" id="userMetricsPermissionsGroup"></div>
                 </div>
                 <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px;">
@@ -1737,6 +2038,35 @@
                 <button type="button" onclick="copyMorningHuddleScript()" class="btn-action" style="background:#0284c7;">📋 نسخ النص</button>
                 <button type="button" onclick="sendMorningHuddleWhatsApp()" class="btn-whatsapp" style="background:#16a34a; color:#fff; padding:6px 12px;">💬 إرسال لجروب الفرع واتساب</button>
                 <button type="button" onclick="closeMorningHuddleModal()" class="btn-action" style="background:#475569;">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ⚡ نافذة التقييم السريع بالمسح (Speed-Focus Evaluation Mode) -->
+    <div id="speedEvalModal" class="modal">
+        <div class="modal-content" style="max-width: 560px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; border-bottom:1px solid var(--border-color); padding-bottom:10px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">⚡ وضع التقييم السريع (بيد واحدة)</h3>
+                    <div id="speedEvalProgressText" style="font-size:11px; color:var(--text-muted); margin-top:2px;">الموظف 1 من 10</div>
+                </div>
+                <button type="button" onclick="closeSpeedEvalModal()" style="background:transparent; color:#94a3b8; border:none; font-size:18px; cursor:pointer;">✕</button>
+            </div>
+            <div style="background:var(--bg-main); border-radius:8px; height:6px; overflow:hidden; margin-bottom:14px;">
+                <div id="speedEvalProgressBar" style="height:100%; width:10%; background:linear-gradient(90deg, #0284c7, #10b981); transition:width 0.25s;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(56, 189, 248, 0.1); border:1px solid rgba(56, 189, 248, 0.35); padding:12px 16px; border-radius:10px; margin-bottom:14px;">
+                <div>
+                    <div id="speedEvalEmpName" style="font-size:17px; font-weight:bold; color:var(--text-main);">—</div>
+                    <div id="speedEvalEmpMeta" style="font-size:11px; color:var(--accent-blue); margin-top:2px;">—</div>
+                </div>
+                <div id="speedEvalLivePct" style="font-size:24px; font-weight:bold; color:#34d399;">0%</div>
+            </div>
+            <div id="speedEvalMetricsList" style="max-height:52vh; overflow-y:auto; padding-left:4px;"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; gap:10px;">
+                <button type="button" onclick="navigateSpeedEval(-1)" class="btn-action" style="background:#475569; padding:10px 18px; font-size:13px;">➡️ السابق</button>
+                <button type="button" onclick="closeSpeedEvalModal()" class="btn-action" style="background:#059669; padding:10px 16px; font-size:12px;">✅ إنهاء وحفظ</button>
+                <button type="button" onclick="navigateSpeedEval(1)" class="btn-action" style="background:#0284c7; padding:10px 22px; font-size:13px;">التالي ⬅️</button>
             </div>
         </div>
     </div>
@@ -3310,8 +3640,8 @@
                     role: found.role,
                     branch: found.branch,
                     branchName: bObj ? bObj.name : (found.branch === 'all' ? 'كل الفروع' : found.branch),
-                    allowedTabs: found.allowedTabs || [],
-                    allowedEmps: found.allowedEmps || [],
+                    allowedTabs: Array.isArray(found.allowedTabs) ? found.allowedTabs : null,
+                    allowedEmps: Array.isArray(found.allowedEmps) ? found.allowedEmps : [],
                     allowedMetrics: (Array.isArray(found.allowedMetrics) && found.allowedMetrics.length > 0) ? found.allowedMetrics : metricNames,
                     password: found.password
                 };
@@ -3410,7 +3740,34 @@
         initCameraRulesDropdowns(); initRootCauseDropdowns(); initComparisonDropdowns(); loadSavedCameraStream();
         refreshMotivationalQuote(true);
         updateSmartNotificationBanner();
-        switchTab('eval');
+        let firstAllowed = ['eval', 'allemp', 'leaderboard', 'plan', 'charts', 'weeklyindividuals', 'alerts', 'coaching', 'heatmap', 'constellation', 'timemachine', 'biaspulse', 'burnout', 'simulator', 'compare', 'rootcause', 'career', 'executivereport', 'camerarules', 'devicelog', 'auditlog'].find(t => hasFeaturePermission(t));
+        if (firstAllowed) switchTab(firstAllowed);
+    }
+
+    const ALL_PERMISSION_KEYS = [
+        'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
+        'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
+        'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
+        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog'
+    ];
+
+    function toggleCheckboxGroup(inputName, checkState) {
+        document.querySelectorAll(`input[name="${inputName}"]`).forEach(cb => { cb.checked = checkState; });
+    }
+
+    function hasFeaturePermission(featureKey) {
+        if (!currentUser) return false;
+        if (currentUser.role === 'Admin') return true;
+        if (featureKey === 'users') return false;
+        // إذا كان للمستخدم صلاحيات مخصصة محددة من المدير العام، نلتزم بها حرفياً 100%
+        if (Array.isArray(currentUser.allowedTabs)) {
+            return currentUser.allowedTabs.includes(featureKey);
+        }
+        // الافتراضي للحسابات القديمة غير المخصصة
+        if (currentUser.role === 'Employee') {
+            return ['eval', 'leaderboard', 'plan', 'weeklyindividuals'].includes(featureKey);
+        }
+        return !['users', 'devicelog', 'auditlog', 'backup'].includes(featureKey);
     }
 
     function applyRoleBasedUI() {
@@ -3424,20 +3781,54 @@
             adminElements.forEach(el => el.classList.add('hidden'));
             managerElements.forEach(el => el.classList.add('hidden'));
         } else {
-            // مدير الفرع أو أي دور إشرافي مخصص جديد يضاف للقائمة
             adminElements.forEach(el => el.classList.add('hidden'));
             managerElements.forEach(el => el.classList.remove('hidden'));
         }
 
-        // احترام صلاحيات التبويبات المخصصة للمستخدم إن وجدت
-        if (currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedTabs) && currentUser.allowedTabs.length > 0) {
-            ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'career', 'executivereport', 'weeklyindividuals', 'leaderboard', 'charts', 'plan'].forEach(t => {
-                let btn = document.getElementById(`tab-${t}`);
-                if (btn) {
-                    if (currentUser.allowedTabs.includes(t)) btn.classList.remove('hidden');
-                    else btn.classList.add('hidden');
+        // تطبيق الصلاحيات الصارم على كل تبويب وزر وميزة
+        ALL_PERMISSION_KEYS.forEach(key => {
+            let allowed = hasFeaturePermission(key);
+            let tabBtn = document.getElementById(`tab-${key}`);
+            if (tabBtn) {
+                if (allowed) tabBtn.classList.remove('hidden');
+                else tabBtn.classList.add('hidden');
+            }
+        });
+
+        // إخفاء أو إظهار الأزرار الإضافية في الهيدر والشريط العلوي حسب الصلاحية
+        let toggleEl = (id, show) => {
+            let el = document.getElementById(id);
+            if (el) { if (show) el.classList.remove('hidden'); else el.classList.add('hidden'); }
+        };
+        toggleEl('btnSpeedEvalToolbar', hasFeaturePermission('speedeval'));
+        toggleEl('btnWarRoomHeader', hasFeaturePermission('warroom'));
+        toggleEl('btnVoiceCmd', hasFeaturePermission('voice'));
+        toggleEl('btnVoiceBriefingHeader', hasFeaturePermission('voice'));
+        toggleEl('headerBackupBtn', hasFeaturePermission('backup'));
+        toggleEl('sidebarBackupFooter', hasFeaturePermission('backup'));
+        toggleEl('btnBannerAlerts', hasFeaturePermission('alerts'));
+        toggleEl('btnBannerCoaching', hasFeaturePermission('coaching'));
+        let bannerEl = document.getElementById('smartNotificationBanner');
+        if (bannerEl) {
+            if (!hasFeaturePermission('alerts') && !hasFeaturePermission('coaching')) bannerEl.classList.add('hidden');
+            else bannerEl.classList.remove('hidden');
+        }
+
+        // إخفاء عناوين الأقسام الفارغة في القائمة الجانبية تلقائياً
+        let navContainer = document.getElementById('appTabsContainer');
+        if (navContainer) {
+            let children = Array.from(navContainer.children);
+            for (let i = 0; i < children.length; i++) {
+                if (children[i].classList.contains('nav-section-label')) {
+                    let hasVisibleBtn = false;
+                    for (let j = i + 1; j < children.length; j++) {
+                        if (children[j].classList.contains('nav-section-label')) break;
+                        if (!children[j].classList.contains('hidden')) { hasVisibleBtn = true; break; }
+                    }
+                    if (hasVisibleBtn) children[i].classList.remove('hidden');
+                    else children[i].classList.add('hidden');
                 }
-            });
+            }
         }
     }
 
@@ -3528,20 +3919,12 @@
 
     function switchTab(tab) {
         closeMobileSidebar();
-        if (currentUser.role !== 'Admin' && (tab === 'users' || tab === 'devicelog' || tab === 'auditlog')) {
-            showToast('عذراً، هذه الصلاحية مخصصة للمدير العام فقط!');
-            return;
-        }
-        if (currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedTabs) && currentUser.allowedTabs.length > 0 && !currentUser.allowedTabs.includes(tab)) {
-            showToast('عذراً، هذا التبويب غير مضاف ضمن صلاحيات حسابك!');
-            return;
-        }
-        if (currentUser.role === 'Employee' && (!currentUser.allowedTabs || currentUser.allowedTabs.length === 0) && tab !== 'eval' && tab !== 'plan' && tab !== 'leaderboard') {
-            showToast('عذراً، هذه الصلاحية غير متاحة لحسابك الموظف!');
+        if (!hasFeaturePermission(tab)) {
+            showToast('عذراً، هذه الشاشة غير مضافة ضمن صلاحيات حسابك!', 'error');
             return;
         }
 
-        ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'burnout', 'simulator', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -3568,6 +3951,9 @@
         if (tab === 'heatmap') renderThermalHeatmap();
         if (tab === 'burnout') { renderBurnoutRadar(); renderBuddyMatcher(); }
         if (tab === 'simulator') renderWhatIfSimulator();
+        if (tab === 'constellation') renderConstellationMap();
+        if (tab === 'timemachine') initTimeMachineView();
+        if (tab === 'biaspulse') { renderBiasDetector(); renderMoodPulseDashboard(); }
         if (tab === 'users') { renderBranchesTable(); renderAdminDepartmentsTable(); renderDepartmentsTable(); renderMetricsConfigTable(); renderCustomRolesTable(); renderUsersTable(); }
     }
 
@@ -3659,7 +4045,7 @@
 
             let trendHtml = getEmployeeTrendHtml(emp, pct, activeWeek, userAllowedMetrics);
             let html = `<td data-label="الكود" style="text-align:center; color:#94a3b8;">${idx + 1}</td>
-                        <td data-label="الموظف"><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span>${alertBadge}</td>
+                        <td data-label="الموظف"><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span>${alertBadge}<div style="margin-top:3px;">${getEmployeeDnaPill(emp, scores)}${getEmployeeStreakPill(emp)}</div></td>
                         <td data-label="الإدارة" style="color:#22d3ee;">${adminDeptDisplay}</td>
                         <td data-label="القسم" style="color:#38bdf8;">${deptDisplay}</td>`;
             
@@ -3918,7 +4304,7 @@
             (dbData[b.id] || []).forEach((emp, empIdx) => {
                 let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
                 let pct = calculateWeightedEmployeePct(emp, scArr, null);
-                list.push({name: emp.name, branchName: b.name, dept: getDeptDisplayName(emp.dept), pct, branchId: b.id, empIdx});
+                list.push({name: emp.name, branchName: b.name, dept: getDeptDisplayName(emp.dept), pct, branchId: b.id, empIdx, dnaHtml: getEmployeeDnaPill(emp, scArr), streakHtml: getEmployeeStreakPill(emp)});
             });
         });
         list.sort((a,b) => b.pct - a.pct);
@@ -3926,7 +4312,7 @@
             let medal = index === 0 ? '🥇 الأول' : (index === 1 ? '🥈 الثاني' : (index === 2 ? '🥉 الثالث' : `#${index+1}`));
             tbody.innerHTML += `<tr>
                 <td style="text-align:center; font-weight:bold; color:#38bdf8;">${medal}</td>
-                <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${item.branchId}', ${item.empIdx})">${item.name}</span></td>
+                <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${item.branchId}', ${item.empIdx})">${item.name}</span><div style="margin-top:3px;">${item.dnaHtml || ''}${item.streakHtml || ''}</div></td>
                 <td style="color:#38bdf8;">${item.branchName}</td>
                 <td>${item.dept}</td>
                 <td style="text-align:center; font-weight:bold; color:#34d399;">${item.pct}%</td>
@@ -4063,6 +4449,7 @@
         document.getElementById('modalWeaknesses').innerHTML = weaknessesHtml;
         document.getElementById('modalSuggestions').innerHTML = suggestionsHtml;
         render7DayPlaybook(emp, currentScores, branchName);
+        renderEmployeeDnaAndQrPassport(emp, currentScores, branchName, pct, activeWeek);
         let ctx = document.getElementById('individualChart').getContext('2d');
         if (individualChartInstance) individualChartInstance.destroy();
         let weeks = getAvailableWeeks().reverse();
@@ -4215,7 +4602,7 @@
             document.getElementById('usrRole').value = u.role || 'Branch Manager';
             document.getElementById('usrBranch').value = u.branch || 'sandoob';
 
-            if (Array.isArray(u.allowedTabs) && u.allowedTabs.length > 0) {
+            if (Array.isArray(u.allowedTabs)) {
                 document.querySelectorAll('input[name="allowedTabs"]').forEach(cb => {
                     cb.checked = u.allowedTabs.includes(cb.value);
                 });
@@ -4236,7 +4623,9 @@
             document.getElementById('usrEmail').value = '';
             document.getElementById('usrPassword').value = '';
             document.getElementById('usrRole').value = 'Branch Manager';
-            document.querySelectorAll('input[name="allowedTabs"]').forEach(cb => cb.checked = true);
+            document.querySelectorAll('input[name="allowedTabs"]').forEach(cb => {
+                cb.checked = !['devicelog', 'auditlog', 'backup', 'warroom', 'voice', 'biaspulse'].includes(cb.value);
+            });
         }
 
         document.getElementById('addUserModal').classList.add('active');
@@ -4404,6 +4793,7 @@
 
     // 📥 دالة تصدير وحفظ قاعدة البيانات بالكامل (Backup & Export)
     function exportDatabaseBackup() {
+        if (currentUser && !hasFeaturePermission('backup')) { showToast('عذراً، تصدير قاعدة البيانات غير مفعل لحسابك!', 'error'); return; }
         let fullBackupObj = {
             version: "v30_enterprise_saas",
             exportedAt: new Date().toLocaleString('ar-EG'),
@@ -4578,7 +4968,8 @@
             { title: '📺 تشغيل غرفة القيادة السينمائية (TV Mode)', tag: 'عرض حي', fn: () => { closeCommandPalette(); openWarRoomMode(); } },
             { title: '☀️ توليد نص اجتماع الصباح في دقيقتين', tag: 'ذكاء إداري', fn: () => { closeCommandPalette(); openMorningHuddleModal(); } },
             { title: '👁️ تفعيل / إيقاف درع الخصوصية (Alt+P)', tag: 'أمان', fn: () => { closeCommandPalette(); togglePrivacyBlur(); } },
-            { title: '🔊 الاستماع للنشرة الصوتية التنفيذية', tag: 'صوت ذكي', fn: () => { closeCommandPalette(); speakExecutiveBriefing(); } }
+            { title: '🔊 الاستماع للنشرة الصوتية التنفيذية', tag: 'صوت ذكي', fn: () => { closeCommandPalette(); speakExecutiveBriefing(); } },
+            { title: '⚡ تشغيل وضع التقييم السريع (بيد واحدة)', tag: 'سرعة', fn: () => { closeCommandPalette(); openSpeedEvalModal(); } }
         ];
         // التبويبات
         let tabsList = [
@@ -4598,12 +4989,26 @@
             { id: 'heatmap', title: '🔥 الخريطة الحرارية للأداء' },
             { id: 'burnout', title: '🩺 رادار الاحتراق وتزاوج الكفاءات' },
             { id: 'simulator', title: '🎛️ محاكي القرارات (ماذا لو؟)' },
+            { id: 'constellation', title: '🌌 خريطة المجرة التفاعلية' },
+            { id: 'timemachine', title: '⏳ آلة الزمن والتوقع الشهري' },
+            { id: 'biaspulse', title: '⚖️ كاشف التحيّز ونبض المزاج' },
             { id: 'users', title: '⚙️ الإعدادات والصلاحيات' }
         ];
         tabsList.forEach(t => {
-            items.push({ title: t.title, tag: 'تبويب', fn: () => { closeCommandPalette(); switchTab(t.id); } });
+            if (hasFeaturePermission(t.id)) {
+                items.push({ title: t.title, tag: 'تبويب', fn: () => { closeCommandPalette(); switchTab(t.id); } });
+            }
         });
-        quickActions.forEach(a => items.push(a));
+        quickActions.forEach(a => {
+            if (a.title.includes('إضافة موظف') && currentUser.role !== 'Admin') return;
+            if (a.title.includes('تصدير') && !hasFeaturePermission('backup')) return;
+            if (a.title.includes('تعديل شعار') && currentUser.role === 'Employee') return;
+            if (a.title.includes('غرفة القيادة') && !hasFeaturePermission('warroom')) return;
+            if (a.title.includes('اجتماع الصباح') && !hasFeaturePermission('morninghuddle')) return;
+            if (a.title.includes('النشرة الصوتية') && !hasFeaturePermission('voice')) return;
+            if (a.title.includes('التقييم السريع') && !hasFeaturePermission('speedeval')) return;
+            items.push(a);
+        });
 
         // الموظفين
         branchesData.forEach(b => {
@@ -4922,6 +5327,7 @@
     // 📺 3. غرفة القيادة السينمائية (War Room / TV Mode)
     let warRoomTimer = null;
     function openWarRoomMode() {
+        if (!hasFeaturePermission('warroom')) { showToast('عذراً، غرفة القيادة غير مفعلة لحسابك!', 'error'); return; }
         let ov = document.getElementById('warRoomOverlay');
         if (!ov) return;
         ov.classList.add('active');
@@ -4999,6 +5405,7 @@
     // 🎙️ 4. التحكم الصوتي بالعربية (Voice Command ERP)
     let voiceRecInstance = null;
     function toggleVoiceCommand() {
+        if (!hasFeaturePermission('voice')) { showToast('عذراً، التحكم الصوتي غير مفعل لحسابك!', 'error'); return; }
         let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
         let btn = document.getElementById('btnVoiceCmd');
         if (!SpeechRec) {
@@ -5037,6 +5444,10 @@
         else if (cmd.includes('حرار') || cmd.includes('خريط')) switchTab('heatmap');
         else if (cmd.includes('احتراق') || cmd.includes('كفاء')) switchTab('burnout');
         else if (cmd.includes('محاكي') || cmd.includes('ماذا لو')) switchTab('simulator');
+        else if (cmd.includes('مجر') || cmd.includes('كواكب')) switchTab('constellation');
+        else if (cmd.includes('زمن') || cmd.includes('توقع')) switchTab('timemachine');
+        else if (cmd.includes('تحيز') || cmd.includes('مزاج')) switchTab('biaspulse');
+        else if (cmd.includes('سريع')) openSpeedEvalModal();
         else if (cmd.includes('شرف') || cmd.includes('متصدر')) switchTab('leaderboard');
         else if (cmd.includes('توجيه')) switchTab('coaching');
         else if (cmd.includes('كاميرا')) switchTab('camerarules');
@@ -5054,6 +5465,7 @@
 
     // 🔊 5. النشرة الصوتية التنفيذية (AI Executive Voice Briefing)
     function speakExecutiveBriefing() {
+        if (!hasFeaturePermission('voice')) { showToast('عذراً، النشرة الصوتية غير مفعلة لحسابك!', 'error'); return; }
         if (!('speechSynthesis' in window)) {
             showToast('⚠️ ميزة النطق الصوتي غير مدعومة في هذا المتصفح.', 'error');
             return;
@@ -5267,6 +5679,7 @@
     let latestMorningHuddleText = '';
     function openMorningHuddleModal() {
         closeMobileSidebar();
+        if (!hasFeaturePermission('morninghuddle')) { showToast('عذراً، هذه الميزة غير مفعلة لحسابك!', 'error'); return; }
         let activeWeek = getCurrentWeekKey();
         let bObj = branchesData.find(b => b.id === currentBranch);
         let bName = bObj ? bObj.name : currentBranch;
@@ -5396,6 +5809,539 @@
         setupDynamicPwaManifest();
         startLiveShiftClock();
     });
+
+
+    // =========================================================================
+    // 🌌 حزمة الابتكارات الخارقة (v8 Quantum Edition - 9 Next-Gen Engines)
+    // =========================================================================
+
+    // 🧬 1. التوأم الرقمي وبصمة الموظف (Employee DNA Archetype)
+    function getEmployeeDnaArchetype(emp, scores) {
+        let sc = scores || [];
+        let maxVal = -1, maxIdx = 0;
+        sc.forEach((v, i) => {
+            let num = Number(v) || 3;
+            if (num > maxVal) { maxVal = num; maxIdx = i; }
+        });
+        let avg = sc.length ? (sc.reduce((a, b) => a + (Number(b) || 3), 0) / sc.length) : 3;
+        if (avg >= 4.6) return { title: 'الشامل الأسطوري', icon: '👑' };
+        let mName = metricNames[maxIdx] || '';
+        if (mName.includes('عملاء') || mName.includes('لباقة')) return { title: 'صانع ولاء العملاء', icon: '💎' };
+        if (mName.includes('إنتاجية') || mName.includes('أداء')) return { title: 'محرك الإنتاجية', icon: '⚡' };
+        if (mName.includes('مواعيد') || mName.includes('حضور')) return { title: 'نجم الانضباط', icon: '⏱️' };
+        if (mName.includes('زملاء') || mName.includes('فريق')) return { title: 'القائد الصامت', icon: '🤝' };
+        if (mName.includes('مبادرة') || mName.includes('تطوير')) return { title: 'العقل المبتكر', icon: '🧠' };
+        if (mName.includes('جودة')) return { title: 'حارس الجودة', icon: '🛡️' };
+        return { title: 'العنصر المتوازن', icon: '🌟' };
+    }
+    function getEmployeeDnaPill(emp, scores) {
+        let dna = getEmployeeDnaArchetype(emp, scores);
+        return `<span class="dna-pill" title="البصمة المهنية التلقائية">${dna.icon} ${dna.title}</span>`;
+    }
+
+    // 🔥 2. محرك سلاسل الالتزام والأوسمة النادرة (Streaks & Rare Badges)
+    function calculateEmployeeStreak(emp) {
+        if (!emp || !emp.history) return 0;
+        let weeks = getAvailableWeeks();
+        let streak = 0;
+        for (let w of weeks) {
+            if (emp.history[w]) {
+                let p = calculateWeightedEmployeePct(emp, emp.history[w], null);
+                if (p >= 90) streak++;
+                else break;
+            } else {
+                break;
+            }
+        }
+        return streak;
+    }
+    function getEmployeeStreakPill(emp) {
+        let st = calculateEmployeeStreak(emp);
+        if (st >= 1) {
+            return `<span class="streak-pill" title="سلسلة أسابيع التميز المتتالية (≥ 90%)">🔥 ${st} ${st === 1 ? 'أسبوع' : 'أسابيع'}</span>`;
+        }
+        return '';
+    }
+    function getEmployeeRareBadges(emp, scores, activeWeek) {
+        let badges = [];
+        let sc = scores || [];
+        let hasLow = sc.some(v => (Number(v) || 3) <= 2);
+        let pct = calculateWeightedEmployeePct(emp, sc, null);
+        if (!hasLow && pct >= 85) badges.push('🛡️ صفر أخطاء');
+        if ((Number(sc[3]) || 3) === 5) badges.push('💎 سفير العملاء');
+        if ((Number(sc[0]) || 3) === 5) badges.push('⏱️ انضباط حديدي');
+        if ((Number(sc[2]) || 3) === 5) badges.push('💡 صانع المبادرات');
+        let prevWeeks = Object.keys(emp.history || {}).filter(w => w !== activeWeek).sort().reverse();
+        if (prevWeeks.length > 0) {
+            let prevPct = calculateWeightedEmployeePct(emp, emp.history[prevWeeks[0]], null);
+            if (pct - prevPct >= 10) badges.push(`🚀 أكبر قفزة (+${pct - prevPct}%)`);
+        }
+        return badges;
+    }
+
+    // 🪪 3. جواز الأداء الذكي عبر QR (Employee QR Passport)
+    function renderEmployeeDnaAndQrPassport(emp, scores, branchName, pct, activeWeek) {
+        let bar = document.getElementById('modalDnaAndBadgesBar');
+        let dna = getEmployeeDnaArchetype(emp, scores);
+        let streak = calculateEmployeeStreak(emp);
+        let rareBadges = getEmployeeRareBadges(emp, scores, activeWeek);
+        if (bar) {
+            let html = `<span class="dna-pill" style="font-size:11px; padding:4px 10px;">${dna.icon} البصمة: ${dna.title}</span>`;
+            if (streak > 0) html += `<span class="streak-pill" style="font-size:11px; padding:4px 10px;">🔥 سلسلة تميز: ${streak} أسبوع</span>`;
+            rareBadges.forEach(b => html += `<span class="rare-badge-pill">${b}</span>`);
+            bar.innerHTML = html;
+        }
+        let qrSum = document.getElementById('qrPassportSummary');
+        let qrImg = document.getElementById('modalQrCodeImg');
+        let comp = brandingData.companyName || 'الرحلة الفريدة';
+        let passportText = `${comp} | ${emp.name} (${branchName}) | الأداء: ${pct}% | البصمة: ${dna.title} | الأسبوع: ${activeWeek}`;
+        if (qrSum) {
+            qrSum.innerHTML = `امسح الرمز بكاميرا الهاتف لعرض بطاقة التميز الموثقة للموظف <b>${emp.name}</b> — البصمة: <b>${dna.title}</b> (${pct}%).`;
+        }
+        if (qrImg) {
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&margin=4&data=${encodeURIComponent(passportText)}`;
+        }
+        window.__currentQrPassport = { name: emp.name, branchName, pct, dna: dna.title, badges: rareBadges, week: activeWeek };
+    }
+    function downloadQrPassportCard() {
+        let p = window.__currentQrPassport;
+        if (!p) return;
+        let canvas = document.createElement('canvas');
+        canvas.width = 900; canvas.height = 500;
+        let ctx = canvas.getContext('2d');
+        let grad = ctx.createLinearGradient(0, 0, 900, 500);
+        grad.addColorStop(0, '#090d16'); grad.addColorStop(1, '#1e1b4b');
+        ctx.fillStyle = grad; ctx.fillRect(0, 0, 900, 500);
+        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 6; ctx.strokeRect(20, 20, 860, 460);
+        ctx.direction = 'rtl'; ctx.textAlign = 'right';
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 26px Tahoma, Arial';
+        ctx.fillText(`🪪 جواز الأداء الذكي — ${brandingData.companyName || 'الرحلة الفريدة'}`, 840, 80);
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 42px Tahoma, Arial';
+        ctx.fillText(p.name, 840, 155);
+        ctx.fillStyle = '#c4b5fd'; ctx.font = 'bold 24px Tahoma, Arial';
+        ctx.fillText(`البصمة المهنية: ${p.dna}`, 840, 215);
+        ctx.fillStyle = '#34d399'; ctx.font = 'bold 34px Tahoma, Arial';
+        ctx.fillText(`النسبة الموزونة: ${p.pct}%  |  ${p.branchName}`, 840, 285);
+        ctx.fillStyle = '#fde047'; ctx.font = '20px Tahoma, Arial';
+        ctx.fillText(p.badges.length ? p.badges.join('  •  ') : 'موظف معتمد وموثق في المنظومة', 840, 355);
+        ctx.fillStyle = '#94a3b8'; ctx.font = '18px Tahoma, Arial';
+        ctx.fillText(`تاريخ الإصدار: ${p.week}`, 840, 425);
+        let a = document.createElement('a');
+        a.href = canvas.toDataURL('image/png');
+        a.download = `جواز_أداء_${p.name}.png`;
+        a.click();
+        showToast('🪪 تم تحميل بطاقة جواز الأداء الذكي (PNG) بنجاح!', 'success');
+    }
+
+    // 🌌 4. خريطة المجرة التفاعلية للشركة (Live Constellation Map)
+    let constellationAnimFrame = null;
+    let constellationNodes = [];
+    function renderConstellationMap() {
+        let canvas = document.getElementById('constellationCanvas');
+        let tooltip = document.getElementById('constellationTooltip');
+        if (!canvas) return;
+        let rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = Math.max(600, rect.width || 800);
+        canvas.height = 480;
+        let ctx = canvas.getContext('2d');
+        let activeWeek = getCurrentWeekKey();
+
+        let planets = branchesData.map((b, idx) => {
+            let cx = (canvas.width / (branchesData.length + 1)) * (idx + 1);
+            let cy = canvas.height / 2;
+            return { id: b.id, name: b.name, cx, cy, emps: dbData[b.id] || [] };
+        });
+
+        let angleOffset = 0;
+        if (constellationAnimFrame) cancelAnimationFrame(constellationAnimFrame);
+
+        function drawFrame() {
+            let sec = document.getElementById('sec-constellation');
+            if (!sec || sec.classList.contains('hidden')) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // خلفية نجوم خافتة
+            ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+            for (let s = 0; s < 45; s++) {
+                let sx = (s * 173) % canvas.width;
+                let sy = (s * 97) % canvas.height;
+                ctx.fillRect(sx, sy, 1.5, 1.5);
+            }
+
+            constellationNodes = [];
+            planets.forEach((pl, pIdx) => {
+                // رسم المدارات
+                [70, 125, 175].forEach(r => {
+                    ctx.beginPath();
+                    ctx.arc(pl.cx, pl.cy, r, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                });
+
+                // الكوكب (الفرع)
+                let pGrad = ctx.createRadialGradient(pl.cx, pl.cy, 6, pl.cx, pl.cy, 34);
+                pGrad.addColorStop(0, '#38bdf8');
+                pGrad.addColorStop(1, '#0369a1');
+                ctx.beginPath();
+                ctx.arc(pl.cx, pl.cy, 30, 0, Math.PI * 2);
+                ctx.fillStyle = pGrad;
+                ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Tahoma, Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(pl.name, pl.cx, pl.cy + 4);
+
+                // الأقمار (الموظفون)
+                pl.emps.forEach((emp, eIdx) => {
+                    let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                    let pct = calculateWeightedEmployeePct(emp, sc, null);
+                    let orbitR = pct >= 90 ? 72 : (pct >= 65 ? 122 : 172);
+                    let speed = (0.002 + (eIdx % 3) * 0.0007) * (pIdx % 2 === 0 ? 1 : -1);
+                    let theta = (Math.PI * 2 / Math.max(1, pl.emps.length)) * eIdx + angleOffset * speed * 60;
+                    let mx = pl.cx + Math.cos(theta) * orbitR;
+                    let my = pl.cy + Math.sin(theta) * orbitR;
+                    let color = pct >= 90 ? '#10b981' : (pct > 60 ? '#38bdf8' : '#ef4444');
+                    let radius = pct >= 90 ? 11 : 9;
+
+                    // خط الجاذبية
+                    ctx.beginPath();
+                    ctx.moveTo(pl.cx, pl.cy);
+                    ctx.lineTo(mx, my);
+                    ctx.strokeStyle = pct <= 60 ? 'rgba(239,68,68,0.18)' : 'rgba(56,189,248,0.08)';
+                    ctx.stroke();
+
+                    // توهج القمر
+                    ctx.beginPath();
+                    ctx.arc(mx, my, radius + 4, 0, Math.PI * 2);
+                    ctx.fillStyle = pct >= 90 ? 'rgba(16,185,129,0.25)' : (pct <= 60 ? 'rgba(239,68,68,0.32)' : 'rgba(56,189,248,0.2)');
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(mx, my, radius, 0, Math.PI * 2);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+
+                    ctx.fillStyle = '#e2e8f0';
+                    ctx.font = '10px Tahoma, Arial';
+                    ctx.fillText(emp.name.split(' ')[0], mx, my - 13);
+
+                    constellationNodes.push({ x: mx, y: my, r: radius + 6, emp, branchId: pl.id, branchName: pl.name, empIdx: eIdx, pct, dna: getEmployeeDnaArchetype(emp, sc) });
+                });
+            });
+
+            angleOffset += 0.012;
+            constellationAnimFrame = requestAnimationFrame(drawFrame);
+        }
+        drawFrame();
+
+        canvas.onmousemove = function(e) {
+            let r = canvas.getBoundingClientRect();
+            let x = (e.clientX - r.left) * (canvas.width / r.width);
+            let y = (e.clientY - r.top) * (canvas.height / r.height);
+            let hit = constellationNodes.find(n => Math.hypot(n.x - x, n.y - y) <= n.r);
+            if (hit && tooltip) {
+                tooltip.style.display = 'block';
+                tooltip.style.left = Math.min(r.width - 190, Math.max(10, e.clientX - r.left + 12)) + 'px';
+                tooltip.style.top = Math.max(10, e.clientY - r.top - 50) + 'px';
+                tooltip.innerHTML = `<b style="color:#38bdf8;">${hit.emp.name}</b> (${hit.branchName})<br>الأداء: <b style="color:#34d399;">${hit.pct}%</b> | ${hit.dna.icon} ${hit.dna.title}<br><span style="color:#94a3b8; font-size:9px;">اضغط لفتح ملف التحليل الكامل</span>`;
+            } else if (tooltip) {
+                tooltip.style.display = 'none';
+            }
+        };
+        canvas.onclick = function(e) {
+            let r = canvas.getBoundingClientRect();
+            let x = (e.clientX - r.left) * (canvas.width / r.width);
+            let y = (e.clientY - r.top) * (canvas.height / r.height);
+            let hit = constellationNodes.find(n => Math.hypot(n.x - x, n.y - y) <= n.r);
+            if (hit) openEmployeeAnalysis(hit.branchId, hit.empIdx);
+        };
+    }
+
+    // ⏳ 5. آلة الزمن للأداء + 🚀 6. رادار التوقع الشهري والزخم
+    let tmAutoTimer = null;
+    function initTimeMachineView() {
+        let weeks = getAvailableWeeks().reverse(); // من الأقدم إلى الأحدث
+        let slider = document.getElementById('timeMachineSlider');
+        if (slider) {
+            slider.min = 0;
+            slider.max = Math.max(0, weeks.length - 1);
+            slider.value = Math.max(0, weeks.length - 1);
+        }
+        renderForecastAndMomentum(weeks);
+        renderTimeMachineSnapshot(slider ? slider.value : 0);
+    }
+    function renderForecastAndMomentum(weeksChrono) {
+        let emps = dbData[currentBranch] || [];
+        let weeklyAvgs = weeksChrono.map(w => {
+            if (emps.length === 0) return 0;
+            let sum = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[w]) ? emp.history[w] : new Array(metricNames.length).fill(3);
+                sum += calculateWeightedEmployeePct(emp, sc, null);
+            });
+            return Math.round(sum / emps.length);
+        });
+        let currAvg = weeklyAvgs[weeklyAvgs.length - 1] || 0;
+        let prevAvg = weeklyAvgs.length >= 2 ? weeklyAvgs[weeklyAvgs.length - 2] : currAvg;
+        let slope = currAvg - prevAvg;
+        let projected = Math.max(0, Math.min(100, Math.round(currAvg + slope * 1.5)));
+
+        document.getElementById('fcCurrentAvg').textContent = `${currAvg}%`;
+        document.getElementById('fcProjectedAvg').textContent = `${projected}%`;
+        let momEl = document.getElementById('fcMomentumStatus');
+        if (momEl) {
+            if (slope >= 3) { momEl.textContent = `🚀 زخم صاعد (+${slope}%)`; momEl.style.color = '#34d399'; }
+            else if (slope <= -3) { momEl.textContent = `📉 تآكل بطيء (${slope}%)`; momEl.style.color = '#fb7185'; }
+            else { momEl.textContent = '⚖️ أداء مستقر'; momEl.style.color = '#38bdf8'; }
+        }
+
+        // صاحب أكبر قفزة أسبوعية
+        let bestJump = -999, bestName = '—';
+        if (weeksChrono.length >= 2) {
+            let wCurr = weeksChrono[weeksChrono.length - 1];
+            let wPrev = weeksChrono[weeksChrono.length - 2];
+            emps.forEach(emp => {
+                let cPct = calculateWeightedEmployeePct(emp, (emp.history && emp.history[wCurr]) || [], null);
+                let pPct = calculateWeightedEmployeePct(emp, (emp.history && emp.history[wPrev]) || [], null);
+                if (cPct - pPct > bestJump) { bestJump = cPct - pPct; bestName = `${emp.name} (${cPct - pPct >= 0 ? '+' : ''}${cPct - pPct}%)`; }
+            });
+        }
+        document.getElementById('fcTopJumper').textContent = bestName;
+    }
+    function renderTimeMachineSnapshot(idxVal) {
+        let weeks = getAvailableWeeks().reverse();
+        let w = weeks[parseInt(idxVal) || 0] || getCurrentWeekKey();
+        let badge = document.getElementById('tmSelectedWeekBadge');
+        if (badge) badge.textContent = `📅 ${w}`;
+
+        let emps = dbData[currentBranch] || [];
+        let thead = document.getElementById('tmTableHead');
+        let tbody = document.getElementById('tmTableBody');
+        let statsRow = document.getElementById('tmWeekStatsRow');
+        if (!thead || !tbody) return;
+
+        let hHtml = `<tr><th style="text-align:right;">الموظف</th>`;
+        metricNames.forEach(m => hHtml += `<th>${m}</th>`);
+        hHtml += `<th>النسبة</th></tr>`;
+        thead.innerHTML = hHtml;
+
+        tbody.innerHTML = '';
+        let sumPct = 0, exc = 0, alrt = 0;
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[w]) ? emp.history[w] : new Array(metricNames.length).fill(3);
+            let pct = calculateWeightedEmployeePct(emp, sc, null);
+            sumPct += pct;
+            if (pct >= 90) exc++;
+            if (pct <= 60) alrt++;
+            let row = `<tr><td><b>${emp.name}</b></td>`;
+            metricNames.forEach((m, i) => {
+                let v = Number(sc[i]) || 3;
+                row += `<td><div class="heat-cell heat-${v}">${v}/5</div></td>`;
+            });
+            row += `<td style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}%</td></tr>`;
+            tbody.innerHTML += row;
+        });
+        let avg = emps.length ? Math.round(sumPct / emps.length) : 0;
+        if (statsRow) {
+            statsRow.innerHTML = `<span>📊 متوسط الفرع في هذا الأسبوع: <b style="color:#38bdf8;">${avg}%</b></span>
+                <span>🌟 المتميزون: <b style="color:#34d399;">${exc}</b></span>
+                <span>🚨 حالات الإنذار: <b style="color:#fb7185;">${alrt}</b></span>`;
+        }
+    }
+    function toggleTimeMachineAutoPlay() {
+        let btn = document.getElementById('btnTmPlay');
+        let slider = document.getElementById('timeMachineSlider');
+        if (tmAutoTimer) {
+            clearInterval(tmAutoTimer);
+            tmAutoTimer = null;
+            if (btn) btn.textContent = '▶ تشغيل آلة الزمن';
+            return;
+        }
+        if (!slider) return;
+        slider.value = 0;
+        renderTimeMachineSnapshot(0);
+        if (btn) btn.textContent = '⏹️ إيقاف العرض';
+        tmAutoTimer = setInterval(() => {
+            let next = (parseInt(slider.value) + 1) % (parseInt(slider.max) + 1);
+            slider.value = next;
+            renderTimeMachineSnapshot(next);
+            playTechChime(520 + next * 90, 0.06);
+        }, 1600);
+    }
+
+    // ⚡ 7. وضع التقييم السريع بالمسح (Speed-Focus Evaluation Mode)
+    let speedEvalIdx = 0;
+    function openSpeedEvalModal() {
+        closeMobileSidebar();
+        if (!hasFeaturePermission('speedeval')) { showToast('عذراً، وضع التقييم السريع غير مفعل لحسابك!', 'error'); return; }
+        if (currentUser && currentUser.role === 'Employee') {
+            showToast('عذراً، وضع التقييم السريع مخصص للمديرين فقط!', 'error');
+            return;
+        }
+        let emps = dbData[currentBranch] || [];
+        if (emps.length === 0) {
+            showToast('لا يوجد موظفون في هذا الفرع حالياً.', 'warn');
+            return;
+        }
+        speedEvalIdx = 0;
+        renderSpeedEvalCard();
+        document.getElementById('speedEvalModal').classList.add('active');
+    }
+    function closeSpeedEvalModal() {
+        document.getElementById('speedEvalModal').classList.remove('active');
+        renderEvalTable();
+    }
+    function navigateSpeedEval(delta) {
+        let emps = dbData[currentBranch] || [];
+        if (emps.length === 0) return;
+        speedEvalIdx = (speedEvalIdx + delta + emps.length) % emps.length;
+        playTechChime(delta > 0 ? 680 : 520, 0.06);
+        renderSpeedEvalCard();
+    }
+    function renderSpeedEvalCard() {
+        let emps = dbData[currentBranch] || [];
+        let emp = emps[speedEvalIdx];
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        if (!emp.history) emp.history = {};
+        if (!emp.history[activeWeek]) emp.history[activeWeek] = new Array(metricNames.length).fill(3);
+        while (emp.history[activeWeek].length < metricNames.length) emp.history[activeWeek].push(3);
+        let scores = emp.history[activeWeek];
+        let pct = calculateWeightedEmployeePct(emp, scores, null);
+
+        document.getElementById('speedEvalProgressText').textContent = `الموظف ${speedEvalIdx + 1} من ${emps.length}`;
+        document.getElementById('speedEvalProgressBar').style.width = `${Math.round(((speedEvalIdx + 1) / emps.length) * 100)}%`;
+        document.getElementById('speedEvalEmpName').textContent = emp.name;
+        document.getElementById('speedEvalEmpMeta').textContent = `${getDeptDisplayName(emp.dept)} — ${emp.jobTitle || 'موظف'}`;
+        document.getElementById('speedEvalLivePct').textContent = `${pct}%`;
+
+        let listEl = document.getElementById('speedEvalMetricsList');
+        listEl.innerHTML = '';
+        metricNames.forEach((mName, mIdx) => {
+            if (!isMetricApplicableForDept(mName, emp.dept)) return;
+            let curVal = Number(scores[mIdx]) || 3;
+            let btns = '';
+            for (let v = 1; v <= 5; v++) {
+                let cls = 'star-score-btn';
+                if (curVal === v) cls += (v <= 2 ? ' selected-low' : (v >= 4 ? ' selected-high' : ' selected'));
+                btns += `<button type="button" class="${cls}" onclick="setSpeedEvalScore(${mIdx}, ${v})">${v}</button>`;
+            }
+            listEl.innerHTML += `<div class="speed-metric-row">
+                <div style="font-weight:bold; font-size:12px; color:var(--text-main);">${mName}</div>
+                <div class="star-btn-group">${btns}</div>
+            </div>`;
+        });
+    }
+    function setSpeedEvalScore(mIdx, val) {
+        updateScore(speedEvalIdx, mIdx, val);
+        playTechChime(500 + val * 70, 0.05);
+        renderSpeedEvalCard();
+    }
+
+    // ⚖️ 8. كاشف تحيّز المديرين وتكرار التقييم (Manager Bias & Calibration Detector)
+    function renderBiasDetector() {
+        let container = document.getElementById('biasDetectorContainer');
+        if (!container) return;
+        let activeWeek = getCurrentWeekKey();
+        let weeks = getAvailableWeeks();
+        let prevWeek = weeks.length > 1 ? weeks[1] : null;
+        let cardsHtml = '';
+
+        branchesData.forEach(b => {
+            let emps = dbData[b.id] || [];
+            if (emps.length === 0) return;
+            let allScores = [];
+            let clonedCount = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [];
+                sc.forEach(v => allScores.push(Number(v) || 3));
+                if (prevWeek && emp.history && emp.history[prevWeek]) {
+                    if (JSON.stringify(sc) === JSON.stringify(emp.history[prevWeek])) clonedCount++;
+                }
+            });
+            let avgScore = allScores.length ? (allScores.reduce((a, c) => a + c, 0) / allScores.length) : 3;
+            let allSame = allScores.length > 1 && allScores.every(v => v === allScores[0]);
+            let findings = [];
+
+            if (avgScore >= 4.6) findings.push('⚠️ <b>انحياز مجاملة مفرطة (Lenient Bias):</b> متوسط الدرجات مرتفع جداً (' + avgScore.toFixed(1) + '/5) — يرجى مراجعة دقة التقييمات.');
+            else if (avgScore <= 2.1) findings.push('⚠️ <b>انحياز قساوة غير مبررة (Harsh Bias):</b> متوسط الدرجات منخفض بشكل حاد (' + avgScore.toFixed(1) + '/5).');
+            if (allSame) findings.push('🚨 <b>تطابق آلي كامل (Zero Variance):</b> جميع الدرجات في هذا الفرع متماثلة تماماً (' + allScores[0] + '/5) مما يشير لعدم تحديث التقييم الفردي بعد.');
+            if (prevWeek && clonedCount >= Math.ceil(emps.length * 0.8) && emps.length >= 2) findings.push('🔄 <b>تكرار تقييمات الأسبوع السابق:</b> أكثر من 80% من الدرجات مطابقة تماماً للأسبوع الماضي.');
+
+            let statusBadge = findings.length === 0 ? '<span class="badge b-green">✅ تقييمات متوازنة ومعايرة</span>' : '<span class="badge b-red">🚨 تنبيه معايرة</span>';
+            cardsHtml += `<div style="background:var(--bg-main); border:1px solid ${findings.length ? '#f59e0b' : 'var(--border-color)'}; border-radius:10px; padding:14px 16px; margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <b style="color:#38bdf8; font-size:13px;">🏢 ${b.name} (${emps.length} موظف)</b>
+                    ${statusBadge}
+                </div>
+                <div style="font-size:12px; color:#cbd5e1; line-height:1.7;">
+                    ${findings.length ? findings.join('<br>') : 'التوزيع الإحصائي لدرجات هذا الفرع منطقي ولا توجد مؤشرات مجاملة أو نسخ آلي.'}
+                </div>
+            </div>`;
+        });
+        container.innerHTML = cardsHtml || '<p style="color:#94a3b8;">لا توجد بيانات كافية للمعايرة.</p>';
+    }
+
+    // 💜 9. نبض الموظف السري في 5 ثوانٍ (Anonymous Mood & Pressure Pulse)
+    let anonMoodLogsData = [];
+    try {
+        let mSaved = localStorage.getItem('unique_journey_mood_pulse_v1');
+        if (mSaved) anonMoodLogsData = JSON.parse(mSaved);
+    } catch(e) {}
+
+    function submitAnonymousMood(moodType) {
+        let noteInp = document.getElementById('anonMoodNoteInput');
+        let note = noteInp ? noteInp.value.trim() : '';
+        anonMoodLogsData.unshift({
+            mood: moodType,
+            note: note || '— (بدون ملاحظة إضافية)',
+            time: new Date().toLocaleString('ar-EG')
+        });
+        if (anonMoodLogsData.length > 200) anonMoodLogsData.pop();
+        localStorage.setItem('unique_journey_mood_pulse_v1', JSON.stringify(anonMoodLogsData));
+        if (noteInp) noteInp.value = '';
+        let strip = document.getElementById('moodPulseStrip');
+        if (strip) strip.style.display = 'none';
+        playTechChime(760, 0.1);
+        showToast('💜 شكراً لمشاركتك! تم تسجيل نبضك ومقترحك بسرية تامة 100%.', 'success');
+        renderMoodPulseDashboard();
+    }
+    function renderMoodPulseDashboard() {
+        let cHappy = 0, cNeutral = 0, cStressed = 0;
+        let tbody = document.getElementById('anonMoodNotesTableBody');
+        if (tbody) tbody.innerHTML = '';
+        anonMoodLogsData.forEach(item => {
+            if (item.mood === 'happy') cHappy++;
+            else if (item.mood === 'neutral') cNeutral++;
+            else cStressed++;
+            if (tbody) {
+                let lbl = item.mood === 'happy' ? '<span class="badge b-green">😊 ممتاز</span>' : (item.mood === 'neutral' ? '<span class="badge b-blue">😐 عادي</span>' : '<span class="badge b-red">😫 مضغوط</span>');
+                tbody.innerHTML += `<tr>
+                    <td style="text-align:center;">${lbl}</td>
+                    <td style="white-space:normal;">${item.note}</td>
+                    <td style="text-align:center; color:#94a3b8; font-family:monospace;">${item.time}</td>
+                </tr>`;
+            }
+        });
+        if (tbody && anonMoodLogsData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; padding:16px;">لا توجد مشاركات مسجلة في نبض المزاج السري حتى الآن.</td></tr>`;
+        }
+        let eh = document.getElementById('moodCountHappy');
+        let en = document.getElementById('moodCountNeutral');
+        let es = document.getElementById('moodCountStressed');
+        if (eh) eh.textContent = cHappy;
+        if (en) en.textContent = cNeutral;
+        if (es) es.textContent = cStressed;
+    }
+    function clearMoodPulseData() {
+        if (confirm('تصفير سجل نبض المزاج السري بالكامل؟')) {
+            anonMoodLogsData = [];
+            localStorage.removeItem('unique_journey_mood_pulse_v1');
+            renderMoodPulseDashboard();
+            showToast('تم تصفير سجل نبض المزاج السري.', 'info');
+        }
+    }
 
 </script>
 </body>
