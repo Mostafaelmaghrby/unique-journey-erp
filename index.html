@@ -499,6 +499,197 @@
             }
             #sec-eval tbody td select { width: 85px; padding: 6px; }
         }
+
+        /* 🌌 1. الواجهة الحية المتنفسة (Ambient Pulse UI) */
+        #ambientPulseFrame {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9000;
+            transition: box-shadow 0.8s ease;
+        }
+        body.ambient-healthy #ambientPulseFrame {
+            box-shadow: inset 0 0 28px rgba(16, 185, 129, 0.22);
+        }
+        body.ambient-warn #ambientPulseFrame {
+            box-shadow: inset 0 0 34px rgba(245, 158, 11, 0.28);
+            animation: ambientBreathWarn 3.5s ease-in-out infinite;
+        }
+        body.ambient-danger #ambientPulseFrame {
+            box-shadow: inset 0 0 42px rgba(239, 68, 68, 0.36);
+            animation: ambientBreathDanger 2.2s ease-in-out infinite;
+        }
+        @keyframes ambientBreathWarn {
+            0%, 100% { box-shadow: inset 0 0 22px rgba(245, 158, 11, 0.16); }
+            50% { box-shadow: inset 0 0 44px rgba(245, 158, 11, 0.36); }
+        }
+        @keyframes ambientBreathDanger {
+            0%, 100% { box-shadow: inset 0 0 24px rgba(239, 68, 68, 0.2); }
+            50% { box-shadow: inset 0 0 52px rgba(239, 68, 68, 0.45); }
+        }
+
+        /* 👁️ 2. درع الخصوصية الفوري (Privacy Blur Shield - Alt+P) */
+        body.privacy-blur-active .clickable-emp,
+        body.privacy-blur-active td,
+        body.privacy-blur-active .stat-card .val,
+        body.privacy-blur-active #bannerAlertText,
+        body.privacy-blur-active #executiveReportContent {
+            filter: blur(7px) !important;
+            user-select: none !important;
+            transition: filter 0.2s ease;
+        }
+        #privacyBannerIndicator {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9500;
+            background: rgba(15, 23, 42, 0.95);
+            border: 1px solid #38bdf8;
+            color: #38bdf8;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            cursor: pointer;
+        }
+        body.privacy-blur-active #privacyBannerIndicator { display: block; }
+
+        /* 🎙️ 3. نبض الميكروفون للأوامر الصوتية */
+        .voice-listening {
+            background: #dc2626 !important;
+            color: #fff !important;
+            border-color: #f87171 !important;
+            animation: backupPulseGlow 1.1s infinite;
+        }
+
+        /* 📺 4. وضع غرفة القيادة السينمائية (War Room / TV Mode) */
+        #warRoomOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at top center, #0f172a 0%, #050810 85%);
+            z-index: 8000;
+            flex-direction: column;
+            color: #f8fafc;
+            padding: 24px 32px;
+            overflow: hidden;
+        }
+        #warRoomOverlay.active { display: flex; }
+        .warroom-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+            padding-bottom: 14px;
+            margin-bottom: 20px;
+        }
+        .warroom-stage {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+            overflow-y: auto;
+            align-items: stretch;
+        }
+        @media (max-width: 900px) {
+            .warroom-stage { grid-template-columns: 1fr; }
+        }
+        .warroom-panel {
+            background: rgba(17, 24, 39, 0.82);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        .warroom-ticker-wrap {
+            margin-top: 18px;
+            background: rgba(2, 132, 199, 0.14);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 10px;
+            padding: 10px 16px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .warroom-ticker-track {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: bold;
+            color: #38bdf8;
+            animation: warroomMarquee 26s linear infinite;
+        }
+        @keyframes warroomMarquee {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* 🔥 5. الخريطة الحرارية للأداء (Thermal KPI Heatmap) */
+        .heat-cell {
+            padding: 8px 6px !important;
+            text-align: center !important;
+            font-weight: bold;
+            border-radius: 6px;
+            font-size: 12px;
+            transition: transform 0.15s;
+        }
+        .heat-cell:hover { transform: scale(1.08); }
+        .heat-5 { background: rgba(16, 185, 129, 0.38); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.6); }
+        .heat-4 { background: rgba(56, 189, 248, 0.28); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.5); }
+        .heat-3 { background: rgba(234, 179, 8, 0.24); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.45); }
+        .heat-2 { background: rgba(249, 115, 22, 0.3); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.55); }
+        .heat-1 { background: rgba(239, 68, 68, 0.38); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.65); }
+
+        /* 🎛️ 6. محاكي القرارات (What-If Simulator) */
+        .sim-slider-row {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .sim-slider-row input[type="range"] {
+            flex: 1;
+            min-width: 160px;
+            accent-color: #38bdf8;
+            cursor: pointer;
+        }
+
+        /* 🗓️ 7. خطة الإنقاذ في 7 أيام (7-Day Turnaround Playbook) */
+        .playbook-day-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-right: 3px solid #38bdf8;
+            border-radius: 8px;
+            padding: 9px 12px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        /* ⏱️ 8. ساعة الدوام ومؤقت التركيز */
+        .live-clock-pill {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: #34d399;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: bold;
+            font-family: monospace;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -549,6 +740,12 @@
                 <button type="button" onclick="switchTab('compare')" id="tab-compare" class="btn-tab admin-manager-only">⚔️ مقارنة حية بين موظفين</button>
                 <button type="button" onclick="switchTab('rootcause')" id="tab-rootcause" class="btn-tab admin-manager-only">🔍 تحليل جذور الأخطاء</button>
 
+                <div class="nav-section-label">🧠 مختبر الذكاء المستقبلي</div>
+                <button type="button" onclick="switchTab('heatmap')" id="tab-heatmap" class="btn-tab admin-manager-only">🔥 الخريطة الحرارية للأداء</button>
+                <button type="button" onclick="switchTab('burnout')" id="tab-burnout" class="btn-tab admin-manager-only">🩺 رادار الاحتراق وتزاوج الكفاءات</button>
+                <button type="button" onclick="switchTab('simulator')" id="tab-simulator" class="btn-tab admin-manager-only">🎛️ محاكي القرارات (ماذا لو؟)</button>
+                <button type="button" onclick="openMorningHuddleModal()" class="btn-tab admin-manager-only" style="color:#fde047;">☀️ اجتماع الصباح في دقيقتين</button>
+
                 <div class="nav-section-label">التقارير والتطوير</div>
                 <button type="button" onclick="switchTab('career')" id="tab-career" class="btn-tab admin-manager-only">🌱 النمو الوظيفي</button>
                 <button type="button" onclick="switchTab('executivereport')" id="tab-executivereport" class="btn-tab admin-manager-only">📊 التقرير التنفيذي الذكي</button>
@@ -587,6 +784,11 @@
                 </div>
                 <div class="header-left">
                     <div class="branch-group" id="branchButtonGroup"></div>
+                    <div class="live-clock-pill" id="liveShiftClockPill" onclick="toggleFocusSprintTimer()" title="اضغط لبدء مؤقت التركيز (25 دقيقة)">⏱️ <span id="liveClockText">--:--</span></div>
+                    <button type="button" id="btnVoiceCmd" onclick="toggleVoiceCommand()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#38bdf8; padding:7px 10px;" title="تحكم صوتي بالعربية (قل: افتح الإنذار المبكر، فرع الترعة...)">🎙️</button>
+                    <button type="button" onclick="speakExecutiveBriefing()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#34d399; padding:7px 10px;" title="استمع للنشرة الصوتية التنفيذية اليومية">🔊</button>
+                    <button type="button" onclick="openWarRoomMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#c084fc; padding:7px 10px;" title="غرفة القيادة السينمائية (وضع شاشة العرض)">📺</button>
+                    <button type="button" onclick="togglePrivacyBlur()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="درع الخصوصية الفوري (Alt+P)">👁️</button>
                     <button type="button" onclick="openCommandPalette()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#cbd5e1; padding:7px 10px;" title="بحث سريع وأوامر (Ctrl+K)">🔍 بحث <span class="cmd-kbd">Ctrl+K</span></button>
                     <button type="button" id="btnThemeToggle" onclick="toggleThemeMode()" class="btn-action" style="background:#1e293b; border:1px solid #334155; color:#facc15; padding:7px 10px;" title="تبديل الوضع الليلي / النهاري">☀️</button>
                     <button type="button" id="btnInstallPwa" onclick="installPwaApp()" class="btn-action hidden" style="background:#7c3aed; padding:7px 10px;" title="تثبيت التطبيق على جهازك">📲 تثبيت التطبيق</button>
@@ -636,6 +838,91 @@
                         <button type="button" onclick="switchTab('coaching')" class="btn-action" style="background: #059669; padding: 6px 14px;">⚡ التوجيه الذكي</button>
                     </div>
                 </div>
+        <!-- 🔥 9. الخريطة الحرارية للأداء (Thermal KPI Heatmap) -->
+        <div id="sec-heatmap" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#fb923c; font-size:16px;">🔥 الخريطة الحرارية للأداء التشغيلي (Thermal KPI Heatmap)</h3>
+                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">اكتشف بنظرة واحدة هل القصور <b>عمودي</b> (مشكلة عامة في بند واحد لدى الجميع تحتاج تدريباً جماعياً) أم <b>أفقي</b> (مشكلة فردية لدى موظف محدد).</p>
+                </div>
+                <div style="display:flex; gap:6px; font-size:10px; align-items:center;">
+                    <span class="heat-cell heat-5" style="padding:3px 8px !important;">5 ممتاز</span>
+                    <span class="heat-cell heat-4" style="padding:3px 8px !important;">4 جيد جداً</span>
+                    <span class="heat-cell heat-3" style="padding:3px 8px !important;">3 مقبول</span>
+                    <span class="heat-cell heat-2" style="padding:3px 8px !important;">2 ضعيف</span>
+                    <span class="heat-cell heat-1" style="padding:3px 8px !important;">1 حرج</span>
+                </div>
+            </div>
+            <div id="heatmapAutoDiagnosis" style="background:var(--bg-main); border:1px solid var(--border-color); border-right:4px solid #f59e0b; border-radius:10px; padding:12px 15px; margin-bottom:15px; font-size:12px; line-height:1.7;"></div>
+            <table>
+                <thead id="heatmapTableHead"></thead>
+                <tbody id="heatmapTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 🩺 10. رادار الاحتراق الوظيفي + محرك تزاوج الكفاءات (Burnout Radar & Buddy Matcher) -->
+        <div id="sec-burnout" class="card hidden">
+            <h3 style="color:#f43f5e; font-size:16px; margin-bottom:6px;">🩺 رادار الاحتراق الوظيفي وخطر الاستقالة (Burnout & Flight-Risk Radar)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:15px;">يرصد النظام الموظفين الذين تراجع أداؤهم المفاجئ أو هبطت درجاتهم في الانضباط والتعامل مع الزملاء لحمايتهم من الإرهاق الوظيفي قبل فقدانهم.</p>
+            <table style="margin-bottom:25px;">
+                <thead>
+                    <tr>
+                        <th style="text-align:right;">الموظف والفرع</th>
+                        <th style="text-align:center;">الأداء الحالي</th>
+                        <th style="text-align:center;">مستوى خطر الإرهاق</th>
+                        <th style="text-align:right;">السبب المرصود والتوصية الوقائية</th>
+                        <th style="text-align:center;">تدخل فوري</th>
+                    </tr>
+                </thead>
+                <tbody id="burnoutRadarTableBody"></tbody>
+            </table>
+
+            <h3 style="color:#34d399; font-size:16px; margin-bottom:6px;">🤝 محرك تزاوج الكفاءات والتوجيه المتبادل (Smart Peer Buddy Matcher)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:15px;">يربط النظام تلقائياً كل موظف لديه قصور في بند محدد بأقوى زميل له في نفس الفرع متفوق في نفس البند (5/5) لتطبيق توجيه عملي مجاني بين الزملاء.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align:right;">الفرع</th>
+                        <th style="text-align:right;">الموظف المحتاج للدعم</th>
+                        <th style="text-align:center;">البند المطلوب تطويره</th>
+                        <th style="text-align:right;">المرشد المقترح من نفس الفرع (المتفوق 5/5)</th>
+                        <th style="text-align:center;">إرسال خطة الربط</th>
+                    </tr>
+                </thead>
+                <tbody id="buddyMatcherTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 🎛️ 11. محاكي القرارات الاستراتيجية (What-If Decision Simulator) -->
+        <div id="sec-simulator" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">🎛️ محاكي القرارات الاستراتيجية «ماذا لو؟» (What-If Simulator)</h3>
+                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">حرّك المنزلقات لاختبار أثر تدريب الفريق في أي معيار على متوسط أداء الفرع وعدد الإنذارات دون تعديل البيانات الحقيقية.</p>
+                </div>
+                <button type="button" onclick="resetSimulatorSliders()" class="btn-action" style="background:#475569;">🔄 إعادة ضبط المحاكي</button>
+            </div>
+            <div class="summary-cards-grid" style="margin-bottom:18px;">
+                <div class="stat-card">
+                    <div><h4>المتوسط الحقيقي الحالي</h4><div class="val" id="simRealAvg">0%</div></div>
+                    <span style="font-size:22px;">📊</span>
+                </div>
+                <div class="stat-card" style="border-color:#10b981;">
+                    <div><h4>المتوسط المتوقع بعد القرار</h4><div class="val" id="simProjAvg" style="color:#34d399;">0%</div></div>
+                    <span style="font-size:22px;">🚀</span>
+                </div>
+                <div class="stat-card" style="border-color:#38bdf8;">
+                    <div><h4>صافي القفزة المتوقعة</h4><div class="val" id="simDeltaAvg" style="color:#facc15;">+0%</div></div>
+                    <span style="font-size:22px;">⚡</span>
+                </div>
+                <div class="stat-card">
+                    <div><h4>حالات الإنذار المتوقع إنقاذها</h4><div class="val" id="simSavedAlerts" style="color:#a78bfa;">0</div></div>
+                    <span style="font-size:22px;">🛡️</span>
+                </div>
+            </div>
+            <div id="simulatorSlidersContainer"></div>
+        </div>
+
         <!-- 1. شيت التقييم -->
         <div id="sec-eval" class="card">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; background:#0f172a; padding:10px; border-radius:8px; flex-wrap:wrap; gap:10px;">
@@ -1138,6 +1425,13 @@
                 <h4 style="color:#34d399; font-size:13px; margin-bottom:6px;">اقتراح ذكي وتوجيهي لتطوير هذا القصور:</h4>
                 <div id="modalSuggestions" style="background:rgba(16,185,129,0.1); border:1px solid #059669; padding:10px; border-radius:6px; font-size:12px; color:#6ee7b7; line-height: 1.6;"></div>
             </div>
+            <div style="margin-bottom: 10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <h4 style="color:#38bdf8; font-size:13px;">🗓️ خطة الإنقاذ والتطوير المخصصة في 7 أيام (سبت ← جمعة):</h4>
+                    <button type="button" onclick="sendPlaybookWhatsApp()" class="btn-whatsapp">💬 إرسال الخطة واتساب</button>
+                </div>
+                <div id="modal7DayPlaybook"></div>
+            </div>
         </div>
     </div>
 
@@ -1389,6 +1683,60 @@
             <div style="display:flex; justify-content:space-between; margin-top:15px;">
                 <button type="button" onclick="resetDefaultMotivationalQuotes()" class="btn-danger" style="padding:6px 12px;">🔄 استعادة الجمل الافتراضية</button>
                 <button type="button" onclick="closeQuotesModal()" class="btn-action" style="background:#475569; padding:6px 16px;">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌌 إطار الواجهة الحية المتنفسة + شارة الخصوصية -->
+    <div id="ambientPulseFrame"></div>
+    <div id="privacyBannerIndicator" onclick="togglePrivacyBlur()">👁️ وضع الخصوصية نشط — اضغط هنا أو Alt+P لإظهار البيانات</div>
+
+    <!-- 📺 وضع غرفة القيادة السينمائية (War Room / TV Mode) -->
+    <div id="warRoomOverlay">
+        <div class="warroom-header">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div class="brand-icon" id="warRoomLogo" style="width:46px; height:46px; font-size:22px;">🚀</div>
+                <div>
+                    <h2 id="warRoomTitle" style="color:#38bdf8; font-size:22px;">غرفة القيادة الحية — الرحلة الفريدة</h2>
+                    <div id="warRoomClock" style="color:#94a3b8; font-size:12px; font-family:monospace;">--:--:--</div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <span class="badge b-green" style="font-size:12px; padding:6px 12px;">🟢 بث حي متجدد تلقائياً</span>
+                <button type="button" onclick="closeWarRoomMode()" class="btn-danger" style="padding:8px 16px; font-size:13px;">✕ خروج من وضع العرض</button>
+            </div>
+        </div>
+        <div class="warroom-stage">
+            <div class="warroom-panel">
+                <h3 style="color:#facc15; font-size:18px; margin-bottom:14px;">🏆 متصدرو لوحة الشرف الأسبوعية</h3>
+                <div id="warRoomLeaderboard" style="flex:1; display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
+            <div class="warroom-panel">
+                <h3 style="color:#34d399; font-size:18px; margin-bottom:14px;">📊 النبض التشغيلي للفروع</h3>
+                <div id="warRoomBranchStats" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;"></div>
+                <div style="flex:1; background:rgba(9,13,22,0.7); border-radius:12px; padding:16px; border:1px solid #1f2937;">
+                    <h4 style="color:#38bdf8; font-size:14px; margin-bottom:8px;">💡 حكمة اليوم للفريق:</h4>
+                    <div id="warRoomQuoteBox" style="color:#34d399; font-size:18px; font-weight:bold; line-height:1.8;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="warroom-ticker-wrap">
+            <div class="warroom-ticker-track" id="warRoomTickerText">جاري تحميل شريط الإنجازات الحية...</div>
+        </div>
+    </div>
+
+    <!-- ☀️ نافذة مولّد اجتماع الصباح في دقيقتين (Morning Huddle Script) -->
+    <div id="morningHuddleModal" class="modal">
+        <div class="modal-content" style="max-width: 620px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; border-bottom:1px solid #334155; padding-bottom:10px;">
+                <h3 style="color:#fde047; font-size:16px;">☀️ مولّد اجتماع الصباح الذكي (في دقيقتين)</h3>
+                <button type="button" onclick="closeMorningHuddleModal()" style="background:transparent; color:#94a3b8; border:none; font-size:18px; cursor:pointer;">✕</button>
+            </div>
+            <div id="morningHuddleContent" style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:16px; line-height:1.9; font-size:13px; white-space:pre-line;"></div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:15px; flex-wrap:wrap;">
+                <button type="button" onclick="copyMorningHuddleScript()" class="btn-action" style="background:#0284c7;">📋 نسخ النص</button>
+                <button type="button" onclick="sendMorningHuddleWhatsApp()" class="btn-whatsapp" style="background:#16a34a; color:#fff; padding:6px 12px;">💬 إرسال لجروب الفرع واتساب</button>
+                <button type="button" onclick="closeMorningHuddleModal()" class="btn-action" style="background:#475569;">إغلاق</button>
             </div>
         </div>
     </div>
@@ -3193,7 +3541,7 @@
             return;
         }
 
-        ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'burnout', 'simulator', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -3217,6 +3565,9 @@
         if (tab === 'leaderboard') renderLeaderboardTable();
         if (tab === 'charts') renderEmployeePerformanceChart();
         if (tab === 'plan') renderPlanTable();
+        if (tab === 'heatmap') renderThermalHeatmap();
+        if (tab === 'burnout') { renderBurnoutRadar(); renderBuddyMatcher(); }
+        if (tab === 'simulator') renderWhatIfSimulator();
         if (tab === 'users') { renderBranchesTable(); renderAdminDepartmentsTable(); renderDepartmentsTable(); renderMetricsConfigTable(); renderCustomRolesTable(); renderUsersTable(); }
     }
 
@@ -3352,6 +3703,7 @@
         document.getElementById('statAvgPct').textContent = branchAvg + '%';
         document.getElementById('statExcellentCount').textContent = excellentCount;
         document.getElementById('statAlertCount').textContent = alertCount;
+        updateAmbientPulse(branchAvg, alertCount);
     }
 
     function renderAllEmployeesTable() {
@@ -3710,6 +4062,7 @@
         }
         document.getElementById('modalWeaknesses').innerHTML = weaknessesHtml;
         document.getElementById('modalSuggestions').innerHTML = suggestionsHtml;
+        render7DayPlaybook(emp, currentScores, branchName);
         let ctx = document.getElementById('individualChart').getContext('2d');
         if (individualChartInstance) individualChartInstance.destroy();
         let weeks = getAvailableWeeks().reverse();
@@ -4221,7 +4574,11 @@
             { title: '📥 تصدير وحفظ قاعدة البيانات (JSON)', tag: 'نسخ احتياطي', fn: () => { closeCommandPalette(); exportDatabaseBackup(); } },
             { title: '🌓 تبديل الوضع الليلي / النهاري', tag: 'مظهر', fn: () => { closeCommandPalette(); toggleThemeMode(); } },
             { title: '🏢 تعديل شعار واسم الشركة', tag: 'الهوية', fn: () => { closeCommandPalette(); openBrandingModal(); } },
-            { title: '🔄 عرض حكمة تحفيزية جديدة', tag: 'تحفيز', fn: () => { closeCommandPalette(); refreshMotivationalQuote(true); } }
+            { title: '🔄 عرض حكمة تحفيزية جديدة', tag: 'تحفيز', fn: () => { closeCommandPalette(); refreshMotivationalQuote(true); } },
+            { title: '📺 تشغيل غرفة القيادة السينمائية (TV Mode)', tag: 'عرض حي', fn: () => { closeCommandPalette(); openWarRoomMode(); } },
+            { title: '☀️ توليد نص اجتماع الصباح في دقيقتين', tag: 'ذكاء إداري', fn: () => { closeCommandPalette(); openMorningHuddleModal(); } },
+            { title: '👁️ تفعيل / إيقاف درع الخصوصية (Alt+P)', tag: 'أمان', fn: () => { closeCommandPalette(); togglePrivacyBlur(); } },
+            { title: '🔊 الاستماع للنشرة الصوتية التنفيذية', tag: 'صوت ذكي', fn: () => { closeCommandPalette(); speakExecutiveBriefing(); } }
         ];
         // التبويبات
         let tabsList = [
@@ -4238,6 +4595,9 @@
             { id: 'charts', title: '📈 الرسوم البيانية ومخطط الرادار' },
             { id: 'plan', title: '📋 خطة العمل التشغيلية' },
             { id: 'auditlog', title: '🛡️ سجل التعديلات والرقابة' },
+            { id: 'heatmap', title: '🔥 الخريطة الحرارية للأداء' },
+            { id: 'burnout', title: '🩺 رادار الاحتراق وتزاوج الكفاءات' },
+            { id: 'simulator', title: '🎛️ محاكي القرارات (ماذا لو؟)' },
             { id: 'users', title: '⚙️ الإعدادات والصلاحيات' }
         ];
         tabsList.forEach(t => {
@@ -4510,11 +4870,531 @@
         }
     }
 
+
+    // =========================================================================
+    // 🌌 مختبر الابتكارات المستقبلية (v6 Future-Tech Edition)
+    // =========================================================================
+
+    // 🔊 مؤثرات صوتية تقنية فائقة النعومة (Web Audio API - Zero external files)
+    function playTechChime(freq = 640, dur = 0.08) {
+        try {
+            let AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (!AudioCtx) return;
+            let ctx = new AudioCtx();
+            let osc = ctx.createOscillator();
+            let gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, ctx.currentTime);
+            gain.gain.setValueAtTime(0.04, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + dur);
+        } catch(e) {}
+    }
+
+    // 🌌 1. الواجهة الحية المتنفسة (Ambient Pulse UI)
+    function updateAmbientPulse(avgPct, alertCount) {
+        document.body.classList.remove('ambient-healthy', 'ambient-warn', 'ambient-danger');
+        if (alertCount >= 3 || avgPct < 60) {
+            document.body.classList.add('ambient-danger');
+        } else if (alertCount >= 1 || avgPct < 75) {
+            document.body.classList.add('ambient-warn');
+        } else {
+            document.body.classList.add('ambient-healthy');
+        }
+    }
+
+    // 👁️ 2. درع الخصوصية الفوري (Privacy Blur Shield - Alt+P)
+    function togglePrivacyBlur() {
+        let active = document.body.classList.toggle('privacy-blur-active');
+        playTechChime(active ? 420 : 720, 0.09);
+        showToast(active ? '👁️ تم تفعيل درع الخصوصية الفوري وإخفاء البيانات' : '👁️ تم إظهار البيانات مجدداً', 'info');
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.altKey && e.key.toLowerCase() === 'p') {
+            e.preventDefault();
+            togglePrivacyBlur();
+        }
+    });
+
+    // 📺 3. غرفة القيادة السينمائية (War Room / TV Mode)
+    let warRoomTimer = null;
+    function openWarRoomMode() {
+        let ov = document.getElementById('warRoomOverlay');
+        if (!ov) return;
+        ov.classList.add('active');
+        renderWarRoomContent();
+        playTechChime(820, 0.12);
+        if (warRoomTimer) clearInterval(warRoomTimer);
+        warRoomTimer = setInterval(renderWarRoomContent, 15000);
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+    }
+    function closeWarRoomMode() {
+        let ov = document.getElementById('warRoomOverlay');
+        if (ov) ov.classList.remove('active');
+        if (warRoomTimer) { clearInterval(warRoomTimer); warRoomTimer = null; }
+        if (document.fullscreenElement && document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+        }
+    }
+    function renderWarRoomContent() {
+        let titleEl = document.getElementById('warRoomTitle');
+        let clockEl = document.getElementById('warRoomClock');
+        let lbEl = document.getElementById('warRoomLeaderboard');
+        let statsEl = document.getElementById('warRoomBranchStats');
+        let quoteEl = document.getElementById('warRoomQuoteBox');
+        let tickerEl = document.getElementById('warRoomTickerText');
+        if (!lbEl || !statsEl) return;
+
+        if (titleEl) titleEl.textContent = `غرفة القيادة الحية — ${brandingData.companyName || 'الرحلة الفريدة'}`;
+        renderBrandIconElement(document.getElementById('warRoomLogo'), brandingData.logo);
+        if (clockEl) clockEl.textContent = new Date().toLocaleString('ar-EG');
+
+        let activeWeek = getCurrentWeekKey();
+        let allList = [];
+        let branchSummaries = [];
+        branchesData.forEach(b => {
+            let emps = dbData[b.id] || [];
+            let sum = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                sum += pct;
+                allList.push({ name: emp.name, branch: b.name, pct });
+            });
+            let avg = emps.length ? Math.round(sum / emps.length) : 0;
+            branchSummaries.push({ name: b.name, avg, count: emps.length });
+        });
+        allList.sort((a, b) => b.pct - a.pct);
+
+        lbEl.innerHTML = '';
+        allList.slice(0, 5).forEach((item, idx) => {
+            let medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx+1}`));
+            lbEl.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(9,13,22,0.75); border:1px solid ${idx===0?'#facc15':'#1f2937'}; padding:12px 16px; border-radius:10px;">
+                <div style="font-size:16px; font-weight:bold;">${medal} ${item.name} <span style="font-size:12px; color:#94a3b8;">(${item.branch})</span></div>
+                <div style="font-size:20px; font-weight:bold; color:#34d399;">${item.pct}%</div>
+            </div>`;
+        });
+
+        statsEl.innerHTML = '';
+        branchSummaries.forEach(bs => {
+            statsEl.innerHTML += `<div style="background:rgba(9,13,22,0.75); border:1px solid #1f2937; border-radius:10px; padding:14px; text-align:center;">
+                <div style="color:#94a3b8; font-size:12px; margin-bottom:4px;">${bs.name} (${bs.count} موظف)</div>
+                <div style="color:#38bdf8; font-size:26px; font-weight:bold;">${bs.avg}%</div>
+            </div>`;
+        });
+
+        let qTxt = document.getElementById('welcomeBannerQuoteText') ? document.getElementById('welcomeBannerQuoteText').textContent : '';
+        if (quoteEl) quoteEl.textContent = qTxt;
+
+        let topStr = allList.length ? `🏆 المتصدر حالياً: ${allList[0].name} (${allList[0].pct}%)` : '';
+        let branchesStr = branchSummaries.map(b => `🏢 ${b.name}: ${b.avg}%`).join('  •  ');
+        if (tickerEl) tickerEl.textContent = `${topStr}  •  ${branchesStr}  •  ${qTxt}  •  نظام ${brandingData.companyName || 'الرحلة الفريدة'} الذكي`;
+    }
+
+    // 🎙️ 4. التحكم الصوتي بالعربية (Voice Command ERP)
+    let voiceRecInstance = null;
+    function toggleVoiceCommand() {
+        let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let btn = document.getElementById('btnVoiceCmd');
+        if (!SpeechRec) {
+            showToast('⚠️ المتصفح لا يدعم الأوامر الصوتية؛ جرب استخدام Google Chrome.', 'error');
+            return;
+        }
+        if (voiceRecInstance) {
+            voiceRecInstance.stop();
+            voiceRecInstance = null;
+            if (btn) btn.classList.remove('voice-listening');
+            return;
+        }
+        voiceRecInstance = new SpeechRec();
+        voiceRecInstance.lang = 'ar-EG';
+        voiceRecInstance.interimResults = false;
+        if (btn) btn.classList.add('voice-listening');
+        showToast('🎙️ أستمع إليك الآن... قل مثلاً: "الإنذار المبكر" أو "الخريطة الحرارية" أو "غرفة القيادة"', 'info');
+
+        voiceRecInstance.onresult = function(event) {
+            let cmd = (event.results[0][0].transcript || '').trim();
+            showToast(`🎙️ سمعت: «${cmd}»`, 'info');
+            executeArabicVoiceCommand(cmd);
+        };
+        voiceRecInstance.onerror = function() {
+            showToast('⚠️ لم ألتقط الصوت بوضوح، حاول مرة أخرى.', 'warn');
+        };
+        voiceRecInstance.onend = function() {
+            voiceRecInstance = null;
+            if (btn) btn.classList.remove('voice-listening');
+        };
+        voiceRecInstance.start();
+    }
+    function executeArabicVoiceCommand(cmd) {
+        if (cmd.includes('إنذار') || cmd.includes('انذار')) switchTab('alerts');
+        else if (cmd.includes('تقييم') || cmd.includes('شيت')) switchTab('eval');
+        else if (cmd.includes('حرار') || cmd.includes('خريط')) switchTab('heatmap');
+        else if (cmd.includes('احتراق') || cmd.includes('كفاء')) switchTab('burnout');
+        else if (cmd.includes('محاكي') || cmd.includes('ماذا لو')) switchTab('simulator');
+        else if (cmd.includes('شرف') || cmd.includes('متصدر')) switchTab('leaderboard');
+        else if (cmd.includes('توجيه')) switchTab('coaching');
+        else if (cmd.includes('كاميرا')) switchTab('camerarules');
+        else if (cmd.includes('رسوم') || cmd.includes('رادار')) switchTab('charts');
+        else if (cmd.includes('قيادة') || cmd.includes('عرض') || cmd.includes('تلفزيون')) openWarRoomMode();
+        else if (cmd.includes('صباح') || cmd.includes('اجتماع')) openMorningHuddleModal();
+        else if (cmd.includes('خصوص') || cmd.includes('اخفي') || cmd.includes('إخفاء')) togglePrivacyBlur();
+        else if (cmd.includes('تصدير') || cmd.includes('حفظ') || cmd.includes('نسخ')) exportDatabaseBackup();
+        else if (cmd.includes('نهار') || cmd.includes('ليل') || cmd.includes('لون')) toggleThemeMode();
+        else if (cmd.includes('سندوب')) changeBranch('sandoob');
+        else if (cmd.includes('ترع')) changeBranch('tura');
+        else if (cmd.includes('نشر') || cmd.includes('تقرير صوت')) speakExecutiveBriefing();
+        else showToast(`لم أتعرف على الأمر «${cmd}» — جرب: الإنذار المبكر، الخريطة الحرارية، غرفة القيادة، اجتماع الصباح.`, 'warn');
+    }
+
+    // 🔊 5. النشرة الصوتية التنفيذية (AI Executive Voice Briefing)
+    function speakExecutiveBriefing() {
+        if (!('speechSynthesis' in window)) {
+            showToast('⚠️ ميزة النطق الصوتي غير مدعومة في هذا المتصفح.', 'error');
+            return;
+        }
+        window.speechSynthesis.cancel();
+        let activeWeek = getCurrentWeekKey();
+        let bObj = branchesData.find(b => b.id === currentBranch);
+        let bName = bObj ? bObj.name : currentBranch;
+        let emps = dbData[currentBranch] || [];
+        let sum = 0, alerts = 0, topEmp = null, topPct = -1;
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            let p = calculateWeightedEmployeePct(emp, sc, null);
+            sum += p;
+            if (p <= 60) alerts++;
+            if (p > topPct) { topPct = p; topEmp = emp.name; }
+        });
+        let avg = emps.length ? Math.round(sum / emps.length) : 0;
+        let speechText = `مرحباً يا ${currentUser ? currentUser.name : 'مدير'}. إليك الملخص التنفيذي لـ ${bName}. متوسط الأداء الحالي هو ${avg} في المائة. `;
+        if (topEmp) speechText += `يتصدر الأداء الأستاذ ${topEmp} بنسبة ${topPct} في المائة. `;
+        speechText += alerts > 0 ? `يوجد حالياً ${alerts} حالات تحتاج إلى تدخل ومتابعة سريعة.` : `العمل مستقر تماماً ولا توجد إنذارات حرجة اليوم.`;
+
+        let utter = new SpeechSynthesisUtterance(speechText);
+        utter.lang = 'ar-EG';
+        utter.rate = 0.98;
+        window.speechSynthesis.speak(utter);
+        showToast('🔊 جاري قراءة النشرة التنفيذية الصوتية...', 'info');
+    }
+
+    // 🔥 6. الخريطة الحرارية للأداء (Thermal KPI Heatmap)
+    function renderThermalHeatmap() {
+        let thead = document.getElementById('heatmapTableHead');
+        let tbody = document.getElementById('heatmapTableBody');
+        let diagEl = document.getElementById('heatmapAutoDiagnosis');
+        if (!thead || !tbody) return;
+
+        let activeWeek = getCurrentWeekKey();
+        let emps = dbData[currentBranch] || [];
+        let headHtml = `<tr><th style="text-align:right;">الموظف</th>`;
+        metricNames.forEach(m => headHtml += `<th>${m}</th>`);
+        headHtml += `<th>المتوسط</th></tr>`;
+        thead.innerHTML = headHtml;
+
+        let metricSums = new Array(metricNames.length).fill(0);
+        let metricLowCounts = new Array(metricNames.length).fill(0);
+        tbody.innerHTML = '';
+
+        emps.forEach((emp, idx) => {
+            let scores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            let pct = calculateWeightedEmployeePct(emp, scores, null);
+            let row = `<tr><td><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${idx})">${emp.name}</span></td>`;
+            metricNames.forEach((m, mIdx) => {
+                let sc = Number(scores[mIdx]) || 3;
+                metricSums[mIdx] += sc;
+                if (sc <= 2) metricLowCounts[mIdx]++;
+                row += `<td><div class="heat-cell heat-${sc}">${sc}/5</div></td>`;
+            });
+            row += `<td style="text-align:center; font-weight:bold; color:var(--accent-blue);">${pct}%</td></tr>`;
+            tbody.innerHTML += row;
+        });
+
+        if (diagEl && emps.length > 0) {
+            let worstIdx = 0, worstAvg = 99;
+            metricSums.forEach((s, i) => {
+                let avg = s / emps.length;
+                if (avg < worstAvg) { worstAvg = avg; worstIdx = i; }
+            });
+            let isVertical = metricLowCounts[worstIdx] >= Math.max(2, Math.ceil(emps.length * 0.3));
+            diagEl.innerHTML = `<b>🧠 التشخيص الحراري التلقائي للفرع:</b><br>
+                • أضعف بند على مستوى الفرع حالياً هو <b style="color:#fb7185;">«${metricNames[worstIdx]}»</b> (بمتوسط ${(worstAvg).toFixed(1)} من 5).<br>
+                • <b>النمط المرصود:</b> ${isVertical ? '<span class="badge b-red">خلل عمودي جماعي</span> — يوصى بتنظيم ورشة تدريب سريعة لكل الفريق في هذا البند.' : '<span class="badge b-green">أداء متوازن نسبياً</span> — أي ضعف موجود هو حالات فردية أفقية تُعالج بالتوجيه الفردي.'}`;
+        }
+    }
+
+    // 🩺 7. رادار الاحتراق الوظيفي + 🤝 8. محرك تزاوج الكفاءات (Burnout Radar & Buddy Matcher)
+    function renderBurnoutRadar() {
+        let tbody = document.getElementById('burnoutRadarTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let flagged = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scores, null);
+                let prevWeeks = Object.keys(emp.history || {}).filter(w => w !== activeWeek).sort().reverse();
+                let prevPct = prevWeeks.length ? calculateWeightedEmployeePct(emp, emp.history[prevWeeks[0]], null) : pct;
+                let drop = prevPct - pct;
+                let punctualityDrop = (Number(scores[0]) || 3) <= 2;
+                let teamworkDrop = (Number(scores[1]) || 3) <= 2;
+
+                if (drop >= 10 || (punctualityDrop && teamworkDrop) || (pct <= 60 && punctualityDrop)) {
+                    flagged++;
+                    let riskLevel = (drop >= 15 || (punctualityDrop && teamworkDrop)) ? '<span class="badge b-red">🔴 خطر إرهاق مرتفع</span>' : '<span class="badge b-yellow">🟠 مؤشر إجهاد مبكر</span>';
+                    let reason = drop >= 10 ? `تراجع مفاجئ بمقدار ${drop}% مقارنة بالأسبوع السابق.` : 'هبوط متزامن في الالتزام بالمواعيد والتعامل مع الزملاء (مؤشر إرهاق أو فقدان شغف).';
+                    tbody.innerHTML += `<tr>
+                        <td><b>${emp.name}</b><br><span style="font-size:10px; color:#38bdf8;">${b.name}</span></td>
+                        <td style="text-align:center; font-weight:bold; color:#fb7185;">${pct}%</td>
+                        <td style="text-align:center;">${riskLevel}</td>
+                        <td style="white-space:normal; line-height:1.5;">${reason}<br><span style="color:#34d399; font-size:11px;">💡 التوصية: جلسة استماع ودية (1-on-1) ومراجعة ضغط العمل.</span></td>
+                        <td style="text-align:center;"><button type="button" onclick="sendWhatsAppMessage('${emp.name.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}', ${pct}, 'alert', '')" class="btn-whatsapp">💬 تواصل ودي</button></td>
+                    </tr>`;
+                }
+            });
+        });
+        if (flagged === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#34d399; padding:20px; font-weight:bold;">💚 ممتاز! لا توجد مؤشرات احتراق وظيفي أو تراجع مفاجئ في الفروع حالياً.</td></tr>`;
+        }
+    }
+
+    function renderBuddyMatcher() {
+        let tbody = document.getElementById('buddyMatcherTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let pairsCount = 0;
+
+        branchesData.forEach(b => {
+            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            let emps = dbData[b.id] || [];
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                metricNames.forEach((mName, mIdx) => {
+                    if ((Number(sc[mIdx]) || 3) <= 2) {
+                        // ابحث عن أقوى زميل في نفس الفرع في هذا البند تحديداً
+                        let bestPeer = null, bestSc = 3;
+                        emps.forEach(peer => {
+                            if (peer.name === emp.name) return;
+                            let pSc = (peer.history && peer.history[activeWeek]) ? (Number(peer.history[activeWeek][mIdx]) || 3) : 3;
+                            if (pSc > bestSc) { bestSc = pSc; bestPeer = peer; }
+                        });
+                        if (bestPeer) {
+                            pairsCount++;
+                            tbody.innerHTML += `<tr>
+                                <td style="color:#38bdf8; font-weight:bold;">${b.name}</td>
+                                <td><b>${emp.name}</b> <span class="badge b-red">${sc[mIdx]}/5</span></td>
+                                <td style="text-align:center; color:#facc15; font-weight:bold;">${mName}</td>
+                                <td>🌟 <b>${bestPeer.name}</b> <span class="badge b-green">متفوق ${bestSc}/5</span></td>
+                                <td style="text-align:center;"><button type="button" onclick="sendBuddyWhatsApp('${emp.name.replace(/'/g, '')}', '${bestPeer.name.replace(/'/g, '')}', '${mName.replace(/'/g, '')}', '${b.name.replace(/'/g, '')}')" class="btn-whatsapp">💬 تفعيل الشراكة</button></td>
+                            </tr>`;
+                        }
+                    }
+                });
+            });
+        });
+        if (pairsCount === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding:18px;">لا توجد حالات قصور تحتاج ربطاً بمرشدين حالياً (أو قم بتقييم بعض الزملاء بـ 4 أو 5 لتفعيل الربط التلقائي).</td></tr>`;
+        }
+    }
+    function sendBuddyWhatsApp(mentee, mentor, metric, branch) {
+        let msg = `🤝 *برنامج التوجيه المتبادل - ${brandingData.companyName || 'الرحلة الفريدة'}* (${branch})
+
+تم ترشيح الأستاذ/ة *${mentor}* كمرشد زميل لدعم الأستاذ/ة *${mentee}* خلال هذا الأسبوع في مهارة *«${metric}»* (جلسة عملية 15 دقيقة يومياً). كل التوفيق للفريق! 🚀`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+        showToast('تم فتح رسالة التوجيه المتبادل على واتساب 🤝', 'success');
+    }
+
+    // 🎛️ 9. محاكي القرارات الاستراتيجية (What-If Decision Simulator)
+    let simBoosts = {};
+    function renderWhatIfSimulator() {
+        let container = document.getElementById('simulatorSlidersContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        metricNames.forEach((m, idx) => {
+            if (simBoosts[idx] === undefined) simBoosts[idx] = 0;
+            container.innerHTML += `<div class="sim-slider-row">
+                <div style="min-width:190px; font-weight:bold; color:var(--text-main); font-size:12px;">${m}</div>
+                <input type="range" min="0" max="2" step="0.5" value="${simBoosts[idx]}" oninput="updateSimBoost(${idx}, this.value)">
+                <div id="simValLabel_${idx}" class="badge b-blue" style="min-width:95px; text-align:center;">+${simBoosts[idx]} درجة</div>
+            </div>`;
+        });
+        recalculateWhatIfSimulation();
+    }
+    function updateSimBoost(idx, val) {
+        simBoosts[idx] = parseFloat(val) || 0;
+        let lbl = document.getElementById(`simValLabel_${idx}`);
+        if (lbl) lbl.textContent = `+${simBoosts[idx]} درجة`;
+        recalculateWhatIfSimulation();
+    }
+    function resetSimulatorSliders() {
+        simBoosts = {};
+        renderWhatIfSimulator();
+        showToast('تمت إعادة ضبط محاكي القرارات 🔄', 'info');
+    }
+    function recalculateWhatIfSimulation() {
+        let activeWeek = getCurrentWeekKey();
+        let emps = dbData[currentBranch] || [];
+        let realSum = 0, simSum = 0, realAlerts = 0, simAlerts = 0;
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            let rPct = calculateWeightedEmployeePct(emp, sc, null);
+            let simSc = sc.map((v, i) => Math.min(5, (Number(v) || 3) + (simBoosts[i] || 0)));
+            let sPct = calculateWeightedEmployeePct(emp, simSc, null);
+            realSum += rPct;
+            simSum += sPct;
+            if (rPct <= 60) realAlerts++;
+            if (sPct <= 60) simAlerts++;
+        });
+        let rAvg = emps.length ? Math.round(realSum / emps.length) : 0;
+        let sAvg = emps.length ? Math.round(simSum / emps.length) : 0;
+        let delta = sAvg - rAvg;
+        document.getElementById('simRealAvg').textContent = `${rAvg}%`;
+        document.getElementById('simProjAvg').textContent = `${sAvg}%`;
+        document.getElementById('simDeltaAvg').textContent = `+${delta}%`;
+        document.getElementById('simSavedAlerts').textContent = `${Math.max(0, realAlerts - simAlerts)}`;
+    }
+
+    // ☀️ 10. مولّد اجتماع الصباح في دقيقتين (Morning Huddle Script)
+    let latestMorningHuddleText = '';
+    function openMorningHuddleModal() {
+        closeMobileSidebar();
+        let activeWeek = getCurrentWeekKey();
+        let bObj = branchesData.find(b => b.id === currentBranch);
+        let bName = bObj ? bObj.name : currentBranch;
+        let emps = dbData[currentBranch] || [];
+        let ranked = [];
+        let metricTotals = new Array(metricNames.length).fill(0);
+
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            ranked.push({ name: emp.name, pct: calculateWeightedEmployeePct(emp, sc, null) });
+            sc.forEach((v, i) => { if (i < metricTotals.length) metricTotals[i] += (Number(v) || 3); });
+        });
+        ranked.sort((a, b) => b.pct - a.pct);
+        let stars = ranked.slice(0, 2).map(r => `${r.name} (${r.pct}%)`).join(' و ');
+        let worstIdx = 0, minT = 999999;
+        metricTotals.forEach((t, i) => { if (t < minT) { minT = t; worstIdx = i; } });
+        let focusMetric = metricNames[worstIdx] || 'الأداء والإنتاجية';
+
+        latestMorningHuddleText = `☀️ *اجتماع الصباح السريع — ${brandingData.companyName || 'الرحلة الفريدة'} (${bName})*
+📅 ${new Date().toLocaleDateString('ar-EG')}
+
+1️⃣ *شكر وتكريم علني لنجوم اليوم:*
+نوجّه تحية كبيرة لكل من: *${stars || 'فريق العمل'}* على التزامهم وتميزهم الاستثنائي هذا الأسبوع! 👏🏆
+
+2️⃣ *نقطة التركيز التشغيلية لليوم (دقيقة واحدة):*
+هدفنا اليوم جميعاً رفع مستوى *«${focusMetric}»* بنسبة 100% دون أي أخطاء.
+
+3️⃣ *تحدي اليوم السريع:*
+تصفير أي تأخير أو ملاحظات في «${focusMetric}» قبل نهاية الشيفت.
+
+💡 *حكمة اليوم:* ${document.getElementById('welcomeBannerQuoteText') ? document.getElementById('welcomeBannerQuoteText').textContent : 'التميز عادة يومية!'}
+
+يوم موفق ومثمر للجميع! 🚀`;
+
+        document.getElementById('morningHuddleContent').textContent = latestMorningHuddleText;
+        document.getElementById('morningHuddleModal').classList.add('active');
+        playTechChime(700, 0.09);
+    }
+    function closeMorningHuddleModal() { document.getElementById('morningHuddleModal').classList.remove('active'); }
+    function copyMorningHuddleScript() {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(latestMorningHuddleText);
+            showToast('✅ تم نسخ نص اجتماع الصباح بنجاح!', 'success');
+        }
+    }
+    function sendMorningHuddleWhatsApp() {
+        window.open(`https://wa.me/?text=${encodeURIComponent(latestMorningHuddleText)}`, '_blank');
+    }
+
+    // 🗓️ 11. مولّد خطة الإنقاذ والتطوير في 7 أيام (7-Day Turnaround Playbook)
+    let latestPlaybookText = '';
+    function render7DayPlaybook(emp, scores, branchName) {
+        let container = document.getElementById('modal7DayPlaybook');
+        if (!container) return;
+        let weakMetrics = [];
+        metricNames.forEach((m, idx) => {
+            if (isMetricApplicableForDept(m, emp.dept) && (Number(scores[idx]) || 3) <= 2) weakMetrics.push(m);
+        });
+        let targetMetric = weakMetrics.length > 0 ? weakMetrics[0] : metricNames[metricNames.length - 1];
+        let days = [
+            { day: 'السبت', task: `جلسة انطلاق (10 دقائق) لتوضيح هدف الأسبوع والتركيز على «${targetMetric}».` },
+            { day: 'الأحد', task: `مراقبة عملية ومرافقة زميل متفوق لتطبيق أفضل ممارسة في «${targetMetric}».` },
+            { day: 'الاثنين', task: `تنفيذ مهام اليوم باستقلالية مع مراجعة سريعة منتصف الشيفت.` },
+            { day: 'الثلاثاء', task: `تقييم نصفي سريع لرصد التحسن وتذليل أي عقبات تشغيلية فورية.` },
+            { day: 'الأربعاء', task: `تحدي الإتقان الكامل: تحقيق 0 أخطاء في «${targetMetric}» طوال اليوم.` },
+            { day: 'الخميس', task: `مراجعة شاملة لإنجازات الأسبوع وتثبيت العادات الإيجابية الجديدة.` },
+            { day: 'الجمعة', task: `إغلاق التقييم الأسبوعي والاحتفاء بالتحسن المحقق في النسبة الموزونة.` }
+        ];
+        container.innerHTML = '';
+        let lines = [`🗓️ *خطة التطوير في 7 أيام — ${emp.name} (${branchName})*`, `🎯 البند المستهدف: *${targetMetric}*
+`];
+        days.forEach(d => {
+            container.innerHTML += `<div class="playbook-day-card"><b style="color:#38bdf8;">${d.day}:</b> ${d.task}</div>`;
+            lines.push(`• *${d.day}:* ${d.task}`);
+        });
+        latestPlaybookText = lines.join('\n');
+    }
+    function sendPlaybookWhatsApp() {
+        if (!latestPlaybookText) return;
+        window.open(`https://wa.me/?text=${encodeURIComponent(latestPlaybookText)}`, '_blank');
+        showToast('تم إرسال خطة الـ 7 أيام عبر واتساب 💬', 'success');
+    }
+
+    // ⏱️ 12. ساعة الدوام الحية + مؤقت التركيز (25-min Focus Sprint)
+    let focusSprintRemaining = 0;
+    let focusSprintInterval = null;
+    function startLiveShiftClock() {
+        setInterval(() => {
+            let el = document.getElementById('liveClockText');
+            if (!el) return;
+            if (focusSprintRemaining > 0) {
+                let m = String(Math.floor(focusSprintRemaining / 60)).padStart(2, '0');
+                let s = String(focusSprintRemaining % 60).padStart(2, '0');
+                el.textContent = `تركيز ${m}:${s}`;
+            } else {
+                let now = new Date();
+                el.textContent = now.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            }
+        }, 1000);
+    }
+    function toggleFocusSprintTimer() {
+        if (focusSprintInterval) {
+            clearInterval(focusSprintInterval);
+            focusSprintInterval = null;
+            focusSprintRemaining = 0;
+            showToast('⏹️ تم إيقاف مؤقت التركيز.', 'info');
+            return;
+        }
+        focusSprintRemaining = 25 * 60;
+        playTechChime(780, 0.1);
+        showToast('⏱️ بدأ مؤقت التركيز العميق (25 دقيقة) لإنجاز التقييمات دون تشتيت!', 'success');
+        focusSprintInterval = setInterval(() => {
+            focusSprintRemaining--;
+            if (focusSprintRemaining <= 0) {
+                clearInterval(focusSprintInterval);
+                focusSprintInterval = null;
+                playTechChime(920, 0.25);
+                showToast('🎉 انتهت جلسة التركيز (25 دقيقة)! خذ استراحة قصيرة.', 'success');
+            }
+        }, 1000);
+    }
+
     // تفعيل الميزات الجديدة فور تحميل الصفحة
     document.addEventListener('DOMContentLoaded', function() {
         applySavedTheme();
         updateBackupPulseUI();
         setupDynamicPwaManifest();
+        startLiveShiftClock();
     });
 
 </script>
