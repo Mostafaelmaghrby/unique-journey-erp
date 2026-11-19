@@ -1349,6 +1349,102 @@
             background: rgba(2, 132, 199, 0.22);
             border-color: #38bdf8;
         }
+
+        /* ===================================================================
+           🤖 v12 AUTONOMOUS AI-NATIVE OS (Ask Data, Roleplay, Blast-Radius,
+
+           =================================================================== */
+        .ai-chat-box {
+            background: rgba(9, 13, 22, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 14px;
+            padding: 14px;
+            height: 320px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        body.light-mode .ai-chat-box { background: #f8fafc; }
+        .chat-msg {
+            max-width: 84%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            line-height: 1.75;
+            white-space: pre-line;
+        }
+        .chat-msg-user {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #fff;
+            border-bottom-right-radius: 3px;
+        }
+        .chat-msg-ai {
+            align-self: flex-end;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #f8fafc;
+            border-bottom-left-radius: 3px;
+        }
+        body.light-mode .chat-msg-ai {
+            background: #ffffff;
+            color: #0f172a;
+        }
+        .quick-prompt-chip {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #7dd3fc;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        body.light-mode .quick-prompt-chip { color: #0369a1; }
+        .quick-prompt-chip:hover { background: #0284c7; color: #fff; }
+        .gap-bar-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+        }
+        .gap-bar-track {
+            flex: 1;
+            height: 8px;
+            background: rgba(148, 163, 184, 0.2);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+        .workflow-rule-card {
+            background: var(--bg-main);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            border-right: 4px solid #10b981;
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .sync-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 10px;
+            font-weight: 800;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.45);
+            color: #34d399;
+            cursor: pointer;
+        }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -1410,6 +1506,14 @@
                 <button type="button" onclick="switchTab('timemachine')" id="tab-timemachine" class="btn-tab admin-manager-only">⏳ آلة الزمن والتوقع الشهري</button>
                 <button type="button" onclick="switchTab('biaspulse')" id="tab-biaspulse" class="btn-tab admin-manager-only">⚖️ كاشف التحيّز ونبض المزاج</button>
                 <button type="button" onclick="openSpeedEvalModal()" id="tab-speedeval" class="btn-tab admin-manager-only" style="color:#38bdf8;">⚡ التقييم السريع بالمسح</button>
+
+                <div class="nav-section-label">🤖 الذكاء الذاتي والأتمتة (v12)</div>
+                <button type="button" onclick="switchTab('askdata')" id="tab-askdata" class="btn-tab admin-manager-only" style="color:#38bdf8;">💬 اسأل بياناتك (Ask Data)</button>
+                <button type="button" onclick="switchTab('roleplay')" id="tab-roleplay" class="btn-tab admin-manager-only" style="color:#c4b5fd;">🎭 محاكي الحوارات الصعبة AI</button>
+                <button type="button" onclick="switchTab('blastradius')" id="tab-blastradius" class="btn-tab admin-manager-only">💥 أثر الغياب واكتشاف القادة</button>
+                <button type="button" onclick="switchTab('workflows')" id="tab-workflows" class="btn-tab admin-manager-only">⚙️ قواعد الأتمتة التلقائية</button>
+                <button type="button" onclick="switchTab('mirror360')" id="tab-mirror360" class="btn-tab">🪞 مرآة التقييم الذاتي 360°</button>
+                <button type="button" onclick="switchTab('roijournal')" id="tab-roijournal" class="btn-tab admin-manager-only">📈 سجل عائد القرارات (ROI)</button>
 
                 <div class="nav-section-label">التقارير والتطوير</div>
                 <button type="button" onclick="switchTab('career')" id="tab-career" class="btn-tab admin-manager-only">🌱 النمو الوظيفي</button>
@@ -1569,6 +1673,144 @@
             </div>
         </div>
 
+        <!-- 💬 v12-1. محرك «اسأل بياناتك» باللغة الطبيعية (Ask Your Data) -->
+        <div id="sec-askdata" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">💬 محرك «اسأل بياناتك» باللغة الطبيعية (Ask Your Data AI)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">اسأل أي سؤال بالعربية عن الموظفين، الفروع، أضعف المعايير، أو المتصدرين — يحلل النظام قاعدة البيانات لحظياً ويجيبك بالأرقام الدقيقة (ويدعم Gemini Live).</p>
+                </div>
+                <button type="button" onclick="clearAskDataChat()" class="btn-danger">🗑️ مسح المحادثة</button>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+                <button type="button" class="quick-prompt-chip" onclick="runAskDataQuery('من هم أفضل 3 موظفين في الشركة؟')">🏆 أفضل 3 موظفين؟</button>
+                <button type="button" class="quick-prompt-chip" onclick="runAskDataQuery('ما هو أضعف معيار تقييم في الفرع الحالي؟')">📉 أضعف معيار الآن؟</button>
+                <button type="button" class="quick-prompt-chip" onclick="runAskDataQuery('كم عدد حالات الإنذار المبكر ومن هم؟')">🚨 حالات الإنذار المبكر؟</button>
+                <button type="button" class="quick-prompt-chip" onclick="runAskDataQuery('قارن بين أداء الفروع بالأرقام')">🏢 مقارنة الفروع؟</button>
+                <button type="button" class="quick-prompt-chip" onclick="runAskDataQuery('من هم المرشحون للترقية والقيادة؟')">👑 المرشحون للقيادة؟</button>
+            </div>
+            <div id="askDataChatBox" class="ai-chat-box">
+                <div class="chat-msg chat-msg-ai">مرحباً! أنا محلل بيانات «الرحلة الفريدة» الذكي 🤖. اسألني أي سؤال عن أرقام فريقك وسأجيبك فوراً من قاعدة البيانات الحية.</div>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="askDataInput" class="form-input" placeholder="اكتب سؤالك هنا (مثال: كم متوسط فرع سندوب؟ أو من يحتاج تدريب في خدمة العملاء؟)..." onkeydown="if(event.key==='Enter') runAskDataQuery()">
+                <button type="button" onclick="runAskDataQuery()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:8px 18px; white-space:nowrap;">🚀 اسأل الآن</button>
+            </div>
+        </div>
+
+        <!-- 🎭 v12-2. محاكي الحوارات الصعبة بالذكاء الاصطناعي (AI Roleplay Coach) -->
+        <div id="sec-roleplay" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <div>
+                    <h3 style="color:#c4b5fd; font-size:16px;">🎭 محاكي الحوارات الصعبة والتدريب القيادي (AI Roleplay Coach)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">اختر الموظف وسيناريو الجلسة، وسيتقمص النظام شخصية الموظف بناءً على درجاته الحقيقية لتتدرب على الحوار ثم يقيّم أسلوبك وفق منهجية <b>Radical Candor</b> و<b>SBI</b>.</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; background:var(--bg-main); padding:12px; border-radius:10px; border:1px solid var(--border-color);">
+                <select id="rpEmpSelect" class="form-input" style="max-width:220px;"></select>
+                <select id="rpScenarioSelect" class="form-input" style="max-width:240px;">
+                    <option value="low_perf">📉 مناقشة تراجع الأداء والإنذار المبكر</option>
+                    <option value="punctuality">⏱️ معالجة التأخير المتكرر عن المواعيد</option>
+                    <option value="customer">💎 تحسين أسلوب التعامل مع العملاء</option>
+                    <option value="promo_delay">⚖️ تأجيل الترقية بمهنية واحتواء</option>
+                </select>
+                <button type="button" onclick="startRoleplaySession()" class="btn-action" style="background:#7c3aed; padding:8px 16px;">🎬 بدء البروفة</button>
+                <button type="button" onclick="evaluateRoleplaySession()" class="btn-action" style="background:#059669; padding:8px 14px;">📊 تقييم أسلوبي القيادي</button>
+            </div>
+            <div id="roleplayChatBox" class="ai-chat-box">
+                <div class="chat-msg chat-msg-ai">اختر الموظف والسيناريو بالأعلى ثم اضغط «🎬 بدء البروفة» لتبدأ المحاكاة التدريبية.</div>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="roleplayInput" class="form-input" placeholder="اكتب ردك كمدير للموظف هنا..." onkeydown="if(event.key==='Enter') sendRoleplayTurn()">
+                <button type="button" onclick="sendRoleplayTurn()" class="btn-action" style="background:#0284c7; padding:8px 18px;">إرسال الرد</button>
+            </div>
+        </div>
+
+        <!-- 💥 v12-3. محاكي أثر غياب الموظف + رادار القادة المخفيين + مصداقية المقيّمين (Bridgewater) -->
+        <div id="sec-blastradius" class="card hidden">
+            <h3 style="color:#fb7185; font-size:16px; margin-bottom:6px;">💥 محاكي «أثر غياب الموظف» وخطة الإحلال (Attrition Blast-Radius Simulator)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:12px;">اختر أي موظف لحساب الصدمة التشغيلية لو غاب أو استقال غداً، وترشيح أقرب بديل جاهز لسد الفجوة فوراً.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                <select id="blastEmpSelect" class="form-input" style="max-width:280px;" onchange="calculateBlastRadius()"></select>
+                <button type="button" onclick="calculateBlastRadius()" class="btn-action" style="background:#dc2626;">💥 احسب أثر الغياب</button>
+            </div>
+            <div id="blastRadiusResultBox" style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:12px; padding:14px; margin-bottom:22px; font-size:12px; line-height:1.8;"></div>
+
+            <h3 style="color:#facc15; font-size:16px; margin-bottom:6px;">👑 رادار الكفاءة المخفية وجاهزية القيادة (Hidden Talent & Leadership Index)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:12px;">يكتشف تلقائياً الموظفين ذوي التوازن العالي والاستقرار عبر المعايير (المرشحون لقيادة فرق أو فروع مستقبلاً).</p>
+            <table style="margin-bottom:22px;">
+                <thead><tr><th style="text-align:right;">الموظف والفرع</th><th style="text-align:center;">الأداء</th><th style="text-align:center;">مؤشر التوازن</th><th style="text-align:center;">جاهزية القيادة</th></tr></thead>
+                <tbody id="hiddenTalentTableBody"></tbody>
+            </table>
+
+            <h3 style="color:#38bdf8; font-size:16px; margin-bottom:6px;">⚖️ مؤشر مصداقية وموضوعية المقيّمين (Bridgewater Believability Index)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:12px;">يقيس عدالة ودقة تقييمات كل فرع (التوزيع الإحصائي + عدم النسخ الآلي) لمنح كل فرع «وزن مصداقية» في التقارير العليا.</p>
+            <div id="bridgewaterScoreContainer"></div>
+        </div>
+
+        <!-- ⚙️ v12-4. محرك القواعد التلقائية «إذا حدث X نفّذ Y» (Autonomous Workflow Rules) -->
+        <div id="sec-workflows" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                <div>
+                    <h3 style="color:#34d399; font-size:16px;">⚙️ محرك الأتمتة الذاتية «إذا حدث X نفّذ Y» (Autonomous Workflow Rules)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">أنشئ قواعد ذكية تعمل تلقائياً على بيانات فريقك لتوليد المهام والتنبيهات دون تدخل يدوي.</p>
+                </div>
+                <button type="button" onclick="executeAllWorkflowRules(true)" class="btn-action" style="background:#059669; padding:8px 16px;">▶ تشغيل القواعد الآن</button>
+            </div>
+            <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:14px; margin-bottom:16px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                <span style="font-size:12px; font-weight:bold; color:#38bdf8;">إذا كان:</span>
+                <select id="wfConditionSelect" class="form-input" style="max-width:220px;">
+                    <option value="pct_below_60">أداء الموظف ≤ 60%</option>
+                    <option value="metric_low">أي معيار لدى الموظف ≤ 2/5</option>
+                    <option value="pct_above_90">أداء الموظف ≥ 90% (تميز)</option>
+                </select>
+                <span style="font-size:12px; font-weight:bold; color:#34d399;">← نفّذ تلقائياً:</span>
+                <select id="wfActionSelect" class="form-input" style="max-width:250px;">
+                    <option value="add_plan_rescue">إضافة مهمة إنقاذ في خطة العمل</option>
+                    <option value="add_plan_reward">إضافة بند تكريم في خطة العمل</option>
+                    <option value="log_roi">تسجيل إجراء متابعة في سجل العائد (ROI)</option>
+                </select>
+                <button type="button" onclick="addWorkflowRule()" class="btn-tab btn-add" style="width:auto; padding:8px 16px;">➕ حفظ القاعدة</button>
+            </div>
+            <div id="workflowRulesList"></div>
+        </div>
+
+        <!-- 🪞 v12-5. مرآة التقييم الذاتي 360° (Perception Gap Mirror) -->
+        <div id="sec-mirror360" class="card hidden">
+            <h3 style="color:#38bdf8; font-size:16px; margin-bottom:6px;">🪞 مرآة التقييم الذاتي 360° وكاشف فجوة الإدراك (Perception Gap Mirror)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:14px;">يقيّم الموظف نفسه في 60 ثانية، ويقارن النظام تقييمه الذاتي بتقييم المدير ليكشف بصرياً «فجوة الإدراك» وينهي أي جدل حول عدالة التقييم.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px;">
+                <select id="mirrorEmpSelect" class="form-input" style="max-width:260px;" onchange="renderMirror360Table()"></select>
+                <button type="button" onclick="saveMirrorSelfEval()" class="btn-action" style="background:#059669; padding:8px 16px;">💾 حفظ التقييم الذاتي وحساب الفجوة</button>
+            </div>
+            <div id="mirrorGapSummary" style="background:var(--bg-main); border:1px solid var(--border-color); border-right:4px solid #38bdf8; border-radius:10px; padding:12px 15px; margin-bottom:14px; font-size:12px; line-height:1.7;"></div>
+            <table>
+                <thead><tr><th style="text-align:right;">المعيار</th><th style="text-align:center;">تقييم الموظف لنفسه (1-5)</th><th style="text-align:center;">تقييم المدير الفعلي</th><th style="text-align:center;">فجوة الإدراك</th></tr></thead>
+                <tbody id="mirror360TableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 📈 v12-6. سجل عائد القرارات الإدارية (Management ROI Journal) -->
+        <div id="sec-roijournal" class="card hidden">
+            <h3 style="color:#34d399; font-size:16px; margin-bottom:6px;">📈 سجل عائد القرارات الإدارية (Management ROI Journal)</h3>
+            <p style="color:var(--text-muted); font-size:11px; margin-bottom:14px;">سجّل أي قرار إداري تتخذه (تدريب، كوتشينج، نقل قسم، تكريم)، وسيقارن النظام تلقائياً أداء الموظف «قبل القرار» و«الآن» ليحسب لك العائد الحقيقي لقراراتك.</p>
+            <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:14px; margin-bottom:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                <select id="roiEmpSelect" class="form-input" style="max-width:220px;"></select>
+                <select id="roiTypeSelect" class="form-input" style="max-width:180px;">
+                    <option value="جلسة كوتشينج فردية">⚡ جلسة كوتشينج فردية</option>
+                    <option value="ورشة تدريب عملية">🎓 ورشة تدريب عملية</option>
+                    <option value="ربط بمرشد زميل">🤝 ربط بمرشد زميل</option>
+                    <option value="تكريم وتحفيز علني">🏆 تكريم وتحفيز علني</option>
+                    <option value="تعديل مهام / نقل قسم">🔄 تعديل مهام / نقل قسم</option>
+                </select>
+                <input type="text" id="roiNoteInput" class="form-input" placeholder="ملاحظة مختصرة عن القرار..." style="flex:1; min-width:200px;">
+                <button type="button" onclick="addRoiDecision()" class="btn-tab btn-add" style="width:auto; padding:8px 16px;">➕ تسجيل القرار</button>
+            </div>
+            <table>
+                <thead><tr><th style="text-align:right;">الموظف</th><th style="text-align:center;">نوع القرار</th><th style="text-align:right;">التفاصيل والتاريخ</th><th style="text-align:center;">الأداء قبل القرار</th><th style="text-align:center;">الأداء الآن</th><th style="text-align:center;">عائد القرار (ROI)</th><th style="text-align:center;">حذف</th></tr></thead>
+                <tbody id="roiJournalTableBody"></tbody>
+            </table>
+        </div>
         <!-- 🌌 12. خريطة المجرة التفاعلية للشركة (Live Constellation Map) -->
         <div id="sec-constellation" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
@@ -2356,6 +2598,12 @@
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="backup"> 💾 تصدير واستعادة قاعدة البيانات</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="devicelog"> 💻 سجل الأجهزة والدخول (رقابة عليا)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="auditlog"> 🛡️ سجل التعديلات والرقابة (رقابة عليا)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="askdata" checked> 💬 اسأل بياناتك (Ask Your Data)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="roleplay" checked> 🎭 محاكي الحوارات الصعبة AI</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="blastradius" checked> 💥 أثر الغياب واكتشاف القادة</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="workflows" checked> ⚙️ قواعد الأتمتة التلقائية</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="mirror360" checked> 🪞 مرآة التقييم الذاتي 360°</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="roijournal" checked> 📈 سجل عائد القرارات (ROI)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="gemini_advisor" checked> 🧠 المستشار الحي (Gemini Live Advisor)</label>
                     </div>
                 </div>
@@ -4344,7 +4592,7 @@
         'missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
         'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
         'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
-        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog', 'gemini_advisor'
+        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog', 'gemini_advisor', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal'
     ];
 
     function toggleCheckboxGroup(inputName, checkState) {
@@ -4524,7 +4772,7 @@
             return;
         }
 
-        ['missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['missioncontrol', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -4534,6 +4782,11 @@
         if (document.getElementById(`tab-${tab}`)) document.getElementById(`tab-${tab}`).classList.add('active');
 
         if (tab === 'missioncontrol') renderMissionControl();
+        if (tab === 'roleplay') initRoleplayDropdowns();
+        if (tab === 'blastradius') { initBlastRadiusView(); renderHiddenTalentRadar(); renderBridgewaterScores(); }
+        if (tab === 'workflows') renderWorkflowRules();
+        if (tab === 'mirror360') initMirror360View();
+        if (tab === 'roijournal') initRoiJournalView();
         if (tab === 'eval') { renderDeptFilterBar(); renderEvalTable(); }
         if (tab === 'allemp') renderAllEmployeesTable();
         if (tab === 'camerarules') { renderCameraRulesTable(); renderLiveHudBadges(); }
@@ -5594,6 +5847,13 @@
             { id: 'constellation', title: '🌌 خريطة المجرة التفاعلية' },
             { id: 'timemachine', title: '⏳ آلة الزمن والتوقع الشهري' },
             { id: 'biaspulse', title: '⚖️ كاشف التحيّز ونبض المزاج' },
+            { id: 'askdata', title: '💬 اسأل بياناتك (Ask Your Data)' },
+            { id: 'roleplay', title: '🎭 محاكي الحوارات الصعبة AI' },
+            { id: 'blastradius', title: '💥 أثر الغياب واكتشاف القادة' },
+            { id: 'workflows', title: '⚙️ قواعد الأتمتة التلقائية' },
+            { id: 'mirror360', title: '🪞 مرآة التقييم الذاتي 360°' },
+            { id: 'roijournal', title: '📈 سجل عائد القرارات (ROI)' },
+
             { id: 'users', title: '⚙️ الإعدادات والصلاحيات' }
         ];
         tabsList.forEach(t => {
@@ -7769,6 +8029,488 @@
     document.addEventListener('DOMContentLoaded', function() {
         initCollapsibleSidebarSections();
     });
+
+
+    // =========================================================================
+    // 🤖 v12 AUTONOMOUS AI-NATIVE OS ENGINES (No Bonus Calculator)
+    // =========================================================================
+
+    // 💬 1. محرك «اسأل بياناتك» باللغة الطبيعية (Ask Your Data)
+    function appendAskDataMsg(text, isUser) {
+        let box = document.getElementById('askDataChatBox');
+        if (!box) return;
+        let div = document.createElement('div');
+        div.className = 'chat-msg ' + (isUser ? 'chat-msg-user' : 'chat-msg-ai');
+        div.textContent = text;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+    }
+    function clearAskDataChat() {
+        let box = document.getElementById('askDataChatBox');
+        if (box) box.innerHTML = `<div class="chat-msg chat-msg-ai">تم مسح المحادثة. اسألني أي سؤال عن بياناتك الآن! 🤖</div>`;
+    }
+    async function runAskDataQuery(presetText) {
+        let inp = document.getElementById('askDataInput');
+        let q = (presetText || (inp ? inp.value : '') || '').trim();
+        if (!q) return;
+        if (inp && !presetText) inp.value = '';
+        appendAskDataMsg(q, true);
+
+        let activeWeek = getCurrentWeekKey();
+        let allEmps = [];
+        let branchStats = [];
+        let metricTotals = new Array(metricNames.length).fill(0);
+        branchesData.forEach(b => {
+            let emps = dbData[b.id] || [];
+            let sum = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                sum += pct;
+                allEmps.push({ name: emp.name, branch: b.name, dept: getDeptDisplayName(emp.dept), pct, scores: sc });
+                sc.forEach((v, i) => { if (i < metricTotals.length) metricTotals[i] += (Number(v) || 3); });
+            });
+            branchStats.push({ name: b.name, count: emps.length, avg: emps.length ? Math.round(sum / emps.length) : 0 });
+        });
+        allEmps.sort((a, b) => b.pct - a.pct);
+
+        // إجابة محلية فورية ذكية
+        let answer = '';
+        if (q.includes('أفضل') || q.includes('افضل') || q.includes('متصدر') || q.includes('أعلى')) {
+            let top3 = allEmps.slice(0, 3).map((e, i) => `${i+1}. ${e.name} (${e.branch}) — ${e.pct}%`).join('\n');
+            answer = `🏆 أفضل 3 موظفين حالياً في الأسبوع (${activeWeek}):\n${top3 || 'لا توجد بيانات.'}`;
+        } else if (q.includes('أضعف') || q.includes('اضعف') || q.includes('قصور') || q.includes('تراجع')) {
+            let worstIdx = 0, minT = 999999;
+            metricTotals.forEach((t, i) => { if (t < minT) { minT = t; worstIdx = i; } });
+            let avgScore = allEmps.length ? (minT / allEmps.length).toFixed(1) : '0';
+            answer = `📉 أضعف معيار على مستوى الشركة حالياً هو «${metricNames[worstIdx]}» بمتوسط (${avgScore} من 5).\n💡 التوصية (Toyota Kaizen): ورشة تحسين 20 دقيقة + قائمة فحص Poka-Yoke.`;
+        } else if (q.includes('إنذار') || q.includes('انذار') || q.includes('حرج')) {
+            let alerts = allEmps.filter(e => e.pct <= 60);
+            answer = alerts.length
+                ? `🚨 يوجد حالياً ${alerts.length} حالات إنذار مبكر (≤ 60%):\n` + alerts.map(a => `• ${a.name} (${a.branch}) — ${a.pct}%`).join('\n')
+                : `🌟 ممتاز! لا توجد أي حالات إنذار مبكر حالياً.`;
+        } else if (q.includes('فرع') || q.includes('فروع') || q.includes('قارن')) {
+            answer = `🏢 مقارنة أداء الفروع المباشرة:\n` + branchStats.map(b => `• ${b.name}: متوسط ${b.avg}% (${b.count} موظف)`).join('\n');
+        } else if (q.includes('ترقي') || q.includes('قياد') || q.includes('قائد')) {
+            let leaders = allEmps.filter(e => e.pct >= 88 && !e.scores.some(s => (Number(s) || 3) <= 2));
+            answer = leaders.length
+                ? `👑 المرشحون للقيادة والترقية (أداء ≥ 88% بدون أي نقاط ضعف):\n` + leaders.slice(0, 5).map(l => `• ${l.name} (${l.branch}) — ${l.pct}%`).join('\n')
+                : `لا يوجد موظفون محققون لشرط التميز الكامل (≥ 88% بلا قصور) حالياً.`;
+        } else if (getSavedGeminiKey() && hasFeaturePermission('gemini_advisor')) {
+            appendAskDataMsg('🧠 جاري تحليل قاعدة البيانات عبر Gemini Live...', false);
+            let ctxSummary = `إجمالي الموظفين: ${allEmps.length}. الفروع: ${branchStats.map(b=>b.name+':'+b.avg+'%').join(', ')}. أعلى 3: ${allEmps.slice(0,3).map(e=>e.name+'('+e.pct+'%)').join(', ')}. أقل 3: ${allEmps.slice(-3).map(e=>e.name+'('+e.pct+'%)').join(', ')}.`;
+            let gRes = await callGeminiLiveAPI(`أنت محلل بيانات تنفيذي. البيانات الحية: ${ctxSummary}\nسؤال المدير: ${q}\nأجب بدقة واختصار بالعربية.`);
+            if (gRes) { appendAskDataMsg(gRes, false); return; }
+        } else {
+            let avgAll = allEmps.length ? Math.round(allEmps.reduce((s, e) => s + e.pct, 0) / allEmps.length) : 0;
+            answer = `📊 ملخص فوري لسؤالك:\n• إجمالي الموظفين: ${allEmps.length}\n• المتوسط العام للشركة: ${avgAll}%\n• المتصدر: ${allEmps[0] ? allEmps[0].name + ' (' + allEmps[0].pct + '%)' : '—'}\n💡 يمكنك تفعيل Gemini Live من الإعدادات للأسئلة المفتوحة المتقدمة.`;
+        }
+        appendAskDataMsg(answer, false);
+    }
+
+    // 🎭 2. محاكي الحوارات الصعبة بالذكاء الاصطناعي (AI Roleplay Coach)
+    let rpSession = { active: false, empName: '', scenario: '', turns: [] };
+    function initRoleplayDropdowns() {
+        let sel = document.getElementById('rpEmpSelect');
+        if (!sel) return;
+        sel.innerHTML = '';
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach(emp => {
+                sel.innerHTML += `<option value="${b.id}|${emp.name}">${emp.name} (${b.name})</option>`;
+            });
+        });
+    }
+    function startRoleplaySession() {
+        let sel = document.getElementById('rpEmpSelect');
+        let scSel = document.getElementById('rpScenarioSelect');
+        if (!sel || !sel.value) return;
+        let [bId, empName] = sel.value.split('|');
+        let scenario = scSel ? scSel.value : 'low_perf';
+        rpSession = { active: true, empName, bId, scenario, turns: [] };
+        let openings = {
+            low_perf: `(${empName} يجلس بتوتر): «أهلاً يا فندم، حضرتك طلبتني عشان التقييم الأسبوعي؟ بصراحة أنا شايف إن الضغط كان كبير جداً الأسبوع ده ومش ذنبي لوحدي...»`,
+            punctuality: `(${empName}): «أهلاً يا فندم، عارف إن البصمة اتأخرت يومين بس المواصلات كانت صعبة وأنا بعوّض ده في الشغل...»`,
+            customer: `(${empName}): «يا فندم العميل ده كان عصبي جداً ومستفز، أنا حاولت أرد عليه بس هو اللي بدأ...»`,
+            promo_delay: `(${empName}): «أنا بقالي فترة شغال بكل طاقتي وكنت متوقع الترقية الشهر ده، ليه اتأجلت؟»`
+        };
+        let box = document.getElementById('roleplayChatBox');
+        if (box) box.innerHTML = `<div class="chat-msg chat-msg-ai">${openings[scenario] || openings.low_perf}</div>`;
+        showToast(`🎬 بدأت بروفة الحوار مع «${empName}» — اكتب ردك القيادي الآن!`, 'info');
+    }
+    async function sendRoleplayTurn() {
+        let inp = document.getElementById('roleplayInput');
+        let box = document.getElementById('roleplayChatBox');
+        let msg = inp ? inp.value.trim() : '';
+        if (!msg || !rpSession.active) { showToast('ابدأ البروفة أولاً بالضغط على «🎬 بدء البروفة».', 'warn'); return; }
+        inp.value = '';
+        rpSession.turns.push({ role: 'manager', text: msg });
+        box.innerHTML += `<div class="chat-msg chat-msg-user">${msg}</div>`;
+        box.scrollTop = box.scrollHeight;
+
+        let reply = '';
+        if (getSavedGeminiKey() && hasFeaturePermission('gemini_advisor')) {
+            let gPrompt = `أنت تتقمص دور الموظف «${rpSession.empName}» في بروفة تدريبية مع مديره (السيناريو: ${rpSession.scenario}). ردّ عليه بواقعية مهنية قصيرة (سطرين) كموظف حقيقي على كلامه: "${msg}"`;
+            reply = await callGeminiLiveAPI(gPrompt);
+        }
+        if (!reply) {
+            let empathetic = msg.includes('أقدر') || msg.includes('نحل') || msg.includes('معاً') || msg.includes('كيف') || msg.includes('إيه') || msg.includes('اساعدك');
+            reply = empathetic
+                ? `(${rpSession.empName} يهدأ ويستجيب بإيجابية): «شكراً إن حضرتك بتسمعني فعلاً... بصراحة أكتر حاجة بتعطلني هي تنظيم الوقت وقت الذروة، لو اتفقنا على خطوة عملية هلتزم بيها من بكرة.»`
+                : `(${rpSession.empName} يشعر ببعض الدفاعية): «حاضر يا فندم، بس أنا حاسس إن فيه ضغط من غير ما نحدد بالضبط أبدأ بإيه الأول... حضرتك تقترح نعمل إيه عملياً؟»`;
+        }
+        rpSession.turns.push({ role: 'employee', text: reply });
+        box.innerHTML += `<div class="chat-msg chat-msg-ai">${reply}</div>`;
+        box.scrollTop = box.scrollHeight;
+    }
+    function evaluateRoleplaySession() {
+        let box = document.getElementById('roleplayChatBox');
+        if (!box || rpSession.turns.length === 0) { showToast('أرسل رداً واحداً على الأقل لتقييم أسلوبك القيادي.', 'warn'); return; }
+        let mgrText = rpSession.turns.filter(t => t.role === 'manager').map(t => t.text).join(' ');
+        let score = 65;
+        let notes = [];
+        if (mgrText.includes('أقدر') || mgrText.includes('مجهود') || mgrText.includes('فاهم')) { score += 12; notes.push('✅ أظهرت اهتماماً شخصياً (Care Personally — Radical Candor).'); }
+        else notes.push('💡 نصيحة: ابدأ بتقدير جانب إيجابي قبل طرح الملاحظة لتخفيف الدفاعية.');
+        if (mgrText.includes('؟') || mgrText.includes('كيف') || mgrText.includes('ما رأيك') || mgrText.includes('إيه')) { score += 13; notes.push('✅ استخدمت أسئلة استكشافية ممتازة (نموذج GROW).'); }
+        else notes.push('💡 نصيحة: اختم بسؤال مفتوح مثل «ما أول خطوة تقترحها غداً؟» لبناء التزام ذاتي.');
+        if (mgrText.includes('خطة') || mgrText.includes('غداً') || mgrText.includes('بكرة') || mgrText.includes('أسبوع')) { score += 10; notes.push('✅ حددت التزاماً زمنياً واضحاً (Actionable Next Step).'); }
+        score = Math.min(100, score);
+        box.innerHTML += `<div class="chat-msg chat-msg-ai" style="border-color:#10b981; background:rgba(16,185,129,0.12);">📊 <b>تقييم أسلوبك القيادي: ${score}%</b>\n${notes.join('\n')}\n📚 المصدر: Radical Candor (Kim Scott) & SBI Framework (CCL)</div>`;
+        box.scrollTop = box.scrollHeight;
+    }
+
+    // 💥 3. محاكي أثر غياب الموظف + 👑 رادار القادة المخفيين + ⚖️ مصداقية المقيّمين (Bridgewater)
+    function initBlastRadiusView() {
+        let sel = document.getElementById('blastEmpSelect');
+        if (!sel) return;
+        sel.innerHTML = '';
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach((emp, idx) => {
+                sel.innerHTML += `<option value="${b.id}|${idx}">${emp.name} (${b.name})</option>`;
+            });
+        });
+        calculateBlastRadius();
+    }
+    function calculateBlastRadius() {
+        let sel = document.getElementById('blastEmpSelect');
+        let box = document.getElementById('blastRadiusResultBox');
+        if (!sel || !box || !sel.value) return;
+        let [bId, idxStr] = sel.value.split('|');
+        let idx = parseInt(idxStr);
+        let emps = dbData[bId] || [];
+        let emp = emps[idx];
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        let bName = (branchesData.find(b => b.id === bId) || {}).name || bId;
+
+        let pcts = emps.map(e => calculateWeightedEmployeePct(e, (e.history && e.history[activeWeek]) || [], null));
+        let curAvg = pcts.length ? Math.round(pcts.reduce((a, c) => a + c, 0) / pcts.length) : 0;
+        let empPct = pcts[idx] || 0;
+        let remPcts = pcts.filter((_, i) => i !== idx);
+        let afterAvg = remPcts.length ? Math.round(remPcts.reduce((a, c) => a + c, 0) / remPcts.length) : 0;
+        let impact = afterAvg - curAvg;
+
+        // أقرب بديل جاهز في نفس الفرع/القسم
+        let backup = null, bestScore = -1;
+        emps.forEach((other, oIdx) => {
+            if (oIdx === idx) return;
+            let s = pcts[oIdx] + (other.dept === emp.dept ? 10 : 0);
+            if (s > bestScore) { bestScore = s; backup = { name: other.name, pct: pcts[oIdx], dept: getDeptDisplayName(other.dept) }; }
+        });
+
+        let riskBadge = empPct >= 88 ? '<span class="badge b-red">🔴 صدمة تشغيلية عالية (عنصر محوري)</span>' : (empPct >= 70 ? '<span class="badge b-yellow">🟠 أثر متوسط</span>' : '<span class="badge b-green">🟢 أثر محدود</span>');
+        box.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+                <b style="color:#38bdf8; font-size:14px;">👤 تحليل أثر غياب: ${emp.name} (${bName})</b>
+                ${riskBadge}
+            </div>
+            • <b>متوسط الفرع الحالي:</b> ${curAvg}% ← <b>بعد غياب الموظف:</b> <b style="color:${impact < 0 ? '#fb7185' : '#34d399'};">${afterAvg}% (${impact >= 0 ? '+' : ''}${impact}%)</b><br>
+            • <b>عبء العمل الإضافي على باقي الفريق:</b> +${emps.length > 1 ? Math.round(100 / (emps.length - 1)) : 100}% لكل زميل مؤقتاً.<br>
+            • <b>🛡️ البديل الأقرب جاهزية (Succession Backup):</b> ${backup ? `<b style="color:#34d399;">${backup.name}</b> (${backup.dept} — أداؤه ${backup.pct}%)` : 'لا يوجد بديل مسجل حالياً'}.<br>
+            <span class="world-source-tag">📚 المصدر: Succession Planning & Key-Person Risk (McKinsey & Harvard Business Review)</span>`;
+    }
+
+    function renderHiddenTalentRadar() {
+        let tbody = document.getElementById('hiddenTalentTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        let candidates = [];
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                let minSc = Math.min(...sc.map(v => Number(v) || 3));
+                let balance = Math.round((minSc / 5) * 100);
+                if (pct >= 80 && minSc >= 3) {
+                    candidates.push({ name: emp.name, branch: b.name, pct, balance, ready: pct >= 90 && minSc >= 4 });
+                }
+            });
+        });
+        candidates.sort((a, b) => (b.pct + b.balance) - (a.pct + a.balance));
+        if (candidates.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:16px;">ارفع تقييمات العناصر المتوازنة (≥ 80% بدون أي بند أقل من 3) لاكتشاف القادة المخفيين تلقائياً.</td></tr>`;
+            return;
+        }
+        candidates.slice(0, 6).forEach(c => {
+            tbody.innerHTML += `<tr>
+                <td><b>${c.name}</b> <span style="font-size:10px; color:#38bdf8;">(${c.branch})</span></td>
+                <td style="text-align:center; font-weight:bold; color:#34d399;">${c.pct}%</td>
+                <td style="text-align:center; color:#c4b5fd; font-weight:bold;">${c.balance}%</td>
+                <td style="text-align:center;">${c.ready ? '<span class="badge b-green">👑 جاهز لقيادة فريق</span>' : '<span class="badge b-blue">🌱 نجم صاعد (High Potential)</span>'}</td>
+            </tr>`;
+        });
+    }
+
+    function renderBridgewaterScores() {
+        let container = document.getElementById('bridgewaterScoreContainer');
+        if (!container) return;
+        let activeWeek = getCurrentWeekKey();
+        let html = '';
+        branchesData.forEach(b => {
+            let emps = dbData[b.id] || [];
+            let allSc = [];
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [];
+                sc.forEach(v => allSc.push(Number(v) || 3));
+            });
+            let avg = allSc.length ? allSc.reduce((a, c) => a + c, 0) / allSc.length : 3;
+            let variance = allSc.length ? allSc.reduce((a, c) => a + Math.pow(c - avg, 2), 0) / allSc.length : 0;
+            let credibility = 95;
+            if (variance < 0.05) credibility -= 35;
+            if (avg >= 4.7 || avg <= 2.0) credibility -= 20;
+            credibility = Math.max(40, Math.min(99, Math.round(credibility)));
+            let badge = credibility >= 85 ? 'b-green' : (credibility >= 65 ? 'b-yellow' : 'b-red');
+            html += `<div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:12px 15px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div><b>🏢 ${b.name}</b> — التباين الإحصائي: <b>${variance.toFixed(2)}</b> • المتوسط: <b>${avg.toFixed(1)}/5</b></div>
+                <span class="badge ${badge}">مؤشر المصداقية (Bridgewater): ${credibility}%</span>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    // ⚙️ 4. محرك القواعد التلقائية «إذا حدث X نفّذ Y» (Autonomous Workflow Rules)
+    let workflowRulesData = [
+        { cond: 'pct_below_60', action: 'add_plan_rescue', enabled: true }
+    ];
+    try {
+        let wfSaved = localStorage.getItem('unique_journey_workflows_v1');
+        if (wfSaved) workflowRulesData = JSON.parse(wfSaved);
+    } catch(e) {}
+
+    function renderWorkflowRules() {
+        let list = document.getElementById('workflowRulesList');
+        if (!list) return;
+        const condLabels = { pct_below_60: 'أداء الموظف ≤ 60%', metric_low: 'أي معيار ≤ 2/5', pct_above_90: 'أداء الموظف ≥ 90%' };
+        const actLabels = { add_plan_rescue: 'إضافة مهمة إنقاذ في خطة العمل', add_plan_reward: 'إضافة بند تكريم في خطة العمل', log_roi: 'تسجيل متابعة في سجل العائد (ROI)' };
+        if (workflowRulesData.length === 0) {
+            list.innerHTML = `<p style="color:#94a3b8; text-align:center; padding:16px;">لا توجد قواعد أتمتة مضافة بعد.</p>`;
+            return;
+        }
+        list.innerHTML = workflowRulesData.map((r, idx) => `
+            <div class="workflow-rule-card">
+                <div style="font-size:12px;">
+                    <span class="badge b-blue">إذا كان</span> <b>${condLabels[r.cond] || r.cond}</b>
+                    <span style="margin:0 8px; color:#34d399;">⬅️</span>
+                    <span class="badge b-green">نفّذ</span> <b>${actLabels[r.action] || r.action}</b>
+                </div>
+                <button type="button" onclick="deleteWorkflowRule(${idx})" class="btn-danger">🗑️ حذف</button>
+            </div>`).join('');
+    }
+    function addWorkflowRule() {
+        let cond = document.getElementById('wfConditionSelect').value;
+        let action = document.getElementById('wfActionSelect').value;
+        workflowRulesData.push({ cond, action, enabled: true });
+        localStorage.setItem('unique_journey_workflows_v1', JSON.stringify(workflowRulesData));
+        renderWorkflowRules();
+        showToast('✅ تم حفظ قاعدة الأتمتة التلقائية بنجاح!', 'success');
+    }
+    function deleteWorkflowRule(idx) {
+        workflowRulesData.splice(idx, 1);
+        localStorage.setItem('unique_journey_workflows_v1', JSON.stringify(workflowRulesData));
+        renderWorkflowRules();
+    }
+    function executeAllWorkflowRules(showFeedback) {
+        let activeWeek = getCurrentWeekKey();
+        let triggered = 0;
+        let emps = dbData[currentBranch] || [];
+        workflowRulesData.forEach(rule => {
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [];
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                let match = (rule.cond === 'pct_below_60' && pct <= 60) ||
+                            (rule.cond === 'metric_low' && sc.some(v => (Number(v) || 3) <= 2)) ||
+                            (rule.cond === 'pct_above_90' && pct >= 90);
+                if (match) {
+                    if (rule.action === 'add_plan_rescue') {
+                        let g = `🤖 [أتمتة] خطة إنقاذ للموظف ${emp.name} (${pct}%)`;
+                        if (!planData.some(p => p.goal === g)) {
+                            planData.unshift({ goal: g, action: 'تطبيق جلسة SBI + متابعة خطة 7 أيام تلقائياً.', resp: 'مدير الفرع', completed: false });
+                            triggered++;
+                        }
+                    } else if (rule.action === 'add_plan_reward') {
+                        let g = `🏆 [أتمتة] تكريم الموظف المتميز ${emp.name} (${pct}%)`;
+                        if (!planData.some(p => p.goal === g)) {
+                            planData.unshift({ goal: g, action: 'إصدار شهادة تميز رقمية وإشادة في اجتماع الصباح.', resp: 'الإدارة العامة', completed: false });
+                            triggered++;
+                        }
+                    } else if (rule.action === 'log_roi') {
+                        let note = `رصد تلقائي (${pct}%)`;
+                        if (!roiJournalData.some(r => r.empName === emp.name && r.note === note)) {
+                            roiJournalData.unshift({ empName: emp.name, branchId: currentBranch, type: 'جلسة كوتشينج فردية', note, basePct: pct, date: new Date().toLocaleDateString('ar-EG') });
+                            triggered++;
+                        }
+                    }
+                }
+            });
+        });
+        if (triggered > 0) {
+            localStorage.setItem('unique_journey_plan_v21', JSON.stringify(planData));
+            localStorage.setItem('unique_journey_roi_v1', JSON.stringify(roiJournalData));
+        }
+        if (showFeedback) {
+            showToast(triggered > 0 ? `⚙️ تم تنفيذ القواعد بنجاح وتوليد ${triggered} إجراء تلقائي!` : 'تم فحص جميع القواعد — لا توجد إجراءات جديدة مطلوبة الآن.', 'success');
+        }
+    }
+
+    // 🪞 5. مرآة التقييم الذاتي 360° (Perception Gap Mirror)
+    let selfEvalStore = {};
+    try {
+        let seSaved = localStorage.getItem('unique_journey_self_eval_v1');
+        if (seSaved) selfEvalStore = JSON.parse(seSaved);
+    } catch(e) {}
+
+    function initMirror360View() {
+        let sel = document.getElementById('mirrorEmpSelect');
+        if (!sel) return;
+        sel.innerHTML = '';
+        branchesData.forEach(b => {
+            (dbData[b.id] || []).forEach((emp, idx) => {
+                if (currentUser && currentUser.role === 'Employee' && emp.name.toLowerCase() !== currentUser.name.toLowerCase()) return;
+                sel.innerHTML += `<option value="${b.id}|${idx}">${emp.name} (${b.name})</option>`;
+            });
+        });
+        renderMirror360Table();
+    }
+    function renderMirror360Table() {
+        let sel = document.getElementById('mirrorEmpSelect');
+        let tbody = document.getElementById('mirror360TableBody');
+        let sumBox = document.getElementById('mirrorGapSummary');
+        if (!sel || !tbody || !sel.value) return;
+        let [bId, idxStr] = sel.value.split('|');
+        let emp = (dbData[bId] || [])[parseInt(idxStr)];
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        let mgrScores = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+        let key = `${bId}_${emp.name}_${activeWeek}`;
+        let selfScores = selfEvalStore[key] || new Array(metricNames.length).fill(4);
+
+        tbody.innerHTML = '';
+        let totalAbsGap = 0, count = 0;
+        metricNames.forEach((m, i) => {
+            if (!isMetricApplicableForDept(m, emp.dept)) return;
+            let sVal = Number(selfScores[i]) || 4;
+            let mVal = Number(mgrScores[i]) || 3;
+            let gap = sVal - mVal;
+            totalAbsGap += Math.abs(gap);
+            count++;
+            let gapBadge = Math.abs(gap) === 0 ? '<span class="badge b-green">✅ تطابق تام (0)</span>'
+                : (gap > 0 ? `<span class="badge b-red">⬆️ يبالغ في تقييم نفسه (+${gap})</span>` : `<span class="badge b-blue">⬇️ متواضع أقل من تقييم المدير (${gap})</span>`);
+            tbody.innerHTML += `<tr>
+                <td><b>${m}</b></td>
+                <td style="text-align:center;"><select id="selfSc_${i}" style="width:75px;">
+                    ${[1,2,3,4,5].map(v => `<option value="${v}" ${sVal===v?'selected':''}>${v}/5</option>`).join('')}
+                </select></td>
+                <td style="text-align:center; font-weight:bold; color:#38bdf8;">${mVal}/5</td>
+                <td style="text-align:center;">${gapBadge}</td>
+            </tr>`;
+        });
+        let avgGap = count ? (totalAbsGap / count).toFixed(1) : 0;
+        if (sumBox) {
+            sumBox.innerHTML = `🪞 <b>متوسط فجوة الإدراك لدى ${emp.name}:</b> <b style="color:${avgGap >= 1.2 ? '#fb7185' : '#34d399'};">${avgGap} درجة</b> — ${avgGap >= 1.2 ? 'توجد فجوة إدراك عالية؛ يوصى بعرض هذه المقارنة في الجلسة الفردية لتوحيد المعايير.' : 'رؤية الموظف لنفسه متقاربة وموضوعية مع تقييم الإدارة.'}`;
+        }
+    }
+    function saveMirrorSelfEval() {
+        let sel = document.getElementById('mirrorEmpSelect');
+        if (!sel || !sel.value) return;
+        let [bId, idxStr] = sel.value.split('|');
+        let emp = (dbData[bId] || [])[parseInt(idxStr)];
+        if (!emp) return;
+        let activeWeek = getCurrentWeekKey();
+        let key = `${bId}_${emp.name}_${activeWeek}`;
+        let arr = metricNames.map((_, i) => {
+            let el = document.getElementById(`selfSc_${i}`);
+            return el ? (parseInt(el.value) || 3) : 3;
+        });
+        selfEvalStore[key] = arr;
+        localStorage.setItem('unique_journey_self_eval_v1', JSON.stringify(selfEvalStore));
+        renderMirror360Table();
+        showToast('🪞 تم حفظ التقييم الذاتي وحساب فجوة الإدراك بنجاح!', 'success');
+    }
+
+    // 📈 6. سجل عائد القرارات الإدارية (Management ROI Journal)
+    let roiJournalData = [];
+    try {
+        let rjSaved = localStorage.getItem('unique_journey_roi_v1');
+        if (rjSaved) roiJournalData = JSON.parse(rjSaved);
+    } catch(e) {}
+
+    function initRoiJournalView() {
+        let sel = document.getElementById('roiEmpSelect');
+        if (sel) {
+            sel.innerHTML = '';
+            branchesData.forEach(b => {
+                (dbData[b.id] || []).forEach(emp => {
+                    sel.innerHTML += `<option value="${b.id}|${emp.name}">${emp.name} (${b.name})</option>`;
+                });
+            });
+        }
+        renderRoiJournalTable();
+    }
+    function addRoiDecision() {
+        let sel = document.getElementById('roiEmpSelect');
+        if (!sel || !sel.value) return;
+        let [bId, empName] = sel.value.split('|');
+        let type = document.getElementById('roiTypeSelect').value;
+        let note = document.getElementById('roiNoteInput').value.trim() || 'قرار تطويري';
+        let emp = (dbData[bId] || []).find(e => e.name === empName);
+        let activeWeek = getCurrentWeekKey();
+        let basePct = emp ? calculateWeightedEmployeePct(emp, (emp.history && emp.history[activeWeek]) || [], null) : 70;
+        roiJournalData.unshift({ empName, branchId: bId, type, note, basePct, date: new Date().toLocaleDateString('ar-EG') });
+        localStorage.setItem('unique_journey_roi_v1', JSON.stringify(roiJournalData));
+        document.getElementById('roiNoteInput').value = '';
+        renderRoiJournalTable();
+        showToast('📈 تم تسجيل القرار الإداري وخط الأساس لقياس عائده تلقائياً!', 'success');
+    }
+    function renderRoiJournalTable() {
+        let tbody = document.getElementById('roiJournalTableBody');
+        if (!tbody) return;
+        tbody.innerHTML = '';
+        let activeWeek = getCurrentWeekKey();
+        if (roiJournalData.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:18px;">لا توجد قرارات مسجلة في سجل العائد (ROI) بعد.</td></tr>`;
+            return;
+        }
+        roiJournalData.forEach((item, idx) => {
+            let emp = (dbData[item.branchId] || []).find(e => e.name === item.empName);
+            let nowPct = emp ? calculateWeightedEmployeePct(emp, (emp.history && emp.history[activeWeek]) || [], null) : item.basePct;
+            let delta = nowPct - item.basePct;
+            let roiBadge = delta > 0 ? `<span class="badge b-green">▲ تحسن +${delta}%</span>` : (delta < 0 ? `<span class="badge b-red">▼ تراجع ${delta}%</span>` : `<span class="badge b-blue">• مستقر 0%</span>`);
+            tbody.innerHTML += `<tr>
+                <td><b>${item.empName}</b></td>
+                <td style="text-align:center;"><span class="badge b-yellow">${item.type}</span></td>
+                <td style="white-space:normal;">${item.note}<br><span style="font-size:10px; color:#94a3b8;">${item.date}</span></td>
+                <td style="text-align:center;">${item.basePct}%</td>
+                <td style="text-align:center; font-weight:bold; color:#38bdf8;">${nowPct}%</td>
+                <td style="text-align:center;">${roiBadge}</td>
+                <td style="text-align:center;"><button type="button" onclick="deleteRoiDecision(${idx})" class="btn-danger">حذف</button></td>
+            </tr>`;
+        });
+    }
+    function deleteRoiDecision(idx) {
+        roiJournalData.splice(idx, 1);
+        localStorage.setItem('unique_journey_roi_v1', JSON.stringify(roiJournalData));
+        renderRoiJournalTable();
+    }
 
 </script>
 </body>
