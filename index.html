@@ -2440,6 +2440,311 @@
             .kpi-hex-icon { font-size: 22px !important; }
         }
 
+    
+        /* ===================================================================
+           🛸 v13.2 ALIEN-TECH HOLOGRAPHIC 3D HEX-PODS & REACTOR HUD
+           =================================================================== */
+        .kpi-topology-stage {
+            background:
+                radial-gradient(ellipse at 50% 48%, rgba(14, 165, 233, 0.20) 0%, rgba(15, 23, 42, 0.72) 44%, rgba(3, 7, 18, 0.98) 82%),
+                linear-gradient(rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px) !important;
+            background-size: 100% 100%, 32px 32px, 32px 32px !important;
+            border: 1px solid rgba(56, 189, 248, 0.45) !important;
+            box-shadow:
+                0 25px 60px rgba(0, 0, 0, 0.75),
+                inset 0 0 65px rgba(14, 165, 233, 0.14),
+                inset 0 1px 0 rgba(186, 230, 253, 0.25) !important;
+        }
+        /* هالة رادار دوّارة حول كرة النبض المركزية */
+        @keyframes hudReticleSpinCW {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        @keyframes hudReticleSpinCCW {
+            from { transform: rotate(360deg); }
+            to   { transform: rotate(0deg); }
+        }
+        .kpi-core-orb-wrapper::before {
+            content: '';
+            position: absolute;
+            width: 266px;
+            height: 266px;
+            border-radius: 50%;
+            border: 1.5px dashed rgba(56, 189, 248, 0.42);
+            box-shadow: 0 0 22px rgba(56, 189, 248, 0.16);
+            animation: hudReticleSpinCW 26s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .kpi-core-orb-wrapper::after {
+            content: '';
+            position: absolute;
+            width: 248px;
+            height: 248px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: rgba(56, 189, 248, 0.85);
+            border-bottom-color: rgba(16, 185, 129, 0.75);
+            animation: hudReticleSpinCCW 11s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .kpi-core-orb {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            overflow: hidden;
+        }
+        /* لمعة عدسة زجاجية ثلاثية الأبعاد على كرة النبض */
+        .kpi-core-orb::before {
+            content: '';
+            position: absolute;
+            top: -12%;
+            left: 14%;
+            width: 72%;
+            height: 46%;
+            border-radius: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.02) 100%);
+            pointer-events: none;
+        }
+
+        /* 🛸 تصميم الخلية السداسية كوحدة هولوجرافية من عالم آخر */
+        .kpi-hex-arena {
+            min-height: 435px !important;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell {
+            width: 156px !important;
+            height: 140px !important;
+            padding: 2.5px !important;
+            background: linear-gradient(145deg, rgba(125, 211, 252, 0.95), rgba(14, 165, 233, 0.30) 45%, rgba(168, 85, 247, 0.88)) !important;
+            filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 12px rgba(56, 189, 248, 0.38)) !important;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell.hex-danger {
+            background: linear-gradient(145deg, rgba(251, 113, 133, 0.98), rgba(220, 38, 38, 0.35) 45%, rgba(251, 146, 60, 0.92)) !important;
+            filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 15px rgba(239, 68, 68, 0.55)) !important;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell.hex-success {
+            background: linear-gradient(145deg, rgba(52, 211, 153, 0.98), rgba(16, 185, 129, 0.32) 45%, rgba(56, 189, 248, 0.92)) !important;
+            filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 14px rgba(16, 185, 129, 0.50)) !important;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell.hex-gold {
+            background: linear-gradient(145deg, rgba(253, 224, 71, 0.98), rgba(245, 158, 11, 0.34) 45%, rgba(56, 189, 248, 0.88)) !important;
+            filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 14px rgba(250, 204, 21, 0.50)) !important;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell.hex-purple {
+            background: linear-gradient(145deg, rgba(192, 132, 252, 0.98), rgba(139, 92, 246, 0.34) 45%, rgba(56, 189, 248, 0.90)) !important;
+            filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.72)) drop-shadow(0 0 14px rgba(168, 85, 247, 0.52)) !important;
+        }
+        .kpi-hex-arena.hex-expanded .kpi-hex-radial-layer .kpi-hex-cell:hover {
+            transform: translate(calc(-50% + var(--hx, 0px)), calc(-50% + var(--hy, 0px) - 6px)) scale(1.11) !important;
+            filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.82)) drop-shadow(0 0 24px rgba(56, 189, 248, 0.88)) !important;
+        }
+        .kpi-hex-inner {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 50% 18%, rgba(56, 189, 248, 0.16), transparent 58%),
+                linear-gradient(165deg, rgba(13, 25, 48, 0.97) 0%, rgba(5, 10, 22, 0.99) 70%, rgba(11, 20, 40, 0.98) 100%) !important;
+            padding: 8px 14px 10px !important;
+            gap: 2px !important;
+        }
+        /* شعاع مسح ليزري زجاجي يمر بهدوء عبر كل خلية */
+        @keyframes holoGlassSweep {
+            0%   { transform: translateX(-160%) skewX(-24deg); opacity: 0; }
+            20%  { opacity: 0.45; }
+            50%  { opacity: 0.15; }
+            100% { transform: translateX(220%) skewX(-24deg); opacity: 0; }
+        }
+        .kpi-hex-inner::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: 0;
+            width: 48%;
+            height: 120%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
+            pointer-events: none;
+            animation: holoGlassSweep 5.5s ease-in-out infinite;
+            animation-delay: var(--sweep-delay, 0s);
+        }
+        /* شريط كود الـ HUD العلوي داخل الخلية */
+        .hex-hud-meta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-family: monospace;
+            font-size: 8.5px;
+            letter-spacing: 0.8px;
+            color: rgba(148, 163, 184, 0.88);
+            margin-bottom: 1px;
+        }
+        .hex-live-led {
+            width: 5.5px;
+            height: 5.5px;
+            border-radius: 50%;
+            background: var(--pod-color, #38bdf8);
+            box-shadow: 0 0 7px var(--pod-color, #38bdf8);
+            animation: ecgLiveLedBlink 1.6s infinite;
+        }
+        /* حلقة القياس الدقيقة مع أيقونة SVG النيونية */
+        .hex-orb-gauge {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1px 0 2px;
+        }
+        .hex-orb-gauge svg.hex-ring-svg {
+            position: absolute;
+            inset: 0;
+            width: 50px;
+            height: 50px;
+            transform: rotate(-90deg);
+        }
+        .hex-svg-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--pod-color, #38bdf8);
+            filter: drop-shadow(0 0 6px var(--pod-color, #38bdf8));
+            position: relative;
+            z-index: 2;
+        }
+        .kpi-hex-title {
+            font-size: 10.5px !important;
+            font-weight: 800 !important;
+            color: #f1f5f9 !important;
+            letter-spacing: 0.1px;
+        }
+        .kpi-hex-val {
+            font-size: 12px !important;
+            font-weight: 800 !important;
+            color: var(--pod-color, #38bdf8) !important;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+            max-width: 112px !important;
+        }
+        .hex-micro-bar {
+            width: 56px;
+            height: 3px;
+            border-radius: 3px;
+            background: rgba(148, 163, 184, 0.18);
+            overflow: hidden;
+            margin-top: 2px;
+        }
+        .hex-micro-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--pod-color, #38bdf8);
+            box-shadow: 0 0 8px var(--pod-color, #38bdf8);
+            transition: width 0.6s ease;
+        }
+        body.light-mode .kpi-hex-inner {
+            background: linear-gradient(165deg, #ffffff 0%, #f0f9ff 100%) !important;
+        }
+        body.light-mode .kpi-hex-title { color: #0f172a !important; }
+        body.light-mode .hex-hud-meta { color: #64748b !important; }
+
+        @media (max-width: 1160px) and (min-width: 761px) {
+            .kpi-hex-radial-layer .kpi-hex-cell {
+                width: 136px !important;
+                height: 122px !important;
+            }
+            .hex-orb-gauge, .hex-orb-gauge svg.hex-ring-svg { width: 42px; height: 42px; }
+            .hex-svg-icon { width: 20px; height: 20px; }
+            .kpi-hex-title { font-size: 9.5px !important; }
+            .kpi-hex-val { font-size: 10.5px !important; }
+        }
+        @media (max-width: 760px) {
+            .kpi-core-orb-wrapper::before { width: 222px; height: 222px; }
+            .kpi-core-orb-wrapper::after  { width: 206px; height: 206px; }
+            .kpi-hex-radial-layer .kpi-hex-cell {
+                width: 118px !important;
+                height: 106px !important;
+            }
+            .hex-orb-gauge, .hex-orb-gauge svg.hex-ring-svg { width: 36px; height: 36px; }
+            .hex-svg-icon { width: 17px; height: 17px; }
+            .hex-hud-meta { font-size: 7px; }
+            .kpi-hex-title { font-size: 8.8px !important; }
+            .kpi-hex-val { font-size: 9.8px !important; }
+        }
+
+    
+        /* ===================================================================
+           💎 v13.3 UNIFIED 3-RECTANGLE ALIGNMENT + ULTRA-MODERN CHART SUITE
+           =================================================================== */
+        .kpi-topology-stage {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 16px !important;
+            padding: 18px !important;
+        }
+        /* المستطيل 1: ساحة كرة النبض والبنود السداسية */
+        .kpi-hex-arena {
+            width: 100% !important;
+            margin: 0 !important;
+            min-height: 430px !important;
+            border-radius: 16px !important;
+            border: 1px solid rgba(56, 189, 248, 0.38) !important;
+            background:
+                radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.14) 0%, rgba(6, 11, 23, 0.88) 72%) !important;
+            box-shadow: inset 0 0 36px rgba(14, 165, 233, 0.08), 0 12px 28px rgba(0, 0, 0, 0.42) !important;
+            padding: 16px !important;
+        }
+        .kpi-hex-summary-strip {
+            margin-top: 0 !important;
+            width: 100% !important;
+            border-radius: 14px !important;
+        }
+        /* المستطيل 2 والمستطيل 3: مخطط النبض والرسم البياني الحديث بنفس العرض والارتفاع والتصميم المتساوي */
+        .kpi-ecg-monitor-box,
+        .kpi-mini-spark-wrap.kpi-modern-chart-box {
+            width: 100% !important;
+            margin: 0 !important;
+            height: 228px !important;
+            min-height: 228px !important;
+            border-radius: 16px !important;
+            padding: 14px 16px 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            box-sizing: border-box !important;
+        }
+        .kpi-ecg-monitor-box {
+            border: 1px solid rgba(16, 185, 129, 0.42) !important;
+            box-shadow: inset 0 0 32px rgba(16, 185, 129, 0.09), 0 12px 28px rgba(0, 0, 0, 0.45) !important;
+        }
+        .kpi-mini-spark-wrap.kpi-modern-chart-box {
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.13) 0%, transparent 65%),
+                linear-gradient(rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+                rgba(4, 9, 20, 0.95) !important;
+            background-size: 100% 100%, 24px 24px, 24px 24px, 100% 100% !important;
+            border: 1px solid rgba(56, 189, 248, 0.42) !important;
+            box-shadow: inset 0 0 32px rgba(56, 189, 248, 0.09), 0 12px 28px rgba(0, 0, 0, 0.45) !important;
+        }
+        #kpiEcgCanvas {
+            width: 100% !important;
+            height: 162px !important;
+            flex: 1;
+        }
+        .kpi-modern-chart-canvas-wrap {
+            position: relative;
+            width: 100%;
+            height: 162px;
+            flex: 1;
+        }
+        body.light-mode .kpi-hex-arena {
+            background: radial-gradient(circle at 50% 50%, rgba(2, 132, 199, 0.10) 0%, rgba(255, 255, 255, 0.92) 75%) !important;
+            border-color: rgba(2, 132, 199, 0.32) !important;
+        }
+        body.light-mode .kpi-mini-spark-wrap.kpi-modern-chart-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%) !important;
+            border-color: rgba(2, 132, 199, 0.35) !important;
+        }
+
     </style>
 </head>
 <body>
@@ -2789,8 +3094,21 @@
                     <canvas id="kpiEcgCanvas"></canvas>
                 </div>
 
-                <div class="kpi-mini-spark-wrap">
-                    <canvas id="kpiTelemetrySparkChart"></canvas>
+                <div class="kpi-mini-spark-wrap kpi-modern-chart-box">
+                    <div class="kpi-ecg-header" style="margin-bottom:10px;">
+                        <div style="display:flex; align-items:center; color:#38bdf8; font-weight:800;">
+                            <span class="ecg-live-dot" style="background:#38bdf8; color:#38bdf8;"></span>
+                            <span>تحليل مؤشرات الأداء الحديث (NEXT-GEN KPI ANALYTICS)</span>
+                        </div>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; font-family:'Cairo', monospace; font-size:10.5px;">
+                            <span id="kcoreChartBestBadge" class="badge b-green" style="padding:2px 8px; font-size:10px;">🏆 الأعلى: —</span>
+                            <span id="kcoreChartWeakBadge" class="badge b-red" style="padding:2px 8px; font-size:10px;">⚠️ الأقل: —</span>
+                            <span class="badge b-blue" style="padding:2px 8px; font-size:10px;">🎯 المستهدف: 85%</span>
+                        </div>
+                    </div>
+                    <div class="kpi-modern-chart-canvas-wrap">
+                        <canvas id="kpiTelemetrySparkChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -13112,6 +13430,376 @@
         });
         return 'M ' + pts.join(' L ');
     };
+
+
+    // =========================================================================
+    // 🛸 v13.2 ALIEN-TECH HOLOGRAPHIC 3D HEX-PODS RENDERER
+    // =========================================================================
+    function getSciFiHexSvgIcon(tabKey) {
+        const icons = {
+            eval: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15v2"/><path d="M11 11v6"/><path d="M15 8v9"/><path d="M19 5v12"/></svg>`,
+            allemp: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+            alerts: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+            coaching: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
+            leaderboard: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>`,
+            plan: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M8 12l2.5 2.5L16 9"/></svg>`,
+            heatmap: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c.5 3.5-2 5.5-2 8.5a4 4 0 0 0 8 0c0-3-2-5-2-8.5"/><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6"/><circle cx="12" cy="17" r="2"/></svg>`,
+            charts: `<svg class="hex-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><line x1="12" y1="3" x2="12" y2="6"/><line x1="21" y1="12" x2="18" y2="12"/></svg>`
+        };
+        return icons[tabKey] || icons.charts;
+    }
+
+    function getSciFiHexTelemetry(item, idx) {
+        let codeMap = {
+            eval: 'KPI-01', allemp: 'HR-02', alerts: 'ALT-03', coaching: 'CCH-04',
+            leaderboard: 'TOP-05', plan: 'OPS-06', heatmap: 'THM-07', charts: 'BCH-08'
+        };
+        let color = '#38bdf8';
+        if (item.cls === 'hex-danger') color = '#fb7185';
+        else if (item.cls === 'hex-success') color = '#34d399';
+        else if (item.cls === 'hex-gold') color = '#facc15';
+        else if (item.cls === 'hex-purple') color = '#c084fc';
+
+        // استخراج نسبة التقدم الفعلية للحلقة الدائرية داخل البند
+        let pct = 78;
+        let valStr = String(item.val || '');
+        let mPct = valStr.match(/(\d+)\s*%/);
+        let mFrac = valStr.match(/(\d+)\s*\/\s*(\d+)/);
+        if (mPct) {
+            pct = Math.max(8, Math.min(100, parseInt(mPct[1], 10)));
+        } else if (mFrac && parseInt(mFrac[2], 10) > 0) {
+            pct = Math.max(8, Math.min(100, Math.round((parseInt(mFrac[1], 10) / parseInt(mFrac[2], 10)) * 100)));
+        } else if (item.cls === 'hex-success') {
+            pct = 96;
+        } else if (item.cls === 'hex-danger') {
+            pct = 32;
+        } else if (item.cls === 'hex-gold') {
+            pct = 92;
+        } else {
+            pct = 82;
+        }
+
+        return {
+            hudCode: codeMap[item.tab] || `SYS-0${idx + 1}`,
+            color,
+            pct
+        };
+    }
+
+    // ترقية توزيع v13.1 ليتلاءم بدقة مع حجم الكبسولات الجديدة (156px)
+    const _origGetRadialHexOffsetsV131 = getRadialHexOffsets;
+    getRadialHexOffsets = function(count, arenaW, arenaH) {
+        let isMobile = arenaW < 760;
+        let isCompactDesktop = arenaW >= 760 && arenaW <= 1160;
+        let cellW = isMobile ? 118 : (isCompactDesktop ? 136 : 156);
+        let halfCellW = cellW / 2;
+
+        if (isMobile) {
+            let rx = Math.max(112, Math.min((arenaW / 2) - halfCellW - 6, 172));
+            let presetMob = [
+                { x:  rx * 0.90, y: -206 },
+                { x:  rx,        y: -76  },
+                { x:  rx,        y:  76  },
+                { x:  rx * 0.90, y:  206 },
+                { x: -rx * 0.90, y: -206 },
+                { x: -rx,        y: -76  },
+                { x: -rx,        y:  76  },
+                { x: -rx * 0.90, y:  206 }
+            ];
+            return presetMob.slice(0, count);
+        }
+
+        let edgePadding = 14;
+        let xOuter = Math.max(315, (arenaW / 2) - halfCellW - edgePadding);
+        let orbClearX = 128 + halfCellW + 18;
+        let xInner = Math.max(orbClearX, Math.round(xOuter * 0.54));
+        if (xOuter - xInner < cellW + 10) {
+            xInner = Math.max(orbClearX - 10, xOuter - cellW - 12);
+        }
+
+        let yInner = isCompactDesktop ? 122 : 132;
+        let yOuter = isCompactDesktop ? 74  : 80;
+
+        let symmetric8 = [
+            { x:  xInner, y: -yInner },
+            { x:  xInner, y:  yInner },
+            { x:  xOuter, y: -yOuter },
+            { x:  xOuter, y:  yOuter },
+            { x: -xInner, y: -yInner },
+            { x: -xInner, y:  yInner },
+            { x: -xOuter, y: -yOuter },
+            { x: -xOuter, y:  yOuter }
+        ];
+
+        if (count <= symmetric8.length) {
+            let out = [];
+            let rightSlots = symmetric8.slice(0, 4);
+            let leftSlots  = symmetric8.slice(4, 8);
+            for (let i = 0; i < count; i++) {
+                let sideIdx = Math.floor(i / 2);
+                out.push(i % 2 === 0 ? rightSlots[sideIdx] : leftSlots[sideIdx]);
+            }
+            return out;
+        }
+        return _origGetRadialHexOffsetsV131(count, arenaW, arenaH);
+    };
+
+    // ترقية بناء الخلايا السداسية بنمط الكبسولات الهولوجرافية ثلاثية الأبعاد
+    renderKpiHexNodes = function() {
+        kpiHexItemsCache = buildKpiHexSummaryData();
+        let layer = document.getElementById('kpiHexRadialLayer');
+        let arena = document.getElementById('kpiHexArena');
+        if (!layer || !arena) return;
+        layer.innerHTML = '';
+
+        let rect = arena.getBoundingClientRect();
+        let arenaW = rect.width || 920;
+        let arenaH = rect.height || 435;
+        let offsets = getRadialHexOffsets(kpiHexItemsCache.length, arenaW, arenaH);
+
+        const ringRadius = 20;
+        const ringCirc = 2 * Math.PI * ringRadius;
+
+        kpiHexItemsCache.forEach((item, i) => {
+            let pos = offsets[i] || { x: 0, y: 0 };
+            let tele = getSciFiHexTelemetry(item, i);
+            let dashOffset = ringCirc * (1 - tele.pct / 100);
+
+            let cell = document.createElement('div');
+            cell.className = `kpi-hex-cell ${item.cls || ''}`;
+            cell.style.setProperty('--hx', `${Math.round(pos.x)}px`);
+            cell.style.setProperty('--hy', `${Math.round(pos.y)}px`);
+            cell.style.setProperty('--pod-color', tele.color);
+            cell.style.setProperty('--sweep-delay', `${(i * 0.65).toFixed(2)}s`);
+            cell.style.transitionDelay = `${i * 42}ms`;
+
+            cell.innerHTML = `
+                <div class="kpi-hex-inner">
+                    <div class="hex-hud-meta">
+                        <span class="hex-live-led"></span>
+                        <span>${tele.hudCode}</span>
+                    </div>
+                    <div class="hex-orb-gauge">
+                        <svg class="hex-ring-svg" viewBox="0 0 50 50">
+                            <circle cx="25" cy="25" r="${ringRadius}" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="2.6"></circle>
+                            <circle cx="25" cy="25" r="${ringRadius}" fill="none" stroke="${tele.color}" stroke-width="2.6" stroke-linecap="round"
+                                stroke-dasharray="${ringCirc.toFixed(1)}" stroke-dashoffset="${dashOffset.toFixed(1)}"
+                                style="filter:drop-shadow(0 0 4px ${tele.color});"></circle>
+                        </svg>
+                        ${getSciFiHexSvgIcon(item.tab)}
+                    </div>
+                    <div class="kpi-hex-title">${item.title}</div>
+                    <div class="kpi-hex-val">${item.val}</div>
+                    <div class="hex-micro-bar">
+                        <div class="hex-micro-bar-fill" style="width:${tele.pct}%;"></div>
+                    </div>
+                </div>`;
+
+            cell.onmouseenter = () => {
+                previewKpiHexSummary(i);
+                highlightKpiArtery(i, true);
+            };
+            cell.onmouseleave = () => {
+                highlightKpiArtery(i, false);
+            };
+            cell.onclick = (e) => {
+                e.stopPropagation();
+                switchTab(item.tab);
+            };
+            layer.appendChild(cell);
+        });
+
+        if (kpiHexExpandedState) {
+            setTimeout(drawKpiPulseArteries, 580);
+            setTimeout(drawKpiPulseArteries, 90);
+        }
+    };
+
+
+    // =========================================================================
+    // 💎 v13.3 ULTRA-MODERN FUTURISTIC KPI CHART + SAFE PULSE ORB TOGGLE
+    // =========================================================================
+    const _v133OrigRenderKpiCore = renderKpiTelemetryCore;
+    renderKpiTelemetryCore = function() {
+        _v133OrigRenderKpiCore();
+        renderModernKpiAnalyticsChart();
+    };
+
+    function renderModernKpiAnalyticsChart() {
+        let canvasEl = document.getElementById('kpiTelemetrySparkChart');
+        if (!canvasEl || typeof Chart === 'undefined') return;
+
+        let activeWeek = getCurrentWeekKey();
+        let emps = dbData[currentBranch] || [];
+        let metricSums = new Array(metricNames.length).fill(0);
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            metricNames.forEach((m, idx) => {
+                metricSums[idx] += (Number(sc[idx]) || 3);
+            });
+        });
+
+        let labels = metricNames.map(m => m.length > 18 ? m.slice(0, 17) + '…' : m);
+        let values = metricNames.map((_, idx) => {
+            if (!emps.length) return 0;
+            return Math.round(((metricSums[idx] || (emps.length * 3)) / (emps.length * 5)) * 100);
+        });
+        let targets = metricNames.map(m => {
+            let cfg = (typeof metricSettingsData !== 'undefined' && metricSettingsData[m]) ? metricSettingsData[m] : null;
+            return (cfg && Number(cfg.target) > 0) ? Number(cfg.target) : 85;
+        });
+
+        // تحديث شارات الأعلى والأقل في رأس الرسم البياني
+        if (values.length > 0) {
+            let maxV = -1, minV = 999, maxI = 0, minI = 0;
+            values.forEach((v, i) => {
+                if (v > maxV) { maxV = v; maxI = i; }
+                if (v < minV) { minV = v; minI = i; }
+            });
+            let bestEl = document.getElementById('kcoreChartBestBadge');
+            let weakEl = document.getElementById('kcoreChartWeakBadge');
+            if (bestEl) bestEl.textContent = `🏆 الأعلى: ${metricNames[maxI]} (${maxV}%)`;
+            if (weakEl) weakEl.textContent = `⚠️ الأقل: ${metricNames[minI]} (${minV}%)`;
+        }
+
+        let ctx = canvasEl.getContext('2d');
+        if (kcoreSparkInstance) {
+            kcoreSparkInstance.destroy();
+            kcoreSparkInstance = null;
+        }
+
+        let isLight = document.body.classList.contains('light-mode');
+        let areaGrad = ctx.createLinearGradient(0, 0, 0, 170);
+        areaGrad.addColorStop(0, 'rgba(56, 189, 248, 0.42)');
+        areaGrad.addColorStop(0.55, 'rgba(139, 92, 246, 0.16)');
+        areaGrad.addColorStop(1, 'rgba(14, 165, 233, 0.00)');
+
+        let lineGrad = ctx.createLinearGradient(0, 0, canvasEl.parentElement ? canvasEl.parentElement.clientWidth : 800, 0);
+        lineGrad.addColorStop(0, '#38bdf8');
+        lineGrad.addColorStop(0.5, '#818cf8');
+        lineGrad.addColorStop(1, '#34d399');
+
+        let pointColors = values.map((v, i) => v >= targets[i] ? '#34d399' : (v >= targets[i] - 12 ? '#38bdf8' : '#fb7185'));
+
+        const neonGlowPlugin = {
+            id: 'neonLineGlowV133',
+            beforeDatasetsDraw(chart) {
+                const c = chart.ctx;
+                c.save();
+                c.shadowColor = 'rgba(56, 189, 248, 0.55)';
+                c.shadowBlur = 12;
+                c.shadowOffsetY = 3;
+            },
+            afterDatasetsDraw(chart) {
+                chart.ctx.restore();
+            }
+        };
+
+        kcoreSparkInstance = new Chart(ctx, {
+            type: 'line',
+            plugins: [neonGlowPlugin],
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'الأداء الفعلي %',
+                        data: values,
+                        borderColor: lineGrad,
+                        backgroundColor: areaGrad,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.42,
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: pointColors,
+                        pointBorderColor: isLight ? '#ffffff' : '#090d16',
+                        pointBorderWidth: 2,
+                        pointHoverBorderColor: '#ffffff',
+                        pointHoverBorderWidth: 2.5
+                    },
+                    {
+                        label: 'المعيار المستهدف %',
+                        data: targets,
+                        borderColor: 'rgba(250, 204, 21, 0.72)',
+                        borderWidth: 1.6,
+                        borderDash: [6, 5],
+                        fill: false,
+                        tension: 0.2,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        pointHoverBackgroundColor: '#facc15'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                animation: { duration: 750, easing: 'easeOutQuart' },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            color: isLight ? '#334155' : '#cbd5e1',
+                            font: { family: 'Cairo', size: 10.5, weight: 'bold' },
+                            boxWidth: 12,
+                            usePointStyle: true,
+                            padding: 8
+                        }
+                    },
+                    tooltip: {
+                        rtl: true,
+                        backgroundColor: 'rgba(9, 13, 22, 0.94)',
+                        titleColor: '#38bdf8',
+                        bodyColor: '#f8fafc',
+                        borderColor: 'rgba(56, 189, 248, 0.65)',
+                        borderWidth: 1,
+                        padding: 10,
+                        cornerRadius: 10,
+                        titleFont: { family: 'Cairo', size: 12, weight: 'bold' },
+                        bodyFont: { family: 'Cairo', size: 11 },
+                        callbacks: {
+                            title: (items) => metricNames[items[0].dataIndex] || items[0].label,
+                            afterBody: (items) => {
+                                let idx = items[0].dataIndex;
+                                let diff = values[idx] - targets[idx];
+                                return diff >= 0
+                                    ? `✅ أعلى من المستهدف بـ +${diff}%`
+                                    : `⚠️ أقل من المستهدف بـ ${diff}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            color: isLight ? '#475569' : '#94a3b8',
+                            font: { family: 'Cairo', size: 10, weight: '700' },
+                            maxRotation: 0
+                        }
+                    },
+                    y: {
+                        min: 0,
+                        max: 100,
+                        border: { display: false },
+                        grid: {
+                            color: isLight ? 'rgba(2, 132, 199, 0.10)' : 'rgba(56, 189, 248, 0.10)',
+                            tickLength: 0
+                        },
+                        ticks: {
+                            stepSize: 25,
+                            color: isLight ? '#475569' : '#94a3b8',
+                            font: { family: 'Cairo', size: 10, weight: '700' },
+                            callback: (v) => v + '%'
+                        }
+                    }
+                }
+            }
+        });
+    }
 
 </script>
 </body>
