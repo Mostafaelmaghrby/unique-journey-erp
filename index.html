@@ -1962,6 +1962,79 @@
             box-shadow: 0 2px 6px rgba(2, 132, 199, 0.45);
         }
 
+    
+        /* ===================================================================
+           🎯 v12.7 KPI BENCHMARK, TRAFFIC LIGHT, DICTIONARY & DEPT TEMPLATES
+           =================================================================== */
+        .kpi-traffic-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        @media (max-width: 768px) {
+            .kpi-traffic-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .kpi-tl-card {
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .kpi-tl-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.35); }
+        .kpi-tl-total { background: linear-gradient(135deg, rgba(14, 116, 144, 0.35), rgba(15, 23, 42, 0.9)); border-color: rgba(56, 189, 248, 0.45); }
+        .kpi-tl-pass  { background: linear-gradient(135deg, rgba(5, 150, 105, 0.35), rgba(15, 23, 42, 0.9)); border-color: rgba(16, 185, 129, 0.55); }
+        .kpi-tl-near  { background: linear-gradient(135deg, rgba(217, 119, 6, 0.35), rgba(15, 23, 42, 0.9)); border-color: rgba(245, 158, 11, 0.55); }
+        .kpi-tl-fail  { background: linear-gradient(135deg, rgba(220, 38, 38, 0.35), rgba(15, 23, 42, 0.9)); border-color: rgba(239, 68, 68, 0.55); }
+        body.light-mode .kpi-tl-total { background: #e0f2fe; }
+        body.light-mode .kpi-tl-pass  { background: #d1fae5; }
+        body.light-mode .kpi-tl-near  { background: #fef3c7; }
+        body.light-mode .kpi-tl-fail  { background: #fee2e2; }
+        .kpi-tl-val { font-size: 22px; font-weight: 800; line-height: 1.1; }
+        .kpi-tl-lbl { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+        .kpi-info-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 17px;
+            height: 17px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.18);
+            border: 1px solid rgba(56, 189, 248, 0.5);
+            color: #7dd3fc;
+            font-size: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-right: 4px;
+            vertical-align: middle;
+            transition: 0.15s;
+        }
+        .kpi-info-btn:hover { background: #0284c7; color: #fff; transform: scale(1.15); }
+        .dept-tpl-bar {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+        }
+        .dept-tpl-btn {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: var(--text-main);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.18s;
+        }
+        body.light-mode .dept-tpl-btn { background: #ffffff; }
+        .dept-tpl-btn:hover { background: #0284c7; color: #fff; border-color: #7dd3fc; transform: translateY(-1px); }
+
     </style>
 </head>
 <body>
@@ -2681,6 +2754,37 @@
                     </div>
                 </div>
             </div>
+            <!-- 🚦 شريط حالة المعايير الملوّن (KPI Traffic Light Status Bar) -->
+            <div class="kpi-traffic-grid" id="kpiTrafficLightBar">
+                <div class="kpi-tl-card kpi-tl-total" onclick="showTrafficLightDetails('all')" title="إجمالي المعايير المعروضة في الجدول">
+                    <div>
+                        <div class="kpi-tl-val" id="tlTotalCount" style="color:#38bdf8;">0</div>
+                        <div class="kpi-tl-lbl">عدد المعايير المعروضة</div>
+                    </div>
+                    <span style="font-size:20px;">📋</span>
+                </div>
+                <div class="kpi-tl-card kpi-tl-pass" onclick="showTrafficLightDetails('pass')" title="اضغط لعرض المعايير التي حققت المستهدف">
+                    <div>
+                        <div class="kpi-tl-val" id="tlPassCount" style="color:#34d399;">0</div>
+                        <div class="kpi-tl-lbl">ضمن / أعلى من المعيار</div>
+                    </div>
+                    <span style="font-size:20px;">✅</span>
+                </div>
+                <div class="kpi-tl-card kpi-tl-near" onclick="showTrafficLightDetails('near')" title="اضغط لعرض المعايير القريبة من المستهدف (فجوة ≤ 10%)">
+                    <div>
+                        <div class="kpi-tl-val" id="tlNearCount" style="color:#fbbf24;">0</div>
+                        <div class="kpi-tl-lbl">قريب من المعيار</div>
+                    </div>
+                    <span style="font-size:20px;">⚠️</span>
+                </div>
+                <div class="kpi-tl-card kpi-tl-fail" onclick="showTrafficLightDetails('fail')" title="اضغط لعرض المعايير الأقل من المستهدف">
+                    <div>
+                        <div class="kpi-tl-val" id="tlFailCount" style="color:#fb7185;">0</div>
+                        <div class="kpi-tl-lbl">أقل من المعيار</div>
+                    </div>
+                    <span style="font-size:20px;">🚨</span>
+                </div>
+            </div>
             <div class="dept-filter-bar">
                 <div id="deptFilterBar" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
                 <div>
@@ -3064,6 +3168,31 @@
                     <div style="height:295px;"><canvas id="branchRadarChart"></canvas></div>
                 </div>
             </div>
+
+            <!-- 🌐 مقارنة الأداء الفعلي بالمعيار العالمي / المستهدف (Benchmark Comparison) -->
+            <div style="margin-top:18px; background:var(--bg-main); border:1px solid rgba(56,189,248,0.3); padding:16px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                    <div>
+                        <h4 style="color:#38bdf8; font-size:14px;">🌐 مقارنة الأداء الفعلي بالمعيار العالمي / المستهدف (Benchmark Comparison)</h4>
+                        <p style="color:var(--text-muted); font-size:11px;">يعرض الفارق الدقيق بين متوسط الأداء الفعلي للفريق والمعيار المستهدف لكل بند (يمكن تعديل المعيار المستهدف من الإعدادات).</p>
+                    </div>
+                    <button type="button" onclick="switchTab('users')" class="btn-action" style="background:#7c3aed;">⚖️ تعديل المعايير المستهدفة</button>
+                </div>
+                <div style="height:280px; margin-bottom:14px;"><canvas id="benchmarkComparisonChart"></canvas></div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:right;">المعيار (KPI)</th>
+                            <th style="text-align:center;">القيمة الفعلية (%)</th>
+                            <th style="text-align:center;">المعيار المستهدف (%)</th>
+                            <th style="text-align:center;">الفارق / الفجوة</th>
+                            <th style="text-align:center;">حالة المعيار</th>
+                            <th style="text-align:center;">شرح المعيار</th>
+                        </tr>
+                    </thead>
+                    <tbody id="benchmarkTableBody"></tbody>
+                </table>
+            </div>
         </div>
         <!-- 7. خطة العمل -->
         <div id="sec-plan" class="card hidden">
@@ -3170,19 +3299,33 @@
                 </div>
                 <div id="totalWeightsBadge" class="badge b-blue" style="font-size:12px; padding:6px 12px;">إجمالي النسب: 100%</div>
             </div>
+            <!-- 🏭 قوالب مؤشرات جاهزة حسب الإدارة (Dynamic Department Templates) -->
+            <div class="dept-tpl-bar">
+                <div style="font-size:12px; font-weight:800; color:#38bdf8; margin-bottom:8px;">🏭 قوالب مؤشرات عالمية جاهزة حسب الإدارة (اضغط لتحميل معايير الإدارة بأوزانها ومعاييرها المستهدفة):</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="dept-tpl-btn" onclick="applyDepartmentKpiTemplate('sales')">💼 قالب المبيعات (Sales)</button>
+                    <button type="button" class="dept-tpl-btn" onclick="applyDepartmentKpiTemplate('hr')">🧑‍🤝‍🧑 قالب الموارد البشرية (HR)</button>
+                    <button type="button" class="dept-tpl-btn" onclick="applyDepartmentKpiTemplate('finance')">💰 قالب المالية والحسابات</button>
+                    <button type="button" class="dept-tpl-btn" onclick="applyDepartmentKpiTemplate('reception')">🎧 قالب الاستقبال وخدمة العملاء</button>
+                    <button type="button" class="dept-tpl-btn" onclick="applyDepartmentKpiTemplate('quality')">🛡️ قالب الجودة والتشغيل</button>
+                    <button type="button" class="dept-tpl-btn" style="border-color:#f59e0b; color:#fde047;" onclick="resetDefaultKpiMetrics()">🔄 إعادة تعيين القيم الافتراضية</button>
+                </div>
+            </div>
             <div style="display:flex; gap:10px; margin-bottom:15px; background:#0f172a; padding:12px; border-radius:8px; border:1px solid #334155; flex-wrap:wrap; align-items:center;">
-                <input type="text" id="settingsNewMetricName" placeholder="اسم بند التقييم الجديد..." class="form-input" style="max-width:240px;">
-                <input type="number" id="settingsNewMetricWeight" placeholder="النسبة % (مثلاً 15)" min="1" max="100" class="form-input" style="max-width:150px;">
+                <input type="text" id="settingsNewMetricName" placeholder="اسم بند التقييم الجديد..." class="form-input" style="max-width:220px;">
+                <input type="number" id="settingsNewMetricWeight" placeholder="الوزن % (مثلاً 15)" min="1" max="100" class="form-input" style="max-width:130px;">
+                <input type="number" id="settingsNewMetricTarget" placeholder="المستهدف % (مثلاً 85)" min="10" max="100" class="form-input" style="max-width:140px;">
                 <button type="button" onclick="addMetricFromSettings()" class="btn-tab btn-add">➕ إضافة بند تقييم جديد</button>
-                <button type="button" onclick="distributeWeightsEqually()" class="btn-tab" style="background:#0284c7; color:#fff;">⚖️ توزيع النسب بالتساوي (100%)</button>
+                <button type="button" onclick="distributeWeightsEqually()" class="btn-tab" style="background:#0284c7; color:#fff;">⚖️ توزيع الأوزان بالتساوي (100%)</button>
             </div>
             <table style="margin-bottom: 25px;">
                 <thead>
                     <tr>
-                        <th style="text-align: right; width: 22%;">اسم بند التقييم</th>
-                        <th style="text-align: center; width: 15%;">النسبة المئوية للبند (%)</th>
-                        <th style="text-align: right; width: 53%;">الأقسام المسموح لها برؤية وتقييم هذا البند</th>
-                        <th style="text-align: center; width: 10%;">حذف</th>
+                        <th style="text-align: right; width: 20%;">اسم بند التقييم</th>
+                        <th style="text-align: center; width: 12%;">الوزن (%)</th>
+                        <th style="text-align: center; width: 13%;">المعيار المستهدف (%)</th>
+                        <th style="text-align: right; width: 45%;">الأقسام المسموح لها برؤية وتقييم هذا البند</th>
+                        <th style="text-align: center; width: 10%;">شرح / حذف</th>
                     </tr>
                 </thead>
                 <tbody id="metricsConfigTableBody"></tbody>
@@ -3703,6 +3846,40 @@
         <button type="button" id="btnDockMorningHuddle" onclick="openMorningHuddleModal()" class="dock-btn" title="اجتماع الصباح العالمي (☀️)">☀️</button>
     </div>
     <div id="zenExitPill" onclick="toggleZenFocusMode()">🧘 خروج من وضع التركيز (Alt+Z)</div>
+
+    
+    <!-- ℹ️ نافذة قاموس وشرح المعيار (KPI Dictionary & Scoring Rubric) -->
+    <div id="kpiDictionaryModal" class="modal">
+        <div class="modal-content" style="max-width: 560px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #334155; padding-bottom:10px;">
+                <h3 id="kpiDictTitle" style="color:#38bdf8; font-size:16px;">ℹ️ دليل قياس المعيار</h3>
+                <button type="button" onclick="closeKpiDictionaryModal()" style="background:transparent; color:#94a3b8; border:none; font-size:18px; cursor:pointer;">✕</button>
+            </div>
+            <div id="kpiDictBadgesRow" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;"></div>
+            <div class="form-group">
+                <label class="form-label" style="color:#38bdf8;">📘 معنى المعيار وطريقة قياسه:</label>
+                <textarea id="kpiDictDescInput" rows="3" class="form-input" style="resize:vertical; line-height:1.7;"></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:12px;">
+                <div style="background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.4); border-radius:8px; padding:10px;">
+                    <div style="font-size:11px; font-weight:800; color:#34d399; margin-bottom:4px;">🌟 متى يستحق الموظف 5/5 (ممتاز)؟</div>
+                    <input type="text" id="kpiDictRubric5" class="form-input" style="font-size:11px;">
+                </div>
+                <div style="background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.4); border-radius:8px; padding:10px;">
+                    <div style="font-size:11px; font-weight:800; color:#fbbf24; margin-bottom:4px;">⚖️ متى يستحق الموظف 3/5 (مقبول)؟</div>
+                    <input type="text" id="kpiDictRubric3" class="form-input" style="font-size:11px;">
+                </div>
+                <div style="background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.4); border-radius:8px; padding:10px;">
+                    <div style="font-size:11px; font-weight:800; color:#fb7185; margin-bottom:4px;">🚨 متى يستحق الموظف 1-2/5 (أقل من المعيار)؟</div>
+                    <input type="text" id="kpiDictRubricLow" class="form-input" style="font-size:11px;">
+                </div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px;">
+                <button type="button" onclick="saveKpiDictionaryEntry()" class="btn-action admin-only" style="background:#059669; padding:7px 16px;">💾 حفظ الشرح والدليل</button>
+                <button type="button" onclick="closeKpiDictionaryModal()" class="btn-action" style="background:#475569; padding:7px 14px;">إغلاق</button>
+            </div>
+        </div>
+    </div>
 
     <!-- 🔔 حاوية الإشعارات العصرية (Toast Notifications) -->
     <div id="toastContainer"></div>
@@ -11377,6 +11554,489 @@
     // Override renderTimeMachineSnapshot so Auto-Play button drives the unified Heatmap seamlessly
     renderTimeMachineSnapshot = function(idxVal) {
         onUnifiedHeatmapTimeScrub(idxVal);
+    };
+
+
+    // =========================================================================
+    // 🎯 v12.7 KPI TRAFFIC LIGHT + BENCHMARK COMPARISON + DICTIONARY + TEMPLATES
+    // =========================================================================
+    const DEFAULT_KPI_DICTIONARY = {
+        "الالتزام بالمواعيد": {
+            target: 90,
+            desc: "يقيس مدى انضباط الموظف في الحضور والانصراف والالتزام بجدول الورديات ومواعيد تسليم المهام دون تأخير.",
+            r5: "حضور مبكر ومنتظم 100% طوال الأسبوع مع صفر تأخير وتسليم كل المهام في وقتها.",
+            r3: "تأخير بسيط لمرة واحدة مع الالتزام العام بمواعيد العمل.",
+            rLow: "تأخير متكرر أو غياب غير مبرر أو إخلال متكرر بمواعيد التسليم."
+        },
+        "التعامل مع الزملاء": {
+            target: 85,
+            desc: "يقيس روح العمل الجماعي، والتعاون الإيجابي مع الزملاء والأقسام الأخرى، والاحترام المتبادل داخل بيئة العمل.",
+            r5: "داعم للفريق، يبادر بمساعدة زملائه ويخلق طاقة إيجابية عالية في الفرع.",
+            r3: "تعامل مهني هادئ ومقبول مع الزملاء دون مشكلات.",
+            rLow: "خلافات متكررة، رفض التعاون، أو أسلوب تواصل سلبي يؤثر على الفريق."
+        },
+        "المبادرة والتطوير": {
+            target: 80,
+            desc: "يقيس قدرة الموظف على تقديم أفكار تحسينية وحل المشكلات بشكل استباقي دون انتظار التوجيه المباشر.",
+            r5: "يقترح حلولاً مبتكرة ويطور أسلوب عمله باستمرار ويتحمل مسؤوليات إضافية.",
+            r3: "ينفذ المطلوب منه بشكل جيد مع مبادرة محدودة عند الحاجة.",
+            rLow: "ينتظر التوجيه في كل تفصيلة ولا يبدي رغبة في التعلم أو التطوير."
+        },
+        "خدمة العملاء واللباقة": {
+            target: 90,
+            desc: "يقيس جودة استقبال العميل، سرعة الاستجابة، احتواء الشكاوى بلباقة، وترك انطباع احترافي عن الشركة.",
+            r5: "إشادات مباشرة من العملاء، سرعة استجابة فائقة، ولباقة احترافية عالية.",
+            r3: "تعامل مهذب ومقبول يلبي احتياج العميل الأساسي.",
+            rLow: "شكاوى عملاء، بطء في الرد، أو أسلوب غير لبق في التعامل."
+        },
+        "تقييم الجودة": {
+            target: 90,
+            desc: "يقيس دقة تنفيذ المعاملات والحجوزات والملفات وخلوّها من الأخطاء التشغيلية أو المراجعة المتكررة.",
+            r5: "دقة شبه كاملة (صفر أخطاء تشغيلية) والتزام تام بمعايير الجودة المعتمدة.",
+            r3: "أخطاء طفيفة غير مؤثرة يتم تداركها سريعاً.",
+            rLow: "أخطاء متكررة تؤثر على العميل أو تسبب تكلفة إضافية وإعادة عمل."
+        },
+        "المظهر والسلوك المهني": {
+            target: 90,
+            desc: "يقيس الالتزام بالزي الرسمي والمظهر اللائق والسلوك الاحترافي أمام العملاء والإدارة.",
+            r5: "قدوة في الأناقة والالتزام الكامل بالزي والسلوك المهني طوال الوقت.",
+            r3: "مظهر مقبول وسلوك مهني مناسب لمعايير الشركة.",
+            rLow: "عدم الالتزام بالزي الرسمي أو سلوك غير مهني داخل مقر العمل."
+        },
+        "الأداء والإنتاجية": {
+            target: 85,
+            desc: "يقيس حجم الإنجاز الفعلي وتحقيق المستهدفات اليومية والأسبوعية مقارنة بحجم العمل المطلوب.",
+            r5: "تجاوز المستهدف الأسبوعي بجدارة مع سرعة وكفاءة عالية في الإنجاز.",
+            r3: "تحقيق الحد المقبول من المهام اليومية والمستهدف الأساسي.",
+            rLow: "تراكم مهام غير منجزة وتراجع واضح عن المستهدف المطلوب."
+        }
+    };
+
+    const DEPT_KPI_TEMPLATES = {
+        sales: {
+            label: "المبيعات",
+            deptKey: "sales",
+            metrics: [
+                { name: "تحقيق التارجت البيعي", weight: 30, target: 90, desc: "نسبة المبيعات المحققة فعلياً مقارنة بالهدف الأسبوعي والشهري للموظف.", r5: "تجاوز التارجت بنسبة ≥ 100%.", r3: "تحقيق 75% - 89% من التارجت.", rLow: "أقل من 65% من التارجت." },
+                { name: "معدل إغلاق الصفقات", weight: 25, target: 85, desc: "نسبة العملاء المحتملين الذين تحولوا إلى حجوزات أو مبيعات فعلية.", r5: "إغلاق سريع ومقنع مع معدل تحويل مرتفع.", r3: "معدل تحويل متوسط ضمن المقبول.", rLow: "فقدان فرص بيعية كثيرة بسبب ضعف المتابعة." },
+                { name: "خدمة العملاء واللباقة", weight: 20, target: 90, desc: "جودة التواصل والمتابعة مع العميل قبل وبعد البيع.", r5: "عملاء سعداء وتوصيات متكررة.", r3: "تواصل مهذب ومناسب.", rLow: "شكاوى أو إهمال في الرد على العملاء." },
+                { name: "تحديث الـ CRM والمتابعة", weight: 15, target: 90, desc: "تسجيل كل بيانات العملاء والمكالمات في النظام أولاً بأول.", r5: "تحديث فوري ودقيق 100%.", r3: "تحديث مقبول مع تأخير بسيط.", rLow: "بيانات ناقصة أو عدم تسجيل المتابعات." },
+                { name: "الالتزام بالمواعيد", weight: 10, target: 90, desc: "الانضباط في الحضور ومواعيد الاجتماعات والعملاء.", r5: "انضباط تام 100%.", r3: "التزام مقبول.", rLow: "تأخير متكرر." }
+            ]
+        },
+        hr: {
+            label: "الموارد البشرية (HR)",
+            deptKey: "hr",
+            metrics: [
+                { name: "سرعة سد الشواغر الوظيفية", weight: 25, target: 85, desc: "الوقت المستغرق من طلب التوظيف حتى تعيين المرشح المناسب.", r5: "سد الشاغر قبل الموعد بكفاءة عالية.", r3: "سد الشاغر في الموعد المحدد.", rLow: "تأخير طويل يؤثر على تشغيل الفروع." },
+                { name: "دقة ملفات وبيانات الموظفين", weight: 25, target: 95, desc: "اكتمال الأوراق، العقود، البطاقات، وسجلات الحضور والانصراف.", r5: "ملفات مكتملة ومحدثة 100% بدون أخطاء.", r3: "نواقص بسيطة جاري استكمالها.", rLow: "ملفات ناقصة أو أخطاء في الحضور والرواتب." },
+                { name: "رضا الموظفين وحل المشكلات", weight: 25, target: 85, desc: "سرعة الاستجابة لاستفسارات الموظفين ومعالجة التحديات بعدالة.", r5: "استجابة سريعة واحتواء مهني يرفع رضا الفريق.", r3: "معالجة مقبولة للطلبات.", rLow: "تجاهل شكاوى الموظفين أو تأخر الرد." },
+                { name: "تطبيق خطط التدريب والتطوير", weight: 15, target: 85, desc: "متابعة تنفيذ جلسات التوجيه والتدريب للموظفين المتعثرين.", r5: "متابعة دقيقة ونتائج تحسن ملموسة.", r3: "تنفيذ أساسي للخطة.", rLow: "عدم متابعة خطط التطوير." },
+                { name: "الالتزام بالمواعيد", weight: 10, target: 95, desc: "قدوة في الانضباط والالتزام بمواعيد العمل والسياسات.", r5: "التزام مثالي 100%.", r3: "التزام جيد.", rLow: "تأخير متكرر." }
+            ]
+        },
+        finance: {
+            label: "المالية والحسابات",
+            deptKey: "acc",
+            metrics: [
+                { name: "دقة القيود والمراجعة المالية", weight: 35, target: 98, desc: "خلو القيود والفواتير والتقارير المالية من الأخطاء الحسابية.", r5: "صفر أخطاء في المراجعة والإغلاق.", r3: "أخطاء طفيفة تُصحح قبل الإغلاق.", rLow: "أخطاء متكررة في الأرصدة أو الفواتير." },
+                { name: "الإغلاق المالي في الموعد", weight: 25, target: 95, desc: "إتمام التقفيلات اليومية والشهرية وصرف الرواتب والبونص في مواعيدها.", r5: "إغلاق مبكر ومنظم دائماً.", r3: "إغلاق في الموعد المحدد.", rLow: "تأخير في التقفيل أو صرف المستحقات." },
+                { name: "متابعة التحصيل والذمم", weight: 20, target: 90, desc: "دقة متابعة المستحقات والذمم المالية دون تراكم.", r5: "تحصيل منظم وتقارير واضحة يومياً.", r3: "متابعة جيدة للذمم الأساسية.", rLow: "تراكم متأخرات دون متابعة." },
+                { name: "الشفافية والتقارير الإدارية", weight: 10, target: 90, desc: "تقديم تقارير مالية واضحة وسهلة الفهم للإدارة العليا.", r5: "تقارير دقيقة وواضحة ومبكرة.", r3: "تقارير مقبولة.", rLow: "تقارير غير واضحة أو متأخرة." },
+                { name: "الالتزام بالمواعيد", weight: 10, target: 90, desc: "الانضباط بالحضور وسرية البيانات المالية.", r5: "انضباط وأمانة تامة.", r3: "التزام جيد.", rLow: "إخلال بالمواعيد." }
+            ]
+        },
+        reception: {
+            label: "الاستقبال وخدمة العملاء",
+            deptKey: "reception",
+            metrics: [
+                { name: "خدمة العملاء واللباقة", weight: 35, target: 92, desc: "الترحيب الحار، الابتسامة، وسرعة توجيه العميل أو حل استفساره.", r5: "انطباع أول استثنائي وإشادات مستمرة.", r3: "استقبال مهذب ومقبول.", rLow: "برود في الاستقبال أو شكاوى عملاء." },
+                { name: "سرعة الاستجابة والرد", weight: 25, target: 90, desc: "زمن الرد على المكالمات والرسائل والعملاء داخل الفرع.", r5: "رد فوري خلال ثوانٍ دون انتظار.", r3: "زمن انتظار مقبول.", rLow: "تأخير ملحوظ أو مكالمات فائتة كثيرة." },
+                { name: "المظهر والسلوك المهني", weight: 20, target: 95, desc: "الالتزام الكامل بالزي الرسمي ونظافة وترتيب منطقة الاستقبال.", r5: "مظهر مثالي ومكتب مرتب دائماً.", r3: "مظهر مقبول.", rLow: "عدم الالتزام بالزي أو فوضى بالمكتب." },
+                { name: "دقة توجيه الطلبات للأقسام", weight: 10, target: 90, desc: "تسجيل بيانات العميل وتوجيهه للقسم الصحيح بدقة.", r5: "توجيه دقيق 100% دون تشتيت العميل.", r3: "توجيه صحيح غالباً.", rLow: "توجيه خاطئ أو بيانات ناقصة." },
+                { name: "الالتزام بالمواعيد", weight: 10, target: 95, desc: "التواجد في منطقة الاستقبال قبل بداية الدوام.", r5: "حضور مبكر ومنتظم دائماً.", r3: "التزام مقبول.", rLow: "تأخير أو ترك المكتب فارغاً." }
+            ]
+        },
+        quality: {
+            label: "الجودة والتشغيل",
+            deptKey: "quality",
+            metrics: [
+                { name: "تقييم الجودة", weight: 35, target: 95, desc: "نسبة التزام العمليات بمعايير الجودة وخلوّها من العيوب.", r5: "التزام كامل بالمعايير وكشف استباقي للأخطاء.", r3: "التزام مقبول بالمعايير الأساسية.", rLow: "تفويت أخطاء جوهرية تؤثر على العميل." },
+                { name: "سرعة معالجة المشكلات التشغيلية", weight: 25, target: 90, desc: "الزمن المستغرق لحل أي عطل أو شكوى تشغيلية ومنع تكرارها.", r5: "حل جذري وسريع يمنع التكرار.", r3: "حل مقبول خلال الوقت المتاح.", rLow: "بطء في الحل وتكرار نفس الخطأ." },
+                { name: "دقة التقارير والتدقيق", weight: 20, target: 95, desc: "جودة تقارير الفحص والتدقيق اليومي على الفروع.", r5: "تقارير دقيقة وموثقة بالأدلة.", r3: "تقارير أساسية مقبولة.", rLow: "تقارير ناقصة أو غير دقيقة." },
+                { name: "التعاون وتوجيه الفرق", weight: 10, target: 85, desc: "نقل ملاحظات الجودة للفرق بأسلوب بنّاء يرفع الأداء.", r5: "توجيه إيجابي يحقق تحسناً سريعاً.", r3: "تواصل مهني مقبول.", rLow: "أسلوب تصادمي أو عدم متابعة التصحيح." },
+                { name: "الالتزام بالمواعيد", weight: 10, target: 90, desc: "الالتزام بجداول التفتيش والمراجعة الدورية.", r5: "التزام 100% بالجدول.", r3: "التزام عام.", rLow: "تأخير متكرر." }
+            ]
+        }
+    };
+
+    function getKpiMeta(mName) {
+        ensureMetricSettingsSync();
+        let cfg = metricSettingsData[mName] || { weight: 15, depts: ['all'] };
+        let def = DEFAULT_KPI_DICTIONARY[mName] || {
+            target: 85,
+            desc: `يقيس كفاءة الموظف والتزامه في معيار «${mName}» وفق سياسات التشغيل المعتمدة.`,
+            r5: "أداء استثنائي يتجاوز التوقعات بنسبة 100%.",
+            r3: "أداء مستقر يحقق الحد الأساسي المطلوب.",
+            rLow: "قصور واضح يتطلب جلسة توجيه فورية وخطة تحسين."
+        };
+        return {
+            weight: Number(cfg.weight) || 15,
+            target: (typeof cfg.target === 'number' && !isNaN(cfg.target)) ? cfg.target : def.target,
+            depts: cfg.depts || ['all'],
+            desc: cfg.desc || def.desc,
+            r5: cfg.r5 || def.r5,
+            r3: cfg.r3 || def.r3,
+            rLow: cfg.rLow || def.rLow
+        };
+    }
+
+    // State for Traffic Light Details
+    let lastTrafficLightBuckets = { all: [], pass: [], near: [], fail: [] };
+    let benchmarkChartInstance = null;
+
+    function computeBranchMetricBenchmarks(branchFilterVal, deptFilterVal) {
+        let activeWeek = getCurrentWeekKey();
+        let userAllowedMetrics = (currentUser && currentUser.role !== 'Admin' && Array.isArray(currentUser.allowedMetrics) && currentUser.allowedMetrics.length > 0)
+            ? currentUser.allowedMetrics
+            : metricNames;
+
+        let targetBranches = (branchFilterVal && branchFilterVal !== 'all')
+            ? branchesData.filter(b => b.id === branchFilterVal)
+            : branchesData.filter(b => !(currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== b.id));
+
+        let rows = [];
+        metricNames.forEach((mName, mIdx) => {
+            if (!userAllowedMetrics.includes(mName)) return;
+            if (deptFilterVal && deptFilterVal !== 'all' && !isMetricApplicableForDept(mName, deptFilterVal)) return;
+
+            let sum = 0, cnt = 0;
+            targetBranches.forEach(b => {
+                (dbData[b.id] || []).forEach(emp => {
+                    if (deptFilterVal && deptFilterVal !== 'all') {
+                        let selObj = departmentsData.find(d => d.id === deptFilterVal);
+                        if (emp.dept !== deptFilterVal && (!selObj || emp.dept !== selObj.name)) return;
+                    }
+                    if (!isMetricApplicableForDept(mName, emp.dept)) return;
+                    let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                    sum += (Number(scArr[mIdx]) || 3);
+                    cnt++;
+                });
+            });
+
+            let actualPct = cnt > 0 ? Math.round(((sum / cnt) / 5) * 100) : 0;
+            let meta = getKpiMeta(mName);
+            let targetPct = meta.target;
+            let gap = actualPct - targetPct;
+            let status = gap >= 0 ? 'pass' : (gap >= -10 ? 'near' : 'fail');
+            rows.push({ name: mName, actualPct, targetPct, gap, status, weight: meta.weight, count: cnt });
+        });
+        return rows;
+    }
+
+    function updateKpiTrafficLightBar() {
+        let rows = computeBranchMetricBenchmarks(currentBranch, currentDeptFilter);
+        let buckets = { all: rows, pass: [], near: [], fail: [] };
+        rows.forEach(r => buckets[r.status].push(r));
+        lastTrafficLightBuckets = buckets;
+
+        let setV = (id, v) => { let el = document.getElementById(id); if (el) el.textContent = v; };
+        setV('tlTotalCount', buckets.all.length);
+        setV('tlPassCount', buckets.pass.length);
+        setV('tlNearCount', buckets.near.length);
+        setV('tlFailCount', buckets.fail.length);
+    }
+
+    function showTrafficLightDetails(type) {
+        let list = lastTrafficLightBuckets[type] || [];
+        let titles = {
+            all: '📋 كل المعايير المعروضة',
+            pass: '✅ المعايير ضمن / أعلى من المستهدف',
+            near: '⚠️ المعايير القريبة من المستهدف (فجوة ≤ 10%)',
+            fail: '🚨 المعايير الأقل من المستهدف'
+        };
+        if (list.length === 0) {
+            showToast(`${titles[type]}: لا توجد معايير في هذه الفئة حالياً.`, 'info');
+            return;
+        }
+        let summary = list.map(r => `${r.name} (${r.actualPct}% / هدف ${r.targetPct}%)`).join(' • ');
+        showToast(`${titles[type]}: ${summary}`, type === 'fail' ? 'error' : (type === 'pass' ? 'success' : 'warn'));
+    }
+
+    function renderBenchmarkComparisonSection() {
+        let canvas = document.getElementById('benchmarkComparisonChart');
+        let tbody = document.getElementById('benchmarkTableBody');
+        if (!canvas || !tbody) return;
+
+        let branchFilter = document.getElementById('chartBranchFilter') ? document.getElementById('chartBranchFilter').value : 'all';
+        let rows = computeBranchMetricBenchmarks(branchFilter, 'all');
+
+        if (benchmarkChartInstance) benchmarkChartInstance.destroy();
+        benchmarkChartInstance = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: rows.map(r => r.name),
+                datasets: [
+                    {
+                        label: 'الأداء الفعلي (%)',
+                        data: rows.map(r => r.actualPct),
+                        backgroundColor: rows.map(r => r.status === 'pass' ? 'rgba(16, 185, 129, 0.85)' : (r.status === 'near' ? 'rgba(245, 158, 11, 0.85)' : 'rgba(239, 68, 68, 0.85)')),
+                        borderRadius: 6,
+                        maxBarThickness: 28
+                    },
+                    {
+                        label: 'المعيار المستهدف / العالمي (%)',
+                        data: rows.map(r => r.targetPct),
+                        backgroundColor: 'rgba(56, 189, 248, 0.35)',
+                        borderColor: '#38bdf8',
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        maxBarThickness: 28
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#cbd5e1', font: { family: 'Cairo', size: 11 } } }
+                },
+                scales: {
+                    x: { grid: { color: 'rgba(148,163,184,0.1)' }, ticks: { color: '#94a3b8', font: { family: 'Cairo', size: 10 } } },
+                    y: { grid: { color: 'rgba(148,163,184,0.12)' }, ticks: { color: '#94a3b8' }, min: 0, max: 100 }
+                }
+            }
+        });
+
+        tbody.innerHTML = '';
+        rows.forEach(r => {
+            let statusBadge = r.status === 'pass'
+                ? '<span class="badge b-green">✅ ضمن / أعلى من المعيار</span>'
+                : (r.status === 'near' ? '<span class="badge b-yellow">⚠️ قريب من المعيار</span>' : '<span class="badge b-red">🚨 أقل من المعيار</span>');
+            let gapColor = r.gap >= 0 ? '#34d399' : (r.gap >= -10 ? '#fbbf24' : '#fb7185');
+            let gapTxt = r.gap >= 0 ? `+${r.gap}%` : `${r.gap}%`;
+            let safeName = r.name.replace(/'/g, "\\'");
+            tbody.innerHTML += `<tr>
+                <td style="font-weight:bold; color:#38bdf8;">${r.name} <span style="font-size:10px; color:#94a3b8;">(وزن ${r.weight}%)</span></td>
+                <td style="text-align:center; font-weight:800; color:${gapColor};">${r.actualPct}%</td>
+                <td style="text-align:center; font-weight:700; color:#7dd3fc;">${r.targetPct}%</td>
+                <td style="text-align:center; font-weight:800; color:${gapColor}; font-family:monospace;">${gapTxt}</td>
+                <td style="text-align:center;">${statusBadge}</td>
+                <td style="text-align:center;"><button type="button" onclick="openKpiDictionaryModal('${safeName}')" class="btn-edit-tbl">ℹ️ الدليل</button></td>
+            </tr>`;
+        });
+    }
+
+    // ℹ️ KPI Dictionary Modal Controller
+    let activeKpiDictMetric = '';
+    function openKpiDictionaryModal(mName) {
+        activeKpiDictMetric = mName;
+        let meta = getKpiMeta(mName);
+        let rows = computeBranchMetricBenchmarks(currentBranch, currentDeptFilter);
+        let found = rows.find(r => r.name === mName);
+        let actualPct = found ? found.actualPct : 0;
+
+        document.getElementById('kpiDictTitle').textContent = `ℹ️ دليل ومعنى معيار: «${mName}»`;
+        document.getElementById('kpiDictBadgesRow').innerHTML = `
+            <span class="badge b-yellow">⚖️ الوزن النسبي: ${meta.weight}%</span>
+            <span class="badge b-blue">🎯 المعيار المستهدف: ${meta.target}%</span>
+            <span class="badge ${actualPct >= meta.target ? 'b-green' : (actualPct >= meta.target - 10 ? 'b-yellow' : 'b-red')}">📊 الأداء الحالي بالفرع: ${actualPct}%</span>
+        `;
+        let isAdm = currentUser && currentUser.role === 'Admin';
+        let setInp = (id, val) => {
+            let el = document.getElementById(id);
+            if (el) { el.value = val; el.readOnly = !isAdm; }
+        };
+        setInp('kpiDictDescInput', meta.desc);
+        setInp('kpiDictRubric5', meta.r5);
+        setInp('kpiDictRubric3', meta.r3);
+        setInp('kpiDictRubricLow', meta.rLow);
+        document.getElementById('kpiDictionaryModal').classList.add('active');
+    }
+
+    function closeKpiDictionaryModal() {
+        document.getElementById('kpiDictionaryModal').classList.remove('active');
+    }
+
+    function saveKpiDictionaryEntry() {
+        if (!activeKpiDictMetric || !metricSettingsData[activeKpiDictMetric]) return;
+        metricSettingsData[activeKpiDictMetric].desc = document.getElementById('kpiDictDescInput').value.trim();
+        metricSettingsData[activeKpiDictMetric].r5 = document.getElementById('kpiDictRubric5').value.trim();
+        metricSettingsData[activeKpiDictMetric].r3 = document.getElementById('kpiDictRubric3').value.trim();
+        metricSettingsData[activeKpiDictMetric].rLow = document.getElementById('kpiDictRubricLow').value.trim();
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        recordAuditLog('تحديث دليل معيار', `تم تحديث شرح ودليل قياس معيار «${activeKpiDictMetric}»`);
+        closeKpiDictionaryModal();
+        showToast(`✅ تم حفظ دليل قياس معيار «${activeKpiDictMetric}» بنجاح!`, 'success');
+    }
+
+    // ⚖️ Update Metric Target % from Settings
+    function updateMetricTarget(idx, newTargetVal) {
+        let mName = metricNames[idx];
+        let t = parseInt(newTargetVal);
+        if (isNaN(t) || t < 10) t = 10;
+        if (t > 100) t = 100;
+        if (!metricSettingsData[mName]) metricSettingsData[mName] = { weight: 15, depts: ['all'] };
+        metricSettingsData[mName].target = t;
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        recordAuditLog('تعديل المعيار المستهدف', `تم تعديل المعيار المستهدف لبند «${mName}» إلى (${t}%)`);
+        renderMetricsConfigTable();
+        renderEvalTable();
+        showToast(`🎯 تم تحديث المعيار المستهدف لبند «${mName}» إلى ${t}%`, 'success');
+    }
+
+    // 🏭 Apply Ready-Made Department KPI Templates
+    function applyDepartmentKpiTemplate(tplKey) {
+        let tpl = DEPT_KPI_TEMPLATES[tplKey];
+        if (!tpl) return;
+        if (!confirm(`هل تريد إضافة قوالب مؤشرات «${tpl.label}» بأوزانها ومعاييرها المستهدفة العالمية إلى جدول المعايير؟`)) return;
+
+        let added = 0;
+        // Find matching dept id if exists
+        let matchedDept = departmentsData.find(d => d.id === tpl.deptKey || d.name.includes(tpl.label.split(' ')[0]));
+        let targetDepts = matchedDept ? [matchedDept.id] : ['all'];
+
+        tpl.metrics.forEach(m => {
+            if (!metricNames.includes(m.name)) {
+                metricNames.push(m.name);
+                added++;
+            }
+            metricSettingsData[m.name] = {
+                weight: m.weight,
+                target: m.target,
+                depts: targetDepts,
+                desc: m.desc,
+                r5: m.r5,
+                r3: m.r3,
+                rLow: m.rLow
+            };
+        });
+
+        localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        Object.keys(dbData).forEach(bId => {
+            (dbData[bId] || []).forEach(emp => {
+                if (!emp.history) emp.history = {};
+                Object.keys(emp.history).forEach(wk => {
+                    while (emp.history[wk].length < metricNames.length) emp.history[wk].push(3);
+                });
+            });
+        });
+        localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+        recordAuditLog('تحميل قالب إدارة', `تم تطبيق قالب مؤشرات «${tpl.label}» (${tpl.metrics.length} معايير عالمية)`);
+        renderMetricsConfigTable();
+        renderEvalTable();
+        showToast(`🏭 تم تحميل قالب «${tpl.label}» بنجاح (${added} بنود جديدة + تحديث الأوزان والمستهدفات)!`, 'success');
+    }
+
+    function resetDefaultKpiMetrics() {
+        if (!confirm('هل تريد إعادة تعيين معايير التقييم إلى الـ 7 معايير الأساسية الافتراضية؟')) return;
+        metricNames = ["الالتزام بالمواعيد", "التعامل مع الزملاء", "المبادرة والتطوير", "خدمة العملاء واللباقة", "تقييم الجودة", "المظهر والسلوك المهني", "الأداء والإنتاجية"];
+        metricSettingsData = {};
+        metricNames.forEach(m => {
+            let d = defaultMetricSettings[m] || { weight: 15, depts: ['all'] };
+            let dict = DEFAULT_KPI_DICTIONARY[m] || { target: 85 };
+            metricSettingsData[m] = { weight: d.weight, depts: [...d.depts], target: dict.target };
+        });
+        localStorage.setItem('unique_journey_metrics_v1', JSON.stringify(metricNames));
+        localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+        recordAuditLog('إعادة تعيين المعايير', 'تمت إعادة تعيين معايير التقييم إلى القيم الافتراضية');
+        renderMetricsConfigTable();
+        renderEvalTable();
+        showToast('🔄 تمت إعادة تعيين معايير التقييم الافتراضية بنجاح!', 'success');
+    }
+
+    // Hook into renderMetricsConfigTable to include Target % column & Info button
+    renderMetricsConfigTable = function() {
+        let tbody = document.getElementById('metricsConfigTableBody');
+        if (!tbody) return;
+        ensureMetricSettingsSync();
+        tbody.innerHTML = '';
+        let totalW = 0;
+        metricNames.forEach((m, idx) => {
+            let meta = getKpiMeta(m);
+            totalW += meta.weight;
+            let isAllChecked = meta.depts.includes('all');
+            let deptsCheckboxes = `<label class="checkbox-label" style="display:inline-flex; margin-left:10px; color:#34d399; font-weight:bold;">
+                <input type="checkbox" ${isAllChecked ? 'checked' : ''} onchange="toggleMetricDept(${idx}, 'all', this.checked)"> 🌟 كل الأقسام
+            </label>`;
+            departmentsData.forEach(d => {
+                let isDeptChecked = !isAllChecked && (meta.depts.includes(d.id) || meta.depts.includes(d.name));
+                deptsCheckboxes += `<label class="checkbox-label" style="display:inline-flex; margin-left:10px;">
+                    <input type="checkbox" ${isDeptChecked ? 'checked' : ''} onchange="toggleMetricDept(${idx}, '${d.id}', this.checked)"> ${d.name}
+                </label>`;
+            });
+            let safeM = m.replace(/'/g, "\\'");
+            tbody.innerHTML += `<tr>
+                <td><input type="text" value="${m}" onchange="renameMetricItem(${idx}, this.value)" class="table-input" style="text-align:right;"></td>
+                <td style="text-align:center;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:3px;">
+                        <input type="number" min="1" max="100" value="${meta.weight}" onchange="updateMetricWeight(${idx}, this.value)" class="table-input" style="width:62px; color:#facc15;">
+                        <span style="color:#facc15; font-weight:bold;">%</span>
+                    </div>
+                </td>
+                <td style="text-align:center;">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:3px;">
+                        <input type="number" min="10" max="100" value="${meta.target}" onchange="updateMetricTarget(${idx}, this.value)" class="table-input" style="width:62px; color:#38bdf8;">
+                        <span style="color:#38bdf8; font-weight:bold;">%</span>
+                    </div>
+                </td>
+                <td style="white-space:normal; line-height:1.9;">${deptsCheckboxes}</td>
+                <td style="text-align:center;">
+                    <button type="button" onclick="openKpiDictionaryModal('${safeM}')" class="btn-edit-tbl" title="معنى المعيار ودليل القياس">ℹ️</button>
+                    ${metricNames.length > 1 ? `<button type="button" onclick="deleteMetricItem(${idx})" class="btn-danger">حذف</button>` : ''}
+                </td>
+            </tr>`;
+        });
+        let badgeEl = document.getElementById('totalWeightsBadge');
+        if (badgeEl) {
+            badgeEl.textContent = `إجمالي الأوزان المحددة: ${totalW}%`;
+            badgeEl.className = totalW === 100 ? 'badge b-green' : 'badge b-yellow';
+        }
+    };
+
+    // Hook into addMetricFromSettings to also save target %
+    const _origAddMetricFromSettings = addMetricFromSettings;
+    addMetricFromSettings = function() {
+        let name = document.getElementById('settingsNewMetricName') ? document.getElementById('settingsNewMetricName').value.trim() : '';
+        let tVal = document.getElementById('settingsNewMetricTarget') ? parseInt(document.getElementById('settingsNewMetricTarget').value) : 85;
+        _origAddMetricFromSettings();
+        if (name && metricSettingsData[name]) {
+            metricSettingsData[name].target = (!isNaN(tVal) && tVal >= 10 && tVal <= 100) ? tVal : 85;
+            localStorage.setItem('unique_journey_metric_settings_v1', JSON.stringify(metricSettingsData));
+            if (document.getElementById('settingsNewMetricTarget')) document.getElementById('settingsNewMetricTarget').value = '';
+            renderMetricsConfigTable();
+        }
+    };
+
+    // Hook into renderEvalTable to inject ℹ️ Dictionary icon in headers + update Traffic Light Bar
+    const _origRenderEvalTableV11 = renderEvalTable;
+    renderEvalTable = function() {
+        _origRenderEvalTableV11();
+        let thead = document.getElementById('evalTableHead');
+        if (thead) {
+            thead.querySelectorAll('th').forEach(th => {
+                let rawTxt = th.childNodes[0] ? th.childNodes[0].textContent.trim() : '';
+                if (metricNames.includes(rawTxt) && !th.querySelector('.kpi-info-btn')) {
+                    let meta = getKpiMeta(rawTxt);
+                    let btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'kpi-info-btn';
+                    btn.textContent = 'i';
+                    btn.title = `معنى معيار «${rawTxt}» (المستهدف: ${meta.target}%)`;
+                    btn.onclick = function(ev) { ev.stopPropagation(); openKpiDictionaryModal(rawTxt); };
+                    th.insertBefore(btn, th.firstChild);
+                }
+            });
+        }
+        updateKpiTrafficLightBar();
+    };
+
+    // Hook into renderEmployeePerformanceChart to also render Benchmark Comparison chart & table
+    const _origRenderEmpChartV11 = renderEmployeePerformanceChart;
+    renderEmployeePerformanceChart = function() {
+        _origRenderEmpChartV11();
+        renderBenchmarkComparisonSection();
     };
 
 </script>
