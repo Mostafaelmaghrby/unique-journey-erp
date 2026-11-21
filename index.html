@@ -3078,10 +3078,10 @@
         .emp-inspector-drawer {
             position: fixed;
             top: 0;
-            left: -450px;
+            left: -580px;
             bottom: 0;
-            width: 430px;
-            max-width: 94vw;
+            width: 550px;
+            max-width: 95vw;
             background: linear-gradient(180deg, rgba(11, 18, 35, 0.98) 0%, rgba(6, 10, 20, 0.99) 100%);
             border-right: 1px solid rgba(56, 189, 248, 0.42);
             box-shadow: 16px 0 48px rgba(0, 0, 0, 0.75);
@@ -3224,6 +3224,240 @@
             width: 0%;
             background: linear-gradient(90deg, #0284c7, #10b981);
             transition: width 0.35s ease;
+        }
+
+    
+        /* 🔧 v15.1 STABILITY FIX: CLEAN CHART CONTAINERS WITHOUT SCALE-DISTORTION */
+        #sec-charts:not(.hidden), #sec-compare:not(.hidden) {
+            animation: none !important;
+        }
+        #sec-charts canvas, #sec-compare canvas {
+            display: block !important;
+            max-width: 100% !important;
+        }
+
+    
+        /* ===================================================================
+           🚀 v16.0 WIDER INSPECTOR DRAWER + HYPER-REALISTIC ANALYTICS STUDIO
+           =================================================================== */
+        .emp-inspector-drawer .inspector-header { padding: 18px 22px; }
+        .emp-inspector-drawer .inspector-body { padding: 18px 22px; gap: 16px; }
+        .emp-inspector-drawer .inspector-footer { padding: 14px 22px; }
+        .emp-inspector-drawer .insp-info-grid { gap: 10px; }
+        .emp-inspector-drawer .insp-info-item { padding: 10px 13px; border-radius: 12px; }
+        .emp-inspector-drawer .insp-info-lbl { font-size: 10.5px; margin-bottom: 3px; }
+        .emp-inspector-drawer .insp-info-val { font-size: 13.5px; }
+
+        .charts-studio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(13, 22, 42, 0.94), rgba(7, 12, 24, 0.96));
+            border: 1px solid rgba(56, 189, 248, 0.34);
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 14px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(186, 230, 253, 0.12);
+        }
+        body.light-mode .charts-studio-header {
+            background: linear-gradient(135deg, #ffffff, #f0f9ff);
+            border-color: rgba(2, 132, 199, 0.3);
+        }
+        .charts-kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 900px) {
+            .charts-kpi-strip { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+            .charts-kpi-strip { grid-template-columns: 1fr; }
+        }
+        .charts-kpi-pill {
+            background: linear-gradient(145deg, rgba(12, 20, 38, 0.92), rgba(7, 11, 22, 0.96));
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            border-radius: 14px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .charts-kpi-pill:hover {
+            transform: translateY(-2px);
+            border-color: rgba(56, 189, 248, 0.65);
+        }
+        body.light-mode .charts-kpi-pill {
+            background: #ffffff;
+            border-color: #cbd5e1;
+        }
+        .charts-studio-grid-2 {
+            display: grid;
+            grid-template-columns: 1.25fr 0.75fr;
+            gap: 16px;
+        }
+        @media (max-width: 1020px) {
+            .charts-studio-grid-2 { grid-template-columns: 1fr; }
+        }
+        .chart-glass-panel {
+            background:
+                radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.10) 0%, transparent 60%),
+                linear-gradient(155deg, rgba(11, 18, 35, 0.95) 0%, rgba(5, 9, 19, 0.98) 100%);
+            border: 1px solid rgba(56, 189, 248, 0.32);
+            border-radius: 18px;
+            padding: 16px 18px;
+            min-width: 0;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.52), inset 0 1px 0 rgba(186, 230, 253, 0.12);
+        }
+        body.light-mode .chart-glass-panel {
+            background: linear-gradient(155deg, #ffffff, #f8fafc);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        }
+        .chart-panel-hdr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .chart-panel-title {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .chart-panel-sub {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+        .chart-scroll-x {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 4px;
+        }
+        .chart-scroll-x::-webkit-scrollbar { height: 6px; }
+        .chart-scroll-x::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.35); border-radius: 6px; }
+
+    
+        /* ===================================================================
+           ✨ v16.2 MISSION CONTROL HARMONY + PROXIMITY AUTO-HIDE SCROLLBARS
+           =================================================================== */
+        #sec-missioncontrol .bento-mission-grid {
+            align-items: stretch;
+            gap: 15px;
+        }
+        #sec-missioncontrol .bento-tile {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid rgba(56, 189, 248, 0.16) !important;
+            box-shadow: 0 14px 32px -12px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.05) !important;
+            padding: 16px 18px !important;
+        }
+        #sec-missioncontrol .bento-tile:hover {
+            border-color: rgba(56, 189, 248, 0.50) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px -12px rgba(2, 132, 199, 0.24), inset 0 1px 0 rgba(125, 211, 252, 0.18) !important;
+        }
+        body.light-mode #sec-missioncontrol .bento-tile {
+            border-color: rgba(148, 163, 184, 0.30) !important;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06) !important;
+        }
+        /* Balanced 4x2 Quick Launch Grid */
+        #sec-missioncontrol .mc-launch-grid {
+            display: grid !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 10px !important;
+            margin-top: 12px !important;
+            flex: 1;
+            align-content: center;
+        }
+        @media (max-width: 960px) {
+            #sec-missioncontrol .mc-launch-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+        #sec-missioncontrol .mc-launch-btn {
+            background: linear-gradient(155deg, rgba(22, 34, 58, 0.72), rgba(11, 18, 34, 0.85)) !important;
+            border: 1px solid rgba(56, 189, 248, 0.18) !important;
+            border-radius: 13px !important;
+            padding: 13px 10px !important;
+            min-height: 76px;
+            justify-content: center;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        body.light-mode #sec-missioncontrol .mc-launch-btn {
+            background: linear-gradient(155deg, #ffffff, #f1f5f9) !important;
+            border-color: rgba(2, 132, 199, 0.2) !important;
+        }
+        #sec-missioncontrol .mc-launch-btn:hover {
+            border-color: rgba(56, 189, 248, 0.65) !important;
+            background: linear-gradient(155deg, rgba(2, 132, 199, 0.24), rgba(14, 165, 233, 0.12)) !important;
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.22), inset 0 1px 0 rgba(186, 230, 253, 0.25);
+        }
+        /* Sleek bottom fade-out mask on Mission Control scrollable lists */
+        #sec-missioncontrol .mc-race-scroll {
+            padding-bottom: 16px;
+            -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 20px), transparent 100%);
+            mask-image: linear-gradient(to bottom, #000 0%, #000 calc(100% - 20px), transparent 100%);
+        }
+        #sec-missioncontrol .mc-progress-track {
+            height: 7px !important;
+            background: rgba(148, 163, 184, 0.12) !important;
+        }
+        #sec-missioncontrol .mc-telemetry-strip {
+            border-color: rgba(56, 189, 248, 0.24) !important;
+        }
+
+        /* ===================================================================
+           👻 AUTO-HIDE SCROLLBARS (VERTICAL & HORIZONTAL — APPEAR NEAR MOUSE ONLY)
+           =================================================================== */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+        }
+        *::-webkit-scrollbar {
+            width: 6px !important;
+            height: 6px !important;
+            background: transparent !important;
+        }
+        *::-webkit-scrollbar-track,
+        *::-webkit-scrollbar-corner {
+            background: transparent !important;
+        }
+        *::-webkit-scrollbar-thumb {
+            background-color: transparent !important;
+            border-radius: 999px !important;
+            border: 1px solid transparent !important;
+            background-clip: content-box !important;
+            transition: background-color 0.25s ease !important;
+        }
+        /* Reveal vertical or horizontal scrollbar ONLY when mouse approaches its edge or during active scroll */
+        .sb-edge-active {
+            scrollbar-color: rgba(56, 189, 248, 0.45) transparent !important;
+        }
+        .sb-edge-active::-webkit-scrollbar-thumb {
+            background-color: rgba(56, 189, 248, 0.45) !important;
+        }
+        .sb-edge-active::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(56, 189, 248, 0.82) !important;
+        }
+        body.light-mode .sb-edge-active {
+            scrollbar-color: rgba(2, 132, 199, 0.42) transparent !important;
+        }
+        body.light-mode .sb-edge-active::-webkit-scrollbar-thumb {
+            background-color: rgba(2, 132, 199, 0.42) !important;
+        }
+        body.light-mode .sb-edge-active::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(2, 132, 199, 0.78) !important;
         }
 
     </style>
@@ -4190,7 +4424,7 @@
                     <select id="compEmp2Select" class="form-input" style="width:220px;" onchange="renderComparison()"></select>
                 </div>
             </div>
-            <div style="background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:14px; height:300px; margin-bottom:16px;"><canvas id="compareOverlayRadarChart"></canvas></div>
+            <div style="position:relative; width:100%; background:var(--bg-main); border:1px solid var(--border-color); border-radius:10px; padding:14px; height:300px; margin-bottom:16px;"><canvas id="compareOverlayRadarChart"></canvas></div>
             <div id="comparisonResultArea"></div>
         </div>
         <!-- 🔍 تحليل الأخطاء -->
@@ -4405,48 +4639,93 @@
                 <tbody id="weeklyIndividualsTableBody"></tbody>
             </table>
         </div>
-        <!-- 6. الرسوم -->
-        <div id="sec-charts" class="card hidden">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                <h3 style="color:#38bdf8; font-size:15px;">📈 تحليلات أداء الموظفين</h3>
-                <select id="chartBranchFilter" onchange="renderEmployeePerformanceChart()" class="form-input" style="width:160px;">
-                    <option value="all">كل الفروع</option>
-                </select>
-            </div>
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
-                <div style="background:var(--bg-main); border:1px solid var(--border-color); padding:15px; border-radius:10px; height:360px;">
-                    <h4 style="color:var(--accent-blue); font-size:13px; margin-bottom:10px;">📊 مقارنة أداء الموظفين (%)</h4>
-                    <div style="height:295px;"><canvas id="employeePerformanceChart"></canvas></div>
+        <!-- 6. الرسوم والتحليلات المتقدمة v16.0 -->
+        <div id="sec-charts" class="card hidden" style="background:transparent; border:none; box-shadow:none; padding:0;">
+            <!-- Header Bar -->
+            <div class="charts-studio-header">
+                <div>
+                    <div style="font-size:10px; color:#38bdf8; font-weight:800; letter-spacing:1.1px; text-transform:uppercase;">REAL-TIME TELEMETRY ANALYTICS STUDIO</div>
+                    <h3 style="color:var(--text-main); font-size:17px; font-weight:800; margin-top:2px;">📈 استوديو الرسوم البيانية والتحليلات الحية</h3>
                 </div>
-                <div style="background:var(--bg-main); border:1px solid var(--border-color); padding:15px; border-radius:10px; height:360px;">
-                    <h4 style="color:#34d399; font-size:13px; margin-bottom:10px;">🕸️ مخطط الرادار لمقارنة الفروع في كل معيار</h4>
-                    <div style="height:295px;"><canvas id="branchRadarChart"></canvas></div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <select id="chartBranchFilter" onchange="renderEmployeePerformanceChart()" class="form-input" style="width:170px; padding:7px 10px; font-weight:700;">
+                        <option value="all">🌟 كل الفروع</option>
+                    </select>
+                    <button type="button" id="btnChartsLiveGlow" onclick="toggleChartsLivePulseV16()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:7px 13px;">✨ النبض الحي: نشط</button>
+                    <button type="button" onclick="exportChartAsImage()" class="btn-action" style="background:#059669; padding:7px 12px;">📸 تصدير PNG</button>
                 </div>
             </div>
 
-            <!-- 🌐 مقارنة الأداء الفعلي بالمعيار العالمي / المستهدف (Benchmark Comparison) -->
-            <div style="margin-top:18px; background:var(--bg-main); border:1px solid rgba(56,189,248,0.3); padding:16px; border-radius:12px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
-                    <div>
-                        <h4 style="color:#38bdf8; font-size:14px;">🌐 مقارنة الأداء الفعلي بالمعيار العالمي / المستهدف (Benchmark Comparison)</h4>
-                        <p style="color:var(--text-muted); font-size:11px;">يعرض الفارق الدقيق بين متوسط الأداء الفعلي للفريق والمعيار المستهدف لكل بند (يمكن تعديل المعيار المستهدف من الإعدادات).</p>
+            <!-- 4 Executive Telemetry KPI Pills -->
+            <div id="chartsTelemetryStrip" class="charts-kpi-strip"></div>
+
+            <!-- Row 1: 3D Luminous Glass-Tube Bars + Holographic Sonar Radar -->
+            <div class="charts-studio-grid-2">
+                <div class="chart-glass-panel">
+                    <div class="chart-panel-hdr">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="ecg-live-dot" style="background:#38bdf8; color:#38bdf8;"></span>
+                            <div>
+                                <div class="chart-panel-title">📊 مقارنة أداء الموظفين (%)</div>
+                                <div class="chart-panel-sub">أنابيب ضوئية ثلاثية الأبعاد مع خط المستهدف الليزري (85%)</div>
+                            </div>
+                        </div>
+                        <span id="chartsEmpCountBadge" class="badge b-blue" style="font-size:10px;">0 موظف</span>
                     </div>
-                    <button type="button" onclick="switchTab('users')" class="btn-action" style="background:#7c3aed;">⚖️ تعديل المعايير المستهدفة</button>
+                    <div class="chart-scroll-x">
+                        <div id="empChartInnerWrap" style="position:relative; height:310px; min-width:100%;">
+                            <canvas id="employeePerformanceChart"></canvas>
+                        </div>
+                    </div>
                 </div>
-                <div style="height:280px; margin-bottom:14px;"><canvas id="benchmarkComparisonChart"></canvas></div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="text-align:right;">المعيار (KPI)</th>
-                            <th style="text-align:center;">القيمة الفعلية (%)</th>
-                            <th style="text-align:center;">المعيار المستهدف (%)</th>
-                            <th style="text-align:center;">الفارق / الفجوة</th>
-                            <th style="text-align:center;">حالة المعيار</th>
-                            <th style="text-align:center;">شرح المعيار</th>
-                        </tr>
-                    </thead>
-                    <tbody id="benchmarkTableBody"></tbody>
-                </table>
+
+                <div class="chart-glass-panel">
+                    <div class="chart-panel-hdr">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span class="ecg-live-dot" style="background:#10b981; color:#10b981;"></span>
+                            <div>
+                                <div class="chart-panel-title">🕸️ رادار السونار لمقارنة الفروع</div>
+                                <div class="chart-panel-sub">مسح دائري حي لتوازن المعايير بين الفروع</div>
+                            </div>
+                        </div>
+                        <span class="badge b-green" style="font-size:10px;">LIVE SONAR</span>
+                    </div>
+                    <div style="position:relative; width:100%; height:310px;">
+                        <canvas id="branchRadarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Bullet-Capsule Benchmark Comparison + Table -->
+            <div class="chart-glass-panel" style="margin-top:16px;">
+                <div class="chart-panel-hdr" style="margin-bottom:14px;">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <span class="ecg-live-dot" style="background:#a855f7; color:#a855f7;"></span>
+                        <div>
+                            <div class="chart-panel-title">🌐 كبسولات القياس العالمية (Actual vs. Global Benchmark)</div>
+                            <div class="chart-panel-sub">كبسولة زجاجية شفافة للمستهدف العالمي بداخلها عمود الطاقة الفعلي مع حساب الفجوة لحظياً</div>
+                        </div>
+                    </div>
+                    <button type="button" onclick="switchTab('users')" class="btn-action" style="background:linear-gradient(135deg,#7c3aed,#4f46e5); padding:6px 13px;">⚖️ تعديل المعايير المستهدفة</button>
+                </div>
+                <div style="position:relative; width:100%; height:300px; margin-bottom:16px; min-width:0;">
+                    <canvas id="benchmarkComparisonChart"></canvas>
+                </div>
+                <div style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align:right;">المعيار (KPI)</th>
+                                <th style="text-align:center;">القيمة الفعلية (%)</th>
+                                <th style="text-align:center;">المعيار المستهدف (%)</th>
+                                <th style="text-align:center;">الفارق / الفجوة</th>
+                                <th style="text-align:center;">حالة المعيار</th>
+                                <th style="text-align:center;">شرح المعيار</th>
+                            </tr>
+                        </thead>
+                        <tbody id="benchmarkTableBody"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <!-- 7. خطة العمل -->
@@ -7397,7 +7676,7 @@
             if (sec) sec.classList.add('hidden');
             if (btn) btn.classList.remove('active');
         });
-        document.getElementById(`sec-${tab}`).classList.remove('hidden');
+        let _targetSecEl = document.getElementById(`sec-${tab}`); if (_targetSecEl) _targetSecEl.classList.remove('hidden');
         if (document.getElementById(`tab-${tab}`)) document.getElementById(`tab-${tab}`).classList.add('active');
 
         if (tab === 'missioncontrol') renderMissionControl();
@@ -12312,7 +12591,7 @@
             } else {
                 dEl.innerHTML = deptsRanked.map((ds, i) => {
                     let badge = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${i+1}`));
-                    let barCol = ds.avg >= 85 ? 'linear-gradient(90deg,#059669,#34d399)' : (ds.avg >= 65 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : 'linear-gradient(90deg,#dc2626,#fb7185)');
+                    let barCol = ds.avg >= 85 ? 'linear-gradient(90deg,#059669,#34d399)' : (ds.avg >= 75 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : (ds.avg >= 60 ? 'linear-gradient(90deg,#0ea5e9,#818cf8)' : 'linear-gradient(90deg,#e11d48,#fb7185)'));
                     return `<div style="cursor:pointer;" onclick="filterByDept('${ds.id}'); switchTab('eval');">
                         <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
                             <span>${badge} 🏛️ ${ds.name} <span style="color:#94a3b8; font-weight:normal;">(${ds.count} موظف)</span></span>
@@ -12333,7 +12612,7 @@
             } else {
                 eEl.innerHTML = empList.map((it, i) => {
                     let medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${i+1}`));
-                    let barCol = it.pct >= 90 ? 'linear-gradient(90deg,#059669,#34d399)' : (it.pct > 60 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : 'linear-gradient(90deg,#dc2626,#fb7185)');
+                    let barCol = it.pct >= 85 ? 'linear-gradient(90deg,#059669,#34d399)' : (it.pct >= 75 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : (it.pct >= 60 ? 'linear-gradient(90deg,#0ea5e9,#818cf8)' : 'linear-gradient(90deg,#e11d48,#fb7185)'));
                     return `<div style="cursor:pointer;" onclick="openEmployeeAnalysis('${it.bId}', ${it.idx})">
                         <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700;">
                             <span>${medal} ${it.name} <span style="color:#94a3b8; font-size:10px; font-weight:normal;">(${it.deptName} • ${it.branchName})</span></span>
@@ -12557,7 +12836,7 @@
         }
         eEl.innerHTML = filtered.map((it, i) => {
             let medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : (i === 2 ? '🥉' : `#${i + 1}`));
-            let barCol = it.pct >= 90 ? 'linear-gradient(90deg,#059669,#34d399)' : (it.pct > 60 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : 'linear-gradient(90deg,#dc2626,#fb7185)');
+            let barCol = it.pct >= 85 ? 'linear-gradient(90deg,#059669,#34d399)' : (it.pct >= 75 ? 'linear-gradient(90deg,#0284c7,#38bdf8)' : (it.pct >= 60 ? 'linear-gradient(90deg,#0ea5e9,#818cf8)' : 'linear-gradient(90deg,#e11d48,#fb7185)'));
             let deltaTag = it.delta > 0
                 ? `<span style="color:#34d399; font-size:10px; margin-right:5px;">▲+${it.delta}%</span>`
                 : (it.delta < 0
@@ -15700,6 +15979,670 @@
         a.click();
         showToast('📸 تم تحميل بطاقة التقرير التنفيذي كصورة PNG بنجاح!', 'success');
     }
+
+
+    // =========================================================================
+    // 🚀 v16.1 ULTRA-RELIABLE 3D ANALYTICS STUDIO (ZERO-BLANK + SAFE SONAR)
+    // =========================================================================
+    let chartsLivePulseEnabledV16 = true;
+    let chartsSonarAnimFrameV16 = null;
+    let chartsSonarAngleV16 = 0;
+    let chartsLastRenderTimerV16 = null;
+
+    function stopChartsSonarAnimV16() {
+        if (chartsSonarAnimFrameV16) {
+            cancelAnimationFrame(chartsSonarAnimFrameV16);
+            chartsSonarAnimFrameV16 = null;
+        }
+    }
+
+    function safeDestroyChartOnCanvas(canvasEl, instanceRef) {
+        try {
+            if (instanceRef && typeof instanceRef.destroy === 'function') instanceRef.destroy();
+        } catch(e) {}
+        try {
+            if (typeof Chart !== 'undefined' && typeof Chart.getChart === 'function' && canvasEl) {
+                let existing = Chart.getChart(canvasEl);
+                if (existing) existing.destroy();
+            }
+        } catch(e) {}
+    }
+
+    function drawOfflineFallbackBars(canvasEl, labels, values, colors, targetLineVal) {
+        if (!canvasEl) return;
+        let parent = canvasEl.parentElement;
+        let w = Math.max(360, (parent && parent.clientWidth) ? parent.clientWidth : 560);
+        let h = Math.max(240, (parent && parent.clientHeight) ? parent.clientHeight : 290);
+        canvasEl.width = w;
+        canvasEl.height = h;
+        let ctx = canvasEl.getContext('2d');
+        ctx.clearRect(0, 0, w, h);
+        let isLight = document.body.classList.contains('light-mode');
+        ctx.fillStyle = isLight ? '#f8fafc' : '#080e1d';
+        ctx.fillRect(0, 0, w, h);
+        if (!labels || labels.length === 0) {
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 13px Cairo, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('لا توجد بيانات لعرضها حالياً', w / 2, h / 2);
+            return;
+        }
+        let padL = 38, padR = 18, padT = 28, padB = 52;
+        let plotW = w - padL - padR, plotH = h - padT - padB;
+        ctx.strokeStyle = isLight ? 'rgba(15,23,42,0.1)' : 'rgba(56,189,248,0.14)';
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '10px monospace';
+        ctx.textAlign = 'right';
+        [0, 25, 50, 75, 100].forEach(v => {
+            let y = padT + plotH * (1 - v / 100);
+            ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+            ctx.fillText(v + '%', padL - 5, y + 3);
+        });
+        if (targetLineVal) {
+            let yT = padT + plotH * (1 - targetLineVal / 100);
+            ctx.save();
+            ctx.setLineDash([5, 4]);
+            ctx.strokeStyle = '#10b981';
+            ctx.beginPath(); ctx.moveTo(padL, yT); ctx.lineTo(w - padR, yT); ctx.stroke();
+            ctx.restore();
+        }
+        let step = plotW / labels.length;
+        let barW = Math.min(30, Math.max(10, step * 0.58));
+        labels.forEach((lbl, i) => {
+            let v = Math.min(100, Math.max(0, Number(values[i]) || 0));
+            let bh = (v / 100) * plotH;
+            let x = padL + i * step + (step - barW) / 2;
+            let y = padT + plotH - bh;
+            let col = (colors && colors[i]) ? colors[i] : '#38bdf8';
+            let g = ctx.createLinearGradient(0, y, 0, padT + plotH);
+            g.addColorStop(0, col);
+            g.addColorStop(1, 'rgba(15,23,42,0.2)');
+            ctx.fillStyle = g;
+            ctx.fillRect(x, y, barW, bh);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(x + barW * 0.15, y, barW * 0.7, 3);
+            ctx.fillStyle = isLight ? '#0f172a' : '#f8fafc';
+            ctx.font = 'bold 10px Cairo, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(v + '%', x + barW / 2, y - 6);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText(String(lbl).split(' ')[0].slice(0, 10), x + barW / 2, h - 18);
+        });
+    }
+
+    function toggleChartsLivePulseV16() {
+        chartsLivePulseEnabledV16 = !chartsLivePulseEnabledV16;
+        let btn = document.getElementById('btnChartsLiveGlow');
+        if (btn) {
+            btn.textContent = chartsLivePulseEnabledV16 ? '✨ النبض الحي: نشط' : '⏸️ النبض الحي: متوقف';
+            btn.style.background = chartsLivePulseEnabledV16 ? 'linear-gradient(135deg,#0284c7,#7c3aed)' : '#475569';
+        }
+        if (chartsLivePulseEnabledV16) {
+            renderEmployeePerformanceChart();
+        } else {
+            stopChartsSonarAnimV16();
+            try { branchRadarInstance?.update('none'); } catch(e) {}
+        }
+    }
+
+    function renderAllChartsSafelyV161() {
+        stopChartsSonarAnimV16();
+        let sec = document.getElementById('sec-charts');
+        if (!sec || sec.classList.contains('hidden')) return;
+
+        let isLight = document.body.classList.contains('light-mode');
+        let gridCol = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(56, 189, 248, 0.14)';
+        let tickCol = isLight ? '#334155' : '#94a3b8';
+        let labelCol = isLight ? '#0f172a' : '#e2e8f0';
+
+        // Ensure branch filter has valid value (never empty string)
+        let branchFilterEl = document.getElementById('chartBranchFilter');
+        let branchFilter = (branchFilterEl && branchFilterEl.value) ? branchFilterEl.value : 'all';
+        let activeWeek = getCurrentWeekKey();
+
+        // Collect employee performance data safely
+        let empItems = [];
+        (branchesData || []).forEach(b => {
+            if (currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            if (branchFilter !== 'all' && b.id !== branchFilter) return;
+            (dbData[b.id] || []).forEach(emp => {
+                let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, scArr, null);
+                let safeName = String(emp.name || 'موظف');
+                empItems.push({
+                    name: safeName,
+                    shortName: safeName.split(' ').slice(0, 2).join(' '),
+                    branchName: b.name || b.id,
+                    pct: Number(pct) || 0
+                });
+            });
+        });
+        empItems.sort((a, b) => b.pct - a.pct);
+
+        let benchRows = (typeof computeBranchMetricBenchmarks === 'function') ? computeBranchMetricBenchmarks(branchFilter, 'all') : [];
+
+        // Populate 4 Executive Telemetry KPI Pills
+        let stripEl = document.getElementById('chartsTelemetryStrip');
+        let countBadge = document.getElementById('chartsEmpCountBadge');
+        if (countBadge) countBadge.textContent = `${empItems.length} موظف`;
+        if (stripEl) {
+            let avgPct = empItems.length ? Math.round(empItems.reduce((s, e) => s + e.pct, 0) / empItems.length) : 0;
+            let topEmp = empItems[0] || { shortName: '—', pct: 0 };
+            let bestKpi = benchRows.length ? [...benchRows].sort((a, b) => b.actualPct - a.actualPct)[0] : { name: '—', actualPct: 0 };
+            let avgGap = benchRows.length ? Math.round(benchRows.reduce((s, r) => s + r.gap, 0) / benchRows.length) : 0;
+            let gapCol = avgGap >= 0 ? '#34d399' : '#fb7185';
+            let gapSign = avgGap >= 0 ? `+${avgGap}%` : `${avgGap}%`;
+
+            stripEl.innerHTML = `
+                <div class="charts-kpi-pill">
+                    <div><div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">متوسط الأداء العام</div><div style="font-size:20px; font-weight:800; color:#38bdf8;">${avgPct}%</div></div>
+                    <span style="font-size:22px;">💎</span>
+                </div>
+                <div class="charts-kpi-pill" style="border-color:rgba(16,185,129,0.4);">
+                    <div><div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">الأعلى أداءً الآن</div><div style="font-size:14px; font-weight:800; color:#34d399;">${topEmp.shortName} (${topEmp.pct}%)</div></div>
+                    <span style="font-size:22px;">👑</span>
+                </div>
+                <div class="charts-kpi-pill" style="border-color:rgba(168,85,247,0.4);">
+                    <div><div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">أقوى معيار تشغيلي</div><div style="font-size:13px; font-weight:800; color:#c4b5fd;">${bestKpi.name} (${bestKpi.actualPct}%)</div></div>
+                    <span style="font-size:22px;">⚡</span>
+                </div>
+                <div class="charts-kpi-pill" style="border-color:${avgGap >= 0 ? 'rgba(16,185,129,0.45)' : 'rgba(244,63,94,0.45)'};">
+                    <div><div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">متوسط الفجوة عن المستهدف</div><div style="font-size:20px; font-weight:800; color:${gapCol};">${gapSign}</div></div>
+                    <span style="font-size:22px;">🎯</span>
+                </div>`;
+        }
+
+        // =====================================================================
+        // 1. 📊 3D GLASS-TUBE LUMINOUS BARS — EMPLOYEE PERFORMANCE
+        // =====================================================================
+        try {
+            let c1 = document.getElementById('employeePerformanceChart');
+            let wrap1 = document.getElementById('empChartInnerWrap');
+            if (wrap1) {
+                let minW = Math.max(540, empItems.length * 50);
+                wrap1.style.width = empItems.length > 10 ? `${minW}px` : '100%';
+            }
+            if (c1) {
+                safeDestroyChartOnCanvas(c1, empChartInstance);
+                empChartInstance = null;
+                let labels1 = empItems.map(e => e.shortName);
+                let data1 = empItems.map(e => e.pct);
+                let borderCols = empItems.map(e => e.pct >= 85 ? '#6ee7b7' : (e.pct <= 60 ? '#fda4af' : '#7dd3fc'));
+
+                const glassTubeBarPluginV161 = {
+                    id: 'glassTubeBarPluginV161',
+                    afterDatasetsDraw(chart) {
+                        try {
+                            let c = chart.ctx;
+                            let meta = chart.getDatasetMeta(0);
+                            let area = chart.chartArea;
+                            let yScale = chart.scales && chart.scales.y;
+                            if (!meta || !area || !yScale || area.height <= 0) return;
+                            c.save();
+                            let yT = yScale.getPixelForValue(85);
+                            if (isFinite(yT) && yT >= area.top && yT <= area.bottom) {
+                                c.beginPath();
+                                c.setLineDash([6, 5]);
+                                c.strokeStyle = 'rgba(52, 211, 153, 0.78)';
+                                c.lineWidth = 1.6;
+                                c.moveTo(area.left, yT);
+                                c.lineTo(area.right, yT);
+                                c.stroke();
+                                c.setLineDash([]);
+                                c.fillStyle = '#34d399';
+                                c.font = 'bold 10px Cairo, sans-serif';
+                                c.textAlign = 'left';
+                                c.fillText('🎯 المستهدف 85%', area.left + 6, yT - 5);
+                            }
+                            meta.data.forEach((bar, idx) => {
+                                if (!bar || !isFinite(bar.x) || !isFinite(bar.y)) return;
+                                let val = data1[idx];
+                                let bw = bar.width || 22;
+                                c.fillStyle = '#ffffff';
+                                c.globalAlpha = 0.88;
+                                c.fillRect(bar.x - bw * 0.34, bar.y + 1.5, bw * 0.68, 3);
+                                c.globalAlpha = 1;
+                                c.fillStyle = isLight ? '#0f172a' : '#f8fafc';
+                                c.font = 'bold 10.5px Cairo, sans-serif';
+                                c.textAlign = 'center';
+                                c.fillText(`${val}%`, bar.x, bar.y - 6);
+                            });
+                            c.restore();
+                        } catch(e) {}
+                    }
+                };
+
+                if (typeof Chart !== 'undefined') {
+                    empChartInstance = new Chart(c1.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: labels1,
+                            datasets: [{
+                                label: 'الأداء الموزون (%)',
+                                data: data1,
+                                backgroundColor: function(context) {
+                                    let chart = context.chart;
+                                    let area = chart.chartArea;
+                                    let val = context.raw || 0;
+                                    if (!area || area.bottom <= area.top) {
+                                        return val >= 85 ? '#10b981' : (val <= 60 ? '#ef4444' : '#38bdf8');
+                                    }
+                                    let g = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+                                    if (val >= 85) {
+                                        g.addColorStop(0, 'rgba(52, 211, 153, 0.98)');
+                                        g.addColorStop(0.6, 'rgba(16, 185, 129, 0.72)');
+                                        g.addColorStop(1, 'rgba(6, 78, 59, 0.18)');
+                                    } else if (val <= 60) {
+                                        g.addColorStop(0, 'rgba(251, 113, 133, 0.98)');
+                                        g.addColorStop(0.6, 'rgba(239, 68, 68, 0.72)');
+                                        g.addColorStop(1, 'rgba(127, 29, 29, 0.18)');
+                                    } else {
+                                        g.addColorStop(0, 'rgba(56, 189, 248, 0.98)');
+                                        g.addColorStop(0.6, 'rgba(2, 132, 199, 0.72)');
+                                        g.addColorStop(1, 'rgba(12, 74, 110, 0.18)');
+                                    }
+                                    return g;
+                                },
+                                borderColor: borderCols,
+                                borderWidth: 1.4,
+                                borderRadius: 8,
+                                maxBarThickness: 28,
+                                barPercentage: 0.68,
+                                categoryPercentage: 0.78
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: { duration: 400 },
+                            layout: { padding: { top: 22 } },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(9, 13, 22, 0.95)',
+                                    borderColor: '#38bdf8',
+                                    borderWidth: 1,
+                                    callbacks: {
+                                        title: items => empItems[items[0].dataIndex]?.name || '',
+                                        label: item => `الأداء: ${item.parsed.y}% (${empItems[item.dataIndex]?.branchName || ''})`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: { grid: { display: false }, ticks: { color: tickCol, font: { family: 'Cairo', size: 10, weight: 'bold' }, maxRotation: 28 } },
+                                y: { grid: { color: gridCol }, ticks: { color: tickCol, callback: v => v + '%', font: { size: 10 } }, min: 0, max: 100 }
+                            }
+                        },
+                        plugins: [glassTubeBarPluginV161]
+                    });
+                } else {
+                    drawOfflineFallbackBars(c1, labels1, data1, borderCols, 85);
+                }
+            }
+        } catch(err) { console.error('v16.1 EmpChart error:', err); }
+
+        // =====================================================================
+        // 2. 🕸️ HOLOGRAPHIC SONAR RADAR — BRANCH COMPARISON (SAFE RADIUS GUARD)
+        // =====================================================================
+        try {
+            let c2 = document.getElementById('branchRadarChart');
+            if (c2) {
+                safeDestroyChartOnCanvas(c2, branchRadarInstance);
+                branchRadarInstance = null;
+                let palette = [
+                    { border: '#38bdf8', bg: 'rgba(56, 189, 248, 0.24)' },
+                    { border: '#10b981', bg: 'rgba(16, 185, 129, 0.24)' },
+                    { border: '#a855f7', bg: 'rgba(168, 85, 247, 0.22)' },
+                    { border: '#f59e0b', bg: 'rgba(245, 158, 11, 0.22)' }
+                ];
+                let datasets2 = (branchesData || []).map((b, bIdx) => {
+                    let emps = dbData[b.id] || [];
+                    let pts = metricNames.map((m, mIdx) => {
+                        if (emps.length === 0) return 0;
+                        let sum = 0;
+                        emps.forEach(emp => {
+                            let scArr = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                            sum += ((Number(scArr[mIdx]) || 3) / 5) * 100;
+                        });
+                        return Math.round(sum / emps.length);
+                    });
+                    let p = palette[bIdx % palette.length];
+                    return {
+                        label: b.name,
+                        data: pts,
+                        borderColor: p.border,
+                        backgroundColor: p.bg,
+                        borderWidth: 2.5,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: p.border,
+                        pointBorderWidth: 2.2,
+                        pointRadius: 4,
+                        pointHoverRadius: 7
+                    };
+                });
+
+                const holoSonarRadarPluginV161 = {
+                    id: 'holoSonarRadarPluginV161',
+                    beforeDatasetsDraw(chart) {
+                        try {
+                            let rScale = chart.scales && chart.scales.r;
+                            if (!rScale) return;
+                            let cx = rScale.xCenter, cy = rScale.yCenter, rad = rScale.drawingArea;
+                            if (!isFinite(cx) || !isFinite(cy) || !isFinite(rad) || rad < 16) return;
+                            let c = chart.ctx;
+                            c.save();
+                            let bgG = c.createRadialGradient(cx, cy, 2, cx, cy, rad);
+                            bgG.addColorStop(0, 'rgba(56, 189, 248, 0.14)');
+                            bgG.addColorStop(0.7, 'rgba(16, 185, 129, 0.05)');
+                            bgG.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                            c.fillStyle = bgG;
+                            c.beginPath(); c.arc(cx, cy, rad, 0, Math.PI * 2); c.fill();
+
+                            if (chartsLivePulseEnabledV16) {
+                                let a1 = chartsSonarAngleV16;
+                                let a0 = a1 - 0.65;
+                                c.beginPath();
+                                c.moveTo(cx, cy);
+                                c.arc(cx, cy, rad, a0, a1);
+                                c.closePath();
+                                let swG = c.createRadialGradient(cx, cy, 1, cx, cy, rad);
+                                swG.addColorStop(0, 'rgba(16, 185, 129, 0.26)');
+                                swG.addColorStop(1, 'rgba(56, 189, 248, 0.03)');
+                                c.fillStyle = swG;
+                                c.fill();
+
+                                c.beginPath();
+                                c.moveTo(cx, cy);
+                                c.lineTo(cx + Math.cos(a1) * rad, cy + Math.sin(a1) * rad);
+                                c.strokeStyle = 'rgba(52, 211, 153, 0.62)';
+                                c.lineWidth = 1.6;
+                                c.stroke();
+                            }
+                            c.restore();
+                        } catch(e) {}
+                    }
+                };
+
+                if (typeof Chart !== 'undefined') {
+                    branchRadarInstance = new Chart(c2.getContext('2d'), {
+                        type: 'radar',
+                        data: { labels: metricNames, datasets: datasets2 },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: { duration: 400 },
+                            scales: {
+                                r: {
+                                    min: 0, max: 100,
+                                    grid: { circular: true, color: gridCol },
+                                    angleLines: { color: gridCol },
+                                    pointLabels: { color: labelCol, font: { family: 'Cairo', size: 10, weight: 'bold' } },
+                                    ticks: { display: false, stepSize: 25 }
+                                }
+                            },
+                            plugins: { legend: { position: 'bottom', labels: { color: labelCol, font: { family: 'Cairo', size: 11, weight: 'bold' }, usePointStyle: true, padding: 12 } } }
+                        },
+                        plugins: [holoSonarRadarPluginV161]
+                    });
+
+                    // Start sonar sweep AFTER initial 450ms Chart.js entry animation finishes!
+                    if (chartsLivePulseEnabledV16) {
+                        setTimeout(() => {
+                            let s0 = document.getElementById('sec-charts');
+                            if (!s0 || s0.classList.contains('hidden') || !chartsLivePulseEnabledV16 || !branchRadarInstance) return;
+                            let lastTs = performance.now();
+                            function animateRadarSweepV161(ts) {
+                                let s = document.getElementById('sec-charts');
+                                if (!s || s.classList.contains('hidden') || !chartsLivePulseEnabledV16 || !branchRadarInstance) {
+                                    chartsSonarAnimFrameV16 = null;
+                                    return;
+                                }
+                                let dt = (ts - lastTs) / 1000;
+                                lastTs = ts;
+                                chartsSonarAngleV16 = (chartsSonarAngleV16 + dt * 1.1) % (Math.PI * 2);
+                                try { branchRadarInstance.update('none'); } catch(e) {}
+                                chartsSonarAnimFrameV16 = requestAnimationFrame(animateRadarSweepV161);
+                            }
+                            chartsSonarAnimFrameV16 = requestAnimationFrame(animateRadarSweepV161);
+                        }, 500);
+                    }
+                } else {
+                    let firstDs = datasets2[0] ? datasets2[0].data : [];
+                    drawOfflineFallbackBars(c2, metricNames, firstDs, metricNames.map(() => '#10b981'), 85);
+                }
+            }
+        } catch(err) { console.error('v16.1 RadarChart error:', err); }
+
+        // =====================================================================
+        // 3. 🌐 DUAL-LAYER BULLET CAPSULE BENCHMARK CHART + TABLE
+        // =====================================================================
+        try {
+            let c3 = document.getElementById('benchmarkComparisonChart');
+            let tbody = document.getElementById('benchmarkTableBody');
+            if (c3) {
+                safeDestroyChartOnCanvas(c3, benchmarkChartInstance);
+                benchmarkChartInstance = null;
+
+                const bulletCapsulePluginV161 = {
+                    id: 'bulletCapsulePluginV161',
+                    afterDatasetsDraw(chart) {
+                        try {
+                            let c = chart.ctx;
+                            let mTarget = chart.getDatasetMeta(0);
+                            let mActual = chart.getDatasetMeta(1);
+                            if (!mTarget || !mActual) return;
+                            c.save();
+                            benchRows.forEach((r, idx) => {
+                                let tBar = mTarget.data[idx];
+                                let aBar = mActual.data[idx];
+                                if (!tBar || !aBar || !isFinite(tBar.y) || !isFinite(aBar.y)) return;
+                                let topY = Math.min(tBar.y, aBar.y);
+                                let gapTxt = r.gap >= 0 ? `▲ +${r.gap}%` : `▼ ${r.gap}%`;
+                                let gapCol = r.gap >= 0 ? '#34d399' : (r.gap >= -10 ? '#fbbf24' : '#fb7185');
+                                let bw = aBar.width || 24;
+                                c.fillStyle = '#ffffff';
+                                c.globalAlpha = 0.85;
+                                c.fillRect(aBar.x - bw * 0.32, aBar.y + 1.5, bw * 0.64, 3);
+                                c.globalAlpha = 1;
+                                c.fillStyle = gapCol;
+                                c.font = 'bold 10.5px Cairo, sans-serif';
+                                c.textAlign = 'center';
+                                c.fillText(gapTxt, tBar.x, topY - 7);
+                            });
+                            c.restore();
+                        } catch(e) {}
+                    }
+                };
+
+                if (typeof Chart !== 'undefined') {
+                    benchmarkChartInstance = new Chart(c3.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: benchRows.map(r => r.name),
+                            datasets: [
+                                {
+                                    label: 'الكبسولة المستهدفة / العالمية (%)',
+                                    data: benchRows.map(r => r.targetPct),
+                                    backgroundColor: isLight ? 'rgba(2, 132, 199, 0.14)' : 'rgba(56, 189, 248, 0.14)',
+                                    borderColor: 'rgba(56, 189, 248, 0.68)',
+                                    borderWidth: 1.5,
+                                    borderRadius: 10,
+                                    grouped: false,
+                                    maxBarThickness: 44,
+                                    order: 2
+                                },
+                                {
+                                    label: 'الأداء الفعلي للفريق (%)',
+                                    data: benchRows.map(r => r.actualPct),
+                                    backgroundColor: function(context) {
+                                        let chart = context.chart;
+                                        let area = chart.chartArea;
+                                        let r = benchRows[context.dataIndex];
+                                        let st = r ? r.status : 'fail';
+                                        if (!area || area.bottom <= area.top) {
+                                            return st === 'pass' ? '#10b981' : (st === 'near' ? '#f59e0b' : '#ef4444');
+                                        }
+                                        let g = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+                                        if (st === 'pass') {
+                                            g.addColorStop(0, 'rgba(52, 211, 153, 0.98)');
+                                            g.addColorStop(1, 'rgba(5, 150, 105, 0.25)');
+                                        } else if (st === 'near') {
+                                            g.addColorStop(0, 'rgba(251, 191, 36, 0.98)');
+                                            g.addColorStop(1, 'rgba(217, 119, 6, 0.25)');
+                                        } else {
+                                            g.addColorStop(0, 'rgba(251, 113, 133, 0.98)');
+                                            g.addColorStop(1, 'rgba(220, 38, 38, 0.25)');
+                                        }
+                                        return g;
+                                    },
+                                    borderColor: benchRows.map(r => r.status === 'pass' ? '#6ee7b7' : (r.status === 'near' ? '#fde047' : '#fda4af')),
+                                    borderWidth: 1.5,
+                                    borderRadius: 8,
+                                    grouped: false,
+                                    maxBarThickness: 26,
+                                    order: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: { duration: 400 },
+                            layout: { padding: { top: 22 } },
+                            plugins: {
+                                legend: { labels: { color: labelCol, font: { family: 'Cairo', size: 11, weight: 'bold' }, usePointStyle: true } },
+                                tooltip: { backgroundColor: 'rgba(9, 13, 22, 0.95)', borderColor: '#38bdf8', borderWidth: 1 }
+                            },
+                            scales: {
+                                x: { grid: { display: false }, ticks: { color: tickCol, font: { family: 'Cairo', size: 10.5, weight: 'bold' } } },
+                                y: { grid: { color: gridCol }, ticks: { color: tickCol, callback: v => v + '%', font: { size: 10 } }, min: 0, max: 100 }
+                            }
+                        },
+                        plugins: [bulletCapsulePluginV161]
+                    });
+                } else {
+                    drawOfflineFallbackBars(c3, benchRows.map(r => r.name), benchRows.map(r => r.actualPct), benchRows.map(r => r.status === 'pass' ? '#10b981' : '#ef4444'), 85);
+                }
+            }
+
+            if (tbody && benchRows.length > 0) {
+                tbody.innerHTML = '';
+                benchRows.forEach(r => {
+                    let statusBadge = r.status === 'pass'
+                        ? '<span class="badge b-green">✅ ضمن / أعلى من المعيار</span>'
+                        : (r.status === 'near' ? '<span class="badge b-yellow">⚠️ قريب من المعيار</span>' : '<span class="badge b-red">🚨 أقل من المعيار</span>');
+                    let gapColor = r.gap >= 0 ? '#34d399' : (r.gap >= -10 ? '#fbbf24' : '#fb7185');
+                    let gapTxt = r.gap >= 0 ? `+${r.gap}%` : `${r.gap}%`;
+                    tbody.innerHTML += `<tr>
+                        <td style="font-weight:bold; color:#38bdf8;">${r.name}</td>
+                        <td style="text-align:center; font-weight:800;">${r.actualPct}%</td>
+                        <td style="text-align:center; color:#7dd3fc; font-weight:800;">${r.targetPct}%</td>
+                        <td style="text-align:center; color:${gapColor}; font-weight:800;">${gapTxt}</td>
+                        <td style="text-align:center;">${statusBadge}</td>
+                        <td style="text-align:center;"><button type="button" onclick="openKpiDictionaryModal('${r.name.replace(/'/g, '')}')" class="btn-action" style="background:#0284c7; padding:3px 9px;">ℹ️ الدليل</button></td>
+                    </tr>`;
+                });
+            }
+        } catch(err) { console.error('v16.1 BenchmarkChart error:', err); }
+
+        setTimeout(() => {
+            try { empChartInstance?.resize(); } catch(e) {}
+            try { branchRadarInstance?.resize(); } catch(e) {}
+            try { benchmarkChartInstance?.resize(); } catch(e) {}
+        }, 160);
+    }
+
+    renderEmployeePerformanceChart = function() {
+        if (chartsLastRenderTimerV16) clearTimeout(chartsLastRenderTimerV16);
+        chartsLastRenderTimerV16 = setTimeout(() => {
+            requestAnimationFrame(() => {
+                renderAllChartsSafelyV161();
+            });
+        }, 45);
+    };
+
+    if (typeof toggleThemeMode === 'function') {
+        const _origToggleThemeV161 = toggleThemeMode;
+        toggleThemeMode = function() {
+            _origToggleThemeV161();
+            let secCharts = document.getElementById('sec-charts');
+            if (secCharts && !secCharts.classList.contains('hidden')) {
+                renderEmployeePerformanceChart();
+            }
+        };
+    }
+
+
+    // =========================================================================
+    // 👻 v16.2 PROXIMITY AUTO-HIDE SCROLLBAR CONTROLLER (VERTICAL & HORIZONTAL)
+    // =========================================================================
+    (function initProximityScrollbarsV162() {
+        const EDGE_PX = 28;
+        let activeEls = new Set();
+        let scrollTimers = new WeakMap();
+
+        function isScrollableEl(el) {
+            if (!el || el.nodeType !== 1) return false;
+            return (el.scrollHeight > el.clientHeight + 2) || (el.scrollWidth > el.clientWidth + 2);
+        }
+
+        function setEdgeActive(el, state) {
+            if (!el) return;
+            if (state) {
+                el.classList.add('sb-edge-active');
+                activeEls.add(el);
+            } else {
+                el.classList.remove('sb-edge-active');
+                activeEls.delete(el);
+            }
+        }
+
+        document.addEventListener('mousemove', function(e) {
+            let x = e.clientX, y = e.clientY;
+            let nextActive = new Set();
+            let node = e.target;
+            while (node && node !== document) {
+                if (isScrollableEl(node)) {
+                    let r = node.getBoundingClientRect();
+                    let hasV = node.scrollHeight > node.clientHeight + 2;
+                    let hasH = node.scrollWidth > node.clientWidth + 2;
+                    // In RTL, vertical scrollbar can be on left OR right depending on browser/dir
+                    let nearV = hasV && ((x - r.left <= EDGE_PX && x >= r.left - 4) || (r.right - x <= EDGE_PX && x <= r.right + 4));
+                    let nearH = hasH && (r.bottom - y <= EDGE_PX && y <= r.bottom + 4);
+                    if (nearV || nearH) {
+                        nextActive.add(node);
+                    }
+                }
+                node = node.parentElement;
+            }
+            activeEls.forEach(el => {
+                if (!nextActive.has(el) && !scrollTimers.has(el)) {
+                    el.classList.remove('sb-edge-active');
+                    activeEls.delete(el);
+                }
+            });
+            nextActive.forEach(el => setEdgeActive(el, true));
+        }, { passive: true });
+
+        document.addEventListener('mouseleave', function() {
+            activeEls.forEach(el => el.classList.remove('sb-edge-active'));
+            activeEls.clear();
+        });
+
+        // Show briefly during wheel/touch scroll, then fade back to hidden
+        document.addEventListener('scroll', function(e) {
+            let target = e.target === document ? document.documentElement : e.target;
+            if (!target || target.nodeType !== 1) return;
+            setEdgeActive(target, true);
+            if (scrollTimers.has(target)) clearTimeout(scrollTimers.get(target));
+            let t = setTimeout(() => {
+                scrollTimers.delete(target);
+                target.classList.remove('sb-edge-active');
+                activeEls.delete(target);
+            }, 900);
+            scrollTimers.set(target, t);
+        }, true);
+    })();
 
 </script>
 </body>
