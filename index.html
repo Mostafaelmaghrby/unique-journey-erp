@@ -2015,12 +2015,12 @@
                 <button type="button" onclick="switchTab('rootcause')" id="tab-rootcause" class="btn-tab admin-manager-only">🔍 تحليل جذور الأخطاء</button>
 
                 <div class="nav-section-label">🧠 مختبر الذكاء المستقبلي</div>
-                <button type="button" onclick="switchTab('heatmap')" id="tab-heatmap" class="btn-tab admin-manager-only">🔥 الخريطة الحرارية للأداء</button>
+                <button type="button" onclick="switchTab('heatmap')" id="tab-heatmap" class="btn-tab admin-manager-only">🔥 الخريطة الحرارية وآلة الزمن</button>
                 <button type="button" onclick="switchTab('burnout')" id="tab-burnout" class="btn-tab admin-manager-only">🩺 رادار الاحتراق وتزاوج الكفاءات</button>
                 <button type="button" onclick="switchTab('simulator')" id="tab-simulator" class="btn-tab admin-manager-only">🎛️ محاكي القرارات (ماذا لو؟)</button>
                 <button type="button" onclick="openMorningHuddleModal()" id="tab-morninghuddle" class="btn-tab admin-manager-only" style="color:#fde047;">☀️ اجتماع الصباح في دقيقتين</button>
                 <button type="button" onclick="switchTab('constellation')" id="tab-constellation" class="btn-tab admin-manager-only">🌌 خريطة المجرة التفاعلية</button>
-                <button type="button" onclick="switchTab('timemachine')" id="tab-timemachine" class="btn-tab admin-manager-only">⏳ آلة الزمن والتوقع الشهري</button>
+                
                 <button type="button" onclick="switchTab('biaspulse')" id="tab-biaspulse" class="btn-tab admin-manager-only">⚖️ كاشف التحيّز ونبض المزاج</button>
                 <button type="button" onclick="openSpeedEvalModal()" id="tab-speedeval" class="btn-tab admin-manager-only" style="color:#38bdf8;">⚡ التقييم السريع بالمسح</button>
 
@@ -2484,39 +2484,6 @@
             </div>
         </div>
 
-        <!-- ⏳ 13. آلة الزمن للأداء + رادار التوقع الشهري والزخم (Time-Machine & AI Forecasting) -->
-        <div id="sec-timemachine" class="card hidden">
-            <h3 style="color:#a78bfa; font-size:16px; margin-bottom:6px;">🚀 رادار التوقع الشهري والزخم (AI Forecasting & Momentum)</h3>
-            <p style="color:var(--text-muted); font-size:11px; margin-bottom:14px;">يحلل النظام ميل منحنى الأداء عبر الأسابيع ليتوقع متوسط الفرع في نهاية الشهر قبل حدوثه.</p>
-            <div class="summary-cards-grid" style="margin-bottom:20px;">
-                <div class="stat-card"><div><h4>المتوسط الحالي للفرع</h4><div class="val" id="fcCurrentAvg">0%</div></div><span style="font-size:20px;">📍</span></div>
-                <div class="stat-card" style="border-color:#a855f7;"><div><h4>التوقع لنهاية الشهر</h4><div class="val" id="fcProjectedAvg" style="color:#c4b5fd;">0%</div></div><span style="font-size:20px;">🔮</span></div>
-                <div class="stat-card"><div><h4>حالة الزخم (Momentum)</h4><div class="val" id="fcMomentumStatus" style="font-size:15px;">مستقر</div></div><span style="font-size:20px;">⚡</span></div>
-                <div class="stat-card"><div><h4>صاحب أكبر قفزة أسبوعية</h4><div class="val" id="fcTopJumper" style="font-size:13px; color:#34d399;">—</div></div><span style="font-size:20px;">🏆</span></div>
-            </div>
-
-            <div class="timemachine-bar">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                    <div>
-                        <h3 style="color:#38bdf8; font-size:15px;">⏳ آلة الزمن للأداء (Performance Time-Machine Scrubber)</h3>
-                        <p style="color:var(--text-muted); font-size:11px;">اسحب الشريط الزمني للتنقل بين الأسابيع ومشاهدة تغير النسب والخريطة الحرارية أمام عينيك.</p>
-                    </div>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span id="tmSelectedWeekBadge" class="badge b-blue" style="font-size:12px;">الأسبوع الحالي</span>
-                        <button type="button" id="btnTmPlay" onclick="toggleTimeMachineAutoPlay()" class="btn-action" style="background:#7c3aed;">▶ تشغيل آلة الزمن</button>
-                        <button type="button" onclick="exportTimeMachineReport()" class="btn-action" style="background:#059669;">📥 تصدير تقرير المسار الشهري</button>
-                    </div>
-                </div>
-                <input type="range" id="timeMachineSlider" class="timemachine-slider" min="0" max="3" step="1" value="3" oninput="renderTimeMachineSnapshot(this.value)">
-                <div id="tmWeekStatsRow" style="display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:#cbd5e1; margin-top:6px;"></div>
-                <div id="tmBestWorstSummary" style="margin-top:8px; font-size:11px; display:flex; gap:10px; flex-wrap:wrap;"></div>
-            </div>
-            <table>
-                <thead id="tmTableHead"></thead>
-                <tbody id="tmTableBody"></tbody>
-            </table>
-        </div>
-
         <!-- ⚖️ 14. كاشف تحيّز المديرين + لوحة نبض المزاج السري (Bias Detector & Mood Pulse Dashboard) -->
         <div id="sec-biaspulse" class="card hidden">
             <h3 style="color:#facc15; font-size:16px; margin-bottom:6px;">⚖️ كاشف تحيّز المديرين وتكرار التقييم (Manager Bias & Calibration Detector)</h3>
@@ -2542,14 +2509,14 @@
             </table>
         </div>
 
-        <!-- 🔥 9. الخريطة الحرارية للأداء (Thermal KPI Heatmap) -->
+        <!-- 🔥⏳ 9. الخريطة الحرارية وآلة الزمن والتوقع الشهري (Unified Thermal Time-Machine) -->
         <div id="sec-heatmap" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
                 <div>
-                    <h3 style="color:#fb923c; font-size:16px;">🔥 الخريطة الحرارية للأداء التشغيلي (Thermal KPI Heatmap)</h3>
-                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">اكتشف بنظرة واحدة هل القصور <b>عمودي</b> (مشكلة عامة في بند واحد لدى الجميع تحتاج تدريباً جماعياً) أم <b>أفقي</b> (مشكلة فردية لدى موظف محدد).</p>
+                    <h3 style="color:#fb923c; font-size:16px;">🔥⏳ الخريطة الحرارية للأداء وآلة الزمن والتوقع الشهري</h3>
+                    <p style="color:var(--text-muted); font-size:11px; margin-top:3px;">شاشة موحّدة لتشخيص القصور <b>العمودي والأفقي</b> في الأسبوع الحالي، والتنقل عبر الزمن لمراجعة الأسابيع السابقة وتوقع أداء نهاية الشهر.</p>
                 </div>
-                <div style="display:flex; gap:6px; font-size:10px; align-items:center;">
+                <div style="display:flex; gap:6px; font-size:10px; align-items:center; flex-wrap:wrap;">
                     <span class="heat-cell heat-5" style="padding:3px 8px !important;">5 ممتاز</span>
                     <span class="heat-cell heat-4" style="padding:3px 8px !important;">4 جيد جداً</span>
                     <span class="heat-cell heat-3" style="padding:3px 8px !important;">3 مقبول</span>
@@ -2557,7 +2524,37 @@
                     <span class="heat-cell heat-1" style="padding:3px 8px !important;">1 حرج</span>
                 </div>
             </div>
-            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;"><select id="heatmapDeptFilter" onchange="renderThermalHeatmap()" class="form-input" style="max-width:200px; padding:6px 10px; font-size:11px;"><option value="all">🌟 كل الأقسام</option></select><label class="checkbox-label" style="font-size:12px; color:#38bdf8;"><input type="checkbox" id="heatmapComparePrevToggle" onchange="renderThermalHeatmap()"> 🔄 مقارنة حرارية مع الأسبوع السابق (▲/▼)</label></div>
+
+            <!-- 🚀 رادار التوقع الشهري والزخم -->
+            <div class="summary-cards-grid" style="margin-bottom:14px;">
+                <div class="stat-card"><div><h4>المتوسط الحالي للفرع</h4><div class="val" id="fcCurrentAvg">0%</div></div><span style="font-size:20px;">📍</span></div>
+                <div class="stat-card" style="border-color:#a855f7;"><div><h4>التوقع لنهاية الشهر</h4><div class="val" id="fcProjectedAvg" style="color:#c4b5fd;">0%</div></div><span style="font-size:20px;">🔮</span></div>
+                <div class="stat-card"><div><h4>حالة الزخم (Momentum)</h4><div class="val" id="fcMomentumStatus" style="font-size:15px;">مستقر</div></div><span style="font-size:20px;">⚡</span></div>
+                <div class="stat-card"><div><h4>صاحب أكبر قفزة أسبوعية</h4><div class="val" id="fcTopJumper" style="font-size:13px; color:#34d399;">—</div></div><span style="font-size:20px;">🏆</span></div>
+            </div>
+
+            <!-- ⏳ شريط آلة الزمن التفاعلي -->
+            <div class="timemachine-bar" style="margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h4 style="color:#38bdf8; font-size:14px;">⏳ شريط آلة الزمن (اسحب للتنقل بين الأسابيع ومشاهدة تغير الخريطة الحرارية)</h4>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                        <span id="tmSelectedWeekBadge" class="badge b-blue" style="font-size:12px;">الأسبوع الحالي</span>
+                        <button type="button" id="btnTmPlay" onclick="toggleTimeMachineAutoPlay()" class="btn-action" style="background:#7c3aed;">▶ تشغيل آلة الزمن</button>
+                        <button type="button" onclick="exportTimeMachineReport()" class="btn-action" style="background:#059669;">📥 تصدير تقرير المسار الشهري</button>
+                    </div>
+                </div>
+                <input type="range" id="timeMachineSlider" class="timemachine-slider" min="0" max="3" step="1" value="3" oninput="onUnifiedHeatmapTimeScrub(this.value)">
+                <div id="tmWeekStatsRow" style="display:flex; gap:14px; flex-wrap:wrap; font-size:12px; color:#cbd5e1; margin-top:4px;"></div>
+                <div id="tmBestWorstSummary" style="margin-top:6px; font-size:11px; display:flex; gap:10px; flex-wrap:wrap;"></div>
+            </div>
+
+            <!-- 🎛️ فلاتر الخريطة الحرارية والتشخيص التلقائي -->
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                <select id="heatmapDeptFilter" onchange="onUnifiedHeatmapTimeScrub()" class="form-input" style="max-width:200px; padding:6px 10px; font-size:11px;"><option value="all">🌟 كل الأقسام</option></select>
+                <label class="checkbox-label" style="font-size:12px; color:#38bdf8;"><input type="checkbox" id="heatmapComparePrevToggle" onchange="onUnifiedHeatmapTimeScrub()"> 🔄 مقارنة حرارية مع الأسبوع السابق (▲/▼)</label>
+            </div>
             <div id="heatmapAutoDiagnosis" style="background:var(--bg-main); border:1px solid var(--border-color); border-right:4px solid #f59e0b; border-radius:10px; padding:12px 15px; margin-bottom:15px; font-size:12px; line-height:1.7;"></div>
             <table>
                 <thead id="heatmapTableHead"></thead>
@@ -3338,12 +3335,12 @@
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="coaching" checked> ⚡ التوجيه اللحظي الذكي</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="compare" checked> ⚔️ مقارنة حية بين موظفين</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="rootcause" checked> 🔍 تحليل جذور الأخطاء</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="heatmap" checked> 🔥 الخريطة الحرارية للأداء</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="heatmap" checked> 🔥 الخريطة الحرارية وآلة الزمن والتوقع</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="burnout" checked> 🩺 رادار الاحتراق وتزاوج الكفاءات</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="simulator" checked> 🎛️ محاكي القرارات (ماذا لو؟)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="morninghuddle" checked> ☀️ اجتماع الصباح في دقيقتين</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="constellation" checked> 🌌 خريطة المجرة التفاعلية</label>
-                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="timemachine" checked> ⏳ آلة الزمن والتوقع الشهري</label>
+                        
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="biaspulse" checked> ⚖️ كاشف التحيّز ونبض المزاج السري</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="speedeval" checked> ⚡ وضع التقييم السريع (بيد واحدة)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="career" checked> 🌱 النمو الوظيفي</label>
@@ -11244,6 +11241,142 @@
                 <span>🎯 <b style="color:#facc15;">${nearExc}</b> موظف على بُعد 5% من قائمة التميز</span>
             `;
         }
+    };
+
+
+    // =========================================================================
+    // 🔥⏳ v12.6 UNIFIED THERMAL HEATMAP + TIME-MACHINE ENGINE
+    // =========================================================================
+    const _origSwitchTabBeforeV10 = switchTab;
+    switchTab = function(tab) {
+        if (tab === 'timemachine') tab = 'heatmap';
+        _origSwitchTabBeforeV10(tab);
+        if (tab === 'heatmap') {
+            initUnifiedHeatmapTimeMachine();
+        }
+    };
+
+    function initUnifiedHeatmapTimeMachine() {
+        let weeks = getAvailableWeeks().reverse(); // oldest -> newest
+        let slider = document.getElementById('timeMachineSlider');
+        if (slider) {
+            slider.min = 0;
+            slider.max = Math.max(0, weeks.length - 1);
+            slider.value = Math.max(0, weeks.length - 1);
+        }
+        if (typeof renderForecastAndMomentum === 'function') {
+            renderForecastAndMomentum(weeks);
+        }
+        onUnifiedHeatmapTimeScrub(slider ? slider.value : Math.max(0, weeks.length - 1));
+    }
+
+    function onUnifiedHeatmapTimeScrub(idxVal) {
+        let weeks = getAvailableWeeks().reverse();
+        let slider = document.getElementById('timeMachineSlider');
+        let idx = (idxVal !== undefined && idxVal !== null) ? parseInt(idxVal) : (slider ? parseInt(slider.value) : Math.max(0, weeks.length - 1));
+        if (isNaN(idx) || idx < 0) idx = 0;
+        if (idx >= weeks.length) idx = weeks.length - 1;
+        let selectedWeek = weeks[idx] || getCurrentWeekKey();
+        let prevWeek = idx > 0 ? weeks[idx - 1] : null;
+
+        let badge = document.getElementById('tmSelectedWeekBadge');
+        if (badge) {
+            badge.textContent = (idx === weeks.length - 1) ? `🟢 الأسبوع الحالي (${selectedWeek})` : `⏳ ${selectedWeek}`;
+        }
+
+        // Populate Dept Filter dropdown if needed
+        let deptSel = document.getElementById('heatmapDeptFilter');
+        if (deptSel && deptSel.options.length <= 1 && Array.isArray(departmentsData)) {
+            departmentsData.forEach(d => {
+                deptSel.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+            });
+        }
+        let chosenDept = deptSel ? deptSel.value : 'all';
+        let comparePrev = document.getElementById('heatmapComparePrevToggle') ? document.getElementById('heatmapComparePrevToggle').checked : false;
+
+        let allEmps = dbData[currentBranch] || [];
+        let emps = allEmps.filter(emp => {
+            if (chosenDept === 'all') return true;
+            return getNormalizedDeptId(emp.dept) === chosenDept || emp.dept === chosenDept;
+        });
+
+        let thead = document.getElementById('heatmapTableHead');
+        let tbody = document.getElementById('heatmapTableBody');
+        let diagEl = document.getElementById('heatmapAutoDiagnosis');
+        let statsRow = document.getElementById('tmWeekStatsRow');
+        let bwEl = document.getElementById('tmBestWorstSummary');
+        if (!thead || !tbody) return;
+
+        let headHtml = `<tr><th style="text-align:right;">الموظف</th>`;
+        metricNames.forEach(m => headHtml += `<th>${m}</th>`);
+        headHtml += `<th>النسبة</th></tr>`;
+        thead.innerHTML = headHtml;
+
+        let metricSums = new Array(metricNames.length).fill(0);
+        let metricLowCounts = new Array(metricNames.length).fill(0);
+        let sumPct = 0, exc = 0, alrt = 0;
+        let bestEmp = null, worstEmp = null;
+        tbody.innerHTML = '';
+
+        emps.forEach((emp) => {
+            let realIdx = allEmps.indexOf(emp);
+            let scores = (emp.history && emp.history[selectedWeek]) ? emp.history[selectedWeek] : new Array(metricNames.length).fill(3);
+            let prevScores = (prevWeek && emp.history && emp.history[prevWeek]) ? emp.history[prevWeek] : null;
+            let pct = calculateWeightedEmployeePct(emp, scores, null);
+            sumPct += pct;
+            if (pct >= 90) exc++;
+            if (pct <= 60) alrt++;
+            if (!bestEmp || pct > bestEmp.pct) bestEmp = { name: emp.name, pct };
+            if (!worstEmp || pct < worstEmp.pct) worstEmp = { name: emp.name, pct };
+
+            let rowHtml = `<tr><td style="text-align:right;"><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span></td>`;
+            metricNames.forEach((m, mIdx) => {
+                let sc = Number(scores[mIdx]) || 3;
+                metricSums[mIdx] += sc;
+                if (sc <= 2) metricLowCounts[mIdx]++;
+                let heatCls = `heat-${Math.min(5, Math.max(1, Math.round(sc)))}`;
+                let deltaMark = '';
+                if (comparePrev && prevScores) {
+                    let pSc = Number(prevScores[mIdx]) || 3;
+                    if (sc > pSc) deltaMark = ' <span style="color:#6ee7b7; font-size:9px;">▲</span>';
+                    else if (sc < pSc) deltaMark = ' <span style="color:#fca5a5; font-size:9px;">▼</span>';
+                }
+                rowHtml += `<td><div class="heat-cell ${heatCls}">${sc}${deltaMark}</div></td>`;
+            });
+            let pctColor = pct >= 90 ? '#34d399' : (pct <= 60 ? '#fb7185' : '#38bdf8');
+            rowHtml += `<td style="text-align:center; font-weight:bold; color:${pctColor};">${pct}%</td></tr>`;
+            tbody.innerHTML += rowHtml;
+        });
+
+        let avgWeek = emps.length ? Math.round(sumPct / emps.length) : 0;
+        if (statsRow) {
+            statsRow.innerHTML = `<span>📊 متوسط الأسبوع المحدد: <b style="color:#38bdf8;">${avgWeek}%</b></span><span>🌟 متميزون: <b style="color:#34d399;">${exc}</b></span><span>🚨 حالات حرجة: <b style="color:#fb7185;">${alrt}</b></span>`;
+        }
+        if (bwEl) {
+            bwEl.innerHTML = bestEmp
+                ? `<span class="badge b-green">🏆 الأعلى في هذا الأسبوع: ${bestEmp.name} (${bestEmp.pct}%)</span> <span class="badge b-red">⚠️ الأقل: ${worstEmp.name} (${worstEmp.pct}%)</span>`
+                : '';
+        }
+        if (diagEl) {
+            if (emps.length === 0) {
+                diagEl.innerHTML = 'لا يوجد موظفون مطابقون للفلتر المحدد.';
+            } else {
+                let worstMIdx = 0, lowestAvg = 99;
+                metricNames.forEach((m, i) => {
+                    let avgM = metricSums[i] / emps.length;
+                    if (avgM < lowestAvg) { lowestAvg = avgM; worstMIdx = i; }
+                });
+                let isVertical = metricLowCounts[worstMIdx] >= Math.max(2, Math.ceil(emps.length * 0.3));
+                diagEl.innerHTML = isVertical
+                    ? `🔥 <b>تشخيص عمودي (${selectedWeek}):</b> معيار <b>«${metricNames[worstMIdx]}»</b> هو أضعف نقطة جماعية (متوسط ${lowestAvg.toFixed(1)}/5 — ${metricLowCounts[worstMIdx]} موظفين بحاجة لدعم). يُوصى بورشة تدريب جماعية سريعة للفرع.`
+                    : `✅ <b>تشخيص متوازن (${selectedWeek}):</b> لا توجد مشكلة جماعية حادة؛ أضعف معيار نسبياً هو <b>«${metricNames[worstMIdx]}»</b> (${lowestAvg.toFixed(1)}/5) ويمكن معالجته بتوجيه فردي سريع.`;
+            }
+        }
+    }
+
+    // Override renderTimeMachineSnapshot so Auto-Play button drives the unified Heatmap seamlessly
+    renderTimeMachineSnapshot = function(idxVal) {
+        onUnifiedHeatmapTimeScrub(idxVal);
     };
 
 </script>
