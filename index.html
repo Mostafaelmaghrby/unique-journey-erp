@@ -2035,6 +2035,411 @@
         body.light-mode .dept-tpl-btn { background: #ffffff; }
         .dept-tpl-btn:hover { background: #0284c7; color: #fff; border-color: #7dd3fc; transform: translateY(-1px); }
 
+    
+        /* ===================================================================
+           ⬡ v12.8 INTERACTIVE HEXAGONAL HONEYCOMB KPI PULSE HUB (#sec-kpicore)
+           =================================================================== */
+        .kpi-hex-arena {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            min-height: 245px;
+            padding: 12px 6px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.4s ease;
+        }
+        .kpi-core-orb-wrapper.hex-trigger {
+            cursor: pointer;
+            transition: transform 0.25s ease;
+            flex-shrink: 0;
+        }
+        .kpi-core-orb-wrapper.hex-trigger:hover {
+            transform: scale(1.04);
+        }
+        .kpi-hex-click-hint {
+            margin-top: 5px;
+            font-size: 9px;
+            color: #7dd3fc;
+            background: rgba(2, 132, 199, 0.28);
+            border: 1px solid rgba(56, 189, 248, 0.55);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+        .kpi-hex-wing {
+            display: flex;
+            align-items: center;
+            gap: 0px;
+            max-width: 0;
+            opacity: 0;
+            overflow: visible;
+            pointer-events: none;
+            transform: scale(0.55);
+            transition: max-width 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                        opacity 0.38s ease,
+                        transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .kpi-hex-arena.hex-expanded .kpi-hex-wing {
+            max-width: 340px;
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1);
+        }
+        .kpi-hex-col {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .kpi-hex-col-offset {
+            margin-top: 52px;
+            margin-right: -14px;
+            margin-left: -14px;
+        }
+        .kpi-hex-cell {
+            width: 126px;
+            height: 112px;
+            position: relative;
+            cursor: pointer;
+            clip-path: polygon(25% 4%, 75% 4%, 98% 50%, 75% 96%, 25% 96%, 2% 50%);
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.85), rgba(14, 165, 233, 0.35), rgba(139, 92, 246, 0.75));
+            padding: 2px;
+            transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.24s ease;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.35));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .kpi-hex-cell:hover {
+            transform: scale(1.11) translateY(-3px);
+            filter: drop-shadow(0 0 18px rgba(56, 189, 248, 0.85));
+            z-index: 12;
+        }
+        .kpi-hex-cell.hex-danger {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.95), rgba(220, 38, 38, 0.45), rgba(251, 146, 60, 0.85));
+            filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.55));
+        }
+        .kpi-hex-cell.hex-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95), rgba(56, 189, 248, 0.45), rgba(52, 211, 153, 0.85));
+            filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.45));
+        }
+        .kpi-hex-cell.hex-gold {
+            background: linear-gradient(135deg, rgba(250, 204, 21, 0.95), rgba(245, 158, 11, 0.45), rgba(56, 189, 248, 0.75));
+            filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.45));
+        }
+        .kpi-hex-inner {
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(25% 4%, 75% 4%, 98% 50%, 75% 96%, 25% 96%, 2% 50%);
+            background: radial-gradient(circle at 50% 35%, rgba(15, 29, 54, 0.96), rgba(6, 11, 22, 0.98));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 14px;
+            gap: 2px;
+        }
+        body.light-mode .kpi-hex-inner {
+            background: radial-gradient(circle at 50% 35%, #ffffff, #f0f9ff);
+        }
+        .kpi-hex-icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+        .kpi-hex-title {
+            font-size: 10px;
+            font-weight: 800;
+            color: #e0f2fe;
+            line-height: 1.25;
+            white-space: nowrap;
+        }
+        body.light-mode .kpi-hex-title { color: #0f172a; }
+        .kpi-hex-val {
+            font-size: 11px;
+            font-weight: 800;
+            color: #38bdf8;
+            max-width: 92px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .kpi-hex-summary-strip {
+            display: none;
+            margin-top: 12px;
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.14), rgba(15, 23, 42, 0.88), rgba(139, 92, 246, 0.14));
+            border: 1px solid rgba(56, 189, 248, 0.42);
+            border-radius: 12px;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: var(--text-main);
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            animation: tabFadeLift 0.25s ease;
+        }
+        .kpi-hex-summary-strip.visible {
+            display: flex;
+        }
+        @media (max-width: 960px) {
+            .kpi-hex-arena {
+                flex-direction: column;
+                gap: 14px;
+            }
+            .kpi-hex-arena.hex-expanded .kpi-hex-wing {
+                max-width: 100%;
+                justify-content: center;
+            }
+            .kpi-hex-col-offset {
+                margin-top: 28px;
+                margin-right: -8px;
+                margin-left: -8px;
+            }
+            .kpi-hex-cell {
+                width: 114px;
+                height: 100px;
+            }
+        }
+
+    
+        /* ===================================================================
+           🩸 v12.9 ENLARGED HEART ORB + ANIMATED VASCULAR ARTERIES (#sec-kpicore)
+           =================================================================== */
+        .kpi-hex-arena {
+            gap: 46px !important;
+            min-height: 300px !important;
+            padding: 18px 10px !important;
+        }
+        .kpi-core-orb-wrapper {
+            width: 268px !important;
+            height: 268px !important;
+            z-index: 4 !important;
+        }
+        .kpi-core-orb {
+            width: 228px !important;
+            height: 228px !important;
+            padding: 16px !important;
+        }
+        .kpi-pulse-ring, .kpi-pulse-ring-2 {
+            width: 232px !important;
+            height: 232px !important;
+        }
+        #kcoreCenterPct {
+            font-size: 48px !important;
+            text-shadow: 0 0 22px rgba(56, 189, 248, 0.55);
+        }
+        #kcoreTrendBadge {
+            font-size: 13px !important;
+        }
+        #kcoreBpmReadout {
+            font-size: 11px !important;
+        }
+        .kpi-hex-click-hint {
+            font-size: 10px !important;
+            padding: 3px 10px !important;
+            margin-top: 6px !important;
+        }
+        .kpi-hex-wing {
+            position: relative;
+            z-index: 4;
+        }
+        .kpi-hex-arena.hex-expanded .kpi-hex-wing {
+            max-width: 360px !important;
+        }
+        .kpi-hex-cell.hex-purple {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.95), rgba(139, 92, 246, 0.45), rgba(56, 189, 248, 0.8));
+            filter: drop-shadow(0 0 12px rgba(168, 85, 247, 0.5));
+        }
+
+        /* 🩸 SVG طبقة الشرايين النابضة */
+        .kpi-artery-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: visible;
+            opacity: 0;
+            transition: opacity 0.45s ease;
+        }
+        .kpi-hex-arena.hex-expanded .kpi-artery-svg {
+            opacity: 1;
+        }
+        @keyframes arteryPulseFlow {
+            0%   { stroke-dashoffset: 68; }
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes arteryCardiacBreathe {
+            0%, 100% { stroke-opacity: 0.24; stroke-width: 6.5px; }
+            14%      { stroke-opacity: 0.72; stroke-width: 10px; }
+            28%      { stroke-opacity: 0.34; stroke-width: 7px; }
+            42%      { stroke-opacity: 0.62; stroke-width: 9px; }
+            58%      { stroke-opacity: 0.24; stroke-width: 6.5px; }
+        }
+        .kpi-artery-glow {
+            fill: none;
+            stroke-linecap: round;
+            animation: arteryCardiacBreathe var(--pulse-dur, 1.35s) ease-in-out infinite;
+        }
+        .kpi-artery-base {
+            fill: none;
+            stroke-linecap: round;
+            stroke-width: 2.4px;
+            stroke-opacity: 0.55;
+            transition: stroke-width 0.2s, stroke-opacity 0.2s;
+        }
+        .kpi-artery-flow {
+            fill: none;
+            stroke-linecap: round;
+            stroke-width: 3.6px;
+            stroke-dasharray: 12 22;
+            animation: arteryPulseFlow var(--pulse-dur, 1.35s) linear infinite;
+            transition: stroke-width 0.2s;
+        }
+        .kpi-artery-group.artery-active .kpi-artery-base {
+            stroke-width: 4px;
+            stroke-opacity: 0.95;
+        }
+        .kpi-artery-group.artery-active .kpi-artery-flow {
+            stroke-width: 5px;
+        }
+        @media (max-width: 960px) {
+            .kpi-hex-arena {
+                gap: 22px !important;
+                min-height: 260px !important;
+            }
+            .kpi-core-orb-wrapper {
+                width: 224px !important;
+                height: 224px !important;
+            }
+            .kpi-core-orb {
+                width: 192px !important;
+                height: 192px !important;
+            }
+            .kpi-pulse-ring, .kpi-pulse-ring-2 {
+                width: 196px !important;
+                height: 196px !important;
+            }
+            #kcoreCenterPct {
+                font-size: 38px !important;
+            }
+        }
+
+    
+        /* ===================================================================
+           💓 v13.0 RADIAL WRAP-AROUND HEXAGONS + LARGER ICONS + ECG ARTERIES
+           =================================================================== */
+        .kpi-hex-arena {
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-height: 460px !important;
+            padding: 20px 10px !important;
+            gap: 0 !important;
+            overflow: visible !important;
+        }
+        /* إخفاء الأجنحة القديمة واستبدالها بحاوية دائرية محيطة بالكرة مباشرة */
+        .kpi-hex-wing {
+            display: none !important;
+        }
+        .kpi-hex-radial-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell {
+            position: absolute;
+            width: 144px !important;
+            height: 128px !important;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.18);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.55s cubic-bezier(0.34, 1.48, 0.64, 1),
+                        opacity 0.4s ease,
+                        filter 0.25s ease;
+        }
+        .kpi-hex-arena.hex-expanded .kpi-hex-radial-layer .kpi-hex-cell {
+            transform: translate(calc(-50% + var(--hx, 0px)), calc(-50% + var(--hy, 0px))) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .kpi-hex-arena.hex-expanded .kpi-hex-radial-layer .kpi-hex-cell:hover {
+            transform: translate(calc(-50% + var(--hx, 0px)), calc(-50% + var(--hy, 0px) - 4px)) scale(1.12) !important;
+            z-index: 20;
+        }
+        .kpi-hex-icon {
+            font-size: 30px !important;
+            line-height: 1.05 !important;
+            margin-bottom: 2px;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.55));
+        }
+        .kpi-hex-title {
+            font-size: 11px !important;
+            font-weight: 800 !important;
+        }
+        .kpi-hex-val {
+            font-size: 12px !important;
+            font-weight: 800 !important;
+        }
+        @media (max-width: 960px) {
+            .kpi-hex-arena {
+                min-height: 520px !important;
+            }
+            .kpi-hex-radial-layer .kpi-hex-cell {
+                width: 112px !important;
+                height: 100px !important;
+            }
+            .kpi-hex-icon {
+                font-size: 23px !important;
+            }
+            .kpi-hex-title {
+                font-size: 9.5px !important;
+            }
+            .kpi-hex-val {
+                font-size: 10.5px !important;
+            }
+        }
+
+    
+        /* ===================================================================
+           ✨ v13.1 FULL-WIDTH SYMMETRIC SPREAD + SMART FLEXIBLE ECG LAYOUT
+           =================================================================== */
+        .kpi-hex-arena {
+            min-height: 415px !important;
+            width: 100% !important;
+            padding: 16px 8px !important;
+        }
+        .kpi-hex-radial-layer .kpi-hex-cell {
+            width: 142px !important;
+            height: 126px !important;
+        }
+        @media (max-width: 1120px) and (min-width: 761px) {
+            .kpi-hex-radial-layer .kpi-hex-cell {
+                width: 126px !important;
+                height: 112px !important;
+            }
+            .kpi-hex-icon { font-size: 26px !important; }
+            .kpi-hex-title { font-size: 10px !important; }
+        }
+        @media (max-width: 760px) {
+            .kpi-hex-arena {
+                min-height: 540px !important;
+            }
+            .kpi-hex-radial-layer .kpi-hex-cell {
+                width: 108px !important;
+                height: 96px !important;
+            }
+            .kpi-hex-icon { font-size: 22px !important; }
+        }
+
     </style>
 </head>
 <body>
@@ -2332,43 +2737,41 @@
                 </div>
             </div>
             <div class="kpi-topology-stage">
-                <div class="kpi-topology-grid">
-                    <div class="kpi-node-col">
-                        <div class="kpi-sys-node" onclick="switchTab('eval')">
-                            <div style="font-size:12px; font-weight:800; color:#38bdf8;">📊 مؤشر التقييم النشط</div>
-                            <div id="kcoreEvalMetric" style="font-size:20px; font-weight:800; margin-top:4px;">0%</div>
-                            <div style="font-size:10px; color:var(--text-muted);">اضغط للانتقال إلى شيت التقييم الأسبوعي</div>
-                        </div>
-                        <div class="kpi-sys-node" onclick="switchTab('coaching')">
-                            <div style="font-size:12px; font-weight:800; color:#34d399;">⚡ التوجيه اللحظي</div>
-                            <div id="kcoreCoachingMetric" style="font-size:20px; font-weight:800; margin-top:4px;">0</div>
-                            <div style="font-size:10px; color:var(--text-muted);">حالات موصى بتوجيهها حسب معايير KPI</div>
-                        </div>
+                <div class="kpi-hex-arena" id="kpiHexArena">
+                    <!-- 🩸 شبكة الشرايين النابضة المتصلة بكل خلية سداسية -->
+                    <svg id="kpiArterySvg" class="kpi-artery-svg" aria-hidden="true"></svg>
+                    <!-- ⬡ طبقة الخلايا السداسية المحيطة بالدائرة -->
+                    <div id="kpiHexRadialLayer" class="kpi-hex-radial-layer"></div>
+                    <!-- الجناح الأيمن: خلايا سداسية تفاعلية (تظهر عند الضغط على كرة النبض) -->
+                    <div class="kpi-hex-wing" id="kpiHexWingRight">
+                        <div class="kpi-hex-col" id="kpiHexColR1"></div>
+                        <div class="kpi-hex-col kpi-hex-col-offset" id="kpiHexColR2"></div>
                     </div>
 
-                    <div class="kpi-core-orb-wrapper">
+                    <!-- 💓 كرة النبض المركزية (اضغط عليها لإطلاق/إخفاء الخلايا السداسية) -->
+                    <div class="kpi-core-orb-wrapper hex-trigger" onclick="toggleKpiHexHub()" title="اضغط لعرض أو إخفاء أهم بنود النظام في خلايا سداسية">
                         <div class="kpi-pulse-ring" id="kcorePulseRing1"></div>
                         <div class="kpi-pulse-ring-2" id="kcorePulseRing2"></div>
                         <div class="kpi-core-orb" id="kcoreOrbEl">
                             <div style="font-size:10px; letter-spacing:1.2px; color:#7dd3fc; font-weight:800;">💓 LIVE KPI PULSE</div>
                             <div id="kcoreCenterPct" style="font-size:36px; font-weight:800; color:#fff; margin:2px 0; line-height:1.1;">0%</div>
-                            <div id="kcoreTrendBadge" style="font-size:11px; color:#34d399; font-weight:bold; margin-top:2px;">• مستقر</div>
-                            <div id="kcoreBpmReadout" style="font-size:10px; color:#bae6fd; font-family:monospace; margin-top:3px;">72 BPM • إيقاع متزن</div>
+                            <div id="kcoreTrendBadge" style="font-size:11px; color:#34d399; font-weight:bold; margin-top:1px;">• مستقر</div>
+                            <div id="kcoreBpmReadout" style="font-size:10px; color:#bae6fd; font-family:monospace; margin-top:2px;">72 BPM</div>
+                            <div id="kcoreHexHintPill" class="kpi-hex-click-hint">👆 اضغط لعرض البنود</div>
                         </div>
                     </div>
 
-                    <div class="kpi-node-col">
-                        <div class="kpi-sys-node" onclick="switchTab('charts')">
-                            <div style="font-size:12px; font-weight:800; color:#c4b5fd;">📈 أضعف معيار تشغيلي</div>
-                            <div id="kcoreWeakestMetric" style="font-size:15px; font-weight:800; margin-top:4px;">—</div>
-                            <div style="font-size:10px; color:var(--text-muted);">اضغط لعرض الرسوم والتحليلات</div>
-                        </div>
-                        <div class="kpi-sys-node" onclick="switchTab('plan')">
-                            <div style="font-size:12px; font-weight:800; color:#facc15;">📋 خطة العمل التشغيلية</div>
-                            <div id="kcorePlanMetric" style="font-size:20px; font-weight:800; margin-top:4px;">0/0</div>
-                            <div style="font-size:10px; color:var(--text-muted);">مهام منجزة ضمن الخطة التشغيلية</div>
-                        </div>
+                    <!-- الجناح الأيسر: خلايا سداسية تفاعلية -->
+                    <div class="kpi-hex-wing" id="kpiHexWingLeft">
+                        <div class="kpi-hex-col kpi-hex-col-offset" id="kpiHexColL1"></div>
+                        <div class="kpi-hex-col" id="kpiHexColL2"></div>
                     </div>
+                </div>
+
+                <!-- ⚡ شريط الملخص السريع التفاعلي عند التمرير على أي خلية سداسية -->
+                <div id="kpiHexSummaryStrip" class="kpi-hex-summary-strip">
+                    <div id="kpiHexSummaryText" style="line-height:1.6;">💡 مرّر الماوس على أي خلية سداسية لقراءة ملخصها الفوري، أو اضغط عليها للدخول المباشر.</div>
+                    <button type="button" id="kpiHexSummaryOpenBtn" class="btn-action hidden" style="background:#0284c7; padding:5px 12px;">🚀 فتح الشاشة</button>
                 </div>
 
                 <!-- 💓 شاشة تخطيط ضربات القلب الحية (Real-Time Moving ECG Waveform) -->
@@ -12037,6 +12440,677 @@
     renderEmployeePerformanceChart = function() {
         _origRenderEmpChartV11();
         renderBenchmarkComparisonSection();
+    };
+
+
+    // =========================================================================
+    // ⬡ v12.8 INTERACTIVE HEXAGONAL HONEYCOMB KPI PULSE HUB CONTROLLER
+    // =========================================================================
+    let kpiHexExpandedState = false;
+    let kpiHexItemsCache = [];
+
+    function toggleKpiHexHub(forceState) {
+        let arena = document.getElementById('kpiHexArena');
+        let strip = document.getElementById('kpiHexSummaryStrip');
+        let hint = document.getElementById('kcoreHexHintPill');
+        if (!arena) return;
+        kpiHexExpandedState = (typeof forceState === 'boolean') ? forceState : !kpiHexExpandedState;
+        if (kpiHexExpandedState) {
+            renderKpiHexNodes();
+            arena.classList.add('hex-expanded');
+            if (strip) strip.classList.add('visible');
+            if (hint) hint.textContent = '🔽 اضغط لإخفاء الخلايا';
+        } else {
+            arena.classList.remove('hex-expanded');
+            if (strip) strip.classList.remove('visible');
+            if (hint) hint.textContent = '👆 اضغط لعرض البنود';
+        }
+    }
+
+    function buildKpiHexSummaryData() {
+        let activeWeek = getCurrentWeekKey();
+        let emps = dbData[currentBranch] || [];
+        let bObj = branchesData.find(b => b.id === currentBranch);
+        let bName = bObj ? bObj.name : currentBranch;
+
+        let sumPct = 0, excCount = 0, alertCount = 0, pendingCoaching = 0;
+        let topEmp = null;
+        let urgentNames = [];
+        let metricSums = new Array(metricNames.length).fill(0);
+
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            let pct = calculateWeightedEmployeePct(emp, sc, null);
+            sumPct += pct;
+            if (pct >= 90) excCount++;
+            if (!topEmp || pct > topEmp.pct) topEmp = { name: emp.name, pct };
+
+            let lowCount = 0;
+            metricNames.forEach((m, idx) => {
+                let v = Number(sc[idx]) || 3;
+                metricSums[idx] += v;
+                if (isMetricApplicableForDept(m, emp.dept) && v <= 2) {
+                    lowCount++;
+                    let key = `${currentBranch}_${emp.name}_${m}_${activeWeek}`;
+                    if (!smartCoachingResolvedState[key]) pendingCoaching++;
+                }
+            });
+            if (pct <= 60 || lowCount >= 2) {
+                alertCount++;
+                urgentNames.push(`${emp.name} (${pct}%)`);
+            }
+        });
+
+        let avgPct = emps.length ? Math.round(sumPct / emps.length) : 0;
+        let worstIdx = 0, minSum = Infinity;
+        metricSums.forEach((s, i) => { if (s < minSum) { minSum = s; worstIdx = i; } });
+        let weakestMetric = metricNames[worstIdx] || 'الأداء والإنتاجية';
+        let weakestPct = emps.length ? Math.round(((metricSums[worstIdx] || 0) / (emps.length * 5)) * 100) : 0;
+
+        let donePlan = (planData || []).filter(p => p.completed).length;
+        let totalPlan = (planData || []).length;
+        let planPct = totalPlan ? Math.round((donePlan / totalPlan) * 100) : 0;
+
+        let benchRows = (typeof computeBranchMetricBenchmarks === 'function')
+            ? computeBranchMetricBenchmarks(currentBranch, 'all')
+            : [];
+        let benchPass = benchRows.filter(r => r.status === 'pass').length;
+        let benchTotal = benchRows.length || metricNames.length;
+
+        let items = [
+            {
+                tab: 'eval',
+                icon: '📊',
+                title: 'شيت التقييم',
+                val: `${avgPct}%`,
+                cls: avgPct >= 85 ? 'hex-success' : (avgPct <= 60 ? 'hex-danger' : ''),
+                summary: `📊 <b>شيت التقييم (${bName}):</b> متوسط الأداء الموزون <b>${avgPct}%</b> — عدد المتميزين (≥90%): <b style="color:#34d399;">${excCount}</b> من إجمالي ${emps.length} موظف.`
+            },
+            {
+                tab: 'allemp',
+                icon: '👥',
+                title: 'فريق العمل',
+                val: `${emps.length} موظف`,
+                cls: '',
+                summary: `👥 <b>قاعدة بيانات الموظفين:</b> إجمالي الفريق في ${bName} هو <b>${emps.length} موظف</b> موزعين على <b>${departmentsData.length} أقسام</b>.`
+            },
+            {
+                tab: 'alerts',
+                icon: '🚨',
+                title: 'الإنذار المبكر',
+                val: alertCount > 0 ? `${alertCount} حرج` : 'آمن 0',
+                cls: alertCount > 0 ? 'hex-danger' : 'hex-success',
+                summary: alertCount > 0
+                    ? `🚨 <b>الإنذار المبكر:</b> يوجد <b style="color:#fb7185;">${alertCount} حالات حرجة</b> تحتاج تدخلاً فورياً: ${urgentNames.slice(0, 3).join('، ')}${urgentNames.length > 3 ? '...' : ''}.`
+                    : `✅ <b>الإنذار المبكر:</b> ممتاز! لا توجد أي حالات حرجة أو إنذارات نشطة في ${bName} هذا الأسبوع.`
+            },
+            {
+                tab: 'coaching',
+                icon: '⚡',
+                title: 'التوجيه الذكي',
+                val: `${pendingCoaching} حالة`,
+                cls: pendingCoaching > 0 ? 'hex-gold' : 'hex-success',
+                summary: pendingCoaching > 0
+                    ? `⚡ <b>التوجيه اللحظي الذكي:</b> يوجد <b style="color:#fbbf24;">${pendingCoaching} نقاط قصور</b> (≤ 2/5) بانتظار جلسات توجيه سريعة.`
+                    : `🌟 <b>التوجيه اللحظي الذكي:</b> جميع حالات التوجيه تمت معالجتها بنجاح.`
+            },
+            {
+                tab: 'leaderboard',
+                icon: '🏆',
+                title: 'لوحة الشرف',
+                val: topEmp ? `${topEmp.pct}%` : '—',
+                cls: 'hex-gold',
+                summary: topEmp
+                    ? `🏆 <b>لوحة الشرف التنافسية:</b> المتصدر الأول في ${bName} هو <b style="color:#facc15;">${topEmp.name}</b> بنسبة <b>${topEmp.pct}%</b>.`
+                    : `🏆 <b>لوحة الشرف:</b> لا توجد بيانات تقييم كافية حالياً.`
+            },
+            {
+                tab: 'heatmap',
+                icon: '🔥',
+                title: 'الحرارة والزمن',
+                val: `${weakestPct}%`,
+                cls: weakestPct < 70 ? 'hex-danger' : '',
+                summary: `🔥⏳ <b>الخريطة الحرارية وآلة الزمن:</b> أضعف معيار حالياً هو <b style="color:#fb923c;">«${weakestMetric}»</b> بمتوسط <b>${weakestPct}%</b>.`
+            },
+            {
+                tab: 'plan',
+                icon: '📋',
+                title: 'خطة العمل',
+                val: `${donePlan}/${totalPlan}`,
+                cls: planPct >= 75 ? 'hex-success' : '',
+                summary: `📋 <b>خطة العمل التشغيلية:</b> تم إنجاز <b>${donePlan}</b> من أصل <b>${totalPlan}</b> مهام (نسبة الإنجاز <b>${planPct}%</b>).`
+            },
+            {
+                tab: 'charts',
+                icon: '🌐',
+                title: 'مقارنة المعايير',
+                val: `${benchPass}/${benchTotal} هدف`,
+                cls: benchPass === benchTotal ? 'hex-success' : '',
+                summary: `🌐 <b>مقارنة الأداء بالمعيار المستهدف:</b> <b>${benchPass}</b> من أصل <b>${benchTotal}</b> معايير حققت أو تجاوزت المعيار المستهدف.`
+            }
+        ];
+        return items.filter(it => hasFeaturePermission(it.tab));
+    }
+
+    function renderKpiHexNodes() {
+        kpiHexItemsCache = buildKpiHexSummaryData();
+        let cols = [
+            document.getElementById('kpiHexColR1'),
+            document.getElementById('kpiHexColR2'),
+            document.getElementById('kpiHexColL1'),
+            document.getElementById('kpiHexColL2')
+        ];
+        if (!cols[0] || !cols[2]) return;
+        cols.forEach(c => { if (c) c.innerHTML = ''; });
+
+        kpiHexItemsCache.forEach((item, i) => {
+            let targetCol = cols[Math.floor(i / 2)] || cols[0];
+            let cell = document.createElement('div');
+            cell.className = `kpi-hex-cell ${item.cls}`;
+            cell.style.transitionDelay = `${(i % 4) * 45}ms`;
+            cell.innerHTML = `
+                <div class="kpi-hex-inner">
+                    <div class="kpi-hex-icon">${item.icon}</div>
+                    <div class="kpi-hex-title">${item.title}</div>
+                    <div class="kpi-hex-val">${item.val}</div>
+                </div>`;
+            cell.onmouseenter = () => previewKpiHexSummary(i);
+            cell.onclick = () => switchTab(item.tab);
+            targetCol.appendChild(cell);
+        });
+    }
+
+    function previewKpiHexSummary(idx) {
+        let item = kpiHexItemsCache[idx];
+        let txtEl = document.getElementById('kpiHexSummaryText');
+        let btnEl = document.getElementById('kpiHexSummaryOpenBtn');
+        if (!item || !txtEl) return;
+        txtEl.innerHTML = item.summary;
+        if (btnEl) {
+            btnEl.classList.remove('hidden');
+            btnEl.textContent = `🚀 فتح ${item.title}`;
+            btnEl.onclick = () => switchTab(item.tab);
+        }
+    }
+
+    // Hook into renderKpiTelemetryCore so Hex Nodes refresh live when expanded
+    const _v128RenderKpiCore = renderKpiTelemetryCore;
+    renderKpiTelemetryCore = function() {
+        _v128RenderKpiCore();
+        if (kpiHexExpandedState) {
+            renderKpiHexNodes();
+        }
+    };
+
+
+    // =========================================================================
+    // 🩸 v12.9 LIVE ANIMATED VASCULAR ARTERIES ENGINE (#kpiArterySvg)
+    // =========================================================================
+    function getArteryStyleForHexClass(cls) {
+        if (cls.includes('hex-danger'))  return { color: '#ef4444', glow: '#fb7185', dur: '1.05s' };
+        if (cls.includes('hex-success')) return { color: '#10b981', glow: '#34d399', dur: '1.50s' };
+        if (cls.includes('hex-gold'))    return { color: '#facc15', glow: '#fde047', dur: '1.28s' };
+        if (cls.includes('hex-purple'))  return { color: '#a855f7', glow: '#c084fc', dur: '1.45s' };
+        return { color: '#38bdf8', glow: '#7dd3fc', dur: '1.40s' };
+    }
+
+    function drawKpiPulseArteries() {
+        let arena = document.getElementById('kpiHexArena');
+        let svg = document.getElementById('kpiArterySvg');
+        let orb = document.getElementById('kcoreOrbEl');
+        if (!arena || !svg || !orb) return;
+
+        if (!kpiHexExpandedState) {
+            svg.innerHTML = '';
+            return;
+        }
+
+        let arenaRect = arena.getBoundingClientRect();
+        if (arenaRect.width < 10 || arenaRect.height < 10) return;
+
+        let orbRect = orb.getBoundingClientRect();
+        let ox = (orbRect.left - arenaRect.left) + (orbRect.width / 2);
+        let oy = (orbRect.top - arenaRect.top) + (orbRect.height / 2);
+        let orbR = Math.max(40, (orbRect.width / 2) - 4);
+
+        let cells = arena.querySelectorAll('.kpi-hex-cell');
+        let defs = `
+            <defs>
+                <filter id="kpiArteryGlowFilter" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="3.2" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        `;
+
+        let groupsHtml = '';
+        cells.forEach((cell, idx) => {
+            let cRect = cell.getBoundingClientRect();
+            let tx = (cRect.left - arenaRect.left) + (cRect.width / 2);
+            let ty = (cRect.top - arenaRect.top) + (cRect.height / 2);
+
+            let dx = tx - ox;
+            let dy = ty - oy;
+            let dist = Math.hypot(dx, dy) || 1;
+
+            // نقطة خروج الشريان من حافة كرة النبض
+            let sx = ox + (dx / dist) * orbR;
+            let sy = oy + (dy / dist) * orbR;
+
+            // منحنى عضوي يشبه الشرايين الحقيقية (Organic Cubic Bezier)
+            let midX = (sx + tx) / 2;
+            let bendY = (idx % 2 === 0 ? -18 : 18);
+            let c1x = sx + dx * 0.34;
+            let c1y = sy + dy * 0.12 + bendY;
+            let c2x = sx + dx * 0.68;
+            let c2y = ty - dy * 0.12 - (bendY * 0.5);
+            let pathD = `M ${sx.toFixed(1)} ${sy.toFixed(1)} C ${c1x.toFixed(1)} ${c1y.toFixed(1)}, ${c2x.toFixed(1)} ${c2y.toFixed(1)}, ${tx.toFixed(1)} ${ty.toFixed(1)}`;
+            let pathId = `kpiArteryPath_${idx}`;
+
+            let st = getArteryStyleForHexClass(cell.className || '');
+            // تفرّع شرياني رفيع جمالي يخرج من منتصف الشريان
+            let branchX = midX + (dx >= 0 ? 12 : -12);
+            let branchY = (sy + ty) / 2 + (idx % 2 === 0 ? -20 : 20);
+            let branchD = `M ${midX.toFixed(1)} ${((sy + ty) / 2).toFixed(1)} Q ${((midX + branchX) / 2).toFixed(1)} ${branchY.toFixed(1)}, ${tx.toFixed(1)} ${ty.toFixed(1)}`;
+
+            groupsHtml += `
+                <g class="kpi-artery-group" id="kpiArteryGroup_${idx}" style="--pulse-dur:${st.dur};">
+                    <path d="${pathD}" class="kpi-artery-glow" stroke="${st.color}" filter="url(#kpiArteryGlowFilter)"/>
+                    <path d="${branchD}" fill="none" stroke="${st.color}" stroke-width="1.2" stroke-opacity="0.32" stroke-dasharray="4 6"/>
+                    <path id="${pathId}" d="${pathD}" class="kpi-artery-base" stroke="${st.color}"/>
+                    <path d="${pathD}" class="kpi-artery-flow" stroke="${st.glow}" filter="url(#kpiArteryGlowFilter)"/>
+                    <circle r="4.2" fill="#ffffff" stroke="${st.color}" stroke-width="2" filter="url(#kpiArteryGlowFilter)">
+                        <animateMotion dur="${st.dur}" repeatCount="indefinite" rotate="auto">
+                            <mpath href="#${pathId}"/>
+                        </animateMotion>
+                    </circle>
+                    <circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="3.6" fill="${st.glow}" opacity="0.9"/>
+                    <circle cx="${tx.toFixed(1)}" cy="${ty.toFixed(1)}" r="3.8" fill="${st.color}" opacity="0.95"/>
+                </g>
+            `;
+        });
+
+        svg.setAttribute('viewBox', `0 0 ${arenaRect.width} ${arenaRect.height}`);
+        svg.innerHTML = defs + groupsHtml;
+    }
+
+    function highlightKpiArtery(idx, active) {
+        let g = document.getElementById(`kpiArteryGroup_${idx}`);
+        if (!g) return;
+        if (active) g.classList.add('artery-active');
+        else g.classList.remove('artery-active');
+    }
+
+    // ترقية ألوان الخلايا السداسية لتشمل تنوعاً بصرياً واضحاً (أحمر، أخضر، أزرق، أصفر، بنفسجي)
+    const _v128BuildKpiHexSummaryData = buildKpiHexSummaryData;
+    buildKpiHexSummaryData = function() {
+        let items = _v128BuildKpiHexSummaryData();
+        items.forEach(it => {
+            if (it.tab === 'charts' && !it.cls) it.cls = 'hex-purple';
+            if (it.tab === 'heatmap' && !it.cls) it.cls = 'hex-gold';
+        });
+        return items;
+    };
+
+    // ربط التمرير على كل خلية بإبراز الشريان المتصل بها
+    const _v128RenderKpiHexNodes = renderKpiHexNodes;
+    renderKpiHexNodes = function() {
+        _v128RenderKpiHexNodes();
+        let arena = document.getElementById('kpiHexArena');
+        if (arena) {
+            arena.querySelectorAll('.kpi-hex-cell').forEach((cell, idx) => {
+                let prevEnter = cell.onmouseenter;
+                cell.onmouseenter = () => {
+                    if (prevEnter) prevEnter();
+                    highlightKpiArtery(idx, true);
+                };
+                cell.onmouseleave = () => highlightKpiArtery(idx, false);
+            });
+        }
+        // رسم الشرايين بعد استقرار الحركة الانتقالية للخلايا
+        requestAnimationFrame(drawKpiPulseArteries);
+        setTimeout(drawKpiPulseArteries, 240);
+        setTimeout(drawKpiPulseArteries, 520);
+    };
+
+    const _v128ToggleKpiHexHub = toggleKpiHexHub;
+    toggleKpiHexHub = function(forceState) {
+        _v128ToggleKpiHexHub(forceState);
+        if (kpiHexExpandedState) {
+            requestAnimationFrame(drawKpiPulseArteries);
+            setTimeout(drawKpiPulseArteries, 240);
+            setTimeout(drawKpiPulseArteries, 520);
+        } else {
+            let svg = document.getElementById('kpiArterySvg');
+            if (svg) svg.innerHTML = '';
+        }
+    };
+
+    window.addEventListener('resize', () => {
+        if (kpiHexExpandedState) drawKpiPulseArteries();
+    });
+
+
+    // =========================================================================
+    // 💓 v13.0 RADIAL WRAP-AROUND HEXAGONS + REAL ECG SPIKE ARTERIES ENGINE
+    // =========================================================================
+    function getRadialHexOffsets(count, arenaW, arenaH) {
+        let isMobile = arenaW < 760;
+        let rxInner = isMobile ? Math.min(138, arenaW * 0.34) : Math.min(206, arenaW * 0.25);
+        let rxOuter = isMobile ? Math.min(150, arenaW * 0.38) : Math.min(338, arenaW * 0.39);
+        let ryWide  = isMobile ? 165 : 138;
+        let ryMid   = isMobile ? 62  : 70;
+
+        // 8 مواضع سداسية تحيط بدائرة النبض تماماً مثل خلية النحل حول الكرة المركزية
+        let preset8 = isMobile ? [
+            { x:  rxInner * 0.85, y: -ryWide },
+            { x:  rxInner,        y: -ryMid  },
+            { x:  rxInner,        y:  ryMid  },
+            { x:  rxInner * 0.85, y:  ryWide },
+            { x: -rxInner * 0.85, y: -ryWide },
+            { x: -rxInner,        y: -ryMid  },
+            { x: -rxInner,        y:  ryMid  },
+            { x: -rxInner * 0.85, y:  ryWide }
+        ] : [
+            { x:  rxInner, y: -ryWide }, // أعلى يمين (محاوط للكرة)
+            { x:  rxInner, y:  0      }, // منتصف يمين (محاوط للكرة)
+            { x:  rxInner, y:  ryWide }, // أسفل يمين (محاوط للكرة)
+            { x:  rxOuter, y: -ryMid  }, // يمين خارجي علوي (تشابك خلية نحل)
+            { x: -rxInner, y: -ryWide }, // أعلى يسار (محاوط للكرة)
+            { x: -rxInner, y:  0      }, // منتصف يسار (محاوط للكرة)
+            { x: -rxInner, y:  ryWide }, // أسفل يسار (محاوط للكرة)
+            { x: -rxOuter, y:  ryMid  }  // يسار خارجي سفلي (تشابك خلية نحل)
+        ];
+
+        if (count <= preset8.length) {
+            return preset8.slice(0, count);
+        }
+        // في حال زيادة البنود عن 8، توزيع دائري متساوٍ حول الكرة
+        let res = [];
+        let r = Math.min(arenaW, arenaH) * 0.4;
+        for (let i = 0; i < count; i++) {
+            let ang = (i / count) * Math.PI * 2 - Math.PI / 2;
+            res.push({ x: Math.cos(ang) * r, y: Math.sin(ang) * r });
+        }
+        return res;
+    }
+
+    function buildEcgHeartbeatPath(sx, sy, tx, ty) {
+        let dx = tx - sx;
+        let dy = ty - sy;
+        let len = Math.hypot(dx, dy) || 1;
+        let ux = dx / len;
+        let uy = dy / len;
+        // متجه عمودي لرسم نبضات الـ ECG (P - Q - R - S - T)
+        let nx = -uy;
+        let ny = ux;
+        // تكبير أو تصغير ارتفاع النبضة بتناسب مع طول الخط
+        let amp = Math.min(20, Math.max(11, len * 0.14));
+
+        // نقاط موجة تخطيط القلب الحقيقية (النسبة على طول الخط، الإزاحة العمودية)
+        let ecgPattern = [
+            [0.00,  0.00],
+            [0.14,  0.00],
+            [0.19, -0.22], // P wave
+            [0.24,  0.00],
+            [0.32,  0.00],
+            [0.36,  0.26], // Q dip
+            [0.42, -1.00], // R sharp peak
+            [0.48,  0.55], // S deep dip
+            [0.54,  0.00],
+            [0.62,  0.00],
+            [0.69, -0.32], // T wave
+            [0.77,  0.00],
+            [0.86,  0.00],
+            [1.00,  0.00]
+        ];
+
+        let pts = ecgPattern.map(([t, h]) => {
+            let px = sx + dx * t + nx * (h * amp);
+            let py = sy + dy * t + ny * (h * amp);
+            return `${px.toFixed(1)} ${py.toFixed(1)}`;
+        });
+        return 'M ' + pts.join(' L ');
+    }
+
+    // إعادة تعريف renderKpiHexNodes لوضع الخلايا حول الدائرة مباشرة
+    renderKpiHexNodes = function() {
+        kpiHexItemsCache = buildKpiHexSummaryData();
+        let layer = document.getElementById('kpiHexRadialLayer');
+        let arena = document.getElementById('kpiHexArena');
+        if (!layer || !arena) return;
+        layer.innerHTML = '';
+
+        let rect = arena.getBoundingClientRect();
+        let arenaW = rect.width || 860;
+        let arenaH = rect.height || 460;
+        let offsets = getRadialHexOffsets(kpiHexItemsCache.length, arenaW, arenaH);
+
+        kpiHexItemsCache.forEach((item, i) => {
+            let pos = offsets[i] || { x: 0, y: 0 };
+            let cell = document.createElement('div');
+            cell.className = `kpi-hex-cell ${item.cls || ''}`;
+            cell.style.setProperty('--hx', `${Math.round(pos.x)}px`);
+            cell.style.setProperty('--hy', `${Math.round(pos.y)}px`);
+            cell.style.transitionDelay = `${i * 42}ms`;
+            cell.innerHTML = `
+                <div class="kpi-hex-inner">
+                    <div class="kpi-hex-icon">${item.icon}</div>
+                    <div class="kpi-hex-title">${item.title}</div>
+                    <div class="kpi-hex-val">${item.val}</div>
+                </div>`;
+            cell.onmouseenter = () => {
+                previewKpiHexSummary(i);
+                highlightKpiArtery(i, true);
+            };
+            cell.onmouseleave = () => highlightKpiArtery(i, false);
+            cell.onclick = () => switchTab(item.tab);
+            layer.appendChild(cell);
+        });
+
+        requestAnimationFrame(drawKpiPulseArteries);
+        setTimeout(drawKpiPulseArteries, 300);
+        setTimeout(drawKpiPulseArteries, 580);
+    };
+
+    // إعادة تعريف drawKpiPulseArteries لرسم خطوط مخطط نبض القلب (ECG) بدلاً من الخط المستقيم
+    drawKpiPulseArteries = function() {
+        let arena = document.getElementById('kpiHexArena');
+        let svg = document.getElementById('kpiArterySvg');
+        let orb = document.getElementById('kcoreOrbEl');
+        let layer = document.getElementById('kpiHexRadialLayer');
+        if (!arena || !svg || !orb || !layer) return;
+
+        if (!kpiHexExpandedState) {
+            svg.innerHTML = '';
+            return;
+        }
+
+        let arenaRect = arena.getBoundingClientRect();
+        if (arenaRect.width < 10 || arenaRect.height < 10) return;
+
+        let orbRect = orb.getBoundingClientRect();
+        let ox = (orbRect.left - arenaRect.left) + (orbRect.width / 2);
+        let oy = (orbRect.top - arenaRect.top) + (orbRect.height / 2);
+        let orbR = Math.max(44, (orbRect.width / 2) - 2);
+
+        let cells = layer.querySelectorAll('.kpi-hex-cell');
+        let defs = `
+            <defs>
+                <filter id="kpiArteryGlowFilter" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="2.8" result="blur"/>
+                    <feMerge>
+                        <feMergeNode in="blur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        `;
+
+        let groupsHtml = '';
+        cells.forEach((cell, idx) => {
+            let cRect = cell.getBoundingClientRect();
+            let tx = (cRect.left - arenaRect.left) + (cRect.width / 2);
+            let ty = (cRect.top - arenaRect.top) + (cRect.height / 2);
+
+            let dx = tx - ox;
+            let dy = ty - oy;
+            let dist = Math.hypot(dx, dy) || 1;
+
+            let sx = ox + (dx / dist) * orbR;
+            let sy = oy + (dy / dist) * orbR;
+            let ex = tx - (dx / dist) * 44;
+            let ey = ty - (dy / dist) * 40;
+
+            let pathD = buildEcgHeartbeatPath(sx, sy, ex, ey);
+            let pathId = `kpiArteryPath_${idx}`;
+            let st = getArteryStyleForHexClass(cell.className || '');
+
+            groupsHtml += `
+                <g class="kpi-artery-group" id="kpiArteryGroup_${idx}" style="--pulse-dur:${st.dur};">
+                    <path d="${pathD}" class="kpi-artery-glow" stroke="${st.color}" stroke-linejoin="round" filter="url(#kpiArteryGlowFilter)"/>
+                    <path id="${pathId}" d="${pathD}" class="kpi-artery-base" stroke="${st.color}" stroke-linejoin="round"/>
+                    <path d="${pathD}" class="kpi-artery-flow" stroke="${st.glow}" stroke-linejoin="round" filter="url(#kpiArteryGlowFilter)"/>
+                    <circle r="4.4" fill="#ffffff" stroke="${st.color}" stroke-width="2" filter="url(#kpiArteryGlowFilter)">
+                        <animateMotion dur="${st.dur}" repeatCount="indefinite" rotate="auto">
+                            <mpath href="#${pathId}"/>
+                        </animateMotion>
+                    </circle>
+                    <circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="3.8" fill="${st.glow}" opacity="0.95"/>
+                    <circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="3.8" fill="${st.color}" opacity="0.95"/>
+                </g>
+            `;
+        });
+
+        svg.setAttribute('viewBox', `0 0 ${arenaRect.width} ${arenaRect.height}`);
+        svg.innerHTML = defs + groupsHtml;
+    };
+
+    window.addEventListener('resize', () => {
+        if (kpiHexExpandedState) {
+            renderKpiHexNodes();
+        }
+    });
+
+
+    // =========================================================================
+    // ✨ v13.1 FULL-WIDTH SYMMETRIC SPREAD FROM START TO END OF RECTANGLE
+    // =========================================================================
+    getRadialHexOffsets = function(count, arenaW, arenaH) {
+        let isMobile = arenaW < 760;
+        let isCompactDesktop = arenaW >= 760 && arenaW <= 1120;
+        let cellW = isMobile ? 108 : (isCompactDesktop ? 126 : 142);
+        let halfCellW = cellW / 2;
+
+        if (isMobile) {
+            let rx = Math.max(105, Math.min((arenaW / 2) - halfCellW - 8, 165));
+            let presetMob = [
+                { x:  rx * 0.92, y: -195 },
+                { x:  rx,        y: -72  },
+                { x:  rx,        y:  72  },
+                { x:  rx * 0.92, y:  195 },
+                { x: -rx * 0.92, y: -195 },
+                { x: -rx,        y: -72  },
+                { x: -rx,        y:  72  },
+                { x: -rx * 0.92, y:  195 }
+            ];
+            return presetMob.slice(0, count);
+        }
+
+        // فرد متناسق بالكامل من أول المستطيل إلى آخره (يميناً ويساراً بتماثل 100%)
+        let edgePadding = 16;
+        let xOuter = Math.max(300, (arenaW / 2) - halfCellW - edgePadding);
+        // المسافة الداخلية موزونة بين حافة كرة النبض والصف الخارجي
+        let orbClearX = 118 + halfCellW + 18;
+        let xInner = Math.max(orbClearX, Math.round(xOuter * 0.54));
+        if (xOuter - xInner < cellW + 12) {
+            xInner = Math.max(orbClearX - 10, xOuter - cellW - 14);
+        }
+
+        let yInner = isCompactDesktop ? 114 : 122;
+        let yOuter = isCompactDesktop ? 68  : 74;
+
+        // 8 مواضع متماثلة تماماً (4 يمين + 4 يسار) تملأ المستطيل من بدايته لنهايته بمرونة
+        let symmetric8 = [
+            // الجناح الأيمن (من الداخل للخارج)
+            { x:  xInner, y: -yInner },
+            { x:  xInner, y:  yInner },
+            { x:  xOuter, y: -yOuter },
+            { x:  xOuter, y:  yOuter },
+            // الجناح الأيسر (مرآة متطابقة تماماً للأيمن)
+            { x: -xInner, y: -yInner },
+            { x: -xInner, y:  yInner },
+            { x: -xOuter, y: -yOuter },
+            { x: -xOuter, y:  yOuter }
+        ];
+
+        if (count <= symmetric8.length) {
+            // توزيع متوازن على اليمين واليسار حتى لو قل عدد البنود بسبب الصلاحيات
+            let out = [];
+            let rightSlots = symmetric8.slice(0, 4);
+            let leftSlots  = symmetric8.slice(4, 8);
+            for (let i = 0; i < count; i++) {
+                let sideIdx = Math.floor(i / 2);
+                out.push(i % 2 === 0 ? rightSlots[sideIdx] : leftSlots[sideIdx]);
+            }
+            return out;
+        }
+
+        let res = [];
+        let rx = xOuter;
+        let ry = Math.min((arenaH / 2) - 70, 155);
+        for (let i = 0; i < count; i++) {
+            let ang = (i / count) * Math.PI * 2 - Math.PI / 2;
+            res.push({ x: Math.cos(ang) * rx, y: Math.sin(ang) * ry });
+        }
+        return res;
+    };
+
+    // ترقية خط مخطط النبض (ECG): نبضتان إيقاعيتان للخطوط الطويلة الممتدة لأطراف المستطيل
+    buildEcgHeartbeatPath = function(sx, sy, tx, ty) {
+        let dx = tx - sx;
+        let dy = ty - sy;
+        let len = Math.hypot(dx, dy) || 1;
+        let ux = dx / len;
+        let uy = dy / len;
+        let nx = -uy;
+        let ny = ux;
+        let amp = Math.min(20, Math.max(12, len * 0.085));
+
+        let pattern;
+        if (len > 210) {
+            // نبضتان واضحتان للخطوط الطويلة نحو أطراف المستطيل
+            pattern = [
+                [0.00,  0.00], [0.08,  0.00],
+                [0.12, -0.22], [0.16,  0.00],
+                [0.20,  0.24], [0.24, -1.00], [0.28,  0.54], [0.32,  0.00],
+                [0.37, -0.28], [0.43,  0.00],
+                [0.54,  0.00],
+                [0.58, -0.22], [0.62,  0.00],
+                [0.66,  0.24], [0.70, -1.00], [0.74,  0.54], [0.78,  0.00],
+                [0.83, -0.28], [0.89,  0.00],
+                [1.00,  0.00]
+            ];
+        } else {
+            // نبضة واحدة حادة للخطوط القريبة من الدائرة
+            pattern = [
+                [0.00,  0.00], [0.14,  0.00],
+                [0.20, -0.24], [0.25,  0.00],
+                [0.34,  0.00], [0.39,  0.28], [0.45, -1.00], [0.51,  0.55], [0.57,  0.00],
+                [0.65,  0.00], [0.72, -0.32], [0.80,  0.00],
+                [1.00,  0.00]
+            ];
+        }
+
+        let pts = pattern.map(([t, h]) => {
+            let px = sx + dx * t + nx * (h * amp);
+            let py = sy + dy * t + ny * (h * amp);
+            return `${px.toFixed(1)} ${py.toFixed(1)}`;
+        });
+        return 'M ' + pts.join(' L ');
     };
 
 </script>
