@@ -3463,6 +3463,481 @@
             background-color: rgba(2, 132, 199, 0.78) !important;
         }
 
+    
+        /* ===================================================================
+           🛸 v17.0 TACTICAL GEO-PULSE COMMAND DECK (#sec-devicelog)
+           =================================================================== */
+        .geo-deck-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.14);
+        }
+        .geo-deck-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .geo-deck-orb {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: radial-gradient(circle at 30% 30%, rgba(56, 189, 248, 0.35), rgba(2, 132, 199, 0.12));
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
+        }
+        .geo-branch-chips-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .geo-branch-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 11px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(15, 23, 42, 0.72);
+            border: 1px solid rgba(56, 189, 248, 0.22);
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .geo-branch-chip:hover {
+            border-color: rgba(56, 189, 248, 0.65);
+            color: #fff;
+            background: rgba(2, 132, 199, 0.2);
+        }
+        body.light-mode .geo-branch-chip {
+            background: #f1f5f9;
+            color: #1e293b;
+            border-color: #cbd5e1;
+        }
+        /* Collapsible Geo-Settings Drawer */
+        .geo-drawer-panel {
+            display: none;
+            background: linear-gradient(145deg, rgba(14, 24, 46, 0.92), rgba(8, 13, 25, 0.96));
+            border: 1px solid rgba(56, 189, 248, 0.28);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4);
+            animation: tabFadeLift 0.22s ease;
+        }
+        .geo-drawer-panel.open {
+            display: block;
+        }
+        body.light-mode .geo-drawer-panel {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        /* Top Command Stage: Radar + Unified Telemetry */
+        .geo-command-grid {
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+            align-items: stretch;
+        }
+        @media (max-width: 1020px) {
+            .geo-command-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .geo-radar-card {
+            position: relative;
+            background: radial-gradient(circle at 50% 50%, rgba(14, 165, 233, 0.10) 0%, rgba(6, 11, 22, 0.96) 75%);
+            border: 1px solid rgba(56, 189, 248, 0.24);
+            border-radius: 18px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: inset 0 0 36px rgba(14, 165, 233, 0.08), 0 12px 28px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        body.light-mode .geo-radar-card {
+            background: radial-gradient(circle at 50% 50%, rgba(2, 132, 199, 0.08) 0%, #0f172a 85%);
+        }
+        .geo-radar-canvas-wrap {
+            position: relative;
+            width: 248px;
+            height: 248px;
+            margin: 4px auto;
+        }
+        #geoPulseRadarCanvas {
+            width: 248px;
+            height: 248px;
+            display: block;
+            cursor: crosshair;
+        }
+        #geoRadarTooltip {
+            position: absolute;
+            display: none;
+            pointer-events: none;
+            background: rgba(7, 12, 24, 0.95);
+            border: 1px solid rgba(56, 189, 248, 0.6);
+            color: #f8fafc;
+            padding: 7px 10px;
+            border-radius: 10px;
+            font-size: 10.5px;
+            line-height: 1.65;
+            z-index: 25;
+            min-width: 155px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.65);
+        }
+        .geo-radar-legend {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .geo-radar-legend span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .geo-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        /* Right Column: Unified Telemetry Bar + Filters */
+        .geo-right-col {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            justify-content: space-between;
+            min-width: 0;
+        }
+        .geo-telemetry-bar {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(9, 13, 24, 0.94));
+            border: 1px solid rgba(56, 189, 248, 0.22);
+            border-radius: 18px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        body.light-mode .geo-telemetry-bar {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-color: #cbd5e1;
+        }
+        .geo-telemetry-metrics {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        @media (max-width: 760px) {
+            .geo-telemetry-metrics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .geo-t-item {
+            padding: 6px 10px;
+            border-left: 1px solid rgba(148, 163, 184, 0.14);
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .geo-t-item:last-child {
+            border-left: none;
+        }
+        .geo-t-lbl {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+        .geo-t-val {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            line-height: 1.1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .geo-energy-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+        }
+        .geo-energy-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            background: rgba(148, 163, 184, 0.14);
+            overflow: hidden;
+        }
+        .geo-energy-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #0284c7, #38bdf8, #10b981);
+            transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+        }
+        /* Filter & View Switcher */
+        .geo-filter-dock {
+            background: rgba(9, 13, 24, 0.78);
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-radius: 14px;
+            padding: 10px 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        body.light-mode .geo-filter-dock {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .geo-view-switch {
+            display: inline-flex;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 10px;
+            padding: 3px;
+            gap: 3px;
+        }
+        body.light-mode .geo-view-switch {
+            background: #e2e8f0;
+        }
+        .geo-view-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 800;
+            padding: 5px 11px;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .geo-view-btn.active {
+            background: #0284c7;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.45);
+        }
+        /* Smart Device Capsules */
+        .geo-capsules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .geo-capsule-card {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(220px, 1.25fr) minmax(220px, 1.2fr) auto;
+            gap: 14px;
+            align-items: center;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.84), rgba(9, 13, 24, 0.94));
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            border-right: 3px solid rgba(56, 189, 248, 0.55);
+            border-radius: 15px;
+            padding: 12px 16px;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .geo-capsule-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+        }
+        .geo-capsule-card.cap-in-office {
+            border-right-color: #10b981;
+        }
+        .geo-capsule-card.cap-outside {
+            border-right-color: #ef4444;
+        }
+        .geo-capsule-card.cap-highlight {
+            border-color: #38bdf8 !important;
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35), 0 14px 30px rgba(2, 132, 199, 0.3) !important;
+        }
+        body.light-mode .geo-capsule-card {
+            background: #ffffff;
+            border-color: #cbd5e1;
+        }
+        @media (max-width: 920px) {
+            .geo-capsule-card {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+        .geo-cap-id {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+        .geo-cap-avatar {
+            position: relative;
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, rgba(2, 132, 199, 0.28), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #e0f2fe;
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .geo-cap-status-ring {
+            position: absolute;
+            bottom: -3px;
+            left: -3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #090d16;
+            background: #64748b;
+        }
+        .geo-cap-status-ring.online {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+        .geo-cap-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+        }
+        .geo-cap-name-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .geo-cap-name {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+        .geo-cap-subtle-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 1px 7px;
+            border-radius: 6px;
+            background: rgba(148, 163, 184, 0.14);
+            color: #cbd5e1;
+        }
+        body.light-mode .geo-cap-subtle-tag {
+            color: #334155;
+            background: #e2e8f0;
+        }
+        .geo-cap-device-line {
+            font-size: 11px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .geo-cap-geo {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+        .geo-cap-place-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 700;
+            width: fit-content;
+            max-width: 100%;
+        }
+        .geo-cap-place-pill.in-office {
+            background: rgba(16, 185, 129, 0.14);
+            border: 1px solid rgba(16, 185, 129, 0.38);
+            color: #34d399;
+        }
+        .geo-cap-place-pill.outside {
+            background: rgba(239, 68, 68, 0.14);
+            border: 1px solid rgba(239, 68, 68, 0.42);
+            color: #fb7185;
+        }
+        .geo-cap-place-pill.approx {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.30);
+            color: #7dd3fc;
+        }
+        .geo-cap-net-line {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 10.5px;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+        .geo-cap-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .geo-icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            background: rgba(15, 23, 42, 0.78);
+            color: #cbd5e1;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.18s ease;
+        }
+        .geo-icon-btn:hover {
+            border-color: #38bdf8;
+            color: #fff;
+            background: rgba(2, 132, 199, 0.25);
+        }
+        .geo-icon-btn.certified {
+            border-color: rgba(16, 185, 129, 0.55);
+            color: #34d399;
+            background: rgba(16, 185, 129, 0.14);
+        }
+        .geo-icon-btn.danger:hover {
+            border-color: #ef4444;
+            color: #fca5a5;
+            background: rgba(220, 38, 38, 0.25);
+        }
+        body.light-mode .geo-icon-btn {
+            background: #f1f5f9;
+            color: #334155;
+            border-color: #cbd5e1;
+        }
+
     </style>
 </head>
 <body>
@@ -4484,35 +4959,41 @@
             <h3 style="color:#38bdf8; margin-bottom:8px; font-size:16px;">📊 التقرير التنفيذي الذكي وحلول معالجة المشكلات</h3>
             <div id="executiveReportContent" style="background:#0f172a; padding:20px; border-radius:10px; border:1px solid #334155; line-height: 1.8; font-size: 13px;"></div>
         </div>
-        <!-- 💻 سجل الأجهزة والدخول المطوّر مع تتبع GPS ونطاق العمل -->
+        <!-- 💻 سجل الأجهزة والدخول — غرفة الرادار المكاني الحي (v17.0 Tactical Geo-Pulse Command Deck) -->
         <div id="sec-devicelog" class="card hidden">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                <div>
-                    <h3 style="color:#38bdf8; font-size:16px;">💻 سجل نشاط ودخول المستخدمين والأجهزة (GPS + نطاق العمل)</h3>
-                    <p style="color:var(--text-muted); font-size:11px;">يطلب النظام إذن الموقع الجغرافي (GPS) عند الدخول لتحديد هل يفتح المستخدم من <b>مقر العمل</b> أم من <b>مكان آخر</b> مع رابط مباشر على خرائط جوجل.</p>
+            <!-- Header -->
+            <div class="geo-deck-header">
+                <div class="geo-deck-title-wrap">
+                    <div class="geo-deck-orb">🛰️</div>
+                    <div>
+                        <h3 style="color:#38bdf8; font-size:16px; font-weight:800;">غرفة الرادار المكاني وسجل الأجهزة (Geo-Pulse Deck)</h3>
+                        <p style="color:var(--text-muted); font-size:11px; margin-top:2px;">رصد مكاني لحظي لحالة الأجهزة ونطاق التواجد الجغرافي داخل الفروع مع مزامنة Firebase.</p>
+                    </div>
                 </div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                    <button type="button" onclick="requestLiveGpsForCurrentUser(true)" class="btn-action" style="background:#0284c7;">📍 تحديث موقعي GPS الآن</button>
-                    <button type="button" onclick="exportDeviceLogsJson()" class="btn-action" style="background:#059669;">📥 تصدير السجل</button>
-                    <button type="button" onclick="clearDeviceLogs()" class="btn-danger">🗑️ مسح السجل</button>
+                <div style="display:flex; gap:7px; flex-wrap:wrap; align-items:center;">
+                    <span id="firebaseSyncStatusBadge" class="badge b-yellow">⏳ جاري الاتصال بـ Firebase...</span>
+                    <span id="gpsPermissionStatusBadge" class="badge b-blue">📡 GPS</span>
+                    <button type="button" id="btnToggleGeoDrawer" onclick="toggleGeoSettingsDrawerV17()" class="btn-action" style="background:rgba(30,41,59,0.9); border:1px solid rgba(56,189,248,0.45); color:#7dd3fc;">⚙️ ضبط نطاق الفروع</button>
+                    <button type="button" onclick="requestLiveGpsForCurrentUser(true)" class="btn-action" style="background:#0284c7;">📍 تحديث موقعي</button>
+                    <button type="button" onclick="exportDeviceLogsJson()" class="btn-action" style="background:#059669;">📥 تصدير</button>
+                    <button type="button" onclick="clearDeviceLogs()" class="btn-danger">🗑️ مسح</button>
                 </div>
             </div>
 
-            <!-- 📍 تخصيص مواقع الفروع واستخراج الإحداثيات من خرائط جوجل (v16.4) -->
-            <div id="geofenceControlPanel" style="background:linear-gradient(145deg, rgba(14,165,233,0.09), rgba(15,23,42,0.92)); border:1px solid rgba(56,189,248,0.34); border-radius:14px; padding:14px 16px; margin-bottom:14px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
-                    <div style="font-size:13px; font-weight:800; color:#38bdf8;">🏢 تحديد مواقع الفروع ونطاق المسافة المسموح بها (Google Maps)</div>
-                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;"><span id="firebaseSyncStatusBadge" class="badge b-yellow">⏳ جاري الاتصال بـ Firebase...</span><span id="gpsPermissionStatusBadge" class="badge b-blue">📡 جاري التحقق من حالة GPS...</span></div>
-                </div>
+            <!-- شارات الفروع المضبوطة المختصرة -->
+            <div id="geoBranchQuickChips" class="geo-branch-chips-bar"></div>
 
-                <!-- Row 1: Branch Selector + Google Maps Link Parser -->
+            <!-- ⚙️ درج إعدادات مواقع الفروع المنزلق (مخفي افتراضياً لتقليل التشتت) -->
+            <div id="geofenceControlPanel" class="geo-drawer-panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                    <div style="font-size:13px; font-weight:800; color:#38bdf8;">🏢 تخصيص مواقع الفروع ونطاق المسافة المسموح بها (Google Maps)</div>
+                    <button type="button" onclick="toggleGeoSettingsDrawerV17(false)" class="btn-danger" style="padding:3px 9px;">✕ إغلاق</button>
+                </div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
                     <select id="geofenceBranchSelect" onchange="loadBranchGeofenceInputs()" class="form-input" style="max-width:200px; padding:7px 10px; font-size:11.5px; font-weight:700;"></select>
                     <input type="text" id="geofenceMapsUrlInput" placeholder="🗺️ الصق رابط خرائط جوجل (Google Maps) أو الإحداثيات لاستخراجها مباشرة..." class="form-input" style="flex:1; min-width:240px; padding:7px 10px; font-size:11px;">
                     <button type="button" onclick="parseGoogleMapsLinkToGeofence()" class="btn-action" style="background:#0284c7; padding:7px 13px; white-space:nowrap;">🔎 استخراج الإحداثيات</button>
                 </div>
-
-                <!-- Row 2: Lat, Lng, Radius + Action Buttons -->
                 <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
                     <input type="text" id="geofenceLatInput" placeholder="خط العرض (Lat)" class="form-input" style="max-width:135px; padding:7px 9px; font-size:11.5px; font-family:monospace;">
                     <input type="text" id="geofenceLngInput" placeholder="خط الطول (Lng)" class="form-input" style="max-width:135px; padding:7px 9px; font-size:11.5px; font-family:monospace;">
@@ -4522,11 +5003,9 @@
                     </div>
                     <button type="button" onclick="captureMyGpsAsBranchWorkLocation()" class="btn-action" style="background:#7c3aed; padding:7px 12px;">📌 التقاط موقعي الحالي</button>
                     <button type="button" onclick="saveBranchGeofenceManual()" class="btn-action" style="background:#059669; padding:7px 13px;">💾 حفظ موقع الفرع</button>
-                    <button type="button" onclick="previewSelectedBranchOnMaps()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; padding:7px 11px;">🗺️ معاينة على الخريطة</button>
+                    <button type="button" onclick="previewSelectedBranchOnMaps()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; padding:7px 11px;">🗺️ معاينة</button>
                 </div>
-
-                <!-- Simple Summary Table of All Branches -->
-                <div style="overflow-x:auto; border-top:1px dashed rgba(148,163,184,0.22); padding-top:8px;">
+                <div style="overflow-x:auto; border-top:1px dashed rgba(148,163,184,0.2); padding-top:8px;">
                     <table style="font-size:11px;">
                         <thead>
                             <tr>
@@ -4541,67 +5020,111 @@
                 </div>
             </div>
 
-            <div class="summary-cards-grid" style="margin-bottom:14px;">
-                <div class="stat-card">
-                    <div><h4>إجمالي الأجهزة / السجلات</h4><div class="val" id="dlogStatTotal">0</div></div>
-                    <span style="font-size:20px;">💻</span>
+            <!-- 🛸 الصف العلوي: الرادار المكاني الحي + شريط نبض الأسطول الموحد -->
+            <div class="geo-command-grid">
+                <!-- الرادار المكاني الحي -->
+                <div class="geo-radar-card">
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:800; color:#38bdf8; margin-bottom:2px;">
+                        <span>📡 الرادار المكاني الحي</span>
+                        <span id="geoRadarBlipCount" style="font-family:monospace; color:#34d399; font-size:10px;">0 SIGNAL</span>
+                    </div>
+                    <div class="geo-radar-canvas-wrap">
+                        <canvas id="geoPulseRadarCanvas" width="248" height="248"></canvas>
+                        <div id="geoRadarTooltip"></div>
+                    </div>
+                    <div class="geo-radar-legend">
+                        <span><i class="geo-dot" style="background:#10b981; box-shadow:0 0 6px #10b981;"></i> داخل المقر</span>
+                        <span><i class="geo-dot" style="background:#ef4444; box-shadow:0 0 6px #ef4444;"></i> خارج المقر</span>
+                        <span><i class="geo-dot" style="background:#38bdf8;"></i> تقريبي IP</span>
+                    </div>
                 </div>
-                <div class="stat-card" style="border-color:#10b981;">
-                    <div><h4>جلسات نشطة الآن</h4><div class="val" id="dlogStatActive" style="color:#34d399;">0</div></div>
-                    <span style="font-size:20px;">🟢</span>
-                </div>
-                <div class="stat-card" style="border-color:#22c55e;">
-                    <div><h4>دخول من مقر العمل</h4><div class="val" id="dlogStatInOffice" style="color:#4ade80;">0</div></div>
-                    <span style="font-size:20px;">🏢</span>
-                </div>
-                <div class="stat-card" style="border-color:#ef4444;">
-                    <div><h4>دخول من خارج العمل</h4><div class="val" id="dlogStatOutOffice" style="color:#fb7185;">0</div></div>
-                    <span style="font-size:20px;">⚠️</span>
-                </div>
-                <div class="stat-card" style="border-color:#f59e0b;">
-                    <div><h4>إجمالي مرات الدخول</h4><div class="val" id="dlogStatVisits" style="color:#facc15;">0</div></div>
-                    <span style="font-size:20px;">🔁</span>
+
+                <!-- شريط نبض الأسطول الموحد + شريط الفلترة والتبديل -->
+                <div class="geo-right-col">
+                    <div class="geo-telemetry-bar">
+                        <div class="geo-telemetry-metrics">
+                            <div class="geo-t-item">
+                                <span class="geo-t-lbl">إجمالي الأجهزة</span>
+                                <span class="geo-t-val" id="dlogStatTotal">0</span>
+                            </div>
+                            <div class="geo-t-item">
+                                <span class="geo-t-lbl">نشط الآن</span>
+                                <span class="geo-t-val" style="color:#34d399;"><span class="ecg-live-dot" style="margin:0;"></span><span id="dlogStatActive">0</span></span>
+                            </div>
+                            <div class="geo-t-item">
+                                <span class="geo-t-lbl">داخل المقر</span>
+                                <span class="geo-t-val" id="dlogStatInOffice" style="color:#4ade80;">0</span>
+                            </div>
+                            <div class="geo-t-item">
+                                <span class="geo-t-lbl">خارج المقر</span>
+                                <span class="geo-t-val" id="dlogStatOutOffice" style="color:#fb7185;">0</span>
+                            </div>
+                            <div class="geo-t-item">
+                                <span class="geo-t-lbl">مرات الدخول</span>
+                                <span class="geo-t-val" id="dlogStatVisits" style="color:#38bdf8;">0</span>
+                            </div>
+                        </div>
+                        <div class="geo-energy-wrap">
+                            <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px;">
+                                <span style="color:var(--text-muted); font-weight:700;">⚡ مؤشر التواجد الفعلي داخل مقار العمل</span>
+                                <span id="geoInOfficeRateText" style="color:#34d399; font-weight:800; font-family:monospace;">0%</span>
+                            </div>
+                            <div class="geo-energy-track">
+                                <div id="geoInOfficeEnergyFill" class="geo-energy-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="geo-filter-dock">
+                        <div style="display:flex; gap:7px; flex-wrap:wrap; align-items:center; flex:1;">
+                            <input type="text" id="deviceLogSearchInput" oninput="renderDeviceLogsTable()" placeholder="🔍 بحث بالاسم، IP، الجهاز، أو الفرع..." class="form-input" style="max-width:220px; padding:6px 10px; font-size:11px;">
+                            <select id="deviceLogStatusFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:130px; padding:6px 8px; font-size:11px;">
+                                <option value="all">كل الحالات</option>
+                                <option value="active">🟢 نشط الآن</option>
+                                <option value="logged_out">⚪ مسجل خروج</option>
+                            </select>
+                            <select id="deviceLogPlaceFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:145px; padding:6px 8px; font-size:11px;">
+                                <option value="all">كل الأماكن</option>
+                                <option value="in_office">🏢 داخل المقر</option>
+                                <option value="outside">⚠️ خارج المقر</option>
+                                <option value="approx">📡 تقريبي (IP)</option>
+                            </select>
+                            <select id="deviceLogTypeFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:130px; padding:6px 8px; font-size:11px;">
+                                <option value="all">كل الأجهزة</option>
+                                <option value="mobile">📱 هاتف</option>
+                                <option value="desktop">🖥️ كمبيوتر</option>
+                            </select>
+                        </div>
+                        <div class="geo-view-switch">
+                            <button type="button" id="btnGeoViewCapsules" class="geo-view-btn active" onclick="setDeviceLogViewModeV17('capsules')">🛸 كبسولات</button>
+                            <button type="button" id="btnGeoViewTable" class="geo-view-btn" onclick="setDeviceLogViewModeV17('table')">📋 جدول</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="dept-filter-bar" style="gap:10px;">
-                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; flex:1;">
-                    <input type="text" id="deviceLogSearchInput" oninput="renderDeviceLogsTable()" placeholder="🔍 بحث بالاسم، IP، الجهاز، أو الموقع..." class="form-input" style="max-width:240px; padding:6px 10px; font-size:11px;">
-                    <select id="deviceLogStatusFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:155px; padding:6px 10px; font-size:11px;">
-                        <option value="all">كل الحالات</option>
-                        <option value="active">🟢 نشط الآن</option>
-                        <option value="logged_out">⚪ مسجل خروج</option>
-                    </select>
-                    <select id="deviceLogPlaceFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:175px; padding:6px 10px; font-size:11px;">
-                        <option value="all">كل أماكن الدخول</option>
-                        <option value="in_office">🏢 من مقر العمل</option>
-                        <option value="outside">⚠️ خارج مقر العمل</option>
-                        <option value="approx">📡 موقع تقريبي (IP)</option>
-                    </select>
-                    <select id="deviceLogTypeFilter" onchange="renderDeviceLogsTable()" class="form-input" style="max-width:160px; padding:6px 10px; font-size:11px;">
-                        <option value="all">كل أنواع الأجهزة</option>
-                        <option value="mobile">📱 هاتف محمول</option>
-                        <option value="desktop">🖥️ كمبيوتر مكتبي</option>
-                    </select>
-                </div>
-            </div>
+            <!-- 🛸 عرض الكبسولات السينمائية (الافتراضي) -->
+            <div id="deviceCapsulesContainer" class="geo-capsules-list"></div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th style="text-align: right;">المستخدم</th>
-                        <th style="text-align: center;">الدور</th>
-                        <th style="text-align: center;">الفرع</th>
-                        <th style="text-align: right;">الجهاز والمتصفح</th>
-                        <th style="text-align: center;">IP والشبكة</th>
-                        <th style="text-align: center;">الموقع الجغرافي ونطاق العمل</th>
-                        <th style="text-align: center;">الحالة وآخر نشاط</th>
-                        <th style="text-align: center;">الدخول</th>
-                        <th style="text-align: center;">إجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="deviceLogsTableBody"></tbody>
-            </table>
+            <!-- 📋 عرض الجدول الكلاسيكي (بديل اختياري) -->
+            <div id="deviceLogsTableWrap" class="hidden" style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: right;">المستخدم</th>
+                            <th style="text-align: center;">الدور</th>
+                            <th style="text-align: center;">الفرع</th>
+                            <th style="text-align: right;">الجهاز والمتصفح</th>
+                            <th style="text-align: center;">IP والشبكة</th>
+                            <th style="text-align: center;">الموقع الجغرافي ونطاق العمل</th>
+                            <th style="text-align: center;">الحالة وآخر نشاط</th>
+                            <th style="text-align: center;">الدخول</th>
+                            <th style="text-align: center;">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deviceLogsTableBody"></tbody>
+                </table>
+            </div>
         </div>
         <!-- 📱 التحكم عن بعد وعرض شاشة الهاتف (v16.6 Live WebRTC + Firebase) -->
         <div id="sec-remotecontrol" class="card hidden">
@@ -17207,7 +17730,7 @@
             let isMob = /هاتف|android|iphone|ipad|mobile/i.test(log.device || '');
             let icon = isMob ? '📱' : '🖥️';
             let isSelected = activeRemoteTargetKeyV166 === fbKey;
-            let batTxt = (log.batteryLevel !== undefined && log.batteryLevel !== null) ? `🔋 ${log.batteryLevel}%` : '';
+            let batTxt = '';
             let placeBadge = log.placeStatus === 'in_office'
                 ? '<span class="badge b-green" style="font-size:9.5px;">🏢 مقر العمل</span>'
                 : (log.placeStatus === 'outside' ? '<span class="badge b-red" style="font-size:9.5px;">⚠️ خارج العمل</span>' : '<span class="badge b-blue" style="font-size:9.5px;">📡 تقريبي</span>');
@@ -17513,6 +18036,376 @@
         }
     }, 2000);
 
+
+
+    // =========================================================================
+    // 🛸 v17.0 TACTICAL GEO-PULSE COMMAND DECK (RADAR + CAPSULES + GEO-DRAWER)
+    // =========================================================================
+    let deviceLogViewModeV17 = 'capsules';
+    let geoRadarAnimIdV17 = null;
+    let geoRadarAngleV17 = 0;
+    let geoRadarBlipsV17 = [];
+    let geoRadarHoveredIdxV17 = -1;
+
+    function toggleGeoSettingsDrawerV17(forceState) {
+        let panel = document.getElementById('geofenceControlPanel');
+        let btn = document.getElementById('btnToggleGeoDrawer');
+        if (!panel) return;
+        let willOpen = (typeof forceState === 'boolean') ? forceState : !panel.classList.contains('open');
+        if (willOpen) {
+            panel.classList.add('open');
+            if (btn) btn.style.background = '#0284c7';
+            if (typeof renderGeofenceBranchesSummaryV164 === 'function') renderGeofenceBranchesSummaryV164();
+        } else {
+            panel.classList.remove('open');
+            if (btn) btn.style.background = 'rgba(30,41,59,0.9)';
+        }
+    }
+
+    function openBranchInGeoDrawerV17(branchId) {
+        toggleGeoSettingsDrawerV17(true);
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (sel) {
+            sel.value = branchId;
+            if (typeof loadBranchGeofenceInputs === 'function') loadBranchGeofenceInputs();
+        }
+    }
+
+    function renderGeoBranchQuickChipsV17() {
+        let box = document.getElementById('geoBranchQuickChips');
+        if (!box) return;
+        box.innerHTML = '';
+        (branchesData || []).forEach(b => {
+            let gf = branchGeofencesData[b.id];
+            let hasLoc = gf && !isNaN(Number(gf.lat)) && !isNaN(Number(gf.lng));
+            let rad = (gf && gf.radius) ? gf.radius : 150;
+            box.innerHTML += `
+                <button type="button" class="geo-branch-chip" onclick="openBranchInGeoDrawerV17('${b.id}')" title="اضغط لتعديل نطاق هذا الفرع">
+                    <span class="geo-dot" style="background:${hasLoc ? '#10b981' : '#f59e0b'};"></span>
+                    <span>${b.name}</span>
+                    <span style="color:#38bdf8; font-family:monospace; font-size:10px;">${hasLoc ? rad + 'م' : 'غير مضبوط'}</span>
+                </button>`;
+        });
+    }
+
+    function setDeviceLogViewModeV17(mode) {
+        deviceLogViewModeV17 = mode;
+        let capBox = document.getElementById('deviceCapsulesContainer');
+        let tblWrap = document.getElementById('deviceLogsTableWrap');
+        let btnCap = document.getElementById('btnGeoViewCapsules');
+        let btnTbl = document.getElementById('btnGeoViewTable');
+        if (mode === 'capsules') {
+            if (capBox) capBox.classList.remove('hidden');
+            if (tblWrap) tblWrap.classList.add('hidden');
+            if (btnCap) btnCap.classList.add('active');
+            if (btnTbl) btnTbl.classList.remove('active');
+        } else {
+            if (capBox) capBox.classList.add('hidden');
+            if (tblWrap) tblWrap.classList.remove('hidden');
+            if (btnCap) btnCap.classList.remove('active');
+            if (btnTbl) btnTbl.classList.add('active');
+        }
+    }
+
+    function getFilteredDeviceLogsV17() {
+        let q = document.getElementById('deviceLogSearchInput') ? document.getElementById('deviceLogSearchInput').value.trim().toLowerCase() : '';
+        let stFilter = document.getElementById('deviceLogStatusFilter') ? document.getElementById('deviceLogStatusFilter').value : 'all';
+        let plFilter = document.getElementById('deviceLogPlaceFilter') ? document.getElementById('deviceLogPlaceFilter').value : 'all';
+        let tpFilter = document.getElementById('deviceLogTypeFilter') ? document.getElementById('deviceLogTypeFilter').value : 'all';
+
+        return (deviceLogsData || []).map((log, origIdx) => ({ log, origIdx })).filter(({ log }) => {
+            let isAct = log.status === 'active' || (!log.status && currentUser && log.name === currentUser.name);
+            let isMob = /هاتف|android|iphone|ipad|mobile/i.test(log.device || '');
+            let pSt = log.placeStatus || 'approx';
+            if (stFilter === 'active' && !isAct) return false;
+            if (stFilter === 'logged_out' && isAct) return false;
+            if (plFilter !== 'all' && pSt !== plFilter) return false;
+            if (tpFilter === 'mobile' && !isMob) return false;
+            if (tpFilter === 'desktop' && isMob) return false;
+            if (!q) return true;
+            let hay = `${log.name || ''} ${log.email || ''} ${log.role || ''} ${log.branchName || ''} ${log.device || ''} ${log.ip || ''} ${log.isp || ''} ${log.location || ''} ${log.placeLabel || ''}`.toLowerCase();
+            return hay.includes(q);
+        });
+    }
+
+    function renderDeviceCapsulesV17(indexed) {
+        let box = document.getElementById('deviceCapsulesContainer');
+        if (!box) return;
+
+        // Update presence energy bar
+        let total = (deviceLogsData || []).length;
+        let inOff = (deviceLogsData || []).filter(d => d.placeStatus === 'in_office').length;
+        let rate = total > 0 ? Math.round((inOff / total) * 100) : 0;
+        let rateTxt = document.getElementById('geoInOfficeRateText');
+        let fillEl = document.getElementById('geoInOfficeEnergyFill');
+        if (rateTxt) rateTxt.textContent = `${rate}% (${inOff}/${total})`;
+        if (fillEl) fillEl.style.width = `${rate}%`;
+
+        if (indexed.length === 0) {
+            box.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:28px; background:rgba(15,23,42,0.55); border:1px dashed rgba(148,163,184,0.2); border-radius:14px; font-size:12px;">لا توجد أجهزة مطابقة لمعايير البحث أو الفلترة الحالية.</div>`;
+            return;
+        }
+
+        box.innerHTML = '';
+        indexed.forEach(({ log, origIdx }) => {
+            let isAct = log.status === 'active' || (!log.status && currentUser && log.name === currentUser.name);
+            let isMob = /هاتف|android|iphone|ipad|mobile/i.test(log.device || '');
+            let devIcon = isMob ? '📱' : '🖥️';
+            let pSt = log.placeStatus || 'approx';
+            let capCls = pSt === 'in_office' ? 'cap-in-office' : (pSt === 'outside' ? 'cap-outside' : '');
+            let placeCls = pSt === 'in_office' ? 'in-office' : (pSt === 'outside' ? 'outside' : 'approx');
+            let placeTxt = log.placeLabel || '📡 موقع تقريبي (IP)';
+            let firstChar = (log.name || 'م').trim().charAt(0);
+            let visits = Number(log.loginCount) || 1;
+            let lastAct = log.lastActiveTime || log.time || '—';
+            let fbKey = log.fbKey || (typeof makeSafeFbDeviceKeyV165 === 'function' ? makeSafeFbDeviceKeyV165(log.name, log.device) : '');
+            let hasCoords = (typeof log.lat === 'number' && typeof log.lng === 'number');
+            let mapUrl = hasCoords ? `https://www.google.com/maps?q=${log.lat},${log.lng}` : '';
+
+            let workBadge = log.isWorkPhone
+                ? `<span style="font-size:10px; color:#34d399; font-weight:700;">• ✓ هاتف عمل معتمد</span>`
+                : '';
+
+            box.innerHTML += `
+                <div class="geo-capsule-card ${capCls}" id="geoCapCard_${origIdx}">
+                    <div class="geo-cap-id">
+                        <div class="geo-cap-avatar">
+                            ${firstChar}
+                            <span class="geo-cap-status-ring ${isAct ? 'online' : ''}" title="${isAct ? 'متصل الآن' : 'غير متصل'}"></span>
+                        </div>
+                        <div class="geo-cap-meta">
+                            <div class="geo-cap-name-row">
+                                <span class="geo-cap-name">${log.name || 'مستخدم'}</span>
+                                <span class="geo-cap-subtle-tag">${log.role || 'مستخدم'}</span>
+                                <span class="geo-cap-subtle-tag">${log.branchName || 'الإدارة'}</span>
+                            </div>
+                            <div class="geo-cap-device-line">${devIcon} ${log.device || 'جهاز غير معروف'} ${workBadge}</div>
+                        </div>
+                    </div>
+
+                    <div class="geo-cap-geo">
+                        <div class="geo-cap-place-pill ${placeCls}">${placeTxt}</div>
+                        <div class="geo-cap-net-line">
+                            <span>🌐 ${log.ip || '—'}</span>
+                            <span>🕒 ${lastAct}</span>
+                            <span>🔁 ${visits}</span>
+                            ${hasCoords ? `<a href="${mapUrl}" target="_blank" style="color:#38bdf8; text-decoration:underline; font-weight:700;">🗺️ الخريطة</a>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="geo-cap-actions">
+                        <button type="button" onclick="openRemoteControlForDeviceV166('${fbKey}')" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#0ea5e9); padding:6px 12px; font-size:11px; border-radius:9px;">📱 التحكم في الهاتف</button>
+                        ${hasCoords ? `<a href="${mapUrl}" target="_blank" class="geo-icon-btn" title="فتح الموقع على خرائط جوجل">🗺️</a>` : ''}
+                        <button type="button" onclick="toggleWorkPhoneStatusV164(${origIdx})" class="geo-icon-btn ${log.isWorkPhone ? 'certified' : ''}" title="${log.isWorkPhone ? 'إلغاء اعتماد هاتف العمل' : 'اعتماد كهاتف عمل'}">${log.isWorkPhone ? '✓' : '📱'}</button>
+                        <button type="button" onclick="deleteDeviceLog(${origIdx})" class="geo-icon-btn danger" title="حذف السجل">🗑️</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    function buildGeoRadarBlipsV17(indexed) {
+        let countEl = document.getElementById('geoRadarBlipCount');
+        if (countEl) countEl.textContent = `${indexed.length} SIGNAL`;
+
+        let cx = 124, cy = 124;
+        geoRadarBlipsV17 = indexed.map(({ log, origIdx }, i) => {
+            let pSt = log.placeStatus || 'approx';
+            let seed = ((log.name || '').split('').reduce((a, c) => a + c.charCodeAt(0), 0) + origIdx * 47) % 360;
+            let angleRad = (seed * Math.PI) / 180;
+            let radius = 84;
+            if (pSt === 'in_office') {
+                radius = 18 + (seed % 32); // inside green perimeter (r <= 54)
+            } else if (pSt === 'outside') {
+                let d = Number(log.distanceMeters) || 1200;
+                let extra = Math.min(48, Math.log10(Math.max(10, d)) * 11);
+                radius = 62 + extra; // outside green perimeter (62..108)
+            } else {
+                radius = 96 + (i % 3) * 5; // outer approx orbit
+            }
+            let color = pSt === 'in_office' ? '#10b981' : (pSt === 'outside' ? '#ef4444' : '#38bdf8');
+            return {
+                x: cx + Math.cos(angleRad) * radius,
+                y: cy + Math.sin(angleRad) * radius,
+                color: color,
+                pSt: pSt,
+                isAct: log.status === 'active' || (!log.status && currentUser && log.name === currentUser.name),
+                log: log,
+                origIdx: origIdx
+            };
+        });
+    }
+
+    function drawGeoPulseRadarFrameV17() {
+        let sec = document.getElementById('sec-devicelog');
+        let canvas = document.getElementById('geoPulseRadarCanvas');
+        if (!canvas || !sec || sec.classList.contains('hidden')) {
+            geoRadarAnimIdV17 = null;
+            return;
+        }
+        let ctx = canvas.getContext('2d');
+        let w = canvas.width, h = canvas.height;
+        let cx = w / 2, cy = h / 2;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Background concentric rings
+        [114, 84, 54, 24].forEach((r, idx) => {
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            if (r === 54) {
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(16, 185, 129, 0.55)';
+                ctx.lineWidth = 1.4;
+            } else {
+                ctx.strokeStyle = 'rgba(56, 189, 248, 0.16)';
+                ctx.lineWidth = 1;
+            }
+            ctx.stroke();
+        });
+
+        // Crosshair axes
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(cx - 114, cy); ctx.lineTo(cx + 114, cy);
+        ctx.moveTo(cx, cy - 114); ctx.lineTo(cx, cy + 114);
+        ctx.stroke();
+
+        // Rotating radar sweep sector
+        geoRadarAngleV17 = (geoRadarAngleV17 + 0.025) % (Math.PI * 2);
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(geoRadarAngleV17);
+        let grad = ctx.createRadialGradient(0, 0, 4, 0, 0, 114);
+        grad.addColorStop(0, 'rgba(56, 189, 248, 0.34)');
+        grad.addColorStop(1, 'rgba(16, 185, 129, 0.03)');
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.arc(0, 0, 114, -0.55, 0);
+        ctx.closePath();
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        // Leading sweep beam
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(114, 0);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+        ctx.restore();
+
+        // Center HQ dot
+        ctx.beginPath();
+        ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = '#34d399';
+        ctx.fill();
+
+        // Draw hovered vector line
+        if (geoRadarHoveredIdxV17 >= 0 && geoRadarBlipsV17[geoRadarHoveredIdxV17]) {
+            let hb = geoRadarBlipsV17[geoRadarHoveredIdxV17];
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(hb.x, hb.y);
+            ctx.strokeStyle = hb.color;
+            ctx.setLineDash([4, 3]);
+            ctx.lineWidth = 1.2;
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // Draw device blips
+        let pulse = (Math.sin(Date.now() / 260) + 1) / 2;
+        geoRadarBlipsV17.forEach((b, idx) => {
+            let isHov = idx === geoRadarHoveredIdxV17;
+            // Halo pulse
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, (isHov ? 11 : 7) + pulse * 4, 0, Math.PI * 2);
+            ctx.fillStyle = b.color + '33';
+            ctx.fill();
+
+            // Core dot
+            ctx.beginPath();
+            ctx.arc(b.x, b.y, isHov ? 5.5 : 4.2, 0, Math.PI * 2);
+            ctx.fillStyle = b.color;
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = isHov ? 1.8 : 0.8;
+            ctx.stroke();
+        });
+
+        geoRadarAnimIdV17 = requestAnimationFrame(drawGeoPulseRadarFrameV17);
+    }
+
+    function ensureGeoRadarLoopV17() {
+        if (!geoRadarAnimIdV17) {
+            geoRadarAnimIdV17 = requestAnimationFrame(drawGeoPulseRadarFrameV17);
+        }
+    }
+
+    function initGeoRadarInteractionV17() {
+        let canvas = document.getElementById('geoPulseRadarCanvas');
+        let tip = document.getElementById('geoRadarTooltip');
+        if (!canvas || canvas._v17Bound) return;
+        canvas._v17Bound = true;
+
+        canvas.addEventListener('mousemove', function(e) {
+            let rect = canvas.getBoundingClientRect();
+            let mx = e.clientX - rect.left;
+            let my = e.clientY - rect.top;
+            let found = -1;
+            geoRadarBlipsV17.forEach((b, idx) => {
+                if (Math.hypot(b.x - mx, b.y - my) <= 13) found = idx;
+            });
+            geoRadarHoveredIdxV17 = found;
+            if (found >= 0 && tip) {
+                let b = geoRadarBlipsV17[found];
+                tip.innerHTML = `
+                    <div style="font-weight:800; color:#38bdf8;">${b.log.name || 'مستخدم'}</div>
+                    <div style="color:#cbd5e1;">${b.log.branchName || 'الإدارة'}</div>
+                    <div style="color:${b.color}; font-weight:700;">${b.log.placeLabel || '📡 موقع تقريبي'}</div>
+                    <div style="color:#94a3b8; font-size:9.5px;">🕒 ${b.log.lastActiveTime || b.log.time || '—'}</div>
+                `;
+                tip.style.display = 'block';
+                tip.style.left = Math.min(110, Math.max(4, mx - 60)) + 'px';
+                tip.style.top = Math.max(4, my - 72) + 'px';
+            } else if (tip) {
+                tip.style.display = 'none';
+            }
+        });
+
+        canvas.addEventListener('mouseleave', function() {
+            geoRadarHoveredIdxV17 = -1;
+            if (tip) tip.style.display = 'none';
+        });
+
+        canvas.addEventListener('click', function() {
+            if (geoRadarHoveredIdxV17 >= 0 && geoRadarBlipsV17[geoRadarHoveredIdxV17]) {
+                let b = geoRadarBlipsV17[geoRadarHoveredIdxV17];
+                setDeviceLogViewModeV17('capsules');
+                let card = document.getElementById('geoCapCard_' + b.origIdx);
+                if (card) {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    card.classList.add('cap-highlight');
+                    setTimeout(() => card.classList.remove('cap-highlight'), 2200);
+                }
+            }
+        });
+    }
+
+    // Wrap renderDeviceLogsTable to drive v17.0 Radar, Branch Chips & Smart Capsules
+    const _origRenderDeviceLogsV17 = renderDeviceLogsTable;
+    renderDeviceLogsTable = function() {
+        _origRenderDeviceLogsV17();
+        renderGeoBranchQuickChipsV17();
+        let indexed = getFilteredDeviceLogsV17();
+        renderDeviceCapsulesV17(indexed);
+        buildGeoRadarBlipsV17(indexed);
+        initGeoRadarInteractionV17();
+        ensureGeoRadarLoopV17();
+        setDeviceLogViewModeV17(deviceLogViewModeV17);
+    };
 
 </script>
 </body>
