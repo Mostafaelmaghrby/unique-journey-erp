@@ -17,6 +17,9 @@
     <!-- SheetJS (XLSX) لدعم رفع شيت الإكسل (.xlsx / .xls / .csv) كما هو مباشرة -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+    <!-- Firebase Realtime Database SDK (v16.5 Live Cloud Sync) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
     <style>
         :root {
             --bg-main: #090d16;
@@ -3538,6 +3541,7 @@
 
                 <div class="nav-section-label admin-only">الإدارة العليا والأمان</div>
                 <button type="button" onclick="switchTab('devicelog')" id="tab-devicelog" class="btn-tab admin-only">💻 سجل الأجهزة والدخول</button>
+                <button type="button" onclick="switchTab('remotecontrol')" id="tab-remotecontrol" class="btn-tab admin-only" style="color:#38bdf8;">📱 التحكم عن بعد</button>
                 <button type="button" onclick="switchTab('auditlog')" id="tab-auditlog" class="btn-tab admin-only">🛡️ سجل التعديلات والرقابة</button>
                 <button type="button" onclick="switchTab('users')" id="tab-users" class="btn-tab admin-only">⚙️ الإعدادات والصلاحيات</button>
             </div>
@@ -4494,19 +4498,46 @@
                 </div>
             </div>
 
-            <!-- 📍 إعداد إحداثيات مقر العمل (Geofencing) لكل فرع -->
-            <div style="background:rgba(14,165,233,0.08); border:1px solid rgba(56,189,248,0.35); border-radius:12px; padding:12px 14px; margin-bottom:14px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
-                    <div style="font-size:12px; font-weight:800; color:#38bdf8;">🏢 ضبط موقع مقر العمل المعتمد (Geofence) للتحقق من مكان الدخول:</div>
-                    <span id="gpsPermissionStatusBadge" class="badge b-blue">📡 جاري التحقق من حالة GPS...</span>
+            <!-- 📍 تخصيص مواقع الفروع واستخراج الإحداثيات من خرائط جوجل (v16.4) -->
+            <div id="geofenceControlPanel" style="background:linear-gradient(145deg, rgba(14,165,233,0.09), rgba(15,23,42,0.92)); border:1px solid rgba(56,189,248,0.34); border-radius:14px; padding:14px 16px; margin-bottom:14px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                    <div style="font-size:13px; font-weight:800; color:#38bdf8;">🏢 تحديد مواقع الفروع ونطاق المسافة المسموح بها (Google Maps)</div>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;"><span id="firebaseSyncStatusBadge" class="badge b-yellow">⏳ جاري الاتصال بـ Firebase...</span><span id="gpsPermissionStatusBadge" class="badge b-blue">📡 جاري التحقق من حالة GPS...</span></div>
                 </div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
-                    <select id="geofenceBranchSelect" onchange="loadBranchGeofenceInputs()" class="form-input" style="max-width:190px; padding:6px 10px; font-size:11px;"></select>
-                    <input type="text" id="geofenceLatInput" placeholder="خط العرض (Lat)" class="form-input" style="max-width:130px; padding:6px 8px; font-size:11px; font-family:monospace;">
-                    <input type="text" id="geofenceLngInput" placeholder="خط الطول (Lng)" class="form-input" style="max-width:130px; padding:6px 8px; font-size:11px; font-family:monospace;">
-                    <input type="number" id="geofenceRadiusInput" value="250" min="30" max="5000" placeholder="النطاق (متر)" class="form-input" style="max-width:110px; padding:6px 8px; font-size:11px;" title="المسافة المسموحة بالمتر لاعتبار الدخول من مقر العمل">
-                    <button type="button" onclick="captureMyGpsAsBranchWorkLocation()" class="btn-action" style="background:#7c3aed; padding:7px 12px;">📌 تثبيت موقعي الحالي كمقر للفرع</button>
-                    <button type="button" onclick="saveBranchGeofenceManual()" class="btn-action" style="background:#059669; padding:7px 12px;">💾 حفظ الإحداثيات</button>
+
+                <!-- Row 1: Branch Selector + Google Maps Link Parser -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:8px;">
+                    <select id="geofenceBranchSelect" onchange="loadBranchGeofenceInputs()" class="form-input" style="max-width:200px; padding:7px 10px; font-size:11.5px; font-weight:700;"></select>
+                    <input type="text" id="geofenceMapsUrlInput" placeholder="🗺️ الصق رابط خرائط جوجل (Google Maps) أو الإحداثيات لاستخراجها مباشرة..." class="form-input" style="flex:1; min-width:240px; padding:7px 10px; font-size:11px;">
+                    <button type="button" onclick="parseGoogleMapsLinkToGeofence()" class="btn-action" style="background:#0284c7; padding:7px 13px; white-space:nowrap;">🔎 استخراج الإحداثيات</button>
+                </div>
+
+                <!-- Row 2: Lat, Lng, Radius + Action Buttons -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
+                    <input type="text" id="geofenceLatInput" placeholder="خط العرض (Lat)" class="form-input" style="max-width:135px; padding:7px 9px; font-size:11.5px; font-family:monospace;">
+                    <input type="text" id="geofenceLngInput" placeholder="خط الطول (Lng)" class="form-input" style="max-width:135px; padding:7px 9px; font-size:11.5px; font-family:monospace;">
+                    <div style="display:flex; align-items:center; gap:5px;">
+                        <input type="number" id="geofenceRadiusInput" value="150" min="25" max="5000" placeholder="المسافة" class="form-input" style="width:105px; padding:7px 8px; font-size:11.5px; font-weight:700;" title="المسافة المسموحة بالمتر لاعتبار الدخول من مقر العمل">
+                        <span style="font-size:11px; color:var(--text-muted); font-weight:700;">متر</span>
+                    </div>
+                    <button type="button" onclick="captureMyGpsAsBranchWorkLocation()" class="btn-action" style="background:#7c3aed; padding:7px 12px;">📌 التقاط موقعي الحالي</button>
+                    <button type="button" onclick="saveBranchGeofenceManual()" class="btn-action" style="background:#059669; padding:7px 13px;">💾 حفظ موقع الفرع</button>
+                    <button type="button" onclick="previewSelectedBranchOnMaps()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; padding:7px 11px;">🗺️ معاينة على الخريطة</button>
+                </div>
+
+                <!-- Simple Summary Table of All Branches -->
+                <div style="overflow-x:auto; border-top:1px dashed rgba(148,163,184,0.22); padding-top:8px;">
+                    <table style="font-size:11px;">
+                        <thead>
+                            <tr>
+                                <th style="text-align:right; padding:6px 8px;">الفرع</th>
+                                <th style="text-align:center; padding:6px 8px;">الإحداثيات (Lat, Lng)</th>
+                                <th style="text-align:center; padding:6px 8px;">المسافة المسموحة</th>
+                                <th style="text-align:center; padding:6px 8px;">إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="geofenceBranchesSummaryBody"></tbody>
+                    </table>
                 </div>
             </div>
 
@@ -4572,6 +4603,64 @@
                 <tbody id="deviceLogsTableBody"></tbody>
             </table>
         </div>
+        <!-- 📱 التحكم عن بعد وعرض شاشة الهاتف (v16.6 Live WebRTC + Firebase) -->
+        <div id="sec-remotecontrol" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">📱 التحكم عن بعد وعرض شاشة الهاتف (Live Remote View)</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">اختر جهاز الموظف واضغط <b>«📱 التحكم في الهاتف»</b> لإرسال طلب بث حي للشاشة عبر Firebase وWebRTC ومتابعة عمله مباشرة أمامك.</p>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <span id="remoteFirebaseBadge" class="badge b-green">🟢 Firebase Live جاهز</span>
+                    <button type="button" onclick="renderRemoteControlPanelV166()" class="btn-action" style="background:#0284c7;">🔄 تحديث الأجهزة</button>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: minmax(290px, 1fr) minmax(320px, 1.35fr); gap:16px; align-items:start;">
+                <!-- قائمة الأجهزة المتصلة -->
+                <div style="background:rgba(9,13,22,0.82); border:1px solid rgba(56,189,248,0.28); border-radius:14px; padding:14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        <h4 style="color:#38bdf8; font-size:13px;">📡 الأجهزة المسجلة والنشطة</h4>
+                        <span id="remoteDevicesCountBadge" class="badge b-blue" style="font-size:10px;">0 جهاز</span>
+                    </div>
+                    <div id="remoteDevicesListContainer" style="display:flex; flex-direction:column; gap:9px; max-height:520px; overflow-y:auto;"></div>
+                </div>
+
+                <!-- شاشة الهاتف الحية (Live Phone Viewer Stage) -->
+                <div style="background:linear-gradient(155deg, rgba(13,21,38,0.96), rgba(5,9,18,0.98)); border:1px solid rgba(56,189,248,0.38); border-radius:16px; padding:16px; display:flex; flex-direction:column; align-items:center;">
+                    <div style="width:100%; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                        <div>
+                            <div id="remoteStageTargetName" style="font-size:14px; font-weight:800; color:#fff;">لم يتم اختيار جهاز بعد</div>
+                            <div id="remoteStageStatusText" style="font-size:11px; color:#94a3b8;">اضغط على «📱 التحكم في الهاتف» بجانب أي موظف لفتح شاشته هنا</div>
+                        </div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="button" id="btnRemoteFullscreen" onclick="toggleRemoteVideoFullscreenV166()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; display:none;">⛶ ملء الشاشة</button>
+                            <button type="button" id="btnRemoteStop" onclick="stopRemoteControlSessionV166()" class="btn-danger" style="display:none; padding:6px 12px;">⏹️ إنهاء العرض</button>
+                        </div>
+                    </div>
+
+                    <!-- إطار الهاتف الواقعي -->
+                    <div id="remotePhoneFrame" style="width:100%; max-width:390px; min-height:460px; background:#020617; border:3px solid #334155; border-radius:28px; padding:10px; box-shadow:0 24px 55px rgba(0,0,0,0.75), inset 0 0 18px rgba(56,189,248,0.12); display:flex; flex-direction:column; position:relative; overflow:hidden;">
+                        <div style="width:90px; height:5px; background:#1e293b; border-radius:6px; margin:2px auto 8px;"></div>
+                        <div style="flex:1; background:#090d16; border-radius:18px; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; min-height:390px;">
+                            <video id="remoteScreenVideo" autoplay playsinline style="width:100%; height:100%; max-height:520px; object-fit:contain; display:none; background:#000;"></video>
+                            <div id="remoteStagePlaceholder" style="text-align:center; padding:24px; color:#94a3b8;">
+                                <div style="font-size:44px; margin-bottom:10px;">📱</div>
+                                <div style="font-size:13px; font-weight:800; color:#38bdf8; margin-bottom:6px;">شاشة الهاتف عن بُعد</div>
+                                <div style="font-size:11px; line-height:1.8;">اختر موظفاً من القائمة واضغط <b>«📱 التحكم في الهاتف»</b>.<br>سيظهر له إشعار فوري على جهازه للموافقة على مشاركة الشاشة ليفتح الهاتف أمامك مباشرة.</div>
+                            </div>
+                        </div>
+                        <!-- شريط أوامر سريعة أسفل الهاتف -->
+                        <div id="remoteQuickActionsBar" style="display:none; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:10px; padding-top:8px; border-top:1px solid #1e293b;">
+                            <button type="button" onclick="sendRemotePingAlertV166()" class="btn-action" style="background:#7c3aed; padding:5px 10px;">💬 تنبيه للشاشة</button>
+                            <button type="button" onclick="sendRemoteGpsRequestV166()" class="btn-action" style="background:#0284c7; padding:5px 10px;">📍 تحديث GPS</button>
+                            <button type="button" onclick="sendRemoteLogoutCommandV166()" class="btn-danger" style="padding:5px 10px;">🔒 إنهاء جلسته</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 🛡️ سجل التعديلات والرقابة -->
         <div id="sec-auditlog" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
@@ -5101,7 +5190,9 @@
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="voice"> 🎙️ التحكم الصوتي والنشرة الصوتية</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="backup"> 💾 تصدير واستعادة قاعدة البيانات</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="devicelog"> 💻 سجل الأجهزة والدخول (رقابة عليا)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="remotecontrol"> 📱 التحكم عن بعد وعرض شاشة الهاتف (رقابة عليا)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="auditlog"> 🛡️ سجل التعديلات والرقابة (رقابة عليا)</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="users"> ⚙️ الإعدادات والصلاحيات (رقابة عليا)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="askdata" checked> 💬 اسأل بياناتك (Ask Your Data)</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="roleplay" checked> 🎭 محاكي الحوارات الصعبة AI</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="blastradius" checked> 💥 أثر الغياب واكتشاف القادة</label>
@@ -5482,6 +5573,21 @@
             <div style="display:flex; justify-content:flex-end; gap:8px;">
                 <button type="button" onclick="saveKpiDictionaryEntry()" class="btn-action admin-only" style="background:#059669; padding:7px 16px;">💾 حفظ الشرح والدليل</button>
                 <button type="button" onclick="closeKpiDictionaryModal()" class="btn-action" style="background:#475569; padding:7px 14px;">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📱 إشعار طلب التحكم عن بعد ومشاركة الشاشة (يظهر على جهاز الموظف) -->
+    <div id="remoteConsentModal" class="modal" style="z-index:9900;">
+        <div class="modal-content" style="max-width:440px; text-align:center; border-top:3px solid #38bdf8;">
+            <div style="font-size:42px; margin-bottom:8px;">📱</div>
+            <h3 style="color:#38bdf8; font-size:16px; margin-bottom:8px;">طلب عرض ومراقبة الشاشة من الإدارة</h3>
+            <p id="remoteConsentText" style="color:#cbd5e1; font-size:12px; line-height:1.8; margin-bottom:16px;">
+                تطلب الإدارة الآن عرض شاشة جهازك للتأكد من سير العمل. بالضغط على «موافق» سيتم طلب إذن مشاركة الشاشة من المتصفح.
+            </p>
+            <div style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+                <button type="button" onclick="acceptRemoteControlRequestV166()" class="btn-action" style="background:#059669; padding:9px 18px; font-size:12.5px;">✅ موافق — فتح الشاشة للإدارة</button>
+                <button type="button" onclick="declineRemoteControlRequestV166()" class="btn-danger" style="padding:9px 16px; font-size:12.5px;">❌ رفض</button>
             </div>
         </div>
     </div>
@@ -7482,7 +7588,7 @@
         initCameraRulesDropdowns(); initRootCauseDropdowns(); initComparisonDropdowns(); loadSavedCameraStream();
         refreshMotivationalQuote(true);
         updateSmartNotificationBanner();
-        let firstAllowed = ['eval', 'allemp', 'leaderboard', 'plan', 'charts', 'weeklyindividuals', 'alerts', 'coaching', 'heatmap', 'constellation', 'timemachine', 'biaspulse', 'burnout', 'simulator', 'compare', 'rootcause', 'career', 'executivereport', 'camerarules', 'devicelog', 'auditlog'].find(t => hasFeaturePermission(t));
+        let firstAllowed = ['eval', 'allemp', 'leaderboard', 'plan', 'charts', 'weeklyindividuals', 'alerts', 'coaching', 'heatmap', 'constellation', 'timemachine', 'biaspulse', 'burnout', 'simulator', 'compare', 'rootcause', 'career', 'executivereport', 'camerarules', 'devicelog', 'remotecontrol', 'auditlog'].find(t => hasFeaturePermission(t));
         if (firstAllowed) switchTab(firstAllowed);
     }
 
@@ -7490,7 +7596,7 @@
         'missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
         'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
         'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
-        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'auditlog', 'gemini_advisor', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal'
+        'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'remotecontrol', 'auditlog', 'users', 'gemini_advisor', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal'
     ];
 
     function toggleCheckboxGroup(inputName, checkState) {
@@ -7500,16 +7606,16 @@
     function hasFeaturePermission(featureKey) {
         if (!currentUser) return false;
         if (currentUser.role === 'Admin') return true;
-        if (featureKey === 'users') return false;
         // إذا كان للمستخدم صلاحيات مخصصة محددة من المدير العام، نلتزم بها حرفياً 100%
         if (Array.isArray(currentUser.allowedTabs)) {
             return currentUser.allowedTabs.includes(featureKey);
         }
+        if (featureKey === 'users') return false;
         // الافتراضي للحسابات القديمة غير المخصصة
         if (currentUser.role === 'Employee') {
             return ['eval', 'leaderboard', 'plan', 'weeklyindividuals'].includes(featureKey);
         }
-        return !['users', 'devicelog', 'auditlog', 'backup'].includes(featureKey);
+        return !['users', 'devicelog', 'remotecontrol', 'auditlog', 'backup'].includes(featureKey);
     }
 
     function applyRoleBasedUI() {
@@ -7670,7 +7776,7 @@
             return;
         }
 
-        ['missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'remotecontrol', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -8420,7 +8526,7 @@
             document.getElementById('usrPassword').value = '';
             document.getElementById('usrRole').value = 'Branch Manager';
             document.querySelectorAll('input[name="allowedTabs"]').forEach(cb => {
-                cb.checked = !['devicelog', 'auditlog', 'backup', 'warroom', 'voice', 'biaspulse'].includes(cb.value);
+                cb.checked = !['users', 'devicelog', 'remotecontrol', 'auditlog', 'backup', 'warroom', 'voice', 'biaspulse'].includes(cb.value);
             });
         }
 
@@ -8617,7 +8723,8 @@
             planData: planData,
             cameraRulesData: cameraRulesData,
             rootCauseErrorsData: rootCauseErrorsData,
-            smartCoachingResolvedState: smartCoachingResolvedState
+            smartCoachingResolvedState: smartCoachingResolvedState,
+            branchGeofencesData: branchGeofencesData
         };
         let jsonString = JSON.stringify(fullBackupObj, null, 2);
         let blob = new Blob([jsonString], { type: "application/json;charset=utf-8" });
@@ -16643,6 +16750,769 @@
             scrollTimers.set(target, t);
         }, true);
     })();
+
+
+    // =========================================================================
+    // 📍 v16.4 DIRECT GOOGLE MAPS GEOFENCE + APPROVED WORK DEVICE VERIFICATION
+    // =========================================================================
+    function renderGeofenceBranchesSummaryV164() {
+        let tbody = document.getElementById('geofenceBranchesSummaryBody');
+        if (!tbody) return;
+        let sel = document.getElementById('geofenceBranchSelect');
+        let selectedBId = sel ? sel.value : '';
+        tbody.innerHTML = '';
+        (branchesData || []).forEach(b => {
+            let gf = branchGeofencesData[b.id];
+            let hasCoords = gf && !isNaN(Number(gf.lat)) && !isNaN(Number(gf.lng));
+            let coordTxt = hasCoords ? `${Number(gf.lat).toFixed(6)}, ${Number(gf.lng).toFixed(6)}` : 'غير محدد';
+            let radTxt = gf && gf.radius ? `${gf.radius} متر` : '150 متر';
+            let isSel = b.id === selectedBId;
+            tbody.innerHTML += `<tr style="${isSel ? 'background:rgba(56,189,248,0.09);' : ''}">
+                <td style="font-weight:800; color:#38bdf8; padding:6px 8px;">🏢 ${b.name}</td>
+                <td style="text-align:center; font-family:monospace; padding:6px 8px;">${coordTxt}</td>
+                <td style="text-align:center; font-weight:700; color:#facc15; padding:6px 8px;">${radTxt}</td>
+                <td style="text-align:center; padding:6px 8px;">
+                    <button type="button" onclick="selectBranchInGeofencePanel('${b.id}')" class="btn-edit-tbl" style="padding:3px 8px;">✏️ تحديد</button>
+                    ${hasCoords ? `<a href="https://www.google.com/maps?q=${gf.lat},${gf.lng}" target="_blank" class="btn-action" style="background:#0284c7; padding:3px 8px; text-decoration:none; display:inline-block;">🗺️ خريطة</a>` : ''}
+                </td>
+            </tr>`;
+        });
+    }
+
+    function selectBranchInGeofencePanel(bId) {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (sel) {
+            sel.value = bId;
+            loadBranchGeofenceInputs();
+        }
+    }
+
+    function parseGoogleMapsLinkToGeofence() {
+        let raw = (document.getElementById('geofenceMapsUrlInput')?.value || '').trim();
+        if (!raw) {
+            showToast('⚠️ الصق رابط خرائط جوجل (Google Maps) أو الإحداثيات أولاً.', 'warn');
+            return;
+        }
+        let lat = null, lng = null;
+        let patterns = [
+            /@(-?\d+\.\d+),\s*(-?\d+\.\d+)/,
+            /[?&](?:q|ll|query|destination)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/,
+            /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,
+            /(-?\d{1,2}\.\d{3,}),\s*(-?\d{1,3}\.\d{3,})/
+        ];
+        for (let p of patterns) {
+            let m = raw.match(p);
+            if (m) {
+                lat = parseFloat(m[1]);
+                lng = parseFloat(m[2]);
+                break;
+            }
+        }
+        if (lat === null || lng === null || isNaN(lat) || isNaN(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+            showToast('⚠️ لم يتم العثور على إحداثيات في الرابط. افتح Google Maps، اضغط بزر الفأرة الأيمن على موقع الفرع وانسخ الإحداثيات (مثال: 31.0225, 31.3785).', 'error');
+            return;
+        }
+        document.getElementById('geofenceLatInput').value = lat.toFixed(6);
+        document.getElementById('geofenceLngInput').value = lng.toFixed(6);
+        showToast(`✅ تم استخراج الإحداثيات (${lat.toFixed(6)}, ${lng.toFixed(6)}) — اضغط «💾 حفظ موقع الفرع».`, 'success');
+    }
+
+    function previewSelectedBranchOnMaps() {
+        let lat = parseFloat(document.getElementById('geofenceLatInput')?.value);
+        let lng = parseFloat(document.getElementById('geofenceLngInput')?.value);
+        if (isNaN(lat) || isNaN(lng)) {
+            showToast('⚠️ أدخل الإحداثيات أو استخرجها من خرائط جوجل أولاً.', 'warn');
+            return;
+        }
+        window.open(`https://www.google.com/maps?q=${lat},${lng}`, '_blank');
+    }
+
+    loadBranchGeofenceInputs = function() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        let bId = sel.value;
+        let gf = branchGeofencesData[bId] || { lat: 31.0409, lng: 31.3785, radius: 150 };
+        let latEl = document.getElementById('geofenceLatInput');
+        let lngEl = document.getElementById('geofenceLngInput');
+        let radEl = document.getElementById('geofenceRadiusInput');
+        let urlEl = document.getElementById('geofenceMapsUrlInput');
+        if (latEl) latEl.value = gf.lat || '';
+        if (lngEl) lngEl.value = gf.lng || '';
+        if (radEl) radEl.value = gf.radius || 150;
+        if (urlEl) urlEl.value = '';
+        renderGeofenceBranchesSummaryV164();
+    };
+
+    captureMyGpsAsBranchWorkLocation = async function() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        showToast('📡 جاري التقاط موقعك الحالي (GPS)...', 'info');
+        let gps = await requestBrowserGpsCoords(10000);
+        if (!gps.ok) {
+            showToast(`⚠️ تعذر التقاط الموقع (${gps.reason}) — اسمح للمتصفح بالوصول للموقع وحاول مجدداً.`, 'error');
+            return;
+        }
+        document.getElementById('geofenceLatInput').value = gps.lat.toFixed(6);
+        document.getElementById('geofenceLngInput').value = gps.lng.toFixed(6);
+        saveBranchGeofenceManual();
+    };
+
+    saveBranchGeofenceManual = function() {
+        let sel = document.getElementById('geofenceBranchSelect');
+        if (!sel) return;
+        let bId = sel.value;
+        let bObj = branchesData.find(b => b.id === bId);
+        let bName = bObj ? bObj.name : bId;
+        let lat = parseFloat(document.getElementById('geofenceLatInput').value);
+        let lng = parseFloat(document.getElementById('geofenceLngInput').value);
+        let rad = Math.min(5000, Math.max(25, parseInt(document.getElementById('geofenceRadiusInput').value) || 150));
+        if (isNaN(lat) || isNaN(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) {
+            showToast('⚠️ يرجى إدخال إحداثيات صحيحة أو استخراجها من خرائط جوجل.', 'error');
+            return;
+        }
+        branchGeofencesData[bId] = {
+            lat: Number(lat.toFixed(6)),
+            lng: Number(lng.toFixed(6)),
+            radius: rad
+        };
+        localStorage.setItem('unique_journey_branch_geo_v1', JSON.stringify(branchGeofencesData));
+        recordAuditLog('تحديث موقع فرع', `تم تحديد موقع "${bName}" عند (${lat.toFixed(6)}, ${lng.toFixed(6)}) بمسافة سماح ${rad} متر`);
+        loadBranchGeofenceInputs();
+        recalculateAllDeviceLogGeofences();
+        showToast(`💾 تم حفظ موقع «${bName}» بنطاق (${rad} متر) بنجاح!`, 'success');
+    };
+
+    // 📱 توثيق واعتماد هاتف العمل المخصص لكل موظف (Approved Work Phone Verification)
+    function toggleApprovedWorkPhoneV164(origIdx) {
+        let log = deviceLogsData[origIdx];
+        if (!log) return;
+        log.isWorkPhone = !log.isWorkPhone;
+        localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+        recordAuditLog('اعتماد هاتف عمل', `تم ${log.isWorkPhone ? 'اعتماد' : 'إلغاء اعتماد'} جهاز "${log.device}" للمستخدم "${log.name}" كهاتف عمل رسمي`);
+        renderDeviceLogsTable();
+        showToast(log.isWorkPhone ? `✅ تم اعتماد جهاز «${log.name}» كهاتف عمل رسمي.` : `⚠️ تم إلغاء اعتماد الجهاز كهاتف عمل.`, log.isWorkPhone ? 'success' : 'warn');
+    }
+
+    // Hook into renderDeviceLogsTable to display the Approved Work Phone badge & toggle button
+    const _origRenderDeviceLogsV164 = renderDeviceLogsTable;
+    renderDeviceLogsTable = function() {
+        _origRenderDeviceLogsV164();
+        let tbody = document.getElementById('deviceLogsTableBody');
+        if (!tbody) return;
+        let rows = tbody.querySelectorAll('tr');
+        rows.forEach(tr => {
+            let delBtn = tr.querySelector('button[onclick^="deleteDeviceLog("]');
+            if (!delBtn) return;
+            let m = (delBtn.getAttribute('onclick') || '').match(/deleteDeviceLog\((\d+)\)/);
+            if (!m) return;
+            let origIdx = parseInt(m[1], 10);
+            let log = deviceLogsData[origIdx];
+            if (!log) return;
+            let devCell = tr.children[3];
+            let actCell = tr.children[8];
+            if (devCell && !devCell.querySelector('.work-phone-badge')) {
+                let bHtml = log.isWorkPhone
+                    ? '<div class="work-phone-badge" style="margin-top:4px;"><span class="badge b-green" style="font-size:9.5px;">📱 هاتف عمل معتمد</span></div>'
+                    : '<div class="work-phone-badge" style="margin-top:4px;"><span class="badge b-yellow" style="font-size:9.5px;">⚠️ جهاز غير معتمد للعمل</span></div>';
+                devCell.insertAdjacentHTML('beforeend', bHtml);
+            }
+            if (actCell && !actCell.querySelector('.btn-work-phone-toggle')) {
+                let btnLabel = log.isWorkPhone ? '❌ إلغاء اعتماد' : '📱 اعتماد كهاتف عمل';
+                let btnStyle = log.isWorkPhone
+                    ? 'background:rgba(245,158,11,0.18); color:#fde047; border:1px solid #f59e0b; padding:3px 7px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold; margin-bottom:4px; display:inline-block;'
+                    : 'background:rgba(16,185,129,0.2); color:#34d399; border:1px solid #10b981; padding:3px 7px; border-radius:6px; cursor:pointer; font-size:10px; font-weight:bold; margin-bottom:4px; display:inline-block;';
+                actCell.insertAdjacentHTML('afterbegin', `<button type="button" class="btn-work-phone-toggle" onclick="toggleApprovedWorkPhoneV164(${origIdx})" style="${btnStyle}">${btnLabel}</button><br>`);
+            }
+        });
+    };
+
+
+    // =========================================================================
+    // ☁️ v16.5 FIREBASE REALTIME DATABASE LIVE SYNC (DEVICE LOGS + GEOFENCES)
+    // =========================================================================
+    const FIREBASE_CONFIG_V165 = {
+        apiKey: "AIzaSyAm1izhQDAy-hkhQqLmIRPULVrtbzW3kig",
+        authDomain: "alrehla-system.firebaseapp.com",
+        databaseURL: "https://alrehla-system-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "alrehla-system",
+        storageBucket: "alrehla-system.firebasestorage.app",
+        messagingSenderId: "184559253332",
+        appId: "1:184559253332:web:9f38be9b1b68896ed07ac1",
+        measurementId: "G-ZRY622GK3R"
+    };
+
+    let fbDbV165 = null;
+    let fbConnectedV165 = false;
+
+    function makeSafeFbDeviceKeyV165(nameStr, deviceStr) {
+        let raw = `${String(nameStr || 'user').trim()}__${String(deviceStr || 'dev').trim()}`;
+        let h1 = 5381, h2 = 0;
+        for (let i = 0; i < raw.length; i++) {
+            let c = raw.charCodeAt(i);
+            h1 = ((h1 << 5) + h1 + c) & 0x7fffffff;
+            h2 = ((h2 << 7) - h2 + c) & 0x7fffffff;
+        }
+        return 'dev_' + h1.toString(36) + '_' + h2.toString(36);
+    }
+
+    function updateFirebaseStatusBadgeV165(connected) {
+        fbConnectedV165 = connected;
+        let el = document.getElementById('firebaseSyncStatusBadge');
+        if (!el) return;
+        if (connected) {
+            el.className = 'badge b-green';
+            el.textContent = '🟢 متصل بالسحابة (Firebase Live)';
+        } else {
+            el.className = 'badge b-red';
+            el.textContent = '🔴 وضع محلي (غير متصل بالسحابة)';
+        }
+    }
+
+    function pushSingleDeviceLogToFirebaseV165(entry) {
+        if (!fbDbV165 || !entry) return;
+        try {
+            let key = entry.fbKey || makeSafeFbDeviceKeyV165(entry.name, entry.device);
+            entry.fbKey = key;
+            let cleanObj = {};
+            Object.keys(entry).forEach(k => {
+                if (entry[k] !== undefined) cleanObj[k] = entry[k];
+            });
+            fbDbV165.ref('device_logs/' + key).set(cleanObj).catch(err => console.warn('FB device write error:', err));
+        } catch(e) { console.warn('FB push device error:', e); }
+    }
+
+    function pushGeofencesToFirebaseV165() {
+        if (!fbDbV165) return;
+        try {
+            fbDbV165.ref('branch_geofences').set(branchGeofencesData).catch(err => console.warn('FB geofence write error:', err));
+        } catch(e) {}
+    }
+
+    function initFirebaseLiveSyncV165() {
+        if (typeof firebase === 'undefined') {
+            updateFirebaseStatusBadgeV165(false);
+            return;
+        }
+        try {
+            if (!firebase.apps || !firebase.apps.length) {
+                firebase.initializeApp(FIREBASE_CONFIG_V165);
+            }
+            fbDbV165 = firebase.database();
+
+            // Monitor live connection state
+            fbDbV165.ref('.info/connected').on('value', (snap) => {
+                updateFirebaseStatusBadgeV165(snap.val() === true);
+            });
+
+            // 1. Live Listener for Branch Geofences (Admin sets location -> all phones get it instantly)
+            fbDbV165.ref('branch_geofences').on('value', (snap) => {
+                let val = snap.val();
+                if (val && typeof val === 'object') {
+                    branchGeofencesData = { ...defaultBranchGeofences, ...val };
+                    localStorage.setItem('unique_journey_branch_geo_v1', JSON.stringify(branchGeofencesData));
+                    if (typeof loadBranchGeofenceInputs === 'function') loadBranchGeofenceInputs();
+                } else {
+                    // Seed initial geofences if empty in cloud
+                    pushGeofencesToFirebaseV165();
+                }
+            });
+
+            // 2. Live Listener for Device Logs (Employee logs in on phone -> Admin sees instantly)
+            fbDbV165.ref('device_logs').on('value', (snap) => {
+                let val = snap.val();
+                let arr = [];
+                if (val && typeof val === 'object') {
+                    Object.keys(val).forEach(k => {
+                        let item = val[k];
+                        if (item && typeof item === 'object') {
+                            item.fbKey = k;
+                            arr.push(item);
+                        }
+                    });
+                }
+                arr.sort((a, b) => (Number(b.lastActiveTs) || 0) - (Number(a.lastActiveTs) || 0));
+                deviceLogsData = arr;
+                localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+
+                // Check if admin remotely terminated THIS current device's session
+                if (currentUser) {
+                    let myKey = makeSafeFbDeviceKeyV165(currentUser.name, detectDeviceType());
+                    let myRec = val && val[myKey];
+                    if (myRec && myRec.forcedLogout === true) {
+                        fbDbV165.ref('device_logs/' + myKey + '/forcedLogout').remove().catch(() => {});
+                        showToast('🔒 تم إنهاء جلستك عن بُعد بواسطة الإدارة.', 'warn');
+                        setTimeout(() => { if (typeof handleLogout === 'function') handleLogout(); }, 600);
+                        return;
+                    }
+                }
+
+                let secDev = document.getElementById('sec-devicelog');
+                if (secDev && !secDev.classList.contains('hidden') && typeof renderDeviceLogsTable === 'function') {
+                    renderDeviceLogsTable();
+                }
+            });
+        } catch (err) {
+            console.error('Firebase init error:', err);
+            updateFirebaseStatusBadgeV165(false);
+        }
+    }
+
+    // Wrap logClientInfo so every login / GPS refresh syncs directly to Firebase
+    const _origLogClientInfoV165 = logClientInfo;
+    logClientInfo = async function(userObj, notifyToast = false) {
+        let deviceStr = detectDeviceType();
+        let fbKey = makeSafeFbDeviceKeyV165(userObj.name, deviceStr);
+        let prevRec = deviceLogsData.find(d => d.fbKey === fbKey || (d.name === userObj.name && d.device === deviceStr));
+        let prevApproved = prevRec ? !!prevRec.isWorkPhone : false;
+
+        await _origLogClientInfoV165(userObj, notifyToast);
+
+        let updatedRec = deviceLogsData.find(d => d.name === userObj.name && d.device === deviceStr);
+        if (updatedRec) {
+            updatedRec.fbKey = fbKey;
+            updatedRec.isWorkPhone = prevApproved;
+            updatedRec.forcedLogout = false;
+            localStorage.setItem('unique_journey_device_logs_v1', JSON.stringify(deviceLogsData));
+            pushSingleDeviceLogToFirebaseV165(updatedRec);
+        }
+    };
+
+    // Wrap markCurrentDeviceLogStatus so active/logged_out heartbeat syncs to Firebase
+    const _origMarkStatusV165 = markCurrentDeviceLogStatus;
+    markCurrentDeviceLogStatus = function(statusVal) {
+        _origMarkStatusV165(statusVal);
+        if (!currentUser) return;
+        let deviceStr = detectDeviceType();
+        let rec = deviceLogsData.find(d => d.name === currentUser.name && d.device === deviceStr);
+        if (rec) {
+            rec.fbKey = rec.fbKey || makeSafeFbDeviceKeyV165(rec.name, rec.device);
+            pushSingleDeviceLogToFirebaseV165(rec);
+        }
+    };
+
+    // Wrap forceTerminateDeviceSession to remotely terminate employee's session in Firebase
+    const _origForceTermV165 = forceTerminateDeviceSession;
+    forceTerminateDeviceSession = function(index) {
+        let target = deviceLogsData[index];
+        let targetKey = target ? (target.fbKey || makeSafeFbDeviceKeyV165(target.name, target.device)) : null;
+        _origForceTermV165(index);
+        if (fbDbV165 && target && target.status === 'logged_out' && targetKey) {
+            target.forcedLogout = true;
+            pushSingleDeviceLogToFirebaseV165(target);
+        }
+    };
+
+    // Wrap deleteDeviceLog to delete from Firebase
+    const _origDeleteDevLogV165 = deleteDeviceLog;
+    deleteDeviceLog = function(index) {
+        let target = deviceLogsData[index];
+        let targetKey = target ? (target.fbKey || makeSafeFbDeviceKeyV165(target.name, target.device)) : null;
+        let prevLen = deviceLogsData.length;
+        _origDeleteDevLogV165(index);
+        if (deviceLogsData.length < prevLen && fbDbV165 && targetKey) {
+            fbDbV165.ref('device_logs/' + targetKey).remove().catch(() => {});
+        }
+    };
+
+    // Wrap clearDeviceLogs to clear Firebase node
+    const _origClearDevLogsV165 = clearDeviceLogs;
+    clearDeviceLogs = function() {
+        let hadItems = deviceLogsData.length > 0;
+        _origClearDevLogsV165();
+        if (hadItems && deviceLogsData.length === 0 && fbDbV165) {
+            fbDbV165.ref('device_logs').remove().catch(() => {});
+        }
+    };
+
+    // Wrap toggleApprovedWorkPhoneV164 to sync approval flag to Firebase
+    const _origToggleWorkPhoneV165 = toggleApprovedWorkPhoneV164;
+    toggleApprovedWorkPhoneV164 = function(origIdx) {
+        _origToggleWorkPhoneV165(origIdx);
+        let rec = deviceLogsData[origIdx];
+        if (rec) pushSingleDeviceLogToFirebaseV165(rec);
+    };
+
+    // Wrap saveBranchGeofenceManual & recalculateAllDeviceLogGeofences to sync geofences to Firebase
+    const _origSaveGeoV165 = saveBranchGeofenceManual;
+    saveBranchGeofenceManual = function() {
+        _origSaveGeoV165();
+        pushGeofencesToFirebaseV165();
+    };
+
+    const _origRecalcGeoV165 = recalculateAllDeviceLogGeofences;
+    recalculateAllDeviceLogGeofences = function() {
+        _origRecalcGeoV165();
+        if (fbDbV165) {
+            deviceLogsData.forEach(log => pushSingleDeviceLogToFirebaseV165(log));
+        }
+    };
+
+    // Start Firebase Realtime Sync automatically
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFirebaseLiveSyncV165);
+    } else {
+        initFirebaseLiveSyncV165();
+    }
+
+
+    // =========================================================================
+    // 📱 v16.6 REMOTE CONTROL TAB (LIVE WEBRTC SCREEN SHARE + FIREBASE SIGNALING)
+    // =========================================================================
+    let activeRemoteTargetKeyV166 = null;
+    let activeRemoteTargetNameV166 = '';
+    let adminPeerConnV166 = null;
+    let employeePeerConnV166 = null;
+    let employeeLocalStreamV166 = null;
+    let adminSessionRefV166 = null;
+    let pendingRemoteReqDataV166 = null;
+
+    const RTC_ICE_CONFIG_V166 = {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+        ]
+    };
+
+    // Hook into switchTab to render Remote Control panel when opened
+    const _origSwitchTabV166 = switchTab;
+    switchTab = function(tab) {
+        _origSwitchTabV166(tab);
+        if (tab === 'remotecontrol') {
+            renderRemoteControlPanelV166();
+        }
+        // Update live current tab telemetry in Firebase
+        if (currentUser && fbDbV165) {
+            let myKey = makeSafeFbDeviceKeyV165(currentUser.name, detectDeviceType());
+            fbDbV165.ref('device_logs/' + myKey + '/activeTab').set(tab).catch(() => {});
+        }
+    };
+
+    function renderRemoteControlPanelV166() {
+        let listEl = document.getElementById('remoteDevicesListContainer');
+        let countEl = document.getElementById('remoteDevicesCountBadge');
+        if (!listEl) return;
+
+        let list = deviceLogsData || [];
+        if (countEl) countEl.textContent = `${list.length} جهاز`;
+
+        if (list.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:24px; font-size:12px;">لا توجد أجهزة مسجلة حتى الآن.<br>بمجرد دخول أي موظف سيظهر جهازه هنا فوراً.</div>`;
+            return;
+        }
+
+        listEl.innerHTML = '';
+        list.forEach((log, idx) => {
+            let fbKey = log.fbKey || makeSafeFbDeviceKeyV165(log.name, log.device);
+            let isAct = log.status === 'active';
+            let isMob = /هاتف|android|iphone|ipad|mobile/i.test(log.device || '');
+            let icon = isMob ? '📱' : '🖥️';
+            let isSelected = activeRemoteTargetKeyV166 === fbKey;
+            let batTxt = (log.batteryLevel !== undefined && log.batteryLevel !== null) ? `🔋 ${log.batteryLevel}%` : '';
+            let placeBadge = log.placeStatus === 'in_office'
+                ? '<span class="badge b-green" style="font-size:9.5px;">🏢 مقر العمل</span>'
+                : (log.placeStatus === 'outside' ? '<span class="badge b-red" style="font-size:9.5px;">⚠️ خارج العمل</span>' : '<span class="badge b-blue" style="font-size:9.5px;">📡 تقريبي</span>');
+
+            listEl.innerHTML += `
+                <div style="background:${isSelected ? 'rgba(2,132,199,0.18)' : 'rgba(15,23,42,0.85)'}; border:1px solid ${isSelected ? '#38bdf8' : 'rgba(148,163,184,0.2)'}; border-radius:12px; padding:11px 12px; display:flex; flex-direction:column; gap:7px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                        <div style="font-weight:800; color:#fff; font-size:12.5px;">${icon} ${log.name}</div>
+                        <span class="badge ${isAct ? 'b-green' : 'b-yellow'}" style="font-size:9.5px;">${isAct ? '🟢 متصل الآن' : '⚪ غير متصل'}</span>
+                    </div>
+                    <div style="font-size:10.5px; color:#94a3b8;">${log.device || ''} ${batTxt ? ' • ' + batTxt : ''}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
+                        <div style="display:flex; gap:5px; align-items:center; flex-wrap:wrap;">
+                            ${placeBadge}
+                            ${log.isWorkPhone ? '<span class="badge b-green" style="font-size:9.5px;">✅ هاتف عمل</span>' : ''}
+                        </div>
+                        <button type="button" onclick="startRemoteControlRequestV166('${fbKey}', '${(log.name || '').replace(/'/g, '')}')" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:6px 12px; font-size:11px;">
+                            📱 التحكم في الهاتف
+                        </button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    async function startRemoteControlRequestV166(targetKey, targetName) {
+        if (!fbDbV165) {
+            showToast('⚠️ غير متصل بـ Firebase حالياً.', 'error');
+            return;
+        }
+        stopRemoteControlSessionV166(false);
+
+        activeRemoteTargetKeyV166 = targetKey;
+        activeRemoteTargetNameV166 = targetName;
+        renderRemoteControlPanelV166();
+
+        let titleEl = document.getElementById('remoteStageTargetName');
+        let stEl = document.getElementById('remoteStageStatusText');
+        let phEl = document.getElementById('remoteStagePlaceholder');
+        let stopBtn = document.getElementById('btnRemoteStop');
+        let qBar = document.getElementById('remoteQuickActionsBar');
+
+        if (titleEl) titleEl.textContent = `📱 ${targetName}`;
+        if (stEl) stEl.textContent = '📡 جاري إرسال إشعار التحكم إلى جهاز الموظف وبانتظار موافقته...';
+        if (stopBtn) stopBtn.style.display = 'inline-block';
+        if (qBar) qBar.style.display = 'flex';
+        if (phEl) {
+            phEl.style.display = 'block';
+            phEl.innerHTML = `<div style="font-size:38px; margin-bottom:10px;">📡</div>
+                <div style="font-size:13px; font-weight:800; color:#38bdf8;">تم إرسال طلب فتح الشاشة إلى «${targetName}»</div>
+                <div style="font-size:11px; color:#94a3b8; margin-top:6px;">بانتظار ضغط الموظف على «موافق» في الإشعار الظاهر على جهازه...</div>`;
+        }
+
+        let sessionId = 'rs_' + Date.now();
+        adminSessionRefV166 = fbDbV165.ref('remote_sessions/' + targetKey);
+        await adminSessionRefV166.set({
+            sessionId: sessionId,
+            requestedBy: currentUser ? currentUser.name : 'الإدارة',
+            status: 'requested',
+            ts: Date.now()
+        });
+
+        adminSessionRefV166.on('value', async (snap) => {
+            let data = snap.val();
+            if (!data || data.sessionId !== sessionId) return;
+
+            if (data.status === 'declined') {
+                if (stEl) stEl.textContent = '❌ رفض الموظف مشاركة الشاشة.';
+                if (phEl) phEl.innerHTML = `<div style="font-size:36px; margin-bottom:8px;">❌</div><div style="color:#fb7185; font-weight:800;">تم رفض الطلب من جهاز الموظف</div>`;
+                showToast(`❌ رفض «${targetName}» مشاركة الشاشة.`, 'warn');
+            } else if (data.status === 'unsupported') {
+                if (stEl) stEl.textContent = '⚠️ متصفح الهاتف لا يدعم بث الشاشة المباشر (يتطلب كمبيوتر أو تطبيق Android مخصص).';
+                if (phEl) phEl.innerHTML = `<div style="font-size:34px; margin-bottom:8px;">📱</div><div style="color:#facc15; font-weight:800; font-size:12px;">متصفح الموبايل لا يدعم بث الشاشة الكاملة</div><div style="font-size:11px; color:#94a3b8; margin-top:6px; line-height:1.7;">يمكنك استخدام أزرار التحكم السريع بالأسفل (تنبيه الشاشة / تحديث GPS / إنهاء الجلسة) أو تثبيت تطبيق Android مخصص لهاتف العمل.</div>`;
+            } else if (data.status === 'offer_ready' && data.offer && !adminPeerConnV166) {
+                if (stEl) stEl.textContent = '🔗 جاري ربط البث الحي للشاشة...';
+                try {
+                    adminPeerConnV166 = new RTCPeerConnection(RTC_ICE_CONFIG_V166);
+                    adminPeerConnV166.ontrack = (ev) => {
+                        let vid = document.getElementById('remoteScreenVideo');
+                        if (vid && ev.streams && ev.streams[0]) {
+                            vid.srcObject = ev.streams[0];
+                            vid.style.display = 'block';
+                            if (phEl) phEl.style.display = 'none';
+                            let fsBtn = document.getElementById('btnRemoteFullscreen');
+                            if (fsBtn) fsBtn.style.display = 'inline-block';
+                            if (stEl) stEl.textContent = '🟢 متصل — عرض حي للشاشة الآن';
+                        }
+                    };
+                    adminPeerConnV166.onicecandidate = (ev) => {
+                        if (ev.candidate && adminSessionRefV166) {
+                            adminSessionRefV166.child('adminCandidates').push(ev.candidate.toJSON());
+                        }
+                    };
+                    await adminPeerConnV166.setRemoteDescription(new RTCSessionDescription(data.offer));
+                    let answer = await adminPeerConnV166.createAnswer();
+                    await adminPeerConnV166.setLocalDescription(answer);
+                    await adminSessionRefV166.update({
+                        answer: { type: answer.type, sdp: answer.sdp },
+                        status: 'connected'
+                    });
+
+                    // Listen for employee ICE candidates
+                    adminSessionRefV166.child('empCandidates').on('child_added', (cSnap) => {
+                        let cand = cSnap.val();
+                        if (cand && adminPeerConnV166) {
+                            adminPeerConnV166.addIceCandidate(new RTCIceCandidate(cand)).catch(() => {});
+                        }
+                    });
+                } catch (err) {
+                    console.error('Admin WebRTC error:', err);
+                    if (stEl) stEl.textContent = '⚠️ تعذر إنشاء اتصال البث الحي.';
+                }
+            } else if (data.status === 'ended') {
+                stopRemoteControlSessionV166(false);
+                if (stEl) stEl.textContent = '⏹️ تم إنهاء بث الشاشة.';
+            }
+        });
+    }
+
+    function stopRemoteControlSessionV166(notifyCloud = true) {
+        if (notifyCloud && adminSessionRefV166) {
+            adminSessionRefV166.update({ status: 'ended' }).catch(() => {});
+        }
+        if (adminSessionRefV166) {
+            adminSessionRefV166.off();
+            adminSessionRefV166.child('empCandidates').off();
+            adminSessionRefV166 = null;
+        }
+        if (adminPeerConnV166) {
+            adminPeerConnV166.close();
+            adminPeerConnV166 = null;
+        }
+        let vid = document.getElementById('remoteScreenVideo');
+        if (vid) {
+            vid.srcObject = null;
+            vid.style.display = 'none';
+        }
+        let phEl = document.getElementById('remoteStagePlaceholder');
+        if (phEl) phEl.style.display = 'block';
+        let fsBtn = document.getElementById('btnRemoteFullscreen');
+        if (fsBtn) fsBtn.style.display = 'none';
+        let stopBtn = document.getElementById('btnRemoteStop');
+        if (stopBtn) stopBtn.style.display = 'none';
+    }
+
+    function toggleRemoteVideoFullscreenV166() {
+        let vid = document.getElementById('remoteScreenVideo');
+        if (vid && vid.requestFullscreen) vid.requestFullscreen();
+    }
+
+    function sendRemotePingAlertV166() {
+        if (!activeRemoteTargetKeyV166 || !fbDbV165) return;
+        let msg = prompt(`اكتب رسالة تنبيه فورية تظهر على شاشة «${activeRemoteTargetNameV166}»:`, 'يرجى التأكد من متابعة العمل على النظام الآن.');
+        if (!msg) return;
+        fbDbV165.ref('remote_commands/' + activeRemoteTargetKeyV166).set({
+            type: 'alert',
+            message: msg,
+            from: currentUser ? currentUser.name : 'الإدارة',
+            ts: Date.now()
+        });
+        showToast('✅ تم إرسال التنبيه إلى شاشة الموظف فوراً.', 'success');
+    }
+
+    function sendRemoteGpsRequestV166() {
+        if (!activeRemoteTargetKeyV166 || !fbDbV165) return;
+        fbDbV165.ref('remote_commands/' + activeRemoteTargetKeyV166).set({
+            type: 'refresh_gps',
+            ts: Date.now()
+        });
+        showToast('📍 تم إرسال أمر تحديث موقع GPS لجهاز الموظف.', 'info');
+    }
+
+    function sendRemoteLogoutCommandV166() {
+        if (!activeRemoteTargetKeyV166 || !fbDbV165) return;
+        if (!confirm(`إنهاء جلسة «${activeRemoteTargetNameV166}» عن بُعد؟`)) return;
+        fbDbV165.ref('device_logs/' + activeRemoteTargetKeyV166 + '/forcedLogout').set(true);
+        showToast('🔒 تم إرسال أمر إنهاء الجلسة عن بُعد.', 'success');
+    }
+
+    // =========================================================================
+    // 📲 EMPLOYEE-SIDE LISTENER (RECEIVES REMOTE REQUESTS & COMMANDS)
+    // =========================================================================
+    function startEmployeeRemoteListenersV166() {
+        if (!fbDbV165 || !currentUser) return;
+        let myKey = makeSafeFbDeviceKeyV165(currentUser.name, detectDeviceType());
+
+        // Report battery level if browser supports it
+        if (navigator.getBattery) {
+            navigator.getBattery().then(bat => {
+                let pct = Math.round(bat.level * 100);
+                fbDbV165.ref('device_logs/' + myKey + '/batteryLevel').set(pct).catch(() => {});
+            }).catch(() => {});
+        }
+
+        // Listen for remote screen view requests
+        fbDbV165.ref('remote_sessions/' + myKey).on('value', async (snap) => {
+            let data = snap.val();
+            if (!data) return;
+            if (data.status === 'requested' && (!pendingRemoteReqDataV166 || pendingRemoteReqDataV166.sessionId !== data.sessionId)) {
+                pendingRemoteReqDataV166 = data;
+                let txtEl = document.getElementById('remoteConsentText');
+                if (txtEl) {
+                    txtEl.innerHTML = `يطلب <b>${data.requestedBy || 'المدير'}</b> الآن عرض شاشة جهازك للتأكد من سير العمل.<br>سيظهر لك إشعار المتصفح للموافقة على مشاركة الشاشة.`;
+                }
+                let modal = document.getElementById('remoteConsentModal');
+                if (modal) modal.classList.add('active');
+            } else if (data.status === 'connected' && data.answer && employeePeerConnV166 && !employeePeerConnV166.currentRemoteDescription) {
+                await employeePeerConnV166.setRemoteDescription(new RTCSessionDescription(data.answer)).catch(() => {});
+            } else if (data.status === 'ended') {
+                stopEmployeeScreenShareV166();
+            }
+        });
+
+        // Listen for admin ICE candidates
+        fbDbV165.ref('remote_sessions/' + myKey + '/adminCandidates').on('child_added', (cSnap) => {
+            let cand = cSnap.val();
+            if (cand && employeePeerConnV166) {
+                employeePeerConnV166.addIceCandidate(new RTCIceCandidate(cand)).catch(() => {});
+            }
+        });
+
+        // Listen for quick remote commands (alert / refresh_gps)
+        fbDbV165.ref('remote_commands/' + myKey).on('value', (snap) => {
+            let cmd = snap.val();
+            if (!cmd || !cmd.ts || (Date.now() - cmd.ts > 60000)) return;
+            fbDbV165.ref('remote_commands/' + myKey).remove().catch(() => {});
+            if (cmd.type === 'alert') {
+                showToast(`📢 رسالة من ${cmd.from || 'الإدارة'}: ${cmd.message}`, 'warn');
+                alert(`📢 رسالة عاجلة من ${cmd.from || 'الإدارة'}:\n\n${cmd.message}`);
+            } else if (cmd.type === 'refresh_gps') {
+                if (typeof requestLiveGpsForCurrentUser === 'function') {
+                    requestLiveGpsForCurrentUser(false);
+                }
+            }
+        });
+    }
+
+    async function acceptRemoteControlRequestV166() {
+        let modal = document.getElementById('remoteConsentModal');
+        if (modal) modal.classList.remove('active');
+        if (!fbDbV165 || !currentUser || !pendingRemoteReqDataV166) return;
+
+        let myKey = makeSafeFbDeviceKeyV165(currentUser.name, detectDeviceType());
+        let ref = fbDbV165.ref('remote_sessions/' + myKey);
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+            await ref.update({ status: 'unsupported' });
+            showToast('⚠️ متصفح هذا الجهاز لا يدعم مشاركة الشاشة المباشرة.', 'warn');
+            return;
+        }
+
+        try {
+            employeeLocalStreamV166 = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: false });
+            employeePeerConnV166 = new RTCPeerConnection(RTC_ICE_CONFIG_V166);
+            employeeLocalStreamV166.getTracks().forEach(track => {
+                employeePeerConnV166.addTrack(track, employeeLocalStreamV166);
+                track.onended = () => {
+                    ref.update({ status: 'ended' }).catch(() => {});
+                    stopEmployeeScreenShareV166();
+                };
+            });
+            employeePeerConnV166.onicecandidate = (ev) => {
+                if (ev.candidate) {
+                    ref.child('empCandidates').push(ev.candidate.toJSON());
+                }
+            };
+            let offer = await employeePeerConnV166.createOffer();
+            await employeePeerConnV166.setLocalDescription(offer);
+            await ref.update({
+                offer: { type: offer.type, sdp: offer.sdp },
+                status: 'offer_ready'
+            });
+            showToast('🟢 جاري مشاركة الشاشة مع الإدارة الآن.', 'success');
+        } catch (err) {
+            await ref.update({ status: 'declined' }).catch(() => {});
+            showToast('تم إلغاء مشاركة الشاشة.', 'warn');
+        }
+    }
+
+    function declineRemoteControlRequestV166() {
+        let modal = document.getElementById('remoteConsentModal');
+        if (modal) modal.classList.remove('active');
+        if (!fbDbV165 || !currentUser) return;
+        let myKey = makeSafeFbDeviceKeyV165(currentUser.name, detectDeviceType());
+        fbDbV165.ref('remote_sessions/' + myKey).update({ status: 'declined' }).catch(() => {});
+    }
+
+    function stopEmployeeScreenShareV166() {
+        if (employeeLocalStreamV166) {
+            employeeLocalStreamV166.getTracks().forEach(t => t.stop());
+            employeeLocalStreamV166 = null;
+        }
+        if (employeePeerConnV166) {
+            employeePeerConnV166.close();
+            employeePeerConnV166 = null;
+        }
+    }
+
+    // Auto-start employee listeners once logged in & Firebase ready
+    setInterval(() => {
+        if (currentUser && fbDbV165 && !window._empRemoteListenersStartedV166) {
+            window._empRemoteListenersStartedV166 = true;
+            startEmployeeRemoteListenersV166();
+        }
+    }, 2000);
+
 
 </script>
 </body>
