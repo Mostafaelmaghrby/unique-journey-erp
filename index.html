@@ -7,7 +7,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="الرحلة الفريدة">
-    <link id="dynamicManifestLink" rel="manifest" href="">
+    <link id="dynamicManifestLink" rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+    <link rel="apple-touch-icon" href="./icon-192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -9692,19 +9694,14 @@
     let deferredPwaPrompt = null;
     function setupDynamicPwaManifest() {
         try {
-            let manifestObj = {
-                name: brandingData.companyName || "الرحلة الفريدة",
-                short_name: brandingData.companyName || "الرحلة الفريدة",
-                start_url: ".",
-                display: "standalone",
-                background_color: "#090d16",
-                theme_color: "#090d16",
-                dir: "rtl",
-                lang: "ar"
-            };
-            let blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+            // Keep static ./manifest.json for PWABuilder & native Android/Windows installation
             let link = document.getElementById('dynamicManifestLink');
-            if (link) link.setAttribute('href', URL.createObjectURL(blob));
+            if (link && !link.getAttribute('href')) {
+                link.setAttribute('href', './manifest.json');
+            }
+            if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            }
         } catch(e) {}
     }
     window.addEventListener('beforeinstallprompt', (e) => {
