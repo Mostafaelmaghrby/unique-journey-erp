@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="الرحلة الفريدة">
-    <link id="dynamicManifestLink" rel="manifest" href="">
+    <link id="dynamicManifestLink" rel="manifest" href="manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -4047,7 +4047,7 @@
                     <div class="branch-group" id="branchButtonGroup"></div>
                     <div class="live-clock-pill" id="liveShiftClockPill" onclick="toggleFocusSprintTimer()" title="اضغط لبدء مؤقت التركيز (25 دقيقة)">⏱️ <span id="liveClockText">--:--</span></div>
                     <button type="button" onclick="openCommandPalette()" class="btn-action" style="background:rgba(30,41,59,0.85); border:1px solid #334155; color:#cbd5e1; padding:6px 10px;" title="بحث سريع وأوامر (Ctrl+K)">🔍 <span class="cmd-kbd">Ctrl+K</span></button>
-                    <button type="button" id="btnInstallPwa" onclick="installPwaApp()" class="btn-action hidden" style="background:#7c3aed; padding:6px 10px;" title="تثبيت التطبيق على جهازك">📲 تثبيت</button>
+                    <button type="button" id="btnInstallPwa" onclick="installPwaApp()" class="btn-action" style="background:#7c3aed; padding:6px 10px;" title="تثبيت التطبيق على جهازك">📲 تثبيت</button>
                     <button type="button" id="btnAddBranchHeader" onclick="openAddBranchModal()" class="btn-action btn-add hidden" style="background:#059669;">➕ فرع</button>
                     <button type="button" id="headerBackupBtn" onclick="exportDatabaseBackup()" class="btn-action" style="background:#059669; padding:6px 11px;">💾 حفظ <span id="backupPulseCount" style="display:none; background:rgba(0,0,0,0.3); padding:1px 6px; border-radius:10px; margin-right:4px; font-size:10px;"></span></button>
                     <button type="button" onclick="window.print()" class="btn-action" style="background:#475569; padding:6px 10px;" title="طباعة PDF">🖨️</button>
@@ -9709,19 +9709,12 @@
     let deferredPwaPrompt = null;
     function setupDynamicPwaManifest() {
         try {
-            let manifestObj = {
-                name: brandingData.companyName || "الرحلة الفريدة",
-                short_name: brandingData.companyName || "الرحلة الفريدة",
-                start_url: ".",
-                display: "standalone",
-                background_color: "#090d16",
-                theme_color: "#090d16",
-                dir: "rtl",
-                lang: "ar"
-            };
-            let blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-            let link = document.getElementById('dynamicManifestLink');
-            if (link) link.setAttribute('href', URL.createObjectURL(blob));
+            if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            }
+            let isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            let btn = document.getElementById('btnInstallPwa');
+            if (btn && isStandalone) btn.classList.add('hidden');
         } catch(e) {}
     }
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -9730,18 +9723,56 @@
         let btn = document.getElementById('btnInstallPwa');
         if (btn) btn.classList.remove('hidden');
     });
+    window.addEventListener('appinstalled', () => {
+        deferredPwaPrompt = null;
+        let btn = document.getElementById('btnInstallPwa');
+        if (btn) btn.classList.add('hidden');
+        showToast('✅ تم تثبيت تطبيق الرحلة الفريدة على جهازك بنجاح!', 'success');
+    });
     function installPwaApp() {
         if (deferredPwaPrompt) {
             deferredPwaPrompt.prompt();
             deferredPwaPrompt.userChoice.then(() => {
                 deferredPwaPrompt = null;
-                let btn = document.getElementById('btnInstallPwa');
-                if (btn) btn.classList.add('hidden');
             });
         } else {
-            showToast('لتثبيت التطبيق على هاتفك: اضغط على قائمة المتصفح واختر «إضافة إلى الشاشة الرئيسية» 📲', 'info');
+            showToast('📲 لتثبيت التطبيق: افتح قائمة المتصفح (⋮ أو المشاركة) واختر «إضافة إلى الشاشة الرئيسية / Install App»', 'info');
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     // =========================================================================
