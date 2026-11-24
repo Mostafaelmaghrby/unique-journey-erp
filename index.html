@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <title>الرحلة الفريدة - نظام KPIs والتشغيل المتكامل</title>
     <!-- Chart.js for performance graphs -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js';document.head.appendChild(s);"></script>
     <!-- SheetJS (XLSX) لدعم رفع شيت الإكسل (.xlsx / .xls / .csv) كما هو مباشرة -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
@@ -3938,6 +3938,34 @@
             border-color: #cbd5e1;
         }
 
+
+        /* 📌 تثبيت صف بنود التقييم (مستطيل البنود) أثناء التمرير */
+        .eval-table-sticky-wrap {
+            max-height: 62vh;
+            overflow: auto;
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            position: relative;
+        }
+        #sec-eval table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        #sec-eval thead th {
+            position: sticky;
+            top: 0;
+            z-index: 12;
+            background: #090d16;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+        }
+        body.light-mode #sec-eval thead th {
+            background: #e2e8f0;
+        }
+        @media (min-width: 769px) {
+            #sec-eval table th:nth-child(2) {
+                z-index: 20 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -4755,10 +4783,12 @@
                     <input type="text" id="quickSearchInput" oninput="renderEvalTable()" placeholder="🔍 بحث سريع عن موظف..." class="form-input" style="width: 200px; padding: 6px; font-size: 11px;">
                 </div>
             </div>
+            <div class="eval-table-sticky-wrap">
             <table>
                 <thead id="evalTableHead"></thead>
                 <tbody id="evalTableBody"></tbody>
             </table>
+            </div>
         </div>
         <!-- 2. الموظفون كلهم -->
         <div id="sec-allemp" class="card hidden">
@@ -17078,7 +17108,7 @@
                                 let dt = (ts - lastTs) / 1000;
                                 lastTs = ts;
                                 chartsSonarAngleV16 = (chartsSonarAngleV16 + dt * 1.1) % (Math.PI * 2);
-                                try { branchRadarInstance.update('none'); } catch(e) {}
+                                try { branchRadarInstance.draw(); } catch(e) {}
                                 chartsSonarAnimFrameV16 = requestAnimationFrame(animateRadarSweepV161);
                             }
                             chartsSonarAnimFrameV16 = requestAnimationFrame(animateRadarSweepV161);
@@ -17227,17 +17257,33 @@
             try { empChartInstance?.resize(); } catch(e) {}
             try { branchRadarInstance?.resize(); } catch(e) {}
             try { benchmarkChartInstance?.resize(); } catch(e) {}
-        }, 160);
+        }, 520);
     }
 
+    let chartsLibRetryCountV17 = 0;
     renderEmployeePerformanceChart = function() {
         if (chartsLastRenderTimerV16) clearTimeout(chartsLastRenderTimerV16);
+        if (typeof Chart === 'undefined') {
+            if (chartsLibRetryCountV17 < 15) {
+                chartsLibRetryCountV17++;
+                chartsLastRenderTimerV16 = setTimeout(() => { renderEmployeePerformanceChart(); }, 500);
+            }
+            return;
+        }
+        chartsLibRetryCountV17 = 0;
         chartsLastRenderTimerV16 = setTimeout(() => {
             requestAnimationFrame(() => {
                 renderAllChartsSafelyV161();
             });
-        }, 45);
+        }, 90);
     };
+
+
+
+
+
+
+
 
     if (typeof toggleThemeMode === 'function') {
         const _origToggleThemeV161 = toggleThemeMode;
@@ -18532,6 +18578,61 @@
         bindAndroidMdmForEmployee(targetName);
         return _origStartRemoteV166(targetKey, targetName);
     };
+</script>
+<script>
+(function() {
+    function destroyChartSafeV174(canvasId) {
+        var el = document.getElementById(canvasId);
+        if (!el || typeof Chart === 'undefined') return;
+        try {
+            var existing = Chart.getChart(el);
+            if (existing) existing.destroy();
+        } catch (e) {}
+    }
+
+    function resetCanvasElementV174(canvasId) {
+        var oldCanvas = document.getElementById(canvasId);
+        if (!oldCanvas || !oldCanvas.parentNode) return null;
+        destroyChartSafeV174(canvasId);
+        var newCanvas = document.createElement('canvas');
+        newCanvas.id = canvasId;
+        if (oldCanvas.className) newCanvas.className = oldCanvas.className;
+        if (oldCanvas.getAttribute('style')) newCanvas.setAttribute('style', oldCanvas.getAttribute('style'));
+        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+        return newCanvas;
+    }
+
+    var _origCloseModalV174 = window.closeEmployeeModal;
+    if (typeof _origCloseModalV174 === 'function') {
+        window.closeEmployeeModal = function() {
+            try { if (typeof stopModalPulseAnimationV15 === 'function') stopModalPulseAnimationV15(); } catch (e) {}
+            destroyChartSafeV174('individualChart');
+            return _origCloseModalV174.apply(this, arguments);
+        };
+    }
+
+    var _origSwitchTabV174 = window.switchTab;
+    if (typeof _origSwitchTabV174 === 'function') {
+        window.switchTab = function(tab) {
+            try { if (typeof stopModalPulseAnimationV15 === 'function') stopModalPulseAnimationV15(); } catch (e) {}
+            try { if (typeof stopChartsSonarAnimV16 === 'function') stopChartsSonarAnimV16(); } catch (e) {}
+            if (tab === 'charts') {
+                resetCanvasElementV174('employeePerformanceChart');
+                resetCanvasElementV174('branchRadarChart');
+                resetCanvasElementV174('benchmarkComparisonChart');
+            }
+            var res = _origSwitchTabV174.apply(this, arguments);
+            if (tab === 'charts') {
+                setTimeout(function() {
+                    if (typeof window.renderEmployeePerformanceChart === 'function') {
+                        try { window.renderEmployeePerformanceChart(); } catch (e) {}
+                    }
+                }, 100);
+            }
+            return res;
+        };
+    }
+})();
 </script>
 </body>
 </html>
