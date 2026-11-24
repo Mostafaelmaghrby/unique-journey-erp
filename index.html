@@ -7,9 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="الرحلة الفريدة">
-    <link id="dynamicManifestLink" rel="manifest" href="./manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-    <link rel="apple-touch-icon" href="./icon-192.png">
+    <link id="dynamicManifestLink" rel="manifest" href="">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -5182,6 +5180,23 @@
                             <button type="button" onclick="sendRemoteLogoutCommandV166()" class="btn-danger" style="padding:5px 10px;">🔒 إنهاء جلسته</button>
                         </div>
                     </div>
+                    <!-- لوحة إدارة تطبيق Android (UniqueJourney MDM) -->
+                    <div id="androidMdmPanel" style="width:100%; margin-top:14px; background:rgba(15,23,42,0.92); border:1px solid rgba(56,189,248,0.38); border-radius:14px; padding:14px; text-align:right;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+                            <span style="font-size:12.5px; font-weight:800; color:#38bdf8;">🤖 تحكم تطبيق Android (UniqueJourney MDM)</span>
+                            <span id="androidMdmStatusBadge" class="badge b-yellow" style="font-size:10px;">في انتظار اختيار جهاز</span>
+                        </div>
+                        <div style="font-size:11.5px; color:#cbd5e1; margin-bottom:10px;">
+                            التطبيق المفتوح حالياً على الهاتف: <b id="androidCurrentAppLabel" style="color:#34d399;">—</b>
+                        </div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+                            <button type="button" onclick="sendAndroidMdmCommand('LOCK_DEVICE')" class="btn-danger" style="padding:6px 11px; font-size:11px;">🔒 قفل الشاشة فوراً</button>
+                            <button type="button" onclick="sendAndroidMdmCommand('REQUEST_SCREEN_SHARE')" class="btn-action" style="background:#4f46e5; padding:6px 11px; font-size:11px;">🖥️ طلب مشاركة الشاشة</button>
+                            <button type="button" onclick="sendAndroidMdmCommand('APPLY_RESTRICTIONS')" class="btn-action" style="background:#334155; padding:6px 11px; font-size:11px;">🛡️ قيود حماية الهاتف</button>
+                        </div>
+                        <div style="font-size:11px; font-weight:bold; color:#94a3b8; margin-bottom:6px;">📦 التطبيقات المثبتة على هاتف العمل:</div>
+                        <div id="androidInstalledAppsList" style="max-height:200px; overflow-y:auto; border-top:1px solid #1e293b; padding-top:6px; font-size:11px;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -9694,14 +9709,19 @@
     let deferredPwaPrompt = null;
     function setupDynamicPwaManifest() {
         try {
-            // Keep static ./manifest.json for PWABuilder & native Android/Windows installation
+            let manifestObj = {
+                name: brandingData.companyName || "الرحلة الفريدة",
+                short_name: brandingData.companyName || "الرحلة الفريدة",
+                start_url: ".",
+                display: "standalone",
+                background_color: "#090d16",
+                theme_color: "#090d16",
+                dir: "rtl",
+                lang: "ar"
+            };
+            let blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
             let link = document.getElementById('dynamicManifestLink');
-            if (link && !link.getAttribute('href')) {
-                link.setAttribute('href', './manifest.json');
-            }
-            if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-                navigator.serviceWorker.register('./sw.js').catch(() => {});
-            }
+            if (link) link.setAttribute('href', URL.createObjectURL(blob));
         } catch(e) {}
     }
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -18404,6 +18424,83 @@
         setDeviceLogViewModeV17(deviceLogViewModeV17);
     };
 
+
+    // =========================================================================
+    // 🤖 v17.1 ANDROID WORK DEVICE MDM INTEGRATION (UNIQUEJOURNEY APP)
+    // =========================================================================
+    let activeAndroidSafeKey = '';
+    let activeAndroidRef = null;
+
+    function bindAndroidMdmForEmployee(empName) {
+        if (!fbDbV165 || !empName) return;
+        activeAndroidSafeKey = empName.trim().replace(/[.#$\[\]/]/g, '_');
+
+        if (activeAndroidRef) activeAndroidRef.off();
+        activeAndroidRef = fbDbV165.ref('remote_responses/' + activeAndroidSafeKey);
+
+        activeAndroidRef.on('value', (snap) => {
+            const data = snap.val();
+            const badge = document.getElementById('androidMdmStatusBadge');
+            const appLbl = document.getElementById('androidCurrentAppLabel');
+            const listEl = document.getElementById('androidInstalledAppsList');
+
+            if (!data) {
+                if (badge) { badge.className = 'badge b-yellow'; badge.textContent = 'غير مربوط بالتطبيق'; }
+                if (appLbl) appLbl.textContent = '—';
+                if (listEl) listEl.innerHTML = '<div style="color:#94a3b8; padding:6px 0;">لم يتم ربط الاسم (' + activeAndroidSafeKey + ') في تطبيق UniqueJourney بعد.</div>';
+                return;
+            }
+
+            if (badge) {
+                badge.className = 'badge b-green';
+                badge.textContent = data.isDeviceOwner ? '🟢 Device Owner (تحكم كامل)' : (data.isAdminActive ? '🟢 Device Admin نشط' : '🟡 متصل');
+            }
+            if (appLbl) appLbl.textContent = data.currentActiveApp || 'غير محدد';
+
+            const apps = data.installedApps || [];
+            if (listEl) {
+                if (apps.length === 0) {
+                    listEl.innerHTML = '<div style="color:#94a3b8;">لا توجد قائمة تطبيقات مرسلة بعد.</div>';
+                } else {
+                    listEl.innerHTML = apps.map(app => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding:6px 4px; border-bottom:1px solid rgba(148,163,184,0.12);">
+                            <div>
+                                <div style="color:#e2e8f0; font-weight:bold;">${app.name}</div>
+                                <small style="color:#64748b; font-size:9.5px;">${app.packageName}</small>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button type="button" onclick="sendAndroidMdmCommand('SUSPEND_APP', '${app.packageName}')" style="background:#f59e0b; color:#000; border:none; border-radius:6px; padding:3px 8px; font-size:10px; font-weight:bold; cursor:pointer;">تعطيل</button>
+                                <button type="button" onclick="sendAndroidMdmCommand('UNSUSPEND_APP', '${app.packageName}')" style="background:#10b981; color:#fff; border:none; border-radius:6px; padding:3px 8px; font-size:10px; font-weight:bold; cursor:pointer;">تفعيل</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        });
+    }
+
+    function sendAndroidMdmCommand(action, targetPackage = '') {
+        if (!fbDbV165 || !activeAndroidSafeKey) {
+            showToast('⚠️ اختر جهاز الموظف أولاً من القائمة.', 'warn');
+            return;
+        }
+        fbDbV165.ref('remote_commands/' + activeAndroidSafeKey).set({
+            action: action,
+            targetPackage: targetPackage,
+            status: 'pending',
+            timestamp: Date.now()
+        }).then(() => {
+            showToast('✅ تم إرسال الأمر (' + action + ') إلى هاتف الموظف فوراً.', 'success');
+        }).catch((err) => {
+            showToast('❌ خطأ في إرسال الأمر: ' + err.message, 'error');
+        });
+    }
+
+    const _origStartRemoteV166 = startRemoteControlRequestV166;
+    startRemoteControlRequestV166 = async function(targetKey, targetName) {
+        bindAndroidMdmForEmployee(targetName);
+        return _origStartRemoteV166(targetKey, targetName);
+    };
 </script>
 </body>
 </html>
