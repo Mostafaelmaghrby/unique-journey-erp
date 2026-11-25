@@ -12076,24 +12076,131 @@
         if (!msg || !rpSession.active) { showToast('ابدأ البروفة أولاً بالضغط على «🎬 بدء البروفة».', 'warn'); return; }
         inp.value = '';
         rpSession.turns.push({ role: 'manager', text: msg });
+        if (!Array.isArray(rpSession.usedReplyIds)) rpSession.usedReplyIds = [];
         box.innerHTML += `<div class="chat-msg chat-msg-user">${msg}</div>`;
         box.scrollTop = box.scrollHeight;
 
+        let emp = (dbData[rpSession.bId] || []).find(e => e.name === rpSession.empName);
+        let activeWeek = getCurrentWeekKey();
+        let scores = (emp && emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : [];
+        let pct = emp ? calculateWeightedEmployeePct(emp, scores, null) : 70;
+        let weakMetrics = metricNames.filter((m, idx) => (Number(scores[idx]) || 3) <= 2);
+        let mainWeak = weakMetrics.length > 0 ? weakMetrics[0] : (rpSession.scenario === 'punctuality' ? 'الالتزام بالمواعيد' : (rpSession.scenario === 'customer' ? 'خدمة العملاء واللباقة' : 'الأداء والإنتاجية'));
+        let jobTitle = (emp && emp.jobTitle) ? emp.jobTitle : 'موظف';
+        let deptName = emp ? getDeptDisplayName(emp.dept) : 'القسم';
+        let empName = rpSession.empName;
+        let turnNum = rpSession.turns.filter(t => t.role === 'manager').length;
+
         let reply = '';
         if (getSavedGeminiKey() && hasFeaturePermission('gemini_advisor')) {
-            let gPrompt = `أنت تتقمص دور الموظف «${rpSession.empName}» في بروفة تدريبية مع مديره (السيناريو: ${rpSession.scenario}). ردّ عليه بواقعية مهنية قصيرة (سطرين) كموظف حقيقي على كلامه: "${msg}"`;
+            let historyText = rpSession.turns.slice(-6).map(t => `${t.role === 'manager' ? 'المدير' : empName}: ${t.text}`).join('\n');
+            let gPrompt = `أنت تتقمص دور الموظف الحقيقي «${empName}» (${jobTitle} في قسم ${deptName}، نسبة أدائه الحالية ${pct}%، أبرز نقطة قصور: ${mainWeak}) في جلسة حوار حقيقي مع مديره (السيناريو: ${rpSession.scenario}).\nسجل الحوار حتى الآن:\n${historyText}\n\nردّ الآن بواقعية مهنية مدروسة ومختلفة تماماً عن الردود السابقة (في سطرين إلى ثلاثة أسطر بالعربية الطبيعية)، بحيث ترد مباشرة على سؤال أو كلام المدير الأخير دون تكرار.`;
             reply = await callGeminiLiveAPI(gPrompt);
         }
+
         if (!reply) {
-            let empathetic = msg.includes('أقدر') || msg.includes('نحل') || msg.includes('معاً') || msg.includes('كيف') || msg.includes('إيه') || msg.includes('اساعدك');
-            reply = empathetic
-                ? `(${rpSession.empName} يهدأ ويستجيب بإيجابية): «شكراً إن حضرتك بتسمعني فعلاً... بصراحة أكتر حاجة بتعطلني هي تنظيم الوقت وقت الذروة، لو اتفقنا على خطوة عملية هلتزم بيها من بكرة.»`
-                : `(${rpSession.empName} يشعر ببعض الدفاعية): «حاضر يا فندم، بس أنا حاسس إن فيه ضغط من غير ما نحدد بالضبط أبدأ بإيه الأول... حضرتك تقترح نعمل إيه عملياً؟»`;
+            let m = msg.toLowerCase();
+            let pickUnique = (pool) => {
+                for (let item of pool) {
+                    if (!rpSession.usedReplyIds.includes(item.id)) {
+                        rpSession.usedReplyIds.push(item.id);
+                        return item.text;
+                    }
+                }
+                let fallback = pool[turnNum % pool.length];
+                return fallback ? fallback.text : '';
+            };
+
+            let isClosing = /(اتفقنا|تمام|بالتوفيق|شكراً|شكرا|خلاص|ممتاز كده|انتهينا)/.test(m);
+            let isWarning = /(إنذار|انذار|خصم|لفت نظر|مرفوض|غير مقبول|تحذير|آخر فرصة|اخر فرصة|عقاب|فصل|تقصير|مهمل)/.test(m);
+            let isSupport = /(تدريب|اساعدك|أساعدك|نساعد|نحل|خطة|خطه|مرشد|زميل|معاً|معا|نتعاون|تنظيم|دعم|اقترح|نقترح)/.test(m);
+            let isTarget = /(تقييم|نسبة|نسبه|أرقام|ارقام|تارجت|هدف|أسبوع|اسبوع|بكرة|بكره|غداً|غدا|موعد|مواعيد|بصمة|بصمه|التزام|نتيجة)/.test(m);
+            let isPromo = /(ترقية|ترقيه|مرتب|حافز|بونص|راتب|زيادة|زياده|مستحق)/.test(m);
+            let isAskingWhy = /(ليه|لماذا|سبب|أسباب|اسباب|إيه المشكلة|ايه المشكله|إيه اللي|ايه اللي|حصل|فسر|وضح|عائق|معطل|فهمني|اشرح|؟)/.test(m);
+            let isEmpathy = /(أقدر|اقدر|مجهود|فاهم|مقدر|ثقة|واثق|بحترم|كويس|شاطر)/.test(m);
+
+            if (isClosing) {
+                reply = pickUnique([
+                    { id: 'close_1', text: `(${empName} يدوّن ملاحظاته بارتياح): «تمام يا فندم، الكلام واضح جداً بالنسبة لي. هبدأ من بكرة بتطبيق اللي اتفقنا عليه في «${mainWeak}» وهتابع مع حضرتك النتيجة آخر الأسبوع.»` },
+                    { id: 'close_2', text: `(${empName} يبتسم بجدية): «شكراً لوقتك يا فندم، فعلاً الجلسة دي فرقت معايا. أوعدك تشوف تحسّن ملموس في التقييم الجاي.»` }
+                ]);
+            } else if (isWarning) {
+                reply = pickUnique([
+                    { id: 'warn_1', text: `(${empName} ينتبه بجدية واضحة): «فاهم خطورة الموقف يا فندم ومقدر صراحتك، ومش عايز الأمور توصل لإنذار رسمي. لو تديني فرصة الأسبوع ده بمعيار واضح في «${mainWeak}»، هثبت لحضرتك التزامي عملياً.»` },
+                    { id: 'warn_2', text: `(${empName} يتنفس بعمق ويجيب بهدوء): «عندك حق التراجع لـ ${pct}% مش مقبول، وأنا بتحمل مسؤوليتي. بس محتاج نتفق على أول نقطتين أركز عليهم من بكرة عشان التقييم يرجع فوق 85%.»` },
+                    { id: 'warn_3', text: `(${empName} يظهر التزاماً حقيقياً): «الرسالة وصلت يا فندم. هراجع أخطائي في «${mainWeak}» يومياً قبل نهاية الشيفت، وموافق نعمل مراجعة سريعة بعد 3 أيام.»` }
+                ]);
+            } else if (isPromo) {
+                reply = pickUnique([
+                    { id: 'promo_1', text: `(${empName} يسأل باهتمام مهني): «أنا فعلاً بطمح أتطور داخل المكان يا فندم. إيه الأرقام أو المعايير المحددة اللي لو حققتها فوق ${pct}% الشهر الجاي أكون جاهز للترقية فعلاً؟»` },
+                    { id: 'promo_2', text: `(${empName} يستمع بتركيز): «فاهم إن الترقية مرتبطة بالاستمرارية مش بأسبوع واحد. لو ركزت على رفع «${mainWeak}» وحافظت على ثبات الأداء شهرين متتاليين، هل نقدر نعيد التقييم وقتها؟»` }
+                ]);
+            } else if (isSupport) {
+                reply = pickUnique([
+                    { id: 'sup_1', text: `(${empName} يتفاعل بحماس عملي): «فكرة ممتازة يا فندم! لو حددنا 15 دقيقة في بداية الشيفت نراجع فيها خطوات «${mainWeak}» مع زميل متمكن في قسم ${deptName}، ده هيختصر عليا وقت كبير ويمنع الأخطاء.»` },
+                    { id: 'sup_2', text: `(${empName} يشعر بالارتياح): «وجود خطة واضحة ودعم عملي بيفرق معايا جداً. أقترح أعمل قائمة مراجعة سريعة قبل تسليم أي شغل، وأبعت لحضرتك ملخص بسيط كل يومين.»` },
+                    { id: 'sup_3', text: `(${empName} يؤكد استعداده): «أنا موافق جداً على الخطة دي. إيه أول خطوة عملية تحب أبدأ بيها النهارده عشان أضمن إني ماشي صح؟»` }
+                ]);
+            } else if (isTarget) {
+                reply = pickUnique([
+                    { id: 'tgt_1', text: `(${empName} ينظر لأرقام تقييمه بواقعية): «بالنسبة لتقييم ${pct}% الحالي، شايف إن رفع «${mainWeak}» من درجته الحالية لـ 4 من 5 الأسبوع الجاي هدف واقعي وأقدر أوصله لو رتبت أولوياتي من أول اليوم.»` },
+                    { id: 'tgt_2', text: `(${empName} يلتزم بالموعد): «حاضر يا فندم، خلينا نثبّت مراجعة يوم الخميس الجاي على الأرقام الفعلية. هركز بشكل أساسي على إن ميبقاش فيه أي ملاحظة في «${mainWeak}».»` },
+                    { id: 'tgt_3', text: `(${empName} يناقش التفاصيل العملية): «ممتاز، بس عشان ألتزم بالهدف ده 100% في أوقات الذروة، هل ممكن نحدد أولوية المهام العاجلة في بداية كل يوم؟»` }
+                ]);
+            } else if (isAskingWhy) {
+                let reasonByScenario = {
+                    low_perf: `بصراحة يا فندم، السبب الحقيقي وراء نزول التقييم لـ ${pct}% إن المهام اتراكمت عليا في «${mainWeak}» ومكنتش بعرف أرتب الأولويات وقت الضغط، واتحرجت أطلب مساعدة بدري.`,
+                    punctuality: `بصراحة يا فندم، المشكلة مش في الاستهتار، لكن مواعيد المواصلات الصبح اتغيرت الأسبوع ده وأنا ماعملتش حساب فرق 20 دقيقة بدري قبل الشيفت.`,
+                    customer: `اللي حصل يا فندم إن العميل دخل منفعل جداً بسبب تأخير سابق، وأنا اندفعت في الرد بدل ما أمتص غضبه الأول وأسمعه للآخر.`,
+                    promo_delay: `أنا بصراحة كنت فاكر إن التزامي اليومي كفاية للترقية، وماكنتش واخد بالي إن فيه فجوة واضحة في «${mainWeak}» محتاجة تتقفل الأول.`
+                };
+                reply = pickUnique([
+                    { id: 'why_1', text: `(${empName} يتحدث بصراحة): «${reasonByScenario[rpSession.scenario] || reasonByScenario.low_perf}»` },
+                    { id: 'why_2', text: `(${empName} يوضح الصورة أكتر): «كمان فيه نقطة تانية يا فندم، في قسم ${deptName} أحياناً بيحصل تداخل في المهام وقت الزحمة فبركز على السرعة وده بيأثر على «${mainWeak}».»` },
+                    { id: 'why_3', text: `(${empName} يفكر بصدق): «لو هكون صريح مع حضرتك، أكتر حاجة كانت ناقصاني هي إني أراجع شغلي بنفسي قبل التسليم، وده اللي هعدّله فوراً.»` }
+                ]);
+            } else if (isEmpathy) {
+                reply = pickUnique([
+                    { id: 'emp_1', text: `(${empName} يهدأ تماماً ويقدر الأسلوب): «شكراً لحضرتك على تفهمك ودعمك. كلامك ده خلاني أتكلم بصراحة: أنا فعلاً محتاج أضبط «${mainWeak}» وهلتزم بأي خطة عملية نتفق عليها دلوقتي.»` },
+                    { id: 'emp_2', text: `(${empName} يستعيد ثقته): «تقديرك لمجهودي بيفرق معايا جداً يا فندم، وده يخليني حريص إني أرفع نسبتي من ${pct}% لفوق 90% في أقرب وقت.»` }
+                ]);
+            } else {
+                reply = pickUnique([
+                    { id: 'gen_1', text: `(${empName} يفكر في كلام المدير): «فهمت وجهة نظر حضرتك يا فندم. فعلاً النقطة اللي محتاجة شغل فوري عندي هي «${mainWeak}»، بس حابب أعرف من حضرتك إيه المعيار اللي هتقيس بيه تحسّني الأسبوع الجاي؟»` },
+                    { id: 'gen_2', text: `(${empName} يرد بواقعية): «معاك حق في النقطة دي. أنا شايف إني لو خصصت أول نص ساعة كل يوم لترتيب مهامي في قسم ${deptName}، الأداء هيتحسن تدريجياً. هل حضرتك شايف خطوة إضافية أعملها؟»` },
+                    { id: 'gen_3', text: `(${empName} يستجيب بمهنية): «مقدر صراحتك يا فندم. خلينا نلخص اتفاقنا في خطوتين عمليتين أبدأ بيهم من بكرة عشان أرفع التقييم من ${pct}% للأفضل.»` }
+                ]);
+            }
         }
+
         rpSession.turns.push({ role: 'employee', text: reply });
         box.innerHTML += `<div class="chat-msg chat-msg-ai">${reply}</div>`;
         box.scrollTop = box.scrollHeight;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     function evaluateRoleplaySession() {
         let box = document.getElementById('roleplayChatBox');
         if (!box || rpSession.turns.length === 0) { showToast('أرسل رداً واحداً على الأقل لتقييم أسلوبك القيادي.', 'warn'); return; }
