@@ -4027,7 +4027,7 @@
                 <button type="button" onclick="switchTab('biaspulse')" id="tab-biaspulse" class="btn-tab admin-manager-only">⚖️ كاشف التحيّز ونبض المزاج</button>
 
                 <div class="nav-section-label">🤖 الذكاء الذاتي والأتمتة (v12)</div>
-                <button type="button" onclick="switchTab('askdata')" id="tab-askdata" class="btn-tab admin-manager-only" style="color:#38bdf8;">💬 اسأل بياناتك (Ask Data)</button>
+                <button type="button" onclick="openVoiceBriefingAssistantModal()" id="tab-askdata" class="btn-tab admin-manager-only hidden" style="display:none !important;">💬 اسأل بياناتك</button>
                 <button type="button" onclick="switchTab('roleplay')" id="tab-roleplay" class="btn-tab admin-manager-only" style="color:#c4b5fd;">🎭 محاكي الحوارات الصعبة AI</button>
                 <button type="button" onclick="switchTab('blastradius')" id="tab-blastradius" class="btn-tab admin-manager-only">💥 أثر الغياب واكتشاف القادة</button>
                 <button type="button" onclick="switchTab('workflows')" id="tab-workflows" class="btn-tab admin-manager-only">⚙️ قواعد الأتمتة التلقائية</button>
@@ -6015,34 +6015,61 @@
 
     <!-- 📺 وضع غرفة القيادة السينمائية (War Room / TV Mode) -->
     <div id="warRoomOverlay">
-        <div class="warroom-header">
+        <div class="warroom-header" style="margin-bottom:14px; padding-bottom:12px;">
             <div style="display:flex; align-items:center; gap:14px;">
-                <div class="brand-icon" id="warRoomLogo" style="width:46px; height:46px; font-size:22px;">🚀</div>
+                <div class="brand-icon" id="warRoomLogo" style="width:48px; height:48px; font-size:24px; box-shadow:0 0 20px rgba(56,189,248,0.45);">🚀</div>
                 <div>
-                    <h2 id="warRoomTitle" style="color:#38bdf8; font-size:22px;">غرفة القيادة الحية — الرحلة الفريدة</h2>
+                    <div style="font-size:10px; letter-spacing:1.5px; color:#38bdf8; font-weight:800;">EXECUTIVE WAR ROOM • LIVE COMMAND CENTER</div>
+                    <h2 id="warRoomTitle" style="color:#fff; font-size:21px; font-weight:800;">غرفة القيادة الحية — الرحلة الفريدة</h2>
                     <div id="warRoomClock" style="color:#94a3b8; font-size:12px; font-family:monospace;">--:--:--</div>
                 </div>
             </div>
-            <div style="display:flex; gap:10px; align-items:center;">
-                <span class="badge b-green" style="font-size:12px; padding:6px 12px;">🟢 بث حي متجدد تلقائياً</span>
-                <button type="button" onclick="closeWarRoomMode()" class="btn-danger" style="padding:8px 16px; font-size:13px;">✕ خروج من وضع العرض</button>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <span id="warRoomWeekPill" class="badge b-blue" style="font-size:11px; padding:6px 12px;">📅 الأسبوع الحالي</span>
+                <span class="badge b-green" style="font-size:11px; padding:6px 12px;"><span class="ecg-live-dot" style="margin-left:5px;"></span> بث حي متجدد</span>
+                <button type="button" onclick="openVoiceBriefingAssistantModal()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:8px 14px; font-size:12px;">🔊 النشرة والمساعد الصوتي</button>
+                <button type="button" onclick="closeWarRoomMode()" class="btn-danger" style="padding:8px 16px; font-size:12px;">✕ خروج من العرض</button>
             </div>
         </div>
-        <div class="warroom-stage">
-            <div class="warroom-panel">
-                <h3 style="color:#facc15; font-size:18px; margin-bottom:14px;">🏆 متصدرو لوحة الشرف الأسبوعية</h3>
-                <div id="warRoomLeaderboard" style="flex:1; display:flex; flex-direction:column; gap:10px;"></div>
+        <div id="warRoomHeroStrip" style="display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:14px;"></div>
+        <div class="warroom-stage" style="grid-template-columns: 1.05fr 1.05fr 0.9fr; gap:16px; min-height:0;">
+            <div class="warroom-panel" style="padding:18px; gap:12px; min-height:0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="color:#facc15; font-size:16px; font-weight:800;">🏆 منصة التتويج ومتصدرو الأسبوع</h3>
+                    <span class="badge b-yellow" style="font-size:10px;">TOP PERFORMERS</span>
+                </div>
+                <div id="warRoomPodiumBox" style="display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:8px; align-items:end; min-height:130px;"></div>
+                <div id="warRoomLeaderboard" style="flex:1; display:flex; flex-direction:column; gap:8px; overflow-y:auto;"></div>
             </div>
-            <div class="warroom-panel">
-                <h3 style="color:#34d399; font-size:18px; margin-bottom:14px;">📊 النبض التشغيلي للفروع</h3>
-                <div id="warRoomBranchStats" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;"></div>
-                <div style="flex:1; background:rgba(9,13,22,0.7); border-radius:12px; padding:16px; border:1px solid #1f2937;">
-                    <h4 style="color:#38bdf8; font-size:14px; margin-bottom:8px;">💡 حكمة اليوم للفريق:</h4>
-                    <div id="warRoomQuoteBox" style="color:#34d399; font-size:18px; font-weight:bold; line-height:1.8;"></div>
+            <div class="warroom-panel" style="padding:18px; gap:14px; min-height:0;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3 style="color:#38bdf8; font-size:16px; font-weight:800;">💓 النبض التشغيلي ومقارنة الفروع والأقسام</h3>
+                    <span id="warRoomPulseStatusPill" class="badge b-green" style="font-size:10px;">صحي</span>
+                </div>
+                <div id="warRoomPulseBanner" style="display:flex; align-items:center; gap:16px; background:rgba(9,13,22,0.72); border:1px solid rgba(56,189,248,0.28); border-radius:14px; padding:12px 16px;"></div>
+                <div>
+                    <div style="font-size:12px; color:#34d399; font-weight:800; margin-bottom:8px;">🏢 سباق أداء الفروع</div>
+                    <div id="warRoomBranchStats" style="display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+                <div style="flex:1; overflow-y:auto;">
+                    <div style="font-size:12px; color:#c4b5fd; font-weight:800; margin-bottom:8px;">🏛️ أداء الأقسام الحية</div>
+                    <div id="warRoomDeptGrid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px;"></div>
+                </div>
+            </div>
+            <div class="warroom-panel" style="padding:18px; gap:12px; min-height:0;">
+                <h3 style="color:#fb7185; font-size:16px; font-weight:800;">🚨 رادار الإنذار المبكر والمعايير</h3>
+                <div id="warRoomKpiExtremes" style="display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+                <div style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                    <div style="font-size:12px; color:#fca5a5; font-weight:800; margin-bottom:6px;">⚡ حالات تحتاج تدخلاً عاجلاً</div>
+                    <div id="warRoomAlertsBox" style="flex:1; display:flex; flex-direction:column; gap:7px; overflow-y:auto;"></div>
+                </div>
+                <div style="background:linear-gradient(135deg, rgba(16,185,129,0.12), rgba(14,165,233,0.12)); border:1px solid rgba(52,211,153,0.35); border-right:4px solid #10b981; border-radius:12px; padding:12px 14px;">
+                    <div style="color:#38bdf8; font-size:11px; font-weight:800; margin-bottom:4px;">💡 حكمة القيادة اليوم:</div>
+                    <div id="warRoomQuoteBox" style="color:#34d399; font-size:14px; font-weight:800; line-height:1.7;"></div>
                 </div>
             </div>
         </div>
-        <div class="warroom-ticker-wrap">
+        <div class="warroom-ticker-wrap" style="margin-top:12px;">
             <div class="warroom-ticker-track" id="warRoomTickerText">جاري تحميل شريط الإنجازات الحية...</div>
         </div>
     </div>
@@ -9855,6 +9882,7 @@
 
     // 📺 3. غرفة القيادة السينمائية (War Room / TV Mode)
     let warRoomTimer = null;
+    let warRoomClockTimer = null;
     function openWarRoomMode() {
         if (!hasFeaturePermission('warroom')) { showToast('عذراً، غرفة القيادة غير مفعلة لحسابك!', 'error'); return; }
         let ov = document.getElementById('warRoomOverlay');
@@ -9863,7 +9891,12 @@
         renderWarRoomContent();
         playTechChime(820, 0.12);
         if (warRoomTimer) clearInterval(warRoomTimer);
+        if (warRoomClockTimer) clearInterval(warRoomClockTimer);
         warRoomTimer = setInterval(renderWarRoomContent, 15000);
+        warRoomClockTimer = setInterval(() => {
+            let clk = document.getElementById('warRoomClock');
+            if (clk) clk.textContent = new Date().toLocaleString('ar-EG', { weekday:'long', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        }, 1000);
         if (document.documentElement.requestFullscreen) {
             document.documentElement.requestFullscreen().catch(() => {});
         }
@@ -9872,6 +9905,7 @@
         let ov = document.getElementById('warRoomOverlay');
         if (ov) ov.classList.remove('active');
         if (warRoomTimer) { clearInterval(warRoomTimer); warRoomTimer = null; }
+        if (warRoomClockTimer) { clearInterval(warRoomClockTimer); warRoomClockTimer = null; }
         if (document.fullscreenElement && document.exitFullscreen) {
             document.exitFullscreen().catch(() => {});
         }
@@ -9879,56 +9913,222 @@
     function renderWarRoomContent() {
         let titleEl = document.getElementById('warRoomTitle');
         let clockEl = document.getElementById('warRoomClock');
+        let weekPill = document.getElementById('warRoomWeekPill');
+        let heroStrip = document.getElementById('warRoomHeroStrip');
+        let podiumEl = document.getElementById('warRoomPodiumBox');
         let lbEl = document.getElementById('warRoomLeaderboard');
+        let pulseBanner = document.getElementById('warRoomPulseBanner');
+        let pulsePill = document.getElementById('warRoomPulseStatusPill');
         let statsEl = document.getElementById('warRoomBranchStats');
+        let deptGrid = document.getElementById('warRoomDeptGrid');
+        let extremesEl = document.getElementById('warRoomKpiExtremes');
+        let alertsEl = document.getElementById('warRoomAlertsBox');
         let quoteEl = document.getElementById('warRoomQuoteBox');
         let tickerEl = document.getElementById('warRoomTickerText');
         if (!lbEl || !statsEl) return;
 
+        let activeWeek = getCurrentWeekKey();
         if (titleEl) titleEl.textContent = `غرفة القيادة الحية — ${brandingData.companyName || 'الرحلة الفريدة'}`;
         renderBrandIconElement(document.getElementById('warRoomLogo'), brandingData.logo);
-        if (clockEl) clockEl.textContent = new Date().toLocaleString('ar-EG');
+        if (clockEl) clockEl.textContent = new Date().toLocaleString('ar-EG', { weekday:'long', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        if (weekPill) weekPill.textContent = `📅 ${activeWeek}`;
 
-        let activeWeek = getCurrentWeekKey();
         let allList = [];
         let branchSummaries = [];
+        let deptMap = {};
+        let metricSums = {}, metricCnts = {};
+        let totalSum = 0, excCount = 0, alertList = [];
+
         branchesData.forEach(b => {
             let emps = dbData[b.id] || [];
-            let sum = 0;
+            let bSum = 0;
             emps.forEach(emp => {
                 let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
                 let pct = calculateWeightedEmployeePct(emp, sc, null);
-                sum += pct;
-                allList.push({ name: emp.name, branch: b.name, pct });
+                bSum += pct;
+                totalSum += pct;
+                if (pct >= 90) excCount++;
+                let dName = getDeptDisplayName(emp.dept);
+                if (!deptMap[dName]) deptMap[dName] = { sum: 0, cnt: 0 };
+                deptMap[dName].sum += pct;
+                deptMap[dName].cnt++;
+
+                let weakM = [];
+                metricNames.forEach((m, idx) => {
+                    if (!isMetricApplicableForDept(m, emp.dept)) return;
+                    let v = Number(sc[idx]) || 3;
+                    metricSums[m] = (metricSums[m] || 0) + (v / 5) * 100;
+                    metricCnts[m] = (metricCnts[m] || 0) + 1;
+                    if (v <= 2) weakM.push(m);
+                });
+
+                let rec = { name: emp.name, branch: b.name, dept: dName, pct, weakM };
+                allList.push(rec);
+                if (pct <= 60) alertList.push(rec);
             });
-            let avg = emps.length ? Math.round(sum / emps.length) : 0;
+            let avg = emps.length ? Math.round(bSum / emps.length) : 0;
             branchSummaries.push({ name: b.name, avg, count: emps.length });
         });
+
         allList.sort((a, b) => b.pct - a.pct);
+        branchSummaries.sort((a, b) => b.avg - a.avg);
+        alertList.sort((a, b) => a.pct - b.pct);
+
+        let overallAvg = allList.length ? Math.round(totalSum / allList.length) : 0;
+        let planTotal = (planData || []).length;
+        let planDone = (planData || []).filter(p => p.completed).length;
+        let planPct = planTotal ? Math.round((planDone / planTotal) * 100) : 0;
+
+        let kpiAvgs = metricNames.map(m => ({
+            name: m,
+            avg: metricCnts[m] ? Math.round(metricSums[m] / metricCnts[m]) : 0
+        })).filter(x => x.avg > 0).sort((a, b) => b.avg - a.avg);
+        let bestKpi = kpiAvgs[0] || { name: '—', avg: 0 };
+        let weakKpi = kpiAvgs[kpiAvgs.length - 1] || { name: '—', avg: 0 };
+
+        if (heroStrip) {
+            let healthCol = overallAvg >= 85 ? '#34d399' : (overallAvg <= 60 ? '#fb7185' : '#38bdf8');
+            heroStrip.innerHTML = `
+                <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(56,189,248,0.35); border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><div style="font-size:11px; color:#94a3b8;">متوسط الصحة العامة</div><div style="font-size:24px; font-weight:800; color:${healthCol};">${overallAvg}%</div></div><span style="font-size:24px;">💓</span>
+                </div>
+                <div style="background:rgba(15,23,42,0.85); border:1px solid rgba(148,163,184,0.25); border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><div style="font-size:11px; color:#94a3b8;">إجمالي القوة العاملة</div><div style="font-size:24px; font-weight:800; color:#f8fafc;">${allList.length}</div></div><span style="font-size:24px;">👥</span>
+                </div>
+                <div style="background:rgba(6,78,59,0.35); border:1px solid rgba(16,185,129,0.45); border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><div style="font-size:11px; color:#a7f3d0;">المتميزون (≥ 90%)</div><div style="font-size:24px; font-weight:800; color:#34d399;">${excCount}</div></div><span style="font-size:24px;">🌟</span>
+                </div>
+                <div style="background:rgba(127,29,29,0.35); border:1px solid rgba(239,68,68,0.45); border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><div style="font-size:11px; color:#fecaca;">إنذار مبكر (≤ 60%)</div><div style="font-size:24px; font-weight:800; color:#fb7185;">${alertList.length}</div></div><span style="font-size:24px;">🚨</span>
+                </div>
+                <div style="background:rgba(76,29,149,0.3); border:1px solid rgba(168,85,247,0.45); border-radius:12px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><div style="font-size:11px; color:#ddd6fe;">إنجاز خطة العمل</div><div style="font-size:24px; font-weight:800; color:#c4b5fd;">${planDone}/${planTotal} <span style="font-size:12px;">(${planPct}%)</span></div></div><span style="font-size:24px;">📋</span>
+                </div>`;
+        }
+
+        if (podiumEl) {
+            let top3 = allList.slice(0, 3);
+            let order = [top3[1], top3[0], top3[2]];
+            let styles = [
+                { cls: 'mc-podium-2', medal: '🥈', h: 66, col: '#cbd5e1' },
+                { cls: 'mc-podium-1', medal: '👑', h: 90, col: '#facc15' },
+                { cls: 'mc-podium-3', medal: '🥉', h: 54, col: '#fb923c' }
+            ];
+            podiumEl.innerHTML = order.map((emp, i) => {
+                if (!emp) return '<div></div>';
+                let st = styles[i];
+                let shortN = emp.name.split(' ').slice(0, 2).join(' ');
+                return `<div style="display:flex; flex-direction:column; align-items:center; text-align:center;">
+                    <div style="font-size:${i===1?24:18}px; margin-bottom:3px;">${st.medal}</div>
+                    <div style="font-size:11px; font-weight:800; color:#fff; margin-bottom:4px;">${shortN}</div>
+                    <div style="width:100%; height:${st.h}px; border-radius:10px 10px 4px 4px; background:linear-gradient(180deg, ${st.col}38, ${st.col}0d); border:1px solid ${st.col}88; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:4px;">
+                        <div style="font-size:${i===1?20:16}px; font-weight:800; color:${st.col};">${emp.pct}%</div>
+                        <div style="font-size:9px; color:#cbd5e1;">${emp.branch}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
 
         lbEl.innerHTML = '';
-        allList.slice(0, 5).forEach((item, idx) => {
-            let medal = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : (idx === 2 ? '🥉' : `#${idx+1}`));
-            lbEl.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(9,13,22,0.75); border:1px solid ${idx===0?'#facc15':'#1f2937'}; padding:12px 16px; border-radius:10px;">
-                <div style="font-size:16px; font-weight:bold;">${medal} ${item.name} <span style="font-size:12px; color:#94a3b8;">(${item.branch})</span></div>
-                <div style="font-size:20px; font-weight:bold; color:#34d399;">${item.pct}%</div>
+        allList.slice(3, 8).forEach((item, idx) => {
+            let rank = idx + 4;
+            let barCol = item.pct >= 85 ? '#10b981' : (item.pct <= 60 ? '#ef4444' : '#38bdf8');
+            lbEl.innerHTML += `<div style="background:rgba(9,13,22,0.75); border:1px solid #1f2937; padding:9px 12px; border-radius:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+                    <div style="font-size:13px; font-weight:bold;">#${rank} ${item.name} <span style="font-size:10px; color:#94a3b8;">(${item.branch})</span></div>
+                    <div style="font-size:14px; font-weight:800; color:${barCol};">${item.pct}%</div>
+                </div>
+                <div style="height:5px; background:rgba(148,163,184,0.16); border-radius:6px; overflow:hidden;"><div style="width:${item.pct}%; height:100%; background:${barCol};"></div></div>
             </div>`;
         });
+
+        let pulseColor = overallAvg >= 85 ? '#10b981' : (overallAvg <= 60 ? '#ef4444' : '#38bdf8');
+        let pulseStatusTxt = overallAvg >= 85 ? '💚 نبض تشغيلي ممتاز' : (overallAvg <= 60 ? '🚨 ضغط تشغيلي حرج' : '🔵 أداء تشغيلي مستقر');
+        let bpmVal = overallAvg >= 85 ? 72 : (overallAvg <= 60 ? 104 : 84);
+        if (pulsePill) {
+            pulsePill.textContent = pulseStatusTxt;
+            pulsePill.className = overallAvg >= 85 ? 'badge b-green' : (overallAvg <= 60 ? 'badge b-red' : 'badge b-blue');
+        }
+        if (pulseBanner) {
+            let dashOff = (226.19 * (1 - overallAvg / 100)).toFixed(1);
+            pulseBanner.innerHTML = `
+                <div style="position:relative; width:84px; height:84px; flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+                    <svg width="84" height="84" viewBox="0 0 84 84" style="transform:rotate(-90deg);">
+                        <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(148,163,184,0.16)" stroke-width="7"></circle>
+                        <circle cx="42" cy="42" r="36" fill="none" stroke="${pulseColor}" stroke-width="7" stroke-linecap="round" stroke-dasharray="226.19" stroke-dashoffset="${dashOff}"></circle>
+                    </svg>
+                    <div style="position:absolute; font-size:18px; font-weight:800; color:${pulseColor};">${overallAvg}%</div>
+                </div>
+                <div style="flex:1;">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; margin-bottom:4px;">
+                        <span>معدل النبض التشغيلي</span>
+                        <span style="color:${pulseColor}; font-family:monospace; font-weight:800;">${bpmVal} BPM</span>
+                    </div>
+                    <svg width="100%" height="36" viewBox="0 0 260 36" preserveAspectRatio="none">
+                        <polyline fill="none" stroke="${pulseColor}" stroke-width="2.2" points="0,20 40,20 55,16 66,22 76,4 86,32 96,14 112,20 155,20 170,16 181,22 191,5 201,31 211,15 228,20 260,20" style="filter:drop-shadow(0 0 5px ${pulseColor});"/>
+                    </svg>
+                    <div style="font-size:10.5px; color:#cbd5e1; margin-top:2px;">المستهدف المؤسسي: <b style="color:#34d399;">85%</b> • الفارق: <b style="color:${overallAvg>=85?'#34d399':'#fbbf24'};">${overallAvg - 85 >= 0 ? '+' : ''}${overallAvg - 85}%</b></div>
+                </div>`;
+        }
 
         statsEl.innerHTML = '';
         branchSummaries.forEach(bs => {
-            statsEl.innerHTML += `<div style="background:rgba(9,13,22,0.75); border:1px solid #1f2937; border-radius:10px; padding:14px; text-align:center;">
-                <div style="color:#94a3b8; font-size:12px; margin-bottom:4px;">${bs.name} (${bs.count} موظف)</div>
-                <div style="color:#38bdf8; font-size:26px; font-weight:bold;">${bs.avg}%</div>
+            let bCol = bs.avg >= 85 ? '#10b981' : (bs.avg <= 60 ? '#ef4444' : '#38bdf8');
+            statsEl.innerHTML += `<div style="background:rgba(9,13,22,0.75); border:1px solid #1f2937; border-radius:10px; padding:10px 12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span style="font-size:13px; font-weight:800; color:#f8fafc;">🏢 ${bs.name} <span style="font-size:10px; color:#94a3b8;">(${bs.count} موظف)</span></span>
+                    <span style="font-size:16px; font-weight:800; color:${bCol};">${bs.avg}%</span>
+                </div>
+                <div style="height:7px; background:rgba(148,163,184,0.16); border-radius:8px; overflow:hidden;"><div style="width:${bs.avg}%; height:100%; background:linear-gradient(90deg, #0284c7, ${bCol});"></div></div>
             </div>`;
         });
 
-        let qTxt = document.getElementById('welcomeBannerQuoteText') ? document.getElementById('welcomeBannerQuoteText').textContent : '';
+        if (deptGrid) {
+            let deptsArr = Object.keys(deptMap).map(k => ({ name: k, avg: Math.round(deptMap[k].sum / deptMap[k].cnt), cnt: deptMap[k].cnt })).sort((a, b) => b.avg - a.avg);
+            deptGrid.innerHTML = deptsArr.map(d => {
+                let c = d.avg >= 85 ? '#34d399' : (d.avg <= 60 ? '#fb7185' : '#38bdf8');
+                return `<div style="background:rgba(9,13,22,0.72); border:1px solid #1f2937; border-radius:9px; padding:8px 10px;">
+                    <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:800; margin-bottom:4px;"><span>${d.name}</span><span style="color:${c};">${d.avg}%</span></div>
+                    <div style="height:4px; background:rgba(148,163,184,0.16); border-radius:4px; overflow:hidden;"><div style="width:${d.avg}%; height:100%; background:${c};"></div></div>
+                </div>`;
+            }).join('');
+        }
+
+        if (extremesEl) {
+            extremesEl.innerHTML = `
+                <div style="background:rgba(6,78,59,0.28); border:1px solid rgba(16,185,129,0.45); border-radius:10px; padding:10px;">
+                    <div style="font-size:10px; color:#a7f3d0;">🌟 أقوى معيار الآن</div>
+                    <div style="font-size:12px; font-weight:800; color:#fff; margin:3px 0;">${bestKpi.name}</div>
+                    <div style="font-size:16px; font-weight:800; color:#34d399;">${bestKpi.avg}%</div>
+                </div>
+                <div style="background:rgba(127,29,29,0.28); border:1px solid rgba(239,68,68,0.45); border-radius:10px; padding:10px;">
+                    <div style="font-size:10px; color:#fecaca;">⚠️ أضعف معيار الآن</div>
+                    <div style="font-size:12px; font-weight:800; color:#fff; margin:3px 0;">${weakKpi.name}</div>
+                    <div style="font-size:16px; font-weight:800; color:#fb7185;">${weakKpi.avg}%</div>
+                </div>`;
+        }
+
+        if (alertsEl) {
+            if (alertList.length === 0) {
+                alertsEl.innerHTML = `<div style="background:rgba(6,78,59,0.22); border:1px solid rgba(16,185,129,0.4); border-radius:10px; padding:16px; text-align:center; color:#34d399; font-weight:bold; font-size:12px;">✅ لا توجد حالات حرجة (≤ 60%) اليوم — جميع الفرق في النطاق الآمن!</div>`;
+            } else {
+                alertsEl.innerHTML = alertList.slice(0, 5).map(a => `<div style="background:rgba(127,29,29,0.22); border:1px solid rgba(239,68,68,0.4); border-right:3px solid #ef4444; border-radius:9px; padding:8px 11px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:12px; font-weight:800; color:#fff;">${a.name} <span style="font-size:10px; color:#fca5a5;">(${a.branch})</span></div>
+                        <div style="font-size:10px; color:#cbd5e1;">${a.weakM.length ? 'قصور: ' + a.weakM.slice(0, 2).join('، ') : 'تراجع عام يحتاج متابعة'}</div>
+                    </div>
+                    <span class="badge b-red" style="font-size:12px;">${a.pct}%</span>
+                </div>`).join('');
+            }
+        }
+
+        let qTxt = document.getElementById('welcomeBannerQuoteText') ? document.getElementById('welcomeBannerQuoteText').textContent : 'التميز عادة يومية';
         if (quoteEl) quoteEl.textContent = qTxt;
 
         let topStr = allList.length ? `🏆 المتصدر حالياً: ${allList[0].name} (${allList[0].pct}%)` : '';
         let branchesStr = branchSummaries.map(b => `🏢 ${b.name}: ${b.avg}%`).join('  •  ');
-        if (tickerEl) tickerEl.textContent = `${topStr}  •  ${branchesStr}  •  ${qTxt}  •  نظام ${brandingData.companyName || 'الرحلة الفريدة'} الذكي`;
+        let kpiStr = `⚡ الأقوى: ${bestKpi.name} (${bestKpi.avg}%)  •  ⚠️ الأضعف: ${weakKpi.name} (${weakKpi.avg}%)`;
+        if (tickerEl) tickerEl.textContent = `${topStr}  •  ${branchesStr}  •  ${kpiStr}  •  🚨 إنذارات: ${alertList.length}  •  ${qTxt}  •  ${brandingData.companyName || 'الرحلة الفريدة'}`;
     }
 
     // 🎙️ 4. التحكم الصوتي بالعربية (Voice Command ERP)
@@ -12719,34 +12919,223 @@
         badge.textContent = diff > 0 ? `▲ +${diff}% تحسن` : (diff < 0 ? `▼ ${diff}% تراجع` : '• مستقر');
     };
 
+    function drawRoundedRectV176(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + w - r, y);
+        ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+        ctx.lineTo(x + w, y + h - r);
+        ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+        ctx.lineTo(x + r, y + h);
+        ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.closePath();
+    }
+
     function exportKpiCoreSnapshotPng() {
+        let activeWeek = getCurrentWeekKey();
+        let allEmps = [], branchStats = [], mSums = {}, mCnts = {};
+        let totalSum = 0, excCnt = 0, alertCnt = 0, coachingCnt = 0;
+
+        (branchesData || []).forEach(b => {
+            let emps = dbData[b.id] || [];
+            let bSum = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                bSum += pct; totalSum += pct;
+                if (pct >= 90) excCnt++;
+                if (pct <= 60) alertCnt++;
+                let hasLow = false;
+                metricNames.forEach((m, idx) => {
+                    if (!isMetricApplicableForDept(m, emp.dept)) return;
+                    let v = Number(sc[idx]) || 3;
+                    mSums[m] = (mSums[m] || 0) + (v / 5) * 100;
+                    mCnts[m] = (mCnts[m] || 0) + 1;
+                    if (v <= 2) hasLow = true;
+                });
+                if (hasLow || pct <= 60) coachingCnt++;
+                allEmps.push({ name: emp.name, branch: b.name, pct });
+            });
+            branchStats.push({ name: b.name, avg: emps.length ? Math.round(bSum / emps.length) : 0, count: emps.length });
+        });
+
+        allEmps.sort((a, b) => b.pct - a.pct);
+        branchStats.sort((a, b) => b.avg - a.avg);
+        let overallAvg = allEmps.length ? Math.round(totalSum / allEmps.length) : 0;
+        let accent = overallAvg >= 85 ? '#10b981' : (overallAvg <= 60 ? '#f43f5e' : '#38bdf8');
+        let statusLabel = overallAvg >= 85 ? 'نبض تشغيلي ممتاز' : (overallAvg <= 60 ? 'حالة ضغط حرج — يتطلب تدخلاً' : 'أداء تشغيلي مستقر');
+        let bpm = overallAvg >= 85 ? 72 : (overallAvg <= 60 ? 104 : 84);
+
+        let kpiList = metricNames.map(m => ({ name: m, avg: mCnts[m] ? Math.round(mSums[m] / mCnts[m]) : 0 })).filter(x => x.avg > 0).sort((a, b) => b.avg - a.avg);
+        let bestKpi = kpiList[0] || { name: '—', avg: 0 };
+        let weakKpi = kpiList[kpiList.length - 1] || { name: '—', avg: 0 };
+        let planTotal = (planData || []).length;
+        let planDone = (planData || []).filter(p => p.completed).length;
+
+        let W = 1280, H = 760;
         let canvas = document.createElement('canvas');
-        canvas.width = 1000; canvas.height = 520;
+        canvas.width = W; canvas.height = H;
         let ctx = canvas.getContext('2d');
-        let g = ctx.createLinearGradient(0, 0, 1000, 520);
-        g.addColorStop(0, '#090d16'); g.addColorStop(1, '#0f172a');
-        ctx.fillStyle = g; ctx.fillRect(0, 0, 1000, 520);
-        ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 4; ctx.strokeRect(18, 18, 964, 484);
-        ctx.direction = 'rtl'; ctx.textAlign = 'center';
-        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 28px Tahoma, Arial';
-        ctx.fillText(`💠 نبض مؤشرات الأداء — ${brandingData.companyName || 'الرحلة الفريدة'}`, 500, 75);
-        let pctTxt = document.getElementById('kcoreCenterPct') ? document.getElementById('kcoreCenterPct').textContent : '0%';
-        let trendTxt = document.getElementById('kcoreTrendBadge') ? document.getElementById('kcoreTrendBadge').textContent : '';
-        let coachTxt = document.getElementById('kcoreCoachingMetric') ? document.getElementById('kcoreCoachingMetric').textContent : '0';
-        let weakTxt = document.getElementById('kcoreWeakestMetric') ? document.getElementById('kcoreWeakestMetric').textContent : '—';
-        let planTxt = document.getElementById('kcorePlanMetric') ? document.getElementById('kcorePlanMetric').textContent : '0/0';
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 64px Tahoma, Arial'; ctx.fillText(pctTxt, 500, 185);
-        ctx.fillStyle = '#34d399'; ctx.font = 'bold 22px Tahoma, Arial'; ctx.fillText(trendTxt, 500, 230);
-        ctx.fillStyle = '#cbd5e1'; ctx.font = '20px Tahoma, Arial';
-        ctx.fillText(`⚡ حالات التوجيه اللحظي: ${coachTxt}   |   📋 خطة العمل: ${planTxt}`, 500, 315);
-        ctx.fillStyle = '#fb7185'; ctx.fillText(`📈 أضعف معيار تشغيلي حالياً: ${weakTxt}`, 500, 375);
-        ctx.fillStyle = '#94a3b8'; ctx.font = '16px Tahoma, Arial';
-        ctx.fillText(`الأسبوع: ${getCurrentWeekKey()}  •  ${new Date().toLocaleString('ar-EG')}`, 500, 455);
+
+        let bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, '#050914'); bg.addColorStop(0.55, '#0b1428'); bg.addColorStop(1, '#070d1d');
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+        let radGlow = ctx.createRadialGradient(250, 310, 20, 250, 310, 320);
+        radGlow.addColorStop(0, overallAvg >= 85 ? 'rgba(16,185,129,0.18)' : (overallAvg <= 60 ? 'rgba(244,63,94,0.18)' : 'rgba(56,189,248,0.18)'));
+        radGlow.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = radGlow; ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = 'rgba(56,189,248,0.045)'; ctx.lineWidth = 1;
+        for (let gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (let gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        drawRoundedRectV176(ctx, 20, 20, W - 40, H - 40, 22);
+        ctx.strokeStyle = accent; ctx.lineWidth = 2.5; ctx.stroke();
+
+        let topGrad = ctx.createLinearGradient(40, 20, W - 40, 20);
+        topGrad.addColorStop(0, '#0284c7'); topGrad.addColorStop(0.5, accent); topGrad.addColorStop(1, '#7c3aed');
+        ctx.fillStyle = topGrad; ctx.fillRect(60, 20, W - 120, 4);
+
+        ctx.direction = 'rtl';
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText('LIVE KPI TELEMETRY SNAPSHOT • EXECUTIVE BRIEF', W - 52, 62);
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 28px Cairo, Tahoma, Arial';
+        ctx.fillText(`💓 نبض مؤشرات الأداء — ${brandingData?.companyName || 'الرحلة الفريدة'}`, W - 52, 98);
+
+        ctx.textAlign = 'left';
+        ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`📅 ${activeWeek}`, 52, 70);
+        ctx.fillStyle = '#64748b'; ctx.font = '13px Cairo, Tahoma, Arial';
+        ctx.fillText(new Date().toLocaleString('ar-EG'), 52, 96);
+
+        ctx.strokeStyle = 'rgba(148,163,184,0.18)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(52, 118); ctx.lineTo(W - 52, 118); ctx.stroke();
+
+        drawRoundedRectV176(ctx, 48, 138, 390, 520, 18);
+        ctx.fillStyle = 'rgba(13, 21, 38, 0.88)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.28)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+        let cx = 243, cy = 295, r = 104;
+        ctx.beginPath(); ctx.arc(cx, cy, r + 14, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(56,189,248,0.14)'; ctx.lineWidth = 2; ctx.setLineDash([6, 6]); ctx.stroke(); ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(148,163,184,0.18)'; ctx.lineWidth = 14; ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * overallAvg / 100));
+        ctx.strokeStyle = accent; ctx.lineWidth = 14; ctx.lineCap = 'round';
+        ctx.shadowColor = accent; ctx.shadowBlur = 18; ctx.stroke(); ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 58px Cairo, Tahoma, Arial';
+        ctx.fillText(`${overallAvg}%`, cx, cy + 16);
+        ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`المستهدف: 85%  •  ${bpm} BPM`, cx, cy + 46);
+
+        drawRoundedRectV176(ctx, 88, 428, 310, 38, 19);
+        ctx.fillStyle = overallAvg >= 85 ? 'rgba(16,185,129,0.2)' : (overallAvg <= 60 ? 'rgba(244,63,94,0.2)' : 'rgba(56,189,248,0.2)');
+        ctx.fill();
+        ctx.strokeStyle = accent; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.fillStyle = accent; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText(statusLabel, cx, 453);
+
+        drawRoundedRectV176(ctx, 72, 488, 342, 146, 12);
+        ctx.fillStyle = 'rgba(4, 9, 20, 0.92)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(16,185,129,0.28)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = '#34d399'; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'left';
+        ctx.fillText('LIVE ECG TELEMETRY', 86, 510);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#7dd3fc';
+        ctx.fillText(`HR: ${bpm} BPM`, 400, 510);
+
+        let ecgPts = [[80,570],[120,570],[135,562],[146,574],[158,524],[170,612],[182,554],[198,570],[245,570],[260,562],[271,574],[283,528],[295,608],[307,556],[323,570],[402,570]];
+        ctx.beginPath();
+        ecgPts.forEach((pt, i) => i === 0 ? ctx.moveTo(pt[0], pt[1]) : ctx.lineTo(pt[0], pt[1]));
+        ctx.strokeStyle = accent; ctx.lineWidth = 2.8;
+        ctx.shadowColor = accent; ctx.shadowBlur = 10; ctx.stroke(); ctx.shadowBlur = 0;
+
+        let statCards = [
+            { lbl: 'إجمالي الفريق', val: String(allEmps.length), col: '#38bdf8', icon: '👥' },
+            { lbl: 'المتميزون (≥90%)', val: String(excCnt), col: '#34d399', icon: '🌟' },
+            { lbl: 'الإنذار المبكر (≤60%)', val: String(alertCnt), col: '#fb7185', icon: '🚨' },
+            { lbl: 'إنجاز خطة العمل', val: `${planDone}/${planTotal}`, col: '#c4b5fd', icon: '📋' }
+        ];
+        statCards.forEach((sc, i) => {
+            let sx = 462 + i * 195;
+            drawRoundedRectV176(ctx, sx, 138, 183, 102, 14);
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.88)'; ctx.fill();
+            ctx.strokeStyle = 'rgba(56,189,248,0.25)'; ctx.lineWidth = 1.2; ctx.stroke();
+            ctx.textAlign = 'right'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 12px Cairo, Tahoma, Arial';
+            ctx.fillText(sc.lbl, sx + 168, 168);
+            ctx.fillStyle = sc.col; ctx.font = 'bold 30px Cairo, Tahoma, Arial';
+            ctx.fillText(sc.val, sx + 168, 214);
+            ctx.textAlign = 'left'; ctx.font = '24px Arial';
+            ctx.fillText(sc.icon, sx + 16, 198);
+        });
+
+        drawRoundedRectV176(ctx, 462, 256, 770, 182, 16);
+        ctx.fillStyle = 'rgba(13, 21, 38, 0.88)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56,189,248,0.26)'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 16px Cairo, Tahoma, Arial';
+        ctx.fillText('🏢 مقارنة أداء الفروع التشغيلية', 1210, 288);
+
+        let bY = 322;
+        branchStats.slice(0, 3).forEach(bs => {
+            let bCol = bs.avg >= 85 ? '#10b981' : (bs.avg <= 60 ? '#f43f5e' : '#38bdf8');
+            ctx.textAlign = 'right'; ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+            ctx.fillText(`${bs.name} (${bs.count} موظف)`, 1210, bY);
+            ctx.textAlign = 'left'; ctx.fillStyle = bCol; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+            ctx.fillText(`${bs.avg}%`, 484, bY);
+            drawRoundedRectV176(ctx, 540, bY - 12, 430, 14, 7);
+            ctx.fillStyle = 'rgba(148,163,184,0.16)'; ctx.fill();
+            let fillW = Math.max(12, Math.round(430 * (bs.avg / 100)));
+            drawRoundedRectV176(ctx, 540 + (430 - fillW), bY - 12, fillW, 14, 7);
+            ctx.fillStyle = bCol; ctx.fill();
+            bY += 40;
+        });
+
+        drawRoundedRectV176(ctx, 856, 454, 376, 204, 16);
+        ctx.fillStyle = 'rgba(13, 21, 38, 0.88)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(250,204,21,0.32)'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#facc15'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText('🏆 متصدرو الأداء هذا الأسبوع', 1212, 486);
+
+        let tY = 524;
+        allEmps.slice(0, 3).forEach((e, idx) => {
+            let m = idx === 0 ? '🥇' : (idx === 1 ? '🥈' : '🥉');
+            ctx.textAlign = 'right'; ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+            ctx.fillText(`${m} ${e.name.split(' ').slice(0, 2).join(' ')}`, 1212, tY);
+            ctx.textAlign = 'left'; ctx.fillStyle = '#34d399'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+            ctx.fillText(`${e.pct}%`, 876, tY);
+            tY += 42;
+        });
+
+        drawRoundedRectV176(ctx, 462, 454, 378, 204, 16);
+        ctx.fillStyle = 'rgba(13, 21, 38, 0.88)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56,189,248,0.32)'; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText('📊 تحليل المعايير والتوجيه اللحظي', 820, 486);
+
+        ctx.fillStyle = '#34d399'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`🌟 أقوى معيار: ${bestKpi.name} (${bestKpi.avg}%)`, 820, 530);
+        ctx.fillStyle = '#fb7185'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`⚠️ أضعف معيار: ${weakKpi.name} (${weakKpi.avg}%)`, 820, 572);
+        ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`⚡ حالات التوجيه اللحظي النشطة: ${coachingCnt}`, 820, 614);
+
+        ctx.strokeStyle = 'rgba(148,163,184,0.16)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(52, 682); ctx.lineTo(W - 52, 682); ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 13px Cairo, Tahoma, Arial';
+        ctx.fillText(`✅ بطاقة معتمدة رقمياً من نظام ${brandingData?.companyName || 'الرحلة الفريدة'} لإدارة مؤشرات الأداء (KPIs)`, W - 52, 714);
+        ctx.textAlign = 'left'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 12px monospace';
+        ctx.fillText('UNIQUE JOURNEY ENTERPRISE ERP', 52, 714);
+
         let a = document.createElement('a');
         a.href = canvas.toDataURL('image/png');
-        a.download = `kpi_pulse_${new Date().toISOString().slice(0,10)}.png`;
+        a.download = `kpi_pulse_${new Date().toISOString().slice(0, 10)}.png`;
         a.click();
-        showToast('📸 تم تصدير لقطة نبض KPI كصورة PNG بنجاح!', 'success');
+        showToast('📸 تم تصدير لوحة نبض KPI التنفيذية بدقة عالية (PNG)!', 'success');
     }
 
     // --- D. Camera Room: 2x2 Grid + HLS (.m3u8) + Snapshot Capture ---
@@ -16744,56 +17133,332 @@
         let emp = (dbData[branchId] || [])[empIdx];
         if (!emp) return;
         let bName = branchesData.find(b => b.id === branchId)?.name || branchId;
-        let activeWeek = getCurrentWeekKey();
+        let weeks = getAvailableWeeks();
+        let activeWeek = weeks[0];
+        let prevWeek = weeks[1];
         let scores = emp.history?.[activeWeek] || new Array(metricNames.length).fill(3);
+        let prevScores = prevWeek && emp.history?.[prevWeek] ? emp.history[prevWeek] : null;
         let pct = calculateWeightedEmployeePct(emp, scores, null);
+        let prevPct = prevScores ? calculateWeightedEmployeePct(emp, prevScores, null) : pct;
+        let delta = pct - prevPct;
         let accent = pct >= 85 ? '#10b981' : (pct <= 60 ? '#f43f5e' : '#38bdf8');
+        let accentGlow = pct >= 85 ? 'rgba(16,185,129,0.28)' : (pct <= 60 ? 'rgba(244,63,94,0.28)' : 'rgba(56,189,248,0.28)');
+        let gradeTxt = pct >= 90 ? '🌟 متميز (فئة النخبة)' : (pct >= 80 ? '✅ جيد جداً' : (pct >= 65 ? '⚖️ أداء مقبول' : '🚨 يحتاج خطة تطوير'));
 
+        // Branch average & rank
+        let branchEmps = dbData[branchId] || [];
+        let branchRanked = branchEmps.map(e => ({
+            name: e.name,
+            p: calculateWeightedEmployeePct(e, e.history?.[activeWeek] || new Array(metricNames.length).fill(3), null)
+        })).sort((a, b) => b.p - a.p);
+        let empRank = branchRanked.findIndex(x => x.name === emp.name) + 1;
+        let branchAvg = branchRanked.length ? Math.round(branchRanked.reduce((s, x) => s + x.p, 0) / branchRanked.length) : 0;
+        let vsBranch = pct - branchAvg;
+
+        // 4-Week History Trend
+        let chronoWeeks = [...weeks].reverse();
+        let trendPts = chronoWeeks.map(w => ({
+            lbl: w.split(' ')[0].slice(5),
+            val: emp.history?.[w] ? calculateWeightedEmployeePct(emp, emp.history[w], null) : pct
+        }));
+
+        let appMetrics = [];
+        metricNames.forEach((m, idx) => {
+            if (!isMetricApplicableForDept(m, emp.dept)) return;
+            let sc = Number(scores[idx]) || 3;
+            let w = (metricSettingsData[m] && metricSettingsData[m].weight) ? metricSettingsData[m].weight : 15;
+            appMetrics.push({ name: m, score: sc, pct: Math.round((sc / 5) * 100), weight: w });
+        });
+        let bestM = appMetrics.length ? [...appMetrics].sort((a, b) => b.score - a.score || b.weight - a.weight)[0] : { name: '—', score: 0, pct: 0 };
+        let weakM = appMetrics.length ? [...appMetrics].sort((a, b) => a.score - b.score || b.weight - a.weight)[0] : { name: '—', score: 0, pct: 0 };
+        let coachingTip = pct >= 85
+            ? `استمر في الحفاظ على معيار «${bestM.name}» ومشاركة خبرتك مع زملائك لرفع متوسط الفرع.`
+            : `ركز خلال الأسبوع القادم على رفع «${weakM.name}» من ${weakM.score}/5 إلى ${Math.min(5, weakM.score + 1)}/5 عبر مراجعة يومية سريعة.`;
+
+        let W = 1400, H = 920;
         let c = document.createElement('canvas');
-        c.width = 960; c.height = 520;
+        c.width = W; c.height = H;
         let ctx = c.getContext('2d');
-        let bg = ctx.createLinearGradient(0, 0, 960, 520);
-        bg.addColorStop(0, '#090f20'); bg.addColorStop(1, '#111c36');
-        ctx.fillStyle = bg; ctx.fillRect(0, 0, 960, 520);
-        ctx.strokeStyle = accent; ctx.lineWidth = 4; ctx.strokeRect(16, 16, 928, 488);
+
+        // Deep Space Gradient Background
+        let bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, '#040814'); bg.addColorStop(0.5, '#0b1428'); bg.addColorStop(1, '#060c1c');
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+        // Ambient Radial Glows
+        let glow1 = ctx.createRadialGradient(210, 170, 10, 210, 170, 290);
+        glow1.addColorStop(0, accentGlow); glow1.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow1; ctx.fillRect(0, 0, W, H);
+
+        let glow2 = ctx.createRadialGradient(1180, 740, 10, 1180, 740, 280);
+        glow2.addColorStop(0, 'rgba(124, 58, 237, 0.16)'); glow2.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = glow2; ctx.fillRect(0, 0, W, H);
+
+        // Subtle Tech Grid
+        ctx.strokeStyle = 'rgba(56,189,248,0.035)'; ctx.lineWidth = 1;
+        for (let gx = 0; gx < W; gx += 40) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (let gy = 0; gy < H; gy += 40) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        // Outer Frame + Top Neon Ribbon
+        drawRoundedRectV176(ctx, 20, 20, W - 40, H - 40, 24);
+        ctx.strokeStyle = accent; ctx.lineWidth = 2.5; ctx.stroke();
+
+        let topBarG = ctx.createLinearGradient(60, 20, W - 60, 20);
+        topBarG.addColorStop(0, '#0284c7'); topBarG.addColorStop(0.5, accent); topBarG.addColorStop(1, '#8b5cf6');
+        ctx.fillStyle = topBarG; ctx.fillRect(70, 20, W - 140, 5);
 
         ctx.direction = 'rtl';
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 20px Cairo, sans-serif';
-        ctx.fillText(`🚀 ${brandingData?.companyName || 'الرحلة الفريدة'} — بطاقة تقرير الأداء التنفيذي`, 905, 68);
-        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 34px Cairo, sans-serif';
-        ctx.fillText(emp.name, 905, 122);
-        ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 18px Cairo, sans-serif';
-        ctx.fillText(`${emp.jobTitle || 'موظف'}  •  ${getDeptDisplayName(emp.dept)}  •  ${bName}  •  ${activeWeek}`, 905, 160);
 
-        // Score circle on left
-        ctx.beginPath(); ctx.arc(145, 125, 62, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(148,163,184,0.22)'; ctx.lineWidth = 10; ctx.stroke();
-        ctx.beginPath(); ctx.arc(145, 125, 62, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * pct / 100));
-        ctx.strokeStyle = accent; ctx.lineWidth = 10; ctx.stroke();
-        ctx.textAlign = 'center'; ctx.fillStyle = accent; ctx.font = 'bold 34px Cairo, sans-serif';
-        ctx.fillText(`${pct}%`, 145, 137);
+        // =============================================================
+        // 1. TOP EXECUTIVE HERO HEADER CARD
+        // =============================================================
+        drawRoundedRectV176(ctx, 48, 46, W - 96, 176, 18);
+        ctx.fillStyle = 'rgba(13, 21, 38, 0.90)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56,189,248,0.28)'; ctx.lineWidth = 1.3; ctx.stroke();
 
-        // Metric bars
+        // Avatar Box (Right)
+        let initials = (emp.name || 'م').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('');
+        let avG = ctx.createLinearGradient(1230, 82, 1320, 172);
+        avG.addColorStop(0, '#0284c7'); avG.addColorStop(1, '#7c3aed');
+        drawRoundedRectV176(ctx, 1232, 82, 92, 92, 22);
+        ctx.fillStyle = avG; ctx.fill();
+        ctx.strokeStyle = 'rgba(186,230,253,0.45)'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = 'bold 36px Cairo, Tahoma, Arial';
+        ctx.fillText(initials || 'م', 1278, 140);
+
+        // Employee Identity
         ctx.textAlign = 'right';
-        let y = 225;
-        metricNames.forEach((m, idx) => {
-            if (!isMetricApplicableForDept(m, emp.dept) || y > 470) return;
-            let sc = Number(scores[idx]) || 3;
-            let col = sc >= 4 ? '#10b981' : (sc <= 2 ? '#f43f5e' : '#38bdf8');
-            ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 16px Cairo, sans-serif';
-            ctx.fillText(`${m} (${sc}/5)`, 905, y);
-            ctx.fillStyle = 'rgba(148,163,184,0.18)'; ctx.fillRect(85, y - 13, 520, 14);
-            ctx.fillStyle = col; ctx.fillRect(85 + 520 * (1 - sc / 5), y - 13, 520 * (sc / 5), 14);
-            y += 36;
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`🚀 ${brandingData?.companyName || 'الرحلة الفريدة'}  •  بطاقة تقرير الأداء التنفيذي المعتمد`, 1206, 86);
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 34px Cairo, Tahoma, Arial';
+        ctx.fillText(emp.name, 1206, 132);
+        ctx.fillStyle = '#cbd5e1'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText(`💼 ${emp.jobTitle || 'موظف'}   •   🧩 ${getDeptDisplayName(emp.dept)}   •   🏢 ${bName}`, 1206, 166);
+        ctx.fillStyle = '#94a3b8'; ctx.font = '13px Cairo, Tahoma, Arial';
+        ctx.fillText(`📅 أسبوع التقييم: ${activeWeek}   •   🏆 الترتيب بالفرع: #${empRank} من ${branchRanked.length}${emp.code ? '   •   الكود: ' + emp.code : ''}`, 1206, 198);
+
+        // Glowing Score Ring (Left inside Hero)
+        let rx = 160, ry = 134, rr = 60;
+        ctx.beginPath(); ctx.arc(rx, ry, rr + 10, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(56,189,248,0.14)'; ctx.lineWidth = 1.8; ctx.setLineDash([5, 5]); ctx.stroke(); ctx.setLineDash([]);
+        ctx.beginPath(); ctx.arc(rx, ry, rr, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(148,163,184,0.2)'; ctx.lineWidth = 11; ctx.stroke();
+        ctx.beginPath(); ctx.arc(rx, ry, rr, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * pct / 100));
+        ctx.strokeStyle = accent; ctx.lineWidth = 11; ctx.lineCap = 'round';
+        ctx.shadowColor = accent; ctx.shadowBlur = 16; ctx.stroke(); ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 32px Cairo, Tahoma, Arial';
+        ctx.fillText(`${pct}%`, rx, ry + 11);
+
+        // Status + Delta + Branch Comparison Pills beside Ring
+        drawRoundedRectV176(ctx, 248, 76, 226, 34, 17);
+        ctx.fillStyle = pct >= 85 ? 'rgba(16,185,129,0.22)' : (pct <= 60 ? 'rgba(244,63,94,0.22)' : 'rgba(56,189,248,0.22)');
+        ctx.fill(); ctx.strokeStyle = accent; ctx.lineWidth = 1.2; ctx.stroke();
+        ctx.fillStyle = accent; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
+        ctx.fillText(gradeTxt, 361, 98);
+
+        let deltaTxt = delta > 0 ? `▲ تحسّن +${delta}% عن السابق` : (delta < 0 ? `▼ تراجع ${delta}% عن السابق` : '• أداء مستقر (0% تغير)');
+        let deltaCol = delta > 0 ? '#34d399' : (delta < 0 ? '#fb7185' : '#94a3b8');
+        drawRoundedRectV176(ctx, 248, 120, 226, 32, 16);
+        ctx.fillStyle = 'rgba(9,13,22,0.75)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(148,163,184,0.22)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = deltaCol; ctx.font = 'bold 12px Cairo, Tahoma, Arial';
+        ctx.fillText(deltaTxt, 361, 141);
+
+        let vsTxt = vsBranch >= 0 ? `📊 أعلى من متوسط الفرع (+${vsBranch}%)` : `📊 أقل من متوسط الفرع (${vsBranch}%)`;
+        let vsCol = vsBranch >= 0 ? '#34d399' : '#fbbf24';
+        drawRoundedRectV176(ctx, 248, 162, 226, 30, 15);
+        ctx.fillStyle = 'rgba(9,13,22,0.65)'; ctx.fill();
+        ctx.fillStyle = vsCol; ctx.font = 'bold 11.5px Cairo, Tahoma, Arial';
+        ctx.fillText(vsTxt, 361, 181);
+
+        // =============================================================
+        // 2. MIDDLE 2-COLUMN BODY: KPI BREAKDOWN (RIGHT) + 4-WEEK TREND (LEFT)
+        // =============================================================
+        // RIGHT PANEL: Detailed KPIs Breakdown
+        drawRoundedRectV176(ctx, 510, 240, 842, 410, 18);
+        ctx.fillStyle = 'rgba(11, 18, 35, 0.88)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56,189,248,0.24)'; ctx.lineWidth = 1.2; ctx.stroke();
+
+        ctx.textAlign = 'right'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 16px Cairo, Tahoma, Arial';
+        ctx.fillText('📊 تفصيل تقييم مؤشرات الأداء الموزونة (KPIs Breakdown)', 1326, 276);
+        ctx.textAlign = 'left'; ctx.fillStyle = '#34d399'; ctx.font = 'bold 12px Cairo, Tahoma, Arial';
+        ctx.fillText('🎯 خط المستهدف القياسي: 85%', 534, 276);
+
+        let y = 320;
+        let rowStep = Math.min(46, Math.floor(315 / Math.max(1, Math.min(7, appMetrics.length))));
+        let trackX = 605, trackW = 445;
+        let targetX = trackX + trackW * (1 - 0.85);
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(52, 211, 153, 0.48)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(targetX, 294); ctx.lineTo(targetX, 632); ctx.stroke();
+        ctx.restore();
+
+        appMetrics.slice(0, 7).forEach(item => {
+            let col = item.score >= 4 ? '#10b981' : (item.score <= 2 ? '#f43f5e' : '#38bdf8');
+            ctx.textAlign = 'right'; ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 14.5px Cairo, Tahoma, Arial';
+            ctx.fillText(item.name, 1326, y);
+            ctx.fillStyle = '#64748b'; ctx.font = 'bold 11px Cairo, Tahoma, Arial';
+            ctx.fillText(`(وزن ${item.weight}%)`, 1126, y);
+
+            // Track
+            drawRoundedRectV176(ctx, trackX, y - 13, trackW, 16, 8);
+            ctx.fillStyle = 'rgba(148,163,184,0.14)'; ctx.fill();
+
+            // Luminous Gradient Fill (RTL)
+            let fillW = Math.max(18, Math.round(trackW * (item.score / 5)));
+            let barG = ctx.createLinearGradient(trackX + trackW - fillW, y, trackX + trackW, y);
+            barG.addColorStop(0, col);
+            barG.addColorStop(1, item.score >= 4 ? '#059669' : (item.score <= 2 ? '#b91c1c' : '#0284c7'));
+            drawRoundedRectV176(ctx, trackX + (trackW - fillW), y - 13, fillW, 16, 8);
+            ctx.fillStyle = barG; ctx.fill();
+
+            // Score + % Pill
+            drawRoundedRectV176(ctx, 526, y - 16, 68, 24, 12);
+            ctx.fillStyle = item.score >= 4 ? 'rgba(16,185,129,0.2)' : (item.score <= 2 ? 'rgba(244,63,94,0.2)' : 'rgba(56,189,248,0.2)');
+            ctx.fill();
+            ctx.textAlign = 'center'; ctx.fillStyle = col; ctx.font = 'bold 12.5px Cairo, Tahoma, Arial';
+            ctx.fillText(`${item.score}/5`, 560, y + 1);
+
+            y += rowStep;
         });
+
+        // LEFT PANEL: 4-Week Performance Trend Curve + Quick Telemetry
+        drawRoundedRectV176(ctx, 48, 240, 444, 410, 18);
+        ctx.fillStyle = 'rgba(11, 18, 35, 0.88)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(168,85,247,0.32)'; ctx.lineWidth = 1.2; ctx.stroke();
+
+        ctx.textAlign = 'right'; ctx.fillStyle = '#c4b5fd'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText('📈 مسار تطور الأداء (آخر 4 أسابيع)', 468, 276);
+
+        // Mini Chart Area
+        let chX = 82, chY = 304, chW = 376, chH = 185;
+        drawRoundedRectV176(ctx, chX - 10, chY - 6, chW + 20, chH + 36, 12);
+        ctx.fillStyle = 'rgba(5, 9, 20, 0.85)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56,189,248,0.16)'; ctx.lineWidth = 1; ctx.stroke();
+
+        // Grid lines + 85% target
+        [100, 75, 50, 25].forEach(v => {
+            let gy = chY + chH * (1 - v / 100);
+            ctx.strokeStyle = 'rgba(148,163,184,0.1)'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(chX, gy); ctx.lineTo(chX + chW, gy); ctx.stroke();
+        });
+        let y85 = chY + chH * (1 - 0.85);
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(16,185,129,0.5)';
+        ctx.beginPath(); ctx.moveTo(chX, y85); ctx.lineTo(chX + chW, y85); ctx.stroke(); ctx.restore();
+
+        // Plot Trend Line
+        let stepX = trendPts.length > 1 ? chW / (trendPts.length - 1) : 0;
+        let coords = trendPts.map((pt, i) => ({
+            x: chX + i * stepX,
+            y: chY + chH * (1 - Math.min(100, Math.max(0, pt.val)) / 100),
+            val: pt.val,
+            lbl: pt.lbl
+        }));
+
+        if (coords.length >= 2) {
+            let areaG = ctx.createLinearGradient(0, chY, 0, chY + chH);
+            areaG.addColorStop(0, accentGlow); areaG.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.beginPath();
+            coords.forEach((pt, i) => i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
+            ctx.lineTo(coords[coords.length - 1].x, chY + chH);
+            ctx.lineTo(coords[0].x, chY + chH);
+            ctx.closePath(); ctx.fillStyle = areaG; ctx.fill();
+
+            ctx.beginPath();
+            coords.forEach((pt, i) => i === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y));
+            ctx.strokeStyle = accent; ctx.lineWidth = 3;
+            ctx.shadowColor = accent; ctx.shadowBlur = 10; ctx.stroke(); ctx.shadowBlur = 0;
+        }
+        coords.forEach(pt => {
+            ctx.beginPath(); ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffffff'; ctx.fill();
+            ctx.strokeStyle = accent; ctx.lineWidth = 2.5; ctx.stroke();
+            ctx.textAlign = 'center'; ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 11px Cairo, Tahoma, Arial';
+            ctx.fillText(`${pt.val}%`, pt.x, pt.y - 10);
+            ctx.fillStyle = '#94a3b8'; ctx.font = '10px monospace';
+            ctx.fillText(pt.lbl, pt.x, chY + chH + 18);
+        });
+
+        // Quick Stats Boxes below Trend Chart
+        let miniBoxes = [
+            { lbl: 'متوسط الفرع', val: `${branchAvg}%`, col: '#38bdf8' },
+            { lbl: 'المستهدف العام', val: '85%', col: '#34d399' },
+            { lbl: 'الفجوة عن الهدف', val: `${pct - 85 >= 0 ? '+' : ''}${pct - 85}%`, col: pct >= 85 ? '#34d399' : '#fb7185' }
+        ];
+        miniBoxes.forEach((mb, i) => {
+            let bx = 70 + i * 136;
+            drawRoundedRectV176(ctx, bx, 548, 126, 82, 12);
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; ctx.fill();
+            ctx.strokeStyle = 'rgba(56,189,248,0.22)'; ctx.lineWidth = 1; ctx.stroke();
+            ctx.textAlign = 'center'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 11px Cairo, Tahoma, Arial';
+            ctx.fillText(mb.lbl, bx + 63, 574);
+            ctx.fillStyle = mb.col; ctx.font = 'bold 24px Cairo, Tahoma, Arial';
+            ctx.fillText(mb.val, bx + 63, 612);
+        });
+
+        // =============================================================
+        // 3. BOTTOM 3 EXECUTIVE INSIGHT CARDS
+        // =============================================================
+        // Card 1 (Right): Strongest KPI
+        drawRoundedRectV176(ctx, 934, 668, 418, 152, 16);
+        ctx.fillStyle = 'rgba(6, 78, 59, 0.28)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)'; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#34d399'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText('🌟 أبرز نقطة قوة هذا الأسبوع', 1328, 702);
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px Cairo, Tahoma, Arial';
+        ctx.fillText(`${bestM.name} (${bestM.score}/5)`, 1328, 738);
+        ctx.fillStyle = '#a7f3d0'; ctx.font = '13px Cairo, Tahoma, Arial';
+        ctx.fillText('نقطة تميز واضحة تعكس التزامك وجودة أدائك.', 1328, 772);
+        ctx.fillText('حافظ عليها لتعزيز فرصك في لوحة الشرف.', 1328, 796);
+
+        // Card 2 (Middle): Development Priority
+        drawRoundedRectV176(ctx, 492, 668, 424, 152, 16);
+        ctx.fillStyle = 'rgba(127, 29, 29, 0.24)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)'; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText('🎯 أولوية التطوير للأسبوع القادم', 892, 702);
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px Cairo, Tahoma, Arial';
+        ctx.fillText(`${weakM.name} (${weakM.score}/5)`, 892, 738);
+        ctx.fillStyle = '#fde68a'; ctx.font = '13px Cairo, Tahoma, Arial';
+        ctx.fillText(`الهدف القادم: رفع التقييم إلى ${Math.min(5, weakM.score + 1)}/5 الأسبوع الجاي.`, 892, 772);
+        ctx.fillText('رفع هذا البند سيصنع أسرع قفزة في نسبتك.', 892, 796);
+
+        // Card 3 (Left): Executive Coaching Recommendation
+        drawRoundedRectV176(ctx, 48, 668, 426, 152, 16);
+        ctx.fillStyle = 'rgba(30, 41, 59, 0.72)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)'; ctx.lineWidth = 1.4; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText('💡 التوصية التنفيذية والتوجيه السريع', 450, 702);
+        ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 13px Cairo, Tahoma, Arial';
+        let tipWords = coachingTip.split(' ');
+        let line1 = tipWords.slice(0, 7).join(' ');
+        let line2 = tipWords.slice(7, 15).join(' ');
+        let line3 = tipWords.slice(15).join(' ');
+        ctx.fillText(line1, 450, 738);
+        if (line2) ctx.fillText(line2, 450, 766);
+        if (line3) ctx.fillText(line3, 450, 794);
+
+        // Official Footer
+        ctx.strokeStyle = 'rgba(148,163,184,0.18)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(52, 844); ctx.lineTo(W - 52, 844); ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
+        ctx.fillText(`✅ بطاقة أداء معتمدة رقمياً من إدارة ${brandingData?.companyName || 'الرحلة الفريدة'}  •  تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG')}`, W - 52, 876);
+        ctx.textAlign = 'left'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 12px monospace';
+        ctx.fillText('VERIFIED EXECUTIVE PERFORMANCE CARD • V17.9', 52, 876);
 
         let a = document.createElement('a');
         a.download = `report_${emp.name.replace(/\s+/g, '_')}.png`;
         a.href = c.toDataURL('image/png');
         a.click();
-        showToast('📸 تم تحميل بطاقة التقرير التنفيذي كصورة PNG بنجاح!', 'success');
+        showToast('📸 تم تحميل بطاقة التقرير التنفيذي الاحترافية (PNG) جاهزة للإرسال!', 'success');
     }
+
+
+    // =========================================================================
 
 
     // =========================================================================
@@ -18739,6 +19404,274 @@
             return res;
         };
     }
+})();
+</script>
+    <!-- 🔊🤖 نافذة النشرة الصوتية والمساعد الذكي المدمج (Ask Your Data + Voice Briefing) -->
+    <div id="voiceAssistantModal" class="modal" style="z-index:9400;">
+        <div class="modal-content" style="max-width:680px; border-top:3px solid #38bdf8; background:linear-gradient(155deg, rgba(13,21,38,0.98), rgba(7,11,22,0.99));">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid rgba(56,189,248,0.22);">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px; font-weight:800;">🔊 النشرة الصوتية والمساعد الذكي لبياناتك</h3>
+                    <div style="font-size:11px; color:#94a3b8; margin-top:2px;">استمع للملخص التنفيذي أو اسأل أي سؤال (بالصوت أو الكتابة) عن أي موظف أو فرع أو معيار وسأجيبك فوراً من أرقامك الحية.</div>
+                </div>
+                <button type="button" onclick="closeVoiceBriefingAssistantModal()" class="emp-modal-close-btn" title="إغلاق">✕</button>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px;">
+                <button type="button" onclick="playExecutiveBriefingAudioV176()" class="btn-action" style="background:#059669; padding:7px 13px;">▶ تشغيل النشرة التنفيذية</button>
+                <button type="button" id="btnVoiceAskMicV176" onclick="startVoiceQuestionCaptureV176()" class="btn-action" style="background:linear-gradient(135deg,#dc2626,#7c3aed); padding:7px 14px;">🎙️ اسأل سؤالك بالصوت</button>
+                <button type="button" onclick="stopAllVoiceSpeechV176()" class="btn-danger" style="padding:7px 12px;">⏹️ إيقاف الصوت</button>
+                <label class="checkbox-label" style="margin-right:auto; font-size:11px; color:#38bdf8;">
+                    <input type="checkbox" id="voiceAutoSpeakToggleV176" checked> 🔊 نطق الإجابة تلقائياً
+                </label>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+                <button type="button" class="quick-prompt-chip" onclick="askVoiceAssistantV176('ملخص حالة الشركة والفروع الآن')">📊 ملخص الشركة</button>
+                <button type="button" class="quick-prompt-chip" onclick="askVoiceAssistantV176('من هم أفضل 5 موظفين؟')">🏆 أفضل 5 موظفين</button>
+                <button type="button" class="quick-prompt-chip" onclick="askVoiceAssistantV176('من هم الموظفون في الإنذار المبكر؟')">🚨 حالات الإنذار</button>
+                <button type="button" class="quick-prompt-chip" onclick="askVoiceAssistantV176('ما هو أضعف معيار تقييم وأقوى معيار؟')">📉 أضعف وأقوى معيار</button>
+                <button type="button" class="quick-prompt-chip" onclick="askVoiceAssistantV176('ما حالة خطة العمل الأسبوعية؟')">📋 خطة العمل</button>
+            </div>
+            <div id="voiceAssistantChatBox" class="ai-chat-box" style="height:290px;"></div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+                <input type="text" id="voiceAssistantInput" class="form-input" placeholder="اكتب أي سؤال (مثال: تقييم ميرنا؟ أو قارن بين الفروع؟ أو أداء قسم المبيعات؟)..." onkeydown="if(event.key==='Enter') askVoiceAssistantV176()">
+                <button type="button" onclick="askVoiceAssistantV176()" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:8px 18px; white-space:nowrap;">🚀 اسأل الآن</button>
+            </div>
+        </div>
+    </div>
+<script>
+(function() {
+    let voiceAskRec = null;
+
+    window.stopAllVoiceSpeechV176 = function() {
+        try { if ('speechSynthesis' in window) window.speechSynthesis.cancel(); } catch (e) {}
+    };
+
+    window.speakTextArabicV176 = function(text) {
+        let autoChk = document.getElementById('voiceAutoSpeakToggleV176');
+        if (autoChk && !autoChk.checked) return;
+        if (!('speechSynthesis' in window)) return;
+        try {
+            window.speechSynthesis.cancel();
+            let clean = String(text || '').replace(/[*#•📊🏆🚨📉📋🏢👥🌟⚠️✅💡🎯🎙️🔊🚀]/g, ' ').replace(/\s+/g, ' ').trim();
+            let utter = new SpeechSynthesisUtterance(clean);
+            utter.lang = 'ar-EG';
+            utter.rate = 0.98;
+            window.speechSynthesis.speak(utter);
+        } catch (e) {}
+    };
+
+    function buildLiveBriefingTextV176() {
+        let activeWeek = getCurrentWeekKey();
+        let bObj = branchesData.find(b => b.id === currentBranch);
+        let bName = bObj ? bObj.name : currentBranch;
+        let emps = dbData[currentBranch] || [];
+        let sum = 0, alerts = 0, topEmp = null, topPct = -1;
+        emps.forEach(emp => {
+            let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+            let p = calculateWeightedEmployeePct(emp, sc, null);
+            sum += p;
+            if (p <= 60) alerts++;
+            if (p > topPct) { topPct = p; topEmp = emp.name; }
+        });
+        let avg = emps.length ? Math.round(sum / emps.length) : 0;
+        let msg = `مرحباً يا ${currentUser ? currentUser.name : 'مدير'}. إليك النشرة التنفيذية لـ ${bName}: متوسط الأداء الحالي ${avg}%.`;
+        if (topEmp) msg += ` يتصدر الترتيب ${topEmp} بنسبة ${topPct}%.`;
+        msg += alerts > 0 ? ` يوجد حالياً ${alerts} حالات إنذار مبكر تحتاج متابعة سريعة.` : ` العمل مستقر ولا توجد حالات حرجة اليوم.`;
+        return msg;
+    }
+
+    window.playExecutiveBriefingAudioV176 = function() {
+        let brief = buildLiveBriefingTextV176();
+        let box = document.getElementById('voiceAssistantChatBox');
+        if (box) {
+            box.innerHTML += `<div class="chat-msg chat-msg-ai">🔊 <b>النشرة التنفيذية الحية:</b>\n${brief}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+        window.speakTextArabicV176(brief);
+    };
+
+    window.openVoiceBriefingAssistantModal = function() {
+        if (!hasFeaturePermission('voice')) { showToast('عذراً، النشرة الصوتية غير مفعلة لحسابك!', 'error'); return; }
+        let modal = document.getElementById('voiceAssistantModal');
+        if (!modal) return;
+        modal.classList.add('active');
+        let box = document.getElementById('voiceAssistantChatBox');
+        if (box && box.children.length === 0) {
+            window.playExecutiveBriefingAudioV176();
+        }
+    };
+
+    window.closeVoiceBriefingAssistantModal = function() {
+        window.stopAllVoiceSpeechV176();
+        let modal = document.getElementById('voiceAssistantModal');
+        if (modal) modal.classList.remove('active');
+    };
+
+    window.speakExecutiveBriefing = function() {
+        window.openVoiceBriefingAssistantModal();
+    };
+
+    window.startVoiceQuestionCaptureV176 = function() {
+        let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let btn = document.getElementById('btnVoiceAskMicV176');
+        if (!SpeechRec) { showToast('⚠️ المتصفح لا يدعم الإدخال الصوتي؛ اكتب سؤالك مباشرة بالأسفل.', 'warn'); return; }
+        window.stopAllVoiceSpeechV176();
+        if (voiceAskRec) { try { voiceAskRec.stop(); } catch(e) {} voiceAskRec = null; if (btn) btn.classList.remove('voice-listening'); return; }
+        voiceAskRec = new SpeechRec();
+        voiceAskRec.lang = 'ar-EG';
+        voiceAskRec.interimResults = false;
+        if (btn) btn.classList.add('voice-listening');
+        showToast('🎙️ تفضل بسؤالك الآن...', 'info');
+        voiceAskRec.onresult = function(ev) {
+            let spoken = ev.results[0][0].transcript || '';
+            if (btn) btn.classList.remove('voice-listening');
+            voiceAskRec = null;
+            if (spoken.trim()) {
+                let inp = document.getElementById('voiceAssistantInput');
+                if (inp) inp.value = spoken.trim();
+                window.askVoiceAssistantV176(spoken.trim());
+            }
+        };
+        voiceAskRec.onerror = function() { if (btn) btn.classList.remove('voice-listening'); voiceAskRec = null; };
+        voiceAskRec.onend = function() { if (btn) btn.classList.remove('voice-listening'); voiceAskRec = null; };
+        voiceAskRec.start();
+    };
+
+    function answerAnyLocalQuestionV176(qRaw) {
+        let q = String(qRaw || '').trim();
+        let ql = q.toLowerCase();
+        let activeWeek = getCurrentWeekKey();
+
+        let allEmps = [];
+        let branchSummary = [];
+        let deptMap = {};
+        let mSums = {}, mCnts = {};
+
+        (branchesData || []).forEach(b => {
+            let emps = dbData[b.id] || [];
+            let bSum = 0, bAlerts = 0;
+            emps.forEach(emp => {
+                let sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array(metricNames.length).fill(3);
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                let dName = getDeptDisplayName(emp.dept);
+                bSum += pct;
+                if (pct <= 60) bAlerts++;
+                if (!deptMap[dName]) deptMap[dName] = { sum: 0, cnt: 0, list: [] };
+                deptMap[dName].sum += pct; deptMap[dName].cnt++; deptMap[dName].list.push({ name: emp.name, pct });
+
+                let appList = [];
+                metricNames.forEach((m, idx) => {
+                    if (!isMetricApplicableForDept(m, emp.dept)) return;
+                    let v = Number(sc[idx]) || 3;
+                    mSums[m] = (mSums[m] || 0) + (v / 5) * 100;
+                    mCnts[m] = (mCnts[m] || 0) + 1;
+                    appList.push({ name: m, score: v });
+                });
+                let bestM = appList.length ? [...appList].sort((a, b) => b.score - a.score)[0] : { name: '—', score: 0 };
+                let weakM = appList.length ? [...appList].sort((a, b) => a.score - b.score)[0] : { name: '—', score: 0 };
+                allEmps.push({ name: emp.name, branch: b.name, branchId: b.id, dept: dName, jobTitle: emp.jobTitle || 'موظف', pct, bestM, weakM, appList });
+            });
+            branchSummary.push({ id: b.id, name: b.name, avg: emps.length ? Math.round(bSum / emps.length) : 0, count: emps.length, alerts: bAlerts });
+        });
+
+        allEmps.sort((a, b) => b.pct - a.pct);
+        let kpiRank = metricNames.map(m => ({ name: m, avg: mCnts[m] ? Math.round(mSums[m] / mCnts[m]) : 0 })).filter(x => x.avg > 0).sort((a, b) => b.avg - a.avg);
+
+        let matchedEmps = allEmps.filter(e => {
+            let parts = e.name.toLowerCase().split(/\s+/).filter(p => p.length >= 3);
+            return ql.includes(e.name.toLowerCase()) || parts.some(p => ql.includes(p));
+        });
+        if (matchedEmps.length > 0 && matchedEmps.length <= 3) {
+            return matchedEmps.map(e =>
+                `👤 ملف ${e.name} (${e.jobTitle} — ${e.dept} — ${e.branch}):\n• نسبة الأداء الحالية: ${e.pct}%\n• أقوى معيار: ${e.bestM.name} (${e.bestM.score}/5)\n• أولوية التطوير: ${e.weakM.name} (${e.weakM.score}/5)\n• التوصية: ${e.pct >= 85 ? 'أداء متميز يستحق الإشادة والتكريم.' : (e.pct <= 60 ? 'يحتاج جلسة توجيه فردية عاجلة لرفع معيار ' + e.weakM.name + '.' : 'أداء مستقر ويمكن رفعه فوق 85% بالتركيز على ' + e.weakM.name + '.')}`
+            ).join('\n\n');
+        }
+
+        let matchedKpi = metricNames.find(m => ql.includes(m.toLowerCase()) || m.toLowerCase().split(/\s+/).some(w => w.length >= 4 && ql.includes(w)));
+        if (matchedKpi && !/(أضعف|اضعف|أقوى|اقوى)/.test(ql)) {
+            let mAvg = mCnts[matchedKpi] ? Math.round(mSums[matchedKpi] / mCnts[matchedKpi]) : 0;
+            let lowPeople = allEmps.filter(e => e.appList.some(x => x.name === matchedKpi && x.score <= 2));
+            let topPeople = allEmps.filter(e => e.appList.some(x => x.name === matchedKpi && x.score === 5));
+            return `📊 تحليل معيار «${matchedKpi}»:\n• متوسط الفريق في هذا المعيار: ${mAvg}% (المستهدف 85%)\n• المتفوقون فيه (5/5): ${topPeople.length ? topPeople.slice(0, 4).map(e => e.name).join('، ') : 'لا يوجد حالياً'}\n• يحتاجون دعماً فيه (≤2/5): ${lowPeople.length ? lowPeople.slice(0, 4).map(e => e.name).join('، ') : 'لا يوجد قصور حاد حالياً'}`;
+        }
+
+        let matchedDept = Object.keys(deptMap).find(d => ql.includes(d.toLowerCase()));
+        if (matchedDept) {
+            let dInfo = deptMap[matchedDept];
+            let dAvg = Math.round(dInfo.sum / dInfo.cnt);
+            let sortedD = [...dInfo.list].sort((a, b) => b.pct - a.pct);
+            return `🏛️ تحليل قسم «${matchedDept}»:\n• عدد الموظفين: ${dInfo.cnt} موظف\n• متوسط أداء القسم: ${dAvg}%\n• الأعلى أداءً: ${sortedD[0]?.name} (${sortedD[0]?.pct}%)\n• الأقل أداءً: ${sortedD[sortedD.length - 1]?.name} (${sortedD[sortedD.length - 1]?.pct}%)`;
+        }
+
+        let matchedBranch = branchSummary.find(b => ql.includes(b.name.toLowerCase()) || b.name.toLowerCase().split(/\s+/).some(w => w.length >= 4 && ql.includes(w)));
+        if (matchedBranch && !/(قارن|مقارن|كل الفروع|الفروع)/.test(ql)) {
+            let bEmps = allEmps.filter(e => e.branchId === matchedBranch.id);
+            return `🏢 ملخص ${matchedBranch.name}:\n• عدد الموظفين: ${matchedBranch.count}\n• متوسط الأداء: ${matchedBranch.avg}%\n• حالات الإنذار المبكر: ${matchedBranch.alerts}\n• المتصدر: ${bEmps[0] ? bEmps[0].name + ' (' + bEmps[0].pct + '%)' : '—'}`;
+        }
+
+        if (/(أفضل|افضل|متصدر|أعلى|اعلى|شرف|أوائل|اوائل|نجوم)/.test(ql)) {
+            let top5 = allEmps.slice(0, 5).map((e, i) => `${i + 1}. ${e.name} (${e.branch}) — ${e.pct}%`).join('\n');
+            return `🏆 أفضل 5 موظفين حالياً على مستوى الشركة:\n${top5}`;
+        }
+
+        if (/(إنذار|انذار|ضعيف|أقل|اقل|خطر|تدخل|متأخر|متراجع|مشكلة)/.test(ql)) {
+            let alerts = allEmps.filter(e => e.pct <= 60).sort((a, b) => a.pct - b.pct);
+            if (alerts.length === 0) return '✅ ممتاز! لا توجد أي حالات إنذار مبكر (≤ 60%) حالياً على مستوى جميع الفروع.';
+            return `🚨 حالات الإنذار المبكر الحالية (${alerts.length} موظف):\n` + alerts.slice(0, 6).map(e => `• ${e.name} (${e.branch}): ${e.pct}% — أولوية التطوير: ${e.weakM.name}`).join('\n');
+        }
+
+        if (/(معيار|بنود|بند|أضعف|اضعف|أقوى|اقوى)/.test(ql)) {
+            let best = kpiRank[0], weak = kpiRank[kpiRank.length - 1];
+            return `📈 تحليل مؤشرات الأداء (KPIs):\n• 🌟 أقوى معيار: ${best ? best.name + ' (' + best.avg + '%)' : '—'}\n• ⚠️ أضعف معيار: ${weak ? weak.name + ' (' + weak.avg + '%)' : '—'}\n• التوصية: تركيز تدريب الأسبوع القادم على معيار «${weak ? weak.name : 'الأداء'}» لرفع المتوسط العام فوق 85%.`;
+        }
+
+        if (/(فرع|فروع|قارن|مقارن)/.test(ql)) {
+            let sortedB = [...branchSummary].sort((a, b) => b.avg - a.avg);
+            return `🏢 مقارنة أداء الفروع الحية:\n` + sortedB.map((b, i) => `${i + 1}. ${b.name}: متوسط ${b.avg}% (${b.count} موظف • ${b.alerts} إنذار)`).join('\n');
+        }
+
+        if (/(خطة|خطه|مهام|مهمة|إنجاز|انجاز)/.test(ql)) {
+            let tot = (planData || []).length;
+            let done = (planData || []).filter(p => p.completed).length;
+            let pending = (planData || []).filter(p => !p.completed).slice(0, 3).map(p => `• ${p.goal} (${p.resp})`).join('\n');
+            return `📋 حالة خطة العمل التشغيلية:\n• تم إنجاز ${done} من أصل ${tot} بنداً (${tot ? Math.round((done / tot) * 100) : 0}%).` + (pending ? `\n• أبرز المهام المفتوحة:\n${pending}` : '\n• جميع البنود مكتملة بنجاح!');
+        }
+
+        if (/(ترقية|ترقيه|قيادة|قائد|مرشح|كفاءة)/.test(ql)) {
+            let cands = allEmps.filter(e => e.pct >= 85);
+            if (!cands.length) return `👑 لم يصل أي موظف بعد لنسبة 85% فأعلى هذا الأسبوع. أقرب مرشح حالياً هو ${allEmps[0]?.name} بنسبة ${allEmps[0]?.pct}%.`;
+            return `👑 المرشحون للقيادة والترقية (≥ 85%):\n` + cands.slice(0, 5).map(e => `• ${e.name} (${e.branch}) — ${e.pct}%`).join('\n');
+        }
+
+        let avgAll = allEmps.length ? Math.round(allEmps.reduce((s, e) => s + e.pct, 0) / allEmps.length) : 0;
+        let alCnt = allEmps.filter(e => e.pct <= 60).length;
+        return `📊 ملخص فوري للنظام (${activeWeek}):\n• إجمالي الموظفين: ${allEmps.length} في ${branchSummary.length} فروع\n• المتوسط العام للأداء: ${avgAll}%\n• المتصدر: ${allEmps[0] ? allEmps[0].name + ' (' + allEmps[0].pct + '%)' : '—'}\n• حالات الإنذار المبكر: ${alCnt}\n• أضعف معيار حالياً: ${kpiRank.length ? kpiRank[kpiRank.length - 1].name + ' (' + kpiRank[kpiRank.length - 1].avg + '%)' : '—'}\n\n💡 يمكنك سؤالي باسم أي موظف أو قسم أو فرع أو معيار وسأعطيك تفاصيله فوراً.`;
+    }
+
+    window.askVoiceAssistantV176 = async function(presetQ) {
+        let inp = document.getElementById('voiceAssistantInput');
+        let box = document.getElementById('voiceAssistantChatBox');
+        let q = (typeof presetQ === 'string' && presetQ.trim()) ? presetQ.trim() : (inp ? inp.value.trim() : '');
+        if (!q || !box) return;
+        if (inp) inp.value = '';
+
+        box.innerHTML += `<div class="chat-msg chat-msg-user">${q}</div>`;
+        box.scrollTop = box.scrollHeight;
+
+        let answer = '';
+        if (typeof getSavedGeminiKey === 'function' && getSavedGeminiKey() && typeof callGeminiLiveAPI === 'function') {
+            let localCtx = answerAnyLocalQuestionV176(q);
+            let prompt = `أنت المساعد التنفيذي الذكي لنظام «${brandingData?.companyName || 'الرحلة الفريدة'}».\nبيانات مرجعية حية من النظام:\n${localCtx}\n\nسؤال المدير: "${q}"\nأجب بالعربية بوضوح ودقة وإيجاز عملي بناءً على البيانات الحقيقية.`;
+            answer = await callGeminiLiveAPI(prompt);
+        }
+        if (!answer) {
+            answer = answerAnyLocalQuestionV176(q);
+        }
+
+        box.innerHTML += `<div class="chat-msg chat-msg-ai">${answer}</div>`;
+        box.scrollTop = box.scrollHeight;
+        window.speakTextArabicV176(answer);
+    };
 })();
 </script>
 </body>
