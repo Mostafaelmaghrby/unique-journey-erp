@@ -5277,26 +5277,57 @@
         <!-- 5. التقارير الأسبوعية -->
         <div id="sec-weeklyindividuals" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                <h3 style="color:#38bdf8; font-size:15px;">📅 أرشيف وتقييمات الأسابيع</h3>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <select id="archiveWeekSelector" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:200px;"></select>
-                    <select id="weeklyBranchFilter" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:150px;">
+                <div>
+                    <h3 style="color:#38bdf8; font-size:16px;">📅 مركز أرشيف وتقييمات الأسابيع التحليلي</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">مراجعة شاملة لأداء الفريق عبر الأسابيع مع مؤشرات التغير، مسار التطور، وأضعف معيار ومقارنة أسبوعين.</p>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <select id="archiveWeekSelector" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:195px;"></select>
+                    <select id="weeklyBranchFilter" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:140px;">
                         <option value="all">كل الفروع</option>
                     </select>
-                    <button type="button" onclick="exportWeeklyArchiveToExcel()" class="btn-action" style="background:#059669;">📊 تصدير الأرشيف Excel (.xlsx)</button>
+                    <button type="button" id="btnWeeklyCompareMode" onclick="toggleWeeklyCompareModeV18()" class="btn-action" style="background:#1e293b; border:1px solid #8b5cf6; color:#c4b5fd;">⚔️ مقارنة أسبوعين</button>
+                    <button type="button" onclick="exportWeeklyArchiveToExcel()" class="btn-action" style="background:#059669;">📊 تصدير Excel</button>
                 </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th style="text-align: right;">اسم الموظف</th>
-                        <th style="text-align: right;">الفرع</th>
-                        <th style="text-align: center;">تقييم الأسبوع المحدد</th>
-                        <th style="text-align: center;">حالة القفل</th>
-                    </tr>
-                </thead>
-                <tbody id="weeklyIndividualsTableBody"></tbody>
-            </table>
+            <!-- شريط مقارنة أسبوعين -->
+            <div id="weeklyCompareBarV18" class="hidden" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; background:rgba(124,58,237,0.14); border:1px solid rgba(168,85,247,0.45); border-radius:10px; padding:10px 14px; margin-bottom:12px;">
+                <span style="font-size:12px; font-weight:800; color:#c4b5fd;">⚔️ قارن الأسبوع المختار أعلاه مع الأسبوع:</span>
+                <select id="archiveWeek2Selector" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:205px;"></select>
+            </div>
+            <!-- شريط الملخص التنفيذي للأسبوع -->
+            <div id="weeklySummaryStripV18" class="summary-cards-grid" style="margin-bottom:12px;"></div>
+            <!-- شريط البحث والفلترة السريعة -->
+            <div class="dept-filter-bar" style="margin-bottom:12px;">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div class="mc-filter-pills" id="weeklyQuickFilterBar">
+                        <button type="button" class="mc-filter-pill active" onclick="setWeeklyQuickFilterV18('all', this)">الكل</button>
+                        <button type="button" class="mc-filter-pill" onclick="setWeeklyQuickFilterV18('top', this)">🌟 المتميزون (≥90%)</button>
+                        <button type="button" class="mc-filter-pill" onclick="setWeeklyQuickFilterV18('alert', this)">🚨 الحرجون (≤60%)</button>
+                    </div>
+                    <select id="weeklyDeptFilterV18" onchange="renderWeeklyIndividualsTable()" class="form-input" style="width:140px; padding:5px 8px; font-size:11px;">
+                        <option value="all">كل الأقسام</option>
+                    </select>
+                    <button type="button" id="btnWeeklySortToggle" onclick="toggleWeeklySortOrderV18()" class="btn-action" style="background:#1e293b; border:1px solid #38bdf8; color:#38bdf8; padding:5px 10px;">⬇️ الأعلى أولاً</button>
+                </div>
+                <input type="text" id="weeklySearchInputV18" oninput="renderWeeklyIndividualsTable()" placeholder="🔍 بحث سريع باسم الموظف..." class="form-input" style="width:200px; padding:6px 10px; font-size:11px;">
+            </div>
+            <div class="eval-table-sticky-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">اسم الموظف والقسم</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الفرع</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">تقييم الأسبوع</th>
+                            <th id="weeklyCompareColHdrV18" style="text-align:center; position:sticky; top:0; z-index:10;">التغير عن السابق</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">مسار 4 أسابيع</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">أضعف معيار</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">إجراءات سريعة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weeklyIndividualsTableBody"></tbody>
+                </table>
+            </div>
         </div>
         <!-- 6. الرسوم والتحليلات المتقدمة v16.0 -->
         <div id="sec-charts" class="card hidden" style="background:transparent; border:none; box-shadow:none; padding:0;">
@@ -8819,29 +8850,224 @@
         });
     }
 
+    let weeklyArchiveQuickFilterV18 = 'all';
+    let weeklyArchiveSortDescV18 = true;
+    let weeklyArchiveCompareModeV18 = false;
+    let weeklyManualLockMapV18 = {};
+    try {
+        let wlSaved = localStorage.getItem('unique_journey_week_locks_v18');
+        if (wlSaved) weeklyManualLockMapV18 = JSON.parse(wlSaved);
+    } catch(e) {}
+
+    function isWeekLockedV18(weekKey) {
+        if (typeof weeklyManualLockMapV18[weekKey] === 'boolean') return weeklyManualLockMapV18[weekKey];
+        return !isCurrentWeekActive(weekKey);
+    }
+
+    function toggleSelectedWeekLockV18() {
+        if (!currentUser || currentUser.role !== 'Admin') {
+            showToast('قفل أو فتح الأسابيع متاح للمدير العام فقط!', 'warn');
+            return;
+        }
+        let sel = document.getElementById('archiveWeekSelector');
+        if (!sel) return;
+        let wk = sel.value;
+        let nextLocked = !isWeekLockedV18(wk);
+        weeklyManualLockMapV18[wk] = nextLocked;
+        localStorage.setItem('unique_journey_week_locks_v18', JSON.stringify(weeklyManualLockMapV18));
+        recordAuditLog('تغيير حالة قفل الأسبوع', `تم ${nextLocked ? 'قفل وأرشفة' : 'إعادة فتح'} الأسبوع: ${wk}`);
+        renderWeeklyIndividualsTable();
+        showToast(nextLocked ? `🔒 تم قفل الأسبوع ${wk}` : `🔓 تم إعادة فتح الأسبوع ${wk}`, 'success');
+    }
+
+    function setWeeklyQuickFilterV18(mode, btn) {
+        weeklyArchiveQuickFilterV18 = mode;
+        document.querySelectorAll('#weeklyQuickFilterBar .mc-filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderWeeklyIndividualsTable();
+    }
+
+    function toggleWeeklySortOrderV18() {
+        weeklyArchiveSortDescV18 = !weeklyArchiveSortDescV18;
+        let btn = document.getElementById('btnWeeklySortToggle');
+        if (btn) btn.textContent = weeklyArchiveSortDescV18 ? '⬇️ الأعلى أولاً' : '⬆️ الأقل أولاً';
+        renderWeeklyIndividualsTable();
+    }
+
+    function toggleWeeklyCompareModeV18() {
+        weeklyArchiveCompareModeV18 = !weeklyArchiveCompareModeV18;
+        let bar = document.getElementById('weeklyCompareBarV18');
+        let btn = document.getElementById('btnWeeklyCompareMode');
+        if (bar) bar.classList.toggle('hidden', !weeklyArchiveCompareModeV18);
+        if (btn) {
+            btn.style.background = weeklyArchiveCompareModeV18 ? '#7c3aed' : '#1e293b';
+            btn.style.color = '#fff';
+        }
+        let w2Sel = document.getElementById('archiveWeek2Selector');
+        if (w2Sel && w2Sel.options.length === 0) {
+            let wks = getAvailableWeeks();
+            w2Sel.innerHTML = wks.map((w, i) => `<option value="${w}" ${i === 1 ? 'selected' : ''}>${w}</option>`).join('');
+        }
+        renderWeeklyIndividualsTable();
+    }
+
+    function buildMiniSparklineSvgV18(vals, color) {
+        if (!vals || vals.length < 2) return '—';
+        let W = 74, H = 22, pad = 3;
+        let step = (W - pad * 2) / (vals.length - 1);
+        let pts = vals.map((v, i) => {
+            let x = (pad + i * step).toFixed(1);
+            let y = (H - pad - (Math.min(100, Math.max(0, v)) / 100) * (H - pad * 2)).toFixed(1);
+            return `${x},${y}`;
+        });
+        let lastPt = pts[pts.length - 1].split(',');
+        return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="vertical-align:middle; overflow:visible;">
+            <polyline fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" points="${pts.join(' ')}"></polyline>
+            <circle cx="${lastPt[0]}" cy="${lastPt[1]}" r="2.8" fill="#fff" stroke="${color}" stroke-width="1.5"></circle>
+        </svg>`;
+    }
+
     function renderWeeklyIndividualsTable() {
         let tbody = document.getElementById('weeklyIndividualsTableBody');
         if (!tbody) return;
-        tbody.innerHTML = '';
-        let selectedWeek = document.getElementById('archiveWeekSelector').value;
-        let filterBranch = document.getElementById('weeklyBranchFilter').value;
+        let weeks = getAvailableWeeks();
+        let selEl = document.getElementById('archiveWeekSelector');
+        let selectedWeek = selEl ? selEl.value : weeks[0];
+        let wIdx = weeks.indexOf(selectedWeek);
+        let prevWeek = (wIdx >= 0 && wIdx + 1 < weeks.length) ? weeks[wIdx + 1] : null;
+
+        let w2Sel = document.getElementById('archiveWeek2Selector');
+        if (w2Sel && w2Sel.options.length === 0) {
+            w2Sel.innerHTML = weeks.map((w, i) => `<option value="${w}" ${i === 1 ? 'selected' : ''}>${w}</option>`).join('');
+        }
+        let compareWeek = (weeklyArchiveCompareModeV18 && w2Sel && w2Sel.value) ? w2Sel.value : prevWeek;
+
+        let filterBranch = document.getElementById('weeklyBranchFilter') ? document.getElementById('weeklyBranchFilter').value : 'all';
+        let deptSel = document.getElementById('weeklyDeptFilterV18');
+        if (deptSel && deptSel.options.length <= 1) {
+            deptSel.innerHTML = `<option value="all">كل الأقسام</option>` + departmentsData.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+        }
+        let filterDept = deptSel ? deptSel.value : 'all';
+        let searchQ = document.getElementById('weeklySearchInputV18') ? document.getElementById('weeklySearchInputV18').value.trim().toLowerCase() : '';
+
+        let rows = [];
+        let chronoWeeks = [...weeks].reverse();
+
         branchesData.forEach(b => {
-            if (currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
+            if (currentUser && currentUser.role === 'Branch Manager' && currentUser.branch !== b.id) return;
             if (filterBranch !== 'all' && b.id !== filterBranch) return;
             (dbData[b.id] || []).forEach((emp, empIdx) => {
+                if (filterDept !== 'all' && getNormalizedDeptId(emp.dept) !== filterDept) return;
+                if (searchQ && !(emp.name || '').toLowerCase().includes(searchQ)) return;
                 if (!emp.history) emp.history = {};
                 if (!emp.history[selectedWeek]) emp.history[selectedWeek] = new Array(metricNames.length).fill(3);
-                let pct = calculateWeightedEmployeePct(emp, emp.history[selectedWeek], null);
-                tbody.innerHTML += `<tr>
-                    <td><span class="clickable-emp" onclick="openEmployeeAnalysis('${b.id}', ${empIdx})">${emp.name}</span></td>
-                    <td style="color:#38bdf8;">${b.name}</td>
-                    <td style="text-align:center; font-weight:bold; color:#38bdf8;">${pct}%</td>
-                    <td style="text-align:center;">${isCurrentWeekActive(selectedWeek)?'<span class="badge b-green">نشط</span>':'<span class="badge b-yellow">مؤرشف</span>'}</td>
-                </tr>`;
+                let sc = emp.history[selectedWeek];
+                let pct = calculateWeightedEmployeePct(emp, sc, null);
+                let cmpPct = (compareWeek && emp.history[compareWeek]) ? calculateWeightedEmployeePct(emp, emp.history[compareWeek], null) : pct;
+                let delta = pct - cmpPct;
+
+                let sparkVals = chronoWeeks.map(w => emp.history[w] ? calculateWeightedEmployeePct(emp, emp.history[w], null) : pct);
+
+                // Weakest metric in selectedWeek
+                let weakM = null, weakS = 6;
+                metricNames.forEach((m, idx) => {
+                    if (!isMetricApplicableForDept(m, emp.dept)) return;
+                    let v = Number(sc[idx]) || 3;
+                    if (v < weakS) { weakS = v; weakM = m; }
+                });
+
+                rows.push({ bId: b.id, bName: b.name, empIdx, emp, pct, cmpPct, delta, sparkVals, weakM, weakS });
             });
         });
-    }
 
+        // Summary KPIs before quick-filter pill
+        let total = rows.length;
+        let avgPct = total ? Math.round(rows.reduce((s, r) => s + r.pct, 0) / total) : 0;
+        let prevAvgPct = total ? Math.round(rows.reduce((s, r) => s + r.cmpPct, 0) / total) : 0;
+        let avgDelta = avgPct - prevAvgPct;
+        let excCount = rows.filter(r => r.pct >= 90).length;
+        let alertCount = rows.filter(r => r.pct <= 60).length;
+        let topRow = total ? [...rows].sort((a, b) => b.pct - a.pct)[0] : null;
+        let locked = isWeekLockedV18(selectedWeek);
+
+        let sumEl = document.getElementById('weeklySummaryStripV18');
+        if (sumEl) {
+            let dBadge = avgDelta > 0 ? `<span class="trend-up">▲ +${avgDelta}%</span>` : (avgDelta < 0 ? `<span class="trend-down">▼ ${avgDelta}%</span>` : `<span class="trend-flat">• 0%</span>`);
+            sumEl.innerHTML = `
+                <div class="stat-card">
+                    <div><h4>متوسط الأسبوع المحدد</h4><div class="val">${avgPct}% ${dBadge}</div></div>
+                    <span style="font-size:22px;">📊</span>
+                </div>
+                <div class="stat-card" style="border-color:rgba(250,204,21,0.4);">
+                    <div><h4>🏆 نجم الأسبوع</h4><div class="val" style="font-size:14px; color:#facc15;">${topRow ? topRow.emp.name : '—'} ${topRow ? '(' + topRow.pct + '%)' : ''}</div></div>
+                    <span style="font-size:22px;">👑</span>
+                </div>
+                <div class="stat-card">
+                    <div><h4>المتميزون / الحرجون</h4><div class="val" style="font-size:17px;"><span style="color:#34d399;">🌟 ${excCount}</span> &nbsp;|&nbsp; <span style="color:#fb7185;">🚨 ${alertCount}</span></div></div>
+                    <span style="font-size:22px;">⚖️</span>
+                </div>
+                <div class="stat-card">
+                    <div>
+                        <h4>حالة أرشفة الأسبوع</h4>
+                        <div style="margin-top:4px; display:flex; align-items:center; gap:6px;">
+                            <span class="badge ${locked ? 'b-yellow' : 'b-green'}">${locked ? '🔒 مقفل / مؤرشف' : '🟢 نشط ومفتوح'}</span>
+                            ${currentUser && currentUser.role === 'Admin' ? `<button type="button" onclick="toggleSelectedWeekLockV18()" class="btn-action" style="padding:3px 8px; font-size:10px; background:#334155;">${locked ? '🔓 فتح' : '🔒 قفل'}</button>` : ''}
+                        </div>
+                    </div>
+                    <span style="font-size:22px;">${locked ? '🔒' : '🔓'}</span>
+                </div>`;
+        }
+
+        // Apply quick filter & sort
+        let displayRows = rows.filter(r => {
+            if (weeklyArchiveQuickFilterV18 === 'top') return r.pct >= 90;
+            if (weeklyArchiveQuickFilterV18 === 'alert') return r.pct <= 60;
+            return true;
+        }).sort((a, b) => weeklyArchiveSortDescV18 ? (b.pct - a.pct) : (a.pct - b.pct));
+
+        let cmpColHdr = document.getElementById('weeklyCompareColHdrV18');
+        if (cmpColHdr) cmpColHdr.textContent = weeklyArchiveCompareModeV18 ? 'مقارنة الأسبوعين' : 'التغير عن السابق';
+
+        tbody.innerHTML = '';
+        if (displayRows.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:24px;">لا توجد بيانات مطابقة للفلتر المحدد في هذا الأسبوع.</td></tr>`;
+            return;
+        }
+
+        displayRows.forEach(r => {
+            let col = r.pct >= 85 ? '#10b981' : (r.pct <= 60 ? '#ef4444' : '#38bdf8');
+            let deltaHtml = r.delta > 0
+                ? `<span class="badge b-green" style="font-size:10px;">▲ +${r.delta}%</span>`
+                : (r.delta < 0 ? `<span class="badge b-red" style="font-size:10px;">▼ ${r.delta}%</span>` : `<span class="badge b-blue" style="font-size:10px;">• 0%</span>`);
+            let cmpCell = weeklyArchiveCompareModeV18
+                ? `<div style="font-size:11px; color:#94a3b8; margin-bottom:2px;">${r.cmpPct}% ← <b style="color:${col};">${r.pct}%</b></div>${deltaHtml}`
+                : deltaHtml;
+            let weakBadge = r.weakM
+                ? `<span class="badge ${r.weakS <= 2 ? 'b-red' : 'b-yellow'}" style="font-size:10px;">${r.weakM} (${r.weakS}/5)</span>`
+                : '—';
+
+            tbody.innerHTML += `<tr>
+                <td>
+                    <span class="clickable-emp" onclick="openEmployeeAnalysis('${r.bId}', ${r.empIdx})">${r.emp.name}</span>
+                    <div style="font-size:10px; color:#94a3b8;">${r.emp.jobTitle || 'موظف'} • ${getDeptDisplayName(r.emp.dept)}</div>
+                </td>
+                <td style="color:#38bdf8; font-weight:bold;">${r.bName}</td>
+                <td style="min-width:140px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:4px;">
+                        <b style="color:${col}; font-size:13px;">${r.pct}%</b>
+                    </div>
+                    <div class="mc-progress-track" style="height:6px; margin-top:0;"><div class="mc-progress-fill" style="width:${r.pct}%; background:${col};"></div></div>
+                </td>
+                <td style="text-align:center;">${cmpCell}</td>
+                <td style="text-align:center;" title="مسار آخر 4 أسابيع">${buildMiniSparklineSvgV18(r.sparkVals, col)}</td>
+                <td style="text-align:center;">${weakBadge}</td>
+                <td style="text-align:center;">
+                    <button type="button" onclick="openEmployeeAnalysis('${r.bId}', ${r.empIdx}); setTimeout(exportEmpReportCardPng, 350);" class="btn-action" style="background:#0284c7; padding:4px 8px; font-size:10px;" title="تحميل بطاقة الموظف PNG">📸 بطاقة</button>
+                    <button type="button" onclick="sendWhatsAppReport('${r.bId}', ${r.empIdx})" class="btn-whatsapp" style="padding:4px 8px; font-size:10px;" title="إرسال التقييم واتساب">💬</button>
+                </td>
+            </tr>`;
+        });
+    }
     function renderEmployeePerformanceChart() {
         const ctx = document.getElementById('employeePerformanceChart').getContext('2d');
         if (empChartInstance) empChartInstance.destroy();
@@ -15823,7 +16049,7 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
-                animation: { duration: 750, easing: 'easeOutQuart' },
+                animation: false,
                 plugins: {
                     legend: {
                         display: true,
@@ -17734,7 +17960,7 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            animation: { duration: 400 },
+                            animation: false,
                             layout: { padding: { top: 22 } },
                             plugins: {
                                 legend: { display: false },
@@ -17850,7 +18076,7 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            animation: { duration: 400 },
+                            animation: false,
                             scales: {
                                 r: {
                                     min: 0, max: 100,
@@ -17987,7 +18213,7 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            animation: { duration: 400 },
+                            animation: false,
                             layout: { padding: { top: 22 } },
                             plugins: {
                                 legend: { labels: { color: labelCol, font: { family: 'Cairo', size: 11, weight: 'bold' }, usePointStyle: true } },
@@ -19353,53 +19579,24 @@
 </script>
 <script>
 (function() {
-    function destroyChartSafeV174(canvasId) {
-        var el = document.getElementById(canvasId);
-        if (!el || typeof Chart === 'undefined') return;
-        try {
-            var existing = Chart.getChart(el);
-            if (existing) existing.destroy();
-        } catch (e) {}
-    }
-
-    function resetCanvasElementV174(canvasId) {
-        var oldCanvas = document.getElementById(canvasId);
-        if (!oldCanvas || !oldCanvas.parentNode) return null;
-        destroyChartSafeV174(canvasId);
-        var newCanvas = document.createElement('canvas');
-        newCanvas.id = canvasId;
-        if (oldCanvas.className) newCanvas.className = oldCanvas.className;
-        if (oldCanvas.getAttribute('style')) newCanvas.setAttribute('style', oldCanvas.getAttribute('style'));
-        oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
-        return newCanvas;
-    }
-
-    var _origCloseModalV174 = window.closeEmployeeModal;
-    if (typeof _origCloseModalV174 === 'function') {
+    var _origCloseModalV18 = window.closeEmployeeModal;
+    if (typeof _origCloseModalV18 === 'function') {
         window.closeEmployeeModal = function() {
             try { if (typeof stopModalPulseAnimationV15 === 'function') stopModalPulseAnimationV15(); } catch (e) {}
-            destroyChartSafeV174('individualChart');
-            return _origCloseModalV174.apply(this, arguments);
+            return _origCloseModalV18.apply(this, arguments);
         };
     }
 
-    var _origSwitchTabV174 = window.switchTab;
-    if (typeof _origSwitchTabV174 === 'function') {
+    var _origSwitchTabV18 = window.switchTab;
+    if (typeof _origSwitchTabV18 === 'function') {
         window.switchTab = function(tab) {
             try { if (typeof stopModalPulseAnimationV15 === 'function') stopModalPulseAnimationV15(); } catch (e) {}
             try { if (typeof stopChartsSonarAnimV16 === 'function') stopChartsSonarAnimV16(); } catch (e) {}
-            if (tab === 'charts') {
-                resetCanvasElementV174('employeePerformanceChart');
-                resetCanvasElementV174('branchRadarChart');
-                resetCanvasElementV174('benchmarkComparisonChart');
-            }
-            var res = _origSwitchTabV174.apply(this, arguments);
-            if (tab === 'charts') {
+            var res = _origSwitchTabV18.apply(this, arguments);
+            if (tab === 'kpicore') {
                 setTimeout(function() {
-                    if (typeof window.renderEmployeePerformanceChart === 'function') {
-                        try { window.renderEmployeePerformanceChart(); } catch (e) {}
-                    }
-                }, 100);
+                    try { if (typeof kpiTelemetrySparkChartInstance !== 'undefined' && kpiTelemetrySparkChartInstance) kpiTelemetrySparkChartInstance.resize(); } catch (e) {}
+                }, 120);
             }
             return res;
         };
