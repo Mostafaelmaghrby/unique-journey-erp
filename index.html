@@ -16,6 +16,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js';document.head.appendChild(s);"></script>
     <!-- SheetJS (XLSX) لدعم رفع شيت الإكسل (.xlsx / .xls / .csv) كما هو مباشرة -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- PDF.js لدعم قراءة تقارير قسم الجودة بصيغة PDF مباشرة -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
     <!-- Firebase Realtime Database SDK (v16.5 Live Cloud Sync) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -4009,6 +4011,7 @@
                 <button type="button" onclick="switchTab('kpicore')" id="tab-kpicore" class="btn-tab admin-manager-only" style="color:#38bdf8;">💠 بوابة نبض KPI الذكية</button>
                 <button type="button" onclick="switchTab('eval')" id="tab-eval" class="btn-tab active">📊 شيت التقييم الأسبوعي</button>
                 <button type="button" onclick="switchTab('allemp')" id="tab-allemp" class="btn-tab admin-manager-only">👥 قاعدة بيانات الموظفين</button>
+                <button type="button" onclick="switchTab('attendance')" id="tab-attendance" class="btn-tab admin-manager-only" style="color:#34d399;">👆 شيت البصمة والحضور والانصراف</button>
                 <button type="button" onclick="switchTab('camerarules')" id="tab-camerarules" class="btn-tab admin-manager-only">🎥 غرفة الكاميرات الحية</button>
 
                 <div class="nav-section-label">الذكاء والرقابة اللحظية</div>
@@ -4692,6 +4695,7 @@
                     <input type="text" id="inlineNewMetricInput" placeholder="اكتب اسم بند تقييم جديد..." class="form-input admin-only" style="width:170px; padding:5px 8px; font-size:11px;">
                     <input type="number" id="inlineNewMetricWeight" placeholder="النسبة % (مثلاً 20)" min="1" max="100" class="form-input admin-only" style="width:120px; padding:5px 8px; font-size:11px;">
                     <button type="button" onclick="addInlineNewMetric()" class="btn-action btn-add admin-only" style="background:#059669; padding:6px 12px;">➕ إضافة تقييم (بند جديد)</button>
+                    <label class="btn-action admin-manager-only" style="background:linear-gradient(135deg,#0891b2,#0284c7); padding:6px 12px; cursor:pointer; margin:0; display:inline-flex; align-items:center; gap:5px;" title="رفع تقرير قسم الجودة (PDF / Excel / TXT) وتحويل الدرجات تلقائياً من (10-100) إلى (1-5) في بند تقييم الجودة">📋 رفع تقرير قسم الجودة<input type="file" id="qualityReportUploadInputV189" accept=".pdf,.xlsx,.xls,.csv,.txt" onchange="handleQualityReportUploadV189(event)" style="display:none;"></label>
                     <button type="button" id="btnSpeedEvalToolbar" onclick="openSpeedEvalModal()" class="btn-action admin-manager-only" style="background:linear-gradient(135deg,#0284c7,#0ea5e9); padding:6px 13px; box-shadow:0 4px 12px rgba(14,165,233,0.3);">⚡ التقييم السريع بالمسح</button>
                     <button type="button" onclick="toggleVoiceSheetCopilot()" class="btn-action admin-manager-only" style="background:linear-gradient(135deg,#7c3aed,#0284c7); padding:6px 12px;">🎙️ تقييم بالصوت</button>
                     <button type="button" onclick="copyPreviousWeekScores()" class="btn-action admin-manager-only" style="background:#0f766e; padding:6px 12px;" title="نسخ درجات الأسبوع السابق كأساس سريع لهذا الأسبوع">📋 نسخ تقييم الأسبوع السابق</button>
@@ -4822,6 +4826,240 @@
                 </thead>
                 <tbody id="allEmployeesTableBody"></tbody>
             </table>
+        </div>
+        <!-- 2.5 شيت البصمة والحضور والانصراف والملخص الشهري -->
+        <div id="sec-attendance" class="card hidden">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <h3 style="color:#34d399; font-size:16px;">👆 شيت البصمة والحضور والانصراف والملخص الشهري</h3>
+                    <p style="color:var(--text-muted); font-size:11px;">ارفع شيت البصمة (Excel / CSV / TXT) مرتباً من بداية الشهر، واضبط مواعيد الحضور والانصراف وفترة السماح لكل موظف بشكل مستقل بجانب زر التعديل، ثم أصدر البطاقة الشهرية المتطورة أو شيت Excel.</p>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <select id="attTimeOffsetSelectV190" class="form-input" style="width:auto; min-width:215px; padding:7px 10px; font-size:11.5px; border-color:#f59e0b; color:#fde047; font-weight:bold;" title="اختر فرق التوقيت قبل رفع شيت البصمة إذا كانت ساعة الجهاز متقدمة أو متأخرة 12 ساعة">
+                        <option value="0">⏱️ توقيت الشيت مضبوط (0 ساعة)</option>
+                        <option value="-12">⏱️ الشيت مزوّد 12 ساعة (إنقاص 12 ساعة)</option>
+                        <option value="12">⏱️ الشيت منقّص 12 ساعة (زيادة 12 ساعة)</option>
+                    </select>
+                    <button type="button" onclick="applyTimeOffsetToExistingAttendanceV190()" class="btn-action" style="background:#d97706; padding:7px 11px;" title="تطبيق فرق التوقيت المختار على السجلات الحالية المعروضة">🔄 ضبط التوقيت الحالي</button>
+                    <label class="btn-action" style="background:#0284c7; cursor:pointer; margin:0; padding:7px 14px;">
+                        📁 رفع شيت البصمة (Excel / CSV)
+                        <input type="file" id="attendanceFileInputV183" accept=".xlsx, .xls, .csv, .txt" onchange="handleAttendanceSheetUploadV183(event)" style="display:none;">
+                    </label>
+                    <button type="button" onclick="toggleManualAttFormV183()" class="btn-action" style="background:#7c3aed; padding:7px 12px;">➕ إضافة سجل يدوي</button>
+                    <button type="button" onclick="exportAttendanceToExcelV183()" class="btn-action" style="background:#059669; padding:7px 14px;">📊 تصدير Excel اليومي</button>
+                    <button type="button" onclick="exportMonthlySummaryExcelV187()" class="btn-action" style="background:#0f766e; padding:7px 14px;">📑 تصدير الملخص الشهري Excel</button>
+                    <button type="button" onclick="clearAttendanceDataV183()" class="btn-danger" style="padding:7px 11px;">🗑️ مسح السجل</button>
+                </div>
+            </div>
+
+            <!-- شريط الإضافة اليدوية الاختياري -->
+            <div id="manualAttEntryBoxV183" class="hidden" style="background:#0f172a; border:1px solid #334155; border-radius:10px; padding:12px; margin-bottom:14px;">
+                <div style="font-size:12px; color:#38bdf8; font-weight:bold; margin-bottom:8px;">➕ إضافة سجل بصمة يدوي</div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap:8px; align-items:center;">
+                    <input type="text" id="attManCode" class="form-input" placeholder="كود الموظف">
+                    <input type="text" id="attManName" class="form-input" placeholder="اسم الموظف">
+                    <input type="date" id="attManDate" class="form-input">
+                    <input type="time" id="attManFirst" class="form-input" title="وقت البصمة الأولى حضور">
+                    <input type="time" id="attManLast" class="form-input" title="وقت البصمة الأخيرة (انصراف)">
+                    <input type="number" id="attManCount" min="1" value="2" class="form-input" placeholder="عدد البصمات">
+                    <input type="text" id="attManNote" class="form-input" placeholder="ملاحظة إضافية (اختياري)">
+                    <button type="button" onclick="addManualAttendanceRecordV183()" class="btn-action" style="background:#059669; padding:9px 12px;">💾 حفظ السجل</button>
+                </div>
+            </div>
+
+            <!-- بطاقات الملخص الإحصائي للبصمة -->
+            <div class="summary-cards-grid" style="margin-bottom:12px;">
+                <div class="stat-card"><div><h4>إجمالي سجلات الأيام</h4><div class="val" id="attStatTotalDays">0</div></div><span style="font-size:22px;">📅</span></div>
+                <div class="stat-card"><div><h4>عدد الموظفين بالشيت</h4><div class="val" id="attStatUniqueEmps" style="color:#38bdf8;">0</div></div><span style="font-size:22px;">👥</span></div>
+                <div class="stat-card"><div><h4>إجمالي البصمات المرصودة</h4><div class="val" id="attStatTotalPunches" style="color:#34d399;">0</div></div><span style="font-size:22px;">👆</span></div>
+                <div class="stat-card"><div><h4>بصمة واحدة فقط (ناقص انصراف)</h4><div class="val" id="attStatSinglePunch" style="color:#fb7185;">0</div></div><span style="font-size:22px;">⚠️</span></div>
+            </div>
+
+            <!-- 🔀 تبديل العرض: سجل الأيام vs الملخص الشهري الكامل -->
+            <div class="dept-filter-bar" style="margin-bottom:12px;">
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <div class="mc-filter-pills" id="attViewModeBarV187">
+                        <button type="button" id="btnAttModeDailyV187" class="mc-filter-pill active" onclick="switchAttendanceViewModeV187('daily')">📋 سجل البصمات اليومي</button>
+                        <button type="button" id="btnAttModeMonthlyV187" class="mc-filter-pill" onclick="switchAttendanceViewModeV187('monthly')">📊 الملخص الشهري الكامل للموظفين</button>
+                    </div>
+                    <div class="mc-filter-pills" id="attQuickFilterBarV183">
+                        <button type="button" class="mc-filter-pill active" onclick="setAttendanceQuickFilterV183('all', this)">الكل</button>
+                        <button type="button" class="mc-filter-pill" onclick="setAttendanceQuickFilterV183('complete', this)">✅ مكتمل</button>
+                        <button type="button" class="mc-filter-pill" onclick="setAttendanceQuickFilterV183('single', this)">⚠️ بصمة واحدة</button>
+                    </div>
+                    <select id="attDateFilterV183" onchange="renderAttendanceTableV183()" class="form-input" style="width:165px; padding:5px 8px; font-size:11px;">
+                        <option value="all">📅 كل التواريخ</option>
+                    </select>
+                    <select id="attMonthFilterV187" onchange="renderMonthlySummaryTableV187()" class="form-input hidden" style="width:165px; padding:5px 8px; font-size:11px;">
+                        <option value="all">🗓️ كل الشهور</option>
+                    </select>
+                </div>
+                <input type="text" id="attSearchInputV183" oninput="renderActiveAttendanceViewV187()" placeholder="🔍 بحث بكود أو اسم الموظف..." class="form-input" style="width:210px; padding:6px 10px; font-size:11px;">
+            </div>
+
+            <!-- 📋 جدول البصمات اليومي -->
+            <div id="attDailyTableWrapV187" class="eval-table-sticky-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">كود الموظف</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">اسم الموظف</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الفرع</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الإدارة</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">القسم</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الوظيفة</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">التاريخ</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">وقت البصمة الأولى (حضور)</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">وقت البصمة الأخيرة (انصراف)</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">مدة التواجد</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">ملاحظة أخيرة (عدد البصمات)</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">المواعيد والإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBodyV183"></tbody>
+                </table>
+            </div>
+
+            <!-- 📊 جدول الملخص الشهري الكامل لكل موظف -->
+            <div id="attMonthlyTableWrapV187" class="eval-table-sticky-wrap hidden">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">الكود</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">اسم الموظف</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الفرع</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الإدارة</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">القسم</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الوظيفة</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">أيام الحضور</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">أيام الغياب</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">ساعات العمل</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">ساعات التأخير</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">البصمات المتكررة (التاريخ والعدد)</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">التقييم والبنود</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">القصور المرصودة</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الحلول والتوجيه</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">المواعيد والبطاقة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceMonthlyBodyV187"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ✏️ نافذة تعديل سجل بصمة -->
+        <div id="editAttendanceModalV187" class="modal" style="z-index:9600;">
+            <div class="modal-content" style="max-width:500px; border-top:3px solid #38bdf8;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #334155; padding-bottom:8px;">
+                    <h3 style="color:#38bdf8; font-size:15px;">✏️ تعديل سجل البصمة</h3>
+                    <button type="button" onclick="closeEditAttendanceModalV187()" class="emp-modal-close-btn">✕</button>
+                </div>
+                <input type="hidden" id="editAttRecIdV187">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label">كود الموظف</label>
+                        <input type="text" id="editAttCodeV187" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">التاريخ</label>
+                        <input type="date" id="editAttDateV187" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">اسم الموظف</label>
+                    <input type="text" id="editAttNameV187" class="form-input">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label">الفرع</label>
+                        <input type="text" id="editAttBranchV190" list="attBranchDatalistV190" class="form-input" placeholder="اختر أو اكتب الفرع">
+                        <datalist id="attBranchDatalistV190"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الإدارة</label>
+                        <input type="text" id="editAttAdminDeptV190" list="attAdminDeptDatalistV190" class="form-input" placeholder="اختر أو اكتب الإدارة">
+                        <datalist id="attAdminDeptDatalistV190"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">القسم</label>
+                        <input type="text" id="editAttDeptV190" list="attDeptDatalistV190" class="form-input" placeholder="اختر أو اكتب القسم">
+                        <datalist id="attDeptDatalistV190"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">الوظيفة</label>
+                        <input type="text" id="editAttJobTitleV190" class="form-input" placeholder="اكتب المسمى الوظيفي">
+                    </div>
+                </div>
+                <div class="form-group" style="margin-top:-4px;">
+                    <label class="checkbox-label" style="color:#34d399; font-size:11px;">
+                        <input type="checkbox" id="editAttApplyAllNameV187" checked> تطبيق الاسم والبيانات الوظيفية (الفرع / الإدارة / القسم / الوظيفة) على كل أيام نفس الكود وحفظها تلقائياً
+                    </label>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                    <div class="form-group">
+                        <label class="form-label">وقت البصمة الأولى (حضور)</label>
+                        <input type="text" id="editAttFirstV187" class="form-input" placeholder="HH:MM:SS" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">وقت البصمة الأخيرة (انصراف)</label>
+                        <input type="text" id="editAttLastV187" class="form-input" placeholder="HH:MM:SS" style="font-family:monospace;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">عدد البصمات</label>
+                        <input type="number" id="editAttCountV187" min="1" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ملاحظة إضافية (اختياري)</label>
+                    <input type="text" id="editAttNoteV187" class="form-input" placeholder="اكتب ملاحظة أو اتركها ليولّدها النظام تلقائياً">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+                    <button type="button" onclick="closeEditAttendanceModalV187()" class="btn-action" style="background:#475569;">إلغاء</button>
+                    <button type="button" onclick="saveEditedAttendanceRecordV187()" class="btn-action" style="background:#059669; padding:8px 16px;">💾 حفظ التعديل</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ⏰ نافذة قواعد الالتزام المخصصة لكل موظف -->
+        <div id="empShiftRuleModalV188" class="modal" style="z-index:9650;">
+            <div class="modal-content" style="max-width:460px; border-top:3px solid #10b981;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid #334155; padding-bottom:8px;">
+                    <h3 style="color:#34d399; font-size:15px;">⏰ قواعد الالتزام ومواعيد الموظف</h3>
+                    <button type="button" onclick="closeEmpShiftRuleModalV188()" class="emp-modal-close-btn">✕</button>
+                </div>
+                <input type="hidden" id="empShiftKeyV188">
+                <div id="empShiftTargetInfoV188" style="background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:12px; color:#e2e8f0; font-weight:bold;">—</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label">موعد حضور الموظف</label>
+                        <input type="time" id="empRuleStartV188" class="form-input" value="10:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">موعد انصراف الموظف</label>
+                        <input type="time" id="empRuleEndV188" class="form-input" value="22:00">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label">فترة السماح (دقائق ±)</label>
+                        <input type="number" id="empRuleGraceV188" min="0" max="60" value="5" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">أيام العمل المطلوبة بالشهر</label>
+                        <input type="number" id="empRuleWorkDaysV188" min="1" max="31" value="26" class="form-input">
+                    </div>
+                </div>
+                <p style="font-size:10.5px; color:#94a3b8; margin-bottom:12px; line-height:1.6;">
+                    ✅ ستُستخدم هذه المواعيد لمحاسبة هذا الموظف تحديداً في حساب ساعات التأخير والخروج المبكر ونسبة الالتزام واقتراح شيت التقييم والبطاقة الشهرية.
+                </p>
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-top:8px;">
+                    <button type="button" onclick="resetEmpShiftRuleV188()" class="btn-danger" style="padding:7px 11px;">🔄 افتراضي</button>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" onclick="closeEmpShiftRuleModalV188()" class="btn-action" style="background:#475569;">إلغاء</button>
+                        <button type="button" onclick="saveEmpShiftRuleV188()" class="btn-action" style="background:#059669; padding:8px 16px;">💾 حفظ مواعيد الموظف</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- 3. كاميرات وغرفة العمليات الحية -->
         <div id="sec-camerarules" class="card hidden">
@@ -5768,6 +6006,7 @@
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="kpicore" checked> 💠 بوابة نبض KPI الذكية</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="eval" checked> 📊 شيت التقييم الأسبوعي</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="allemp" checked> 👥 قاعدة بيانات الموظفين</label>
+                        <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="attendance" checked> 👆 شيت البصمة والحضور والانصراف</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="camerarules" checked> 🎥 غرفة الكاميرات الحية</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="alerts" checked> 🚨 مركز الإنذار المبكر</label>
                         <label class="checkbox-label"><input type="checkbox" name="allowedTabs" value="coaching" checked> ⚡ التوجيه اللحظي الذكي</label>
@@ -8221,7 +8460,7 @@
     }
 
     const ALL_PERMISSION_KEYS = [
-        'missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
+        'missioncontrol', 'kpicore', 'eval', 'allemp', 'attendance', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause',
         'heatmap', 'burnout', 'simulator', 'morninghuddle', 'constellation', 'timemachine',
         'biaspulse', 'speedeval', 'career', 'executivereport', 'weeklyindividuals',
         'leaderboard', 'charts', 'plan', 'warroom', 'voice', 'backup', 'devicelog', 'remotecontrol', 'auditlog', 'users', 'gemini_advisor', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal'
@@ -8404,7 +8643,7 @@
             return;
         }
 
-        ['missioncontrol', 'kpicore', 'eval', 'allemp', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'remotecontrol', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
+        ['missioncontrol', 'kpicore', 'eval', 'allemp', 'attendance', 'camerarules', 'alerts', 'coaching', 'compare', 'rootcause', 'heatmap', 'askdata', 'roleplay', 'blastradius', 'workflows', 'mirror360', 'roijournal', 'burnout', 'simulator', 'constellation', 'timemachine', 'biaspulse', 'career', 'executivereport', 'devicelog', 'remotecontrol', 'auditlog', 'weeklyindividuals', 'leaderboard', 'charts', 'plan', 'users'].forEach(t => {
             let sec = document.getElementById(`sec-${t}`);
             let btn = document.getElementById(`tab-${t}`);
             if (sec) sec.classList.add('hidden');
@@ -8422,6 +8661,7 @@
         if (tab === 'roijournal') initRoiJournalView();
         if (tab === 'eval') { renderDeptFilterBar(); renderEvalTable(); }
         if (tab === 'allemp') renderAllEmployeesTable();
+        if (tab === 'attendance') renderAttendanceTableV183();
         if (tab === 'camerarules') { renderCameraRulesTable(); renderLiveHudBadges(); }
         if (tab === 'alerts') renderAlertsTable();
         if (tab === 'coaching') renderSmartCoachingTable();
@@ -8543,10 +8783,11 @@
                     html += `<td data-label="${mName}" style="text-align:center; color:#64748b; font-size:11px;" title="هذا البند غير مخصص لقسم ${deptDisplay}">—</td>`;
                 } else {
                     let sc = Number(scores[i]) || 3;
+                    let attHintHtml = ((typeof getEvalPunctualityHintHtmlV187 === 'function') ? getEvalPunctualityHintHtmlV187(emp, mName) : '') + ((typeof getEvalQualityHintHtmlV189 === 'function') ? getEvalQualityHintHtmlV189(emp, mName, activeWeek) : '');
                     if (currentUser.role === 'Employee') {
-                        html += `<td data-label="${mName}" style="text-align:center; font-weight:bold; color:#38bdf8;">${sc}/5</td>`;
+                        html += `<td data-label="${mName}" style="text-align:center; font-weight:bold; color:#38bdf8;">${attHintHtml}${sc}/5</td>`;
                     } else {
-                        html += `<td data-label="${mName}" style="text-align:center;"><select onchange="updateScore(${realIdx}, ${i}, this.value)">
+                        html += `<td data-label="${mName}" style="text-align:center;">${attHintHtml}<select onchange="updateScore(${realIdx}, ${i}, this.value)">
                             <option value="1" ${sc===1?'selected':''}>1</option>
                             <option value="2" ${sc===2?'selected':''}>2</option>
                             <option value="3" ${sc===3?'selected':''}>3</option>
@@ -16125,6 +16366,7 @@
         addemp: `<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>`,
         eval: `<path d="M3 3v18h18"/><path d="M7 14v3"/><path d="M11 10v7"/><path d="M15 6v11"/><path d="M19 9v8"/>`,
         allemp: `<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>`,
+        attendance: `<path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/><path d="M14 13.12c0 2.38 0 6.38-1 8.88"/><path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/><path d="M2 12a10 10 0 0 1 18-6"/><path d="M2 16h.01"/><path d="M21.8 16c.2-2 .131-5.354 0-6"/><path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/><path d="M8.65 22c.21-.66.45-1.32.57-2"/><path d="M9 6.8a6 6 0 0 1 9 5.2v2"/>`,
         camerarules: `<path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/>`,
         alerts: `<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>`,
         coaching: `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
@@ -16981,6 +17223,7 @@
         let canvas = document.getElementById('individualChart');
         if (!emp || !canvas) return;
         let ctx = canvas.getContext('2d');
+        try { let _ex = (typeof Chart !== 'undefined' && Chart.getChart) ? Chart.getChart(canvas) : null; if (_ex && _ex !== individualChartInstance) _ex.destroy(); } catch(e) {}
         if (individualChartInstance) {
             individualChartInstance.destroy();
             individualChartInstance = null;
@@ -17017,6 +17260,7 @@
                 },
                 options: {
                     responsive: true,
+                    animation: false,
                     maintainAspectRatio: false,
                     scales: {
                         r: {
@@ -17160,7 +17404,7 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                animation: { duration: 450 },
+                animation: false,
                 scales: {
                     y: { min: 35, max: 100, grid: { color: gridCol }, ticks: { color: tickCol, callback: v => v + '%', font: { size: 10 } } },
                     x: { grid: { display: false }, ticks: { color: tickCol, font: { size: 10 } } }
@@ -17190,7 +17434,7 @@
             lastTs = ts;
             let speed = (curVal <= 60 || delta <= -5) ? 1.35 : 0.85;
             modalPulsePhaseV15 += dt * speed;
-            individualChartInstance.draw();
+            try { if (individualChartInstance.chartArea && individualChartInstance.chartArea.width > 0) individualChartInstance.draw(); } catch(e) {}
             modalPulseAnimFrameV15 = requestAnimationFrame(animateModalPulse);
         }
         modalPulseAnimFrameV15 = requestAnimationFrame(animateModalPulse);
@@ -17339,7 +17583,7 @@
             }
 
             // 3. تشغيل المخطط النيوني الحي والنابض
-            renderUpgradedModalChartV15(branchId, empIdx);
+            requestAnimationFrame(() => setTimeout(() => renderUpgradedModalChartV15(branchId, empIdx), 60));
         };
     }
 
@@ -17401,7 +17645,10 @@
             ? `استمر في الحفاظ على معيار «${bestM.name}» ومشاركة خبرتك مع زملائك لرفع متوسط الفرع.`
             : `ركز خلال الأسبوع القادم على رفع «${weakM.name}» من ${weakM.score}/5 إلى ${Math.min(5, weakM.score + 1)}/5 عبر مراجعة يومية سريعة.`;
 
-        let W = 1400, H = 920;
+        let rowStep = appMetrics.length <= 7 ? Math.min(46, Math.floor(315 / Math.max(1, appMetrics.length))) : 44;
+        let midPanelH = Math.max(410, 102 + appMetrics.length * rowStep);
+        let extraH = midPanelH - 410;
+        let W = 1400, H = 920 + extraH;
         let c = document.createElement('canvas');
         c.width = W; c.height = H;
         let ctx = c.getContext('2d');
@@ -17416,7 +17663,7 @@
         glow1.addColorStop(0, accentGlow); glow1.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = glow1; ctx.fillRect(0, 0, W, H);
 
-        let glow2 = ctx.createRadialGradient(1180, 740, 10, 1180, 740, 280);
+        let glow2 = ctx.createRadialGradient(1180, 740 + extraH, 10, 1180, 740 + extraH, 280);
         glow2.addColorStop(0, 'rgba(124, 58, 237, 0.16)'); glow2.addColorStop(1, 'rgba(0,0,0,0)');
         ctx.fillStyle = glow2; ctx.fillRect(0, 0, W, H);
 
@@ -17502,28 +17749,27 @@
         // =============================================================
         // 2. MIDDLE 2-COLUMN BODY: KPI BREAKDOWN (RIGHT) + 4-WEEK TREND (LEFT)
         // =============================================================
-        // RIGHT PANEL: Detailed KPIs Breakdown
-        drawRoundedRectV176(ctx, 510, 240, 842, 410, 18);
+        // RIGHT PANEL: Detailed KPIs Breakdown (All applicable metrics dynamically)
+        drawRoundedRectV176(ctx, 510, 240, 842, midPanelH, 18);
         ctx.fillStyle = 'rgba(11, 18, 35, 0.88)'; ctx.fill();
         ctx.strokeStyle = 'rgba(56,189,248,0.24)'; ctx.lineWidth = 1.2; ctx.stroke();
 
         ctx.textAlign = 'right'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 16px Cairo, Tahoma, Arial';
-        ctx.fillText('📊 تفصيل تقييم مؤشرات الأداء الموزونة (KPIs Breakdown)', 1326, 276);
+        ctx.fillText(`📊 تفصيل تقييم مؤشرات الأداء الموزونة (${appMetrics.length} بند)`, 1326, 276);
         ctx.textAlign = 'left'; ctx.fillStyle = '#34d399'; ctx.font = 'bold 12px Cairo, Tahoma, Arial';
         ctx.fillText('🎯 خط المستهدف القياسي: 85%', 534, 276);
 
         let y = 320;
-        let rowStep = Math.min(46, Math.floor(315 / Math.max(1, Math.min(7, appMetrics.length))));
         let trackX = 605, trackW = 445;
         let targetX = trackX + trackW * (1 - 0.85);
         ctx.save();
         ctx.setLineDash([4, 4]);
         ctx.strokeStyle = 'rgba(52, 211, 153, 0.48)';
         ctx.lineWidth = 1.5;
-        ctx.beginPath(); ctx.moveTo(targetX, 294); ctx.lineTo(targetX, 632); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(targetX, 294); ctx.lineTo(targetX, 240 + midPanelH - 18); ctx.stroke();
         ctx.restore();
 
-        appMetrics.slice(0, 7).forEach(item => {
+        appMetrics.forEach(item => {
             let col = item.score >= 4 ? '#10b981' : (item.score <= 2 ? '#f43f5e' : '#38bdf8');
             ctx.textAlign = 'right'; ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 14.5px Cairo, Tahoma, Arial';
             ctx.fillText(item.name, 1326, y);
@@ -17553,7 +17799,7 @@
         });
 
         // LEFT PANEL: 4-Week Performance Trend Curve + Quick Telemetry
-        drawRoundedRectV176(ctx, 48, 240, 444, 410, 18);
+        drawRoundedRectV176(ctx, 48, 240, 444, midPanelH, 18);
         ctx.fillStyle = 'rgba(11, 18, 35, 0.88)'; ctx.fill();
         ctx.strokeStyle = 'rgba(168,85,247,0.32)'; ctx.lineWidth = 1.2; ctx.stroke();
 
@@ -17561,7 +17807,8 @@
         ctx.fillText('📈 مسار تطور الأداء (آخر 4 أسابيع)', 468, 276);
 
         // Mini Chart Area
-        let chX = 82, chY = 304, chW = 376, chH = 185;
+        let miniBoxY = 240 + midPanelH - 102;
+        let chX = 82, chY = 304, chW = 376, chH = Math.max(185, miniBoxY - chY - 58);
         drawRoundedRectV176(ctx, chX - 10, chY - 6, chW + 20, chH + 36, 12);
         ctx.fillStyle = 'rgba(5, 9, 20, 0.85)'; ctx.fill();
         ctx.strokeStyle = 'rgba(56,189,248,0.16)'; ctx.lineWidth = 1; ctx.stroke();
@@ -17617,64 +17864,65 @@
         ];
         miniBoxes.forEach((mb, i) => {
             let bx = 70 + i * 136;
-            drawRoundedRectV176(ctx, bx, 548, 126, 82, 12);
+            drawRoundedRectV176(ctx, bx, miniBoxY, 126, 82, 12);
             ctx.fillStyle = 'rgba(15, 23, 42, 0.9)'; ctx.fill();
             ctx.strokeStyle = 'rgba(56,189,248,0.22)'; ctx.lineWidth = 1; ctx.stroke();
             ctx.textAlign = 'center'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 11px Cairo, Tahoma, Arial';
-            ctx.fillText(mb.lbl, bx + 63, 574);
+            ctx.fillText(mb.lbl, bx + 63, miniBoxY + 26);
             ctx.fillStyle = mb.col; ctx.font = 'bold 24px Cairo, Tahoma, Arial';
-            ctx.fillText(mb.val, bx + 63, 612);
+            ctx.fillText(mb.val, bx + 63, miniBoxY + 64);
         });
 
         // =============================================================
         // 3. BOTTOM 3 EXECUTIVE INSIGHT CARDS
         // =============================================================
+        let cardsY = 668 + extraH;
         // Card 1 (Right): Strongest KPI
-        drawRoundedRectV176(ctx, 934, 668, 418, 152, 16);
+        drawRoundedRectV176(ctx, 934, cardsY, 418, 152, 16);
         ctx.fillStyle = 'rgba(6, 78, 59, 0.28)'; ctx.fill();
         ctx.strokeStyle = 'rgba(16, 185, 129, 0.5)'; ctx.lineWidth = 1.4; ctx.stroke();
         ctx.textAlign = 'right'; ctx.fillStyle = '#34d399'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
-        ctx.fillText('🌟 أبرز نقطة قوة هذا الأسبوع', 1328, 702);
+        ctx.fillText('🌟 أبرز نقطة قوة هذا الأسبوع', 1328, cardsY + 34);
         ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px Cairo, Tahoma, Arial';
-        ctx.fillText(`${bestM.name} (${bestM.score}/5)`, 1328, 738);
+        ctx.fillText(`${bestM.name} (${bestM.score}/5)`, 1328, cardsY + 70);
         ctx.fillStyle = '#a7f3d0'; ctx.font = '13px Cairo, Tahoma, Arial';
-        ctx.fillText('نقطة تميز واضحة تعكس التزامك وجودة أدائك.', 1328, 772);
-        ctx.fillText('حافظ عليها لتعزيز فرصك في لوحة الشرف.', 1328, 796);
+        ctx.fillText('نقطة تميز واضحة تعكس التزامك وجودة أدائك.', 1328, cardsY + 104);
+        ctx.fillText('حافظ عليها لتعزيز فرصك في لوحة الشرف.', 1328, cardsY + 128);
 
         // Card 2 (Middle): Development Priority
-        drawRoundedRectV176(ctx, 492, 668, 424, 152, 16);
+        drawRoundedRectV176(ctx, 492, cardsY, 424, 152, 16);
         ctx.fillStyle = 'rgba(127, 29, 29, 0.24)'; ctx.fill();
         ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)'; ctx.lineWidth = 1.4; ctx.stroke();
         ctx.textAlign = 'right'; ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
-        ctx.fillText('🎯 أولوية التطوير للأسبوع القادم', 892, 702);
+        ctx.fillText('🎯 أولوية التطوير للأسبوع القادم', 892, cardsY + 34);
         ctx.fillStyle = '#ffffff'; ctx.font = 'bold 18px Cairo, Tahoma, Arial';
-        ctx.fillText(`${weakM.name} (${weakM.score}/5)`, 892, 738);
+        ctx.fillText(`${weakM.name} (${weakM.score}/5)`, 892, cardsY + 70);
         ctx.fillStyle = '#fde68a'; ctx.font = '13px Cairo, Tahoma, Arial';
-        ctx.fillText(`الهدف القادم: رفع التقييم إلى ${Math.min(5, weakM.score + 1)}/5 الأسبوع الجاي.`, 892, 772);
-        ctx.fillText('رفع هذا البند سيصنع أسرع قفزة في نسبتك.', 892, 796);
+        ctx.fillText(`الهدف القادم: رفع التقييم إلى ${Math.min(5, weakM.score + 1)}/5 الأسبوع الجاي.`, 892, cardsY + 104);
+        ctx.fillText('رفع هذا البند سيصنع أسرع قفزة في نسبتك.', 892, cardsY + 128);
 
         // Card 3 (Left): Executive Coaching Recommendation
-        drawRoundedRectV176(ctx, 48, 668, 426, 152, 16);
+        drawRoundedRectV176(ctx, 48, cardsY, 426, 152, 16);
         ctx.fillStyle = 'rgba(30, 41, 59, 0.72)'; ctx.fill();
         ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)'; ctx.lineWidth = 1.4; ctx.stroke();
         ctx.textAlign = 'right'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
-        ctx.fillText('💡 التوصية التنفيذية والتوجيه السريع', 450, 702);
+        ctx.fillText('💡 التوصية التنفيذية والتوجيه السريع', 450, cardsY + 34);
         ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 13px Cairo, Tahoma, Arial';
         let tipWords = coachingTip.split(' ');
         let line1 = tipWords.slice(0, 7).join(' ');
         let line2 = tipWords.slice(7, 15).join(' ');
         let line3 = tipWords.slice(15).join(' ');
-        ctx.fillText(line1, 450, 738);
-        if (line2) ctx.fillText(line2, 450, 766);
-        if (line3) ctx.fillText(line3, 450, 794);
+        ctx.fillText(line1, 450, cardsY + 70);
+        if (line2) ctx.fillText(line2, 450, cardsY + 98);
+        if (line3) ctx.fillText(line3, 450, cardsY + 126);
 
         // Official Footer
         ctx.strokeStyle = 'rgba(148,163,184,0.18)'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(52, 844); ctx.lineTo(W - 52, 844); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(52, 844 + extraH); ctx.lineTo(W - 52, 844 + extraH); ctx.stroke();
         ctx.textAlign = 'right'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
-        ctx.fillText(`✅ بطاقة أداء معتمدة رقمياً من إدارة ${brandingData?.companyName || 'الرحلة الفريدة'}  •  تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG')}`, W - 52, 876);
+        ctx.fillText(`✅ بطاقة أداء معتمدة رقمياً من إدارة ${brandingData?.companyName || 'الرحلة الفريدة'}  •  تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG')}`, W - 52, 876 + extraH);
         ctx.textAlign = 'left'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 12px monospace';
-        ctx.fillText('VERIFIED EXECUTIVE PERFORMANCE CARD • V17.9', 52, 876);
+        ctx.fillText('VERIFIED EXECUTIVE PERFORMANCE CARD • V18.2', 52, 876 + extraH);
 
         let a = document.createElement('a');
         a.download = `report_${emp.name.replace(/\s+/g, '_')}.png`;
@@ -19868,6 +20116,1972 @@
         box.innerHTML += `<div class="chat-msg chat-msg-ai">${answer}</div>`;
         box.scrollTop = box.scrollHeight;
         window.speakTextArabicV176(answer);
+    };
+})();
+</script>
+<script>
+// =========================================================================
+// 👆 v18.8 PER-EMPLOYEE SHIFT RULES + HOURS DELAY + REPEATED DATES + EXECUTIVE CARD
+// =========================================================================
+(function() {
+    const ATT_STORAGE_KEY = 'unique_journey_fingerprint_attendance_v183';
+    const ATT_EMP_RULES_KEY = 'unique_journey_emp_shift_rules_v188';
+    const ATT_CODEMAP_KEY = 'unique_journey_attendance_codemap_v187';
+    const ATT_EMPMETA_KEY = 'unique_journey_attendance_empmeta_v190';
+    const DEFAULT_SHIFT_RULE = { start: '10:00', end: '22:00', grace: 5, workDays: 26 };
+
+    let attendanceRecordsV183 = [];
+    let attQuickFilterV183 = 'all';
+    let attViewModeV187 = 'daily';
+    let empShiftRulesMapV188 = {};
+    let attCodeNameMapV187 = {};
+    let attEmpMetaMapV190 = {};
+
+    try {
+        const savedAtt = localStorage.getItem(ATT_STORAGE_KEY);
+        if (savedAtt) attendanceRecordsV183 = JSON.parse(savedAtt);
+    } catch (e) { attendanceRecordsV183 = []; }
+    try {
+        const savedEmpRules = localStorage.getItem(ATT_EMP_RULES_KEY);
+        if (savedEmpRules) empShiftRulesMapV188 = JSON.parse(savedEmpRules);
+    } catch (e) { empShiftRulesMapV188 = {}; }
+    try {
+        const savedMap = localStorage.getItem(ATT_CODEMAP_KEY);
+        if (savedMap) attCodeNameMapV187 = JSON.parse(savedMap);
+    } catch (e) { attCodeNameMapV187 = {}; }
+    try {
+        const savedMeta = localStorage.getItem(ATT_EMPMETA_KEY);
+        if (savedMeta) attEmpMetaMapV190 = JSON.parse(savedMeta);
+    } catch (e) { attEmpMetaMapV190 = {}; }
+
+    function saveEmpMetaStoreV190() {
+        try { localStorage.setItem(ATT_EMPMETA_KEY, JSON.stringify(attEmpMetaMapV190)); } catch (e) {}
+    }
+
+    // 🏢 جلب بيانات الموظف الوظيفية (الفرع / الإدارة / القسم / الوظيفة) من التعديلات المحفوظة أو قاعدة البيانات
+    function resolveAttEmpMetaV190(codeVal, nameVal, recObj) {
+        const rawC = String(codeVal || '').trim();
+        const cleanC = cleanCodeKeyV187(codeVal);
+        const saved = (rawC && attEmpMetaMapV190[rawC]) || (cleanC && attEmpMetaMapV190[cleanC]) || null;
+
+        let dbBranch = '', dbAdminDept = '', dbDept = '', dbJobTitle = '';
+        const dbMatch = findMatchingEmpInDbV187(codeVal, nameVal);
+        if (dbMatch && dbMatch.emp) {
+            const emp = dbMatch.emp;
+            const bObj = (typeof branchesData !== 'undefined') ? branchesData.find(b => b.id === dbMatch.branchId) : null;
+            dbBranch = bObj ? bObj.name : (dbMatch.branchId || '');
+            dbAdminDept = emp.adminDept || '';
+            dbDept = (typeof getDeptDisplayName === 'function') ? getDeptDisplayName(emp.dept) : (emp.dept || '');
+            dbJobTitle = emp.jobTitle || '';
+        }
+
+        return {
+            branch: (recObj && recObj.branch) || (saved && saved.branch) || dbBranch || '—',
+            adminDept: (recObj && recObj.adminDept) || (saved && saved.adminDept) || dbAdminDept || '—',
+            dept: (recObj && recObj.dept) || (saved && saved.dept) || dbDept || '—',
+            jobTitle: (recObj && recObj.jobTitle) || (saved && saved.jobTitle) || dbJobTitle || '—'
+        };
+    }
+
+    // ⏱️ إزاحة التاريخ والوقت معاً بمقدار ±12 ساعة بدقة (مع ضبط تغيّر اليوم عند منتصف الليل)
+    function shiftDateTimeByHoursV190(dateStr, timeStr, offsetHours) {
+        const off = Number(offsetHours) || 0;
+        if (!off || !dateStr) return { date: dateStr, time: timeStr };
+        const dm = String(dateStr).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (!dm) return { date: dateStr, time: timeStr };
+        let hh = 0, mm = 0, ss = 0;
+        const hasTime = Boolean(timeStr && String(timeStr).includes(':'));
+        if (hasTime) {
+            const tp = String(timeStr).split(':').map(Number);
+            hh = tp[0] || 0; mm = tp[1] || 0; ss = tp[2] || 0;
+        }
+        const ms = Date.UTC(Number(dm[1]), Number(dm[2]) - 1, Number(dm[3]), hh, mm, ss) + off * 3600 * 1000;
+        const d = new Date(ms);
+        const newDate = `${d.getUTCFullYear()}-${pad2V183(d.getUTCMonth() + 1)}-${pad2V183(d.getUTCDate())}`;
+        const newTime = hasTime ? `${pad2V183(d.getUTCHours())}:${pad2V183(d.getUTCMinutes())}:${pad2V183(d.getUTCSeconds())}` : timeStr;
+        return { date: newDate, time: newTime };
+    }
+
+    function populateAttEditDatalistsV190() {
+        const bList = document.getElementById('attBranchDatalistV190');
+        if (bList && typeof branchesData !== 'undefined') {
+            bList.innerHTML = branchesData.map(b => `<option value="${b.name}">`).join('');
+        }
+        const aList = document.getElementById('attAdminDeptDatalistV190');
+        if (aList && typeof adminDepartmentsData !== 'undefined') {
+            aList.innerHTML = adminDepartmentsData.map(a => `<option value="${a.name}">`).join('');
+        }
+        const dList = document.getElementById('attDeptDatalistV190');
+        if (dList && typeof departmentsData !== 'undefined') {
+            dList.innerHTML = departmentsData.map(d => `<option value="${d.name}">`).join('');
+        }
+    }
+
+    // 🔄 تطبيق فرق التوقيت (±12 ساعة) على السجلات الحالية المعروضة عند الطلب
+    window.applyTimeOffsetToExistingAttendanceV190 = function() {
+        const off = parseInt(document.getElementById('attTimeOffsetSelectV190')?.value || '0', 10) || 0;
+        if (!off) {
+            showToast('اختر أولاً (الشيت مزوّد 12 ساعة) أو (الشيت منقّص 12 ساعة) من القائمة المجاورة.', 'warn');
+            return;
+        }
+        if (!attendanceRecordsV183 || attendanceRecordsV183.length === 0) {
+            showToast('لا توجد سجلات بصمة حالية لتعديل توقيتها. سيُطبّق الاختيار تلقائياً عند رفع الشيت.', 'info');
+            return;
+        }
+        const dirTxt = off < 0 ? 'إنقاص 12 ساعة' : 'زيادة 12 ساعة';
+        if (!confirm(`هل تريد تطبيق (${dirTxt}) على جميع السجلات الحالية (${attendanceRecordsV183.length} سجل)؟`)) return;
+
+        attendanceRecordsV183.forEach(r => {
+            if (r.firstPunch && r.firstPunch !== '—') {
+                const s1 = shiftDateTimeByHoursV190(r.date, r.firstPunch, off);
+                r.date = s1.date;
+                r.firstPunch = s1.time;
+            }
+            if (r.lastPunch && r.lastPunch !== '—') {
+                const s2 = shiftDateTimeByHoursV190(r.date, r.lastPunch, off);
+                r.lastPunch = s2.time;
+            }
+        });
+        sortAttendanceAscendingV187();
+        saveAttendanceStoreV183();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        showToast(`✅ تم تطبيق (${dirTxt}) على جميع السجلات الحالية بنجاح!`, 'success');
+    };
+
+    function saveAttendanceStoreV183() {
+        try { localStorage.setItem(ATT_STORAGE_KEY, JSON.stringify(attendanceRecordsV183)); } catch (e) {}
+    }
+
+    function saveEmpShiftRulesStoreV188() {
+        try { localStorage.setItem(ATT_EMP_RULES_KEY, JSON.stringify(empShiftRulesMapV188)); } catch (e) {}
+    }
+
+    function pad2V183(n) { return String(n).padStart(2, '0'); }
+
+    function cleanCodeKeyV187(codeVal) {
+        return String(codeVal || '').trim().toLowerCase().replace(/^emp[-_]?/i, '').replace(/^0+/, '');
+    }
+
+    function getEmpRuleKeyV188(codeVal, nameVal) {
+        const c = cleanCodeKeyV187(codeVal);
+        if (c && c !== '—' && c !== '-') return `code:${c}`;
+        const n = String(nameVal || '').trim().toLowerCase();
+        return n ? `name:${n}` : 'default';
+    }
+
+    function getEmpShiftRuleV188(codeVal, nameVal) {
+        const kCode = getEmpRuleKeyV188(codeVal, '');
+        if (kCode !== 'default' && empShiftRulesMapV188[kCode]) {
+            return Object.assign({}, DEFAULT_SHIFT_RULE, empShiftRulesMapV188[kCode]);
+        }
+        const kName = getEmpRuleKeyV188('', nameVal);
+        if (kName !== 'default' && empShiftRulesMapV188[kName]) {
+            return Object.assign({}, DEFAULT_SHIFT_RULE, empShiftRulesMapV188[kName]);
+        }
+        return Object.assign({}, DEFAULT_SHIFT_RULE);
+    }
+
+    function hasCustomShiftRuleV188(codeVal, nameVal) {
+        const kCode = getEmpRuleKeyV188(codeVal, '');
+        const kName = getEmpRuleKeyV188('', nameVal);
+        return Boolean((kCode !== 'default' && empShiftRulesMapV188[kCode]) || (kName !== 'default' && empShiftRulesMapV188[kName]));
+    }
+
+    // ⏱️ تحويل الدقائق إلى ساعات واضحة (ساعة ودقيقة)
+    function formatMinutesAsHoursV188(totalMins) {
+        const mins = Math.max(0, Math.round(Number(totalMins) || 0));
+        if (mins === 0) return '0 س';
+        const h = Math.floor(mins / 60);
+        const m = mins % 60;
+        if (h === 0) return `0 س ${m} د`;
+        if (m === 0) return `${h} ساعة`;
+        return `${h} س ${m} د`;
+    }
+
+    function formatMinutesAsDecimalHoursV188(totalMins) {
+        const mins = Math.max(0, Number(totalMins) || 0);
+        return `${(mins / 60).toFixed(2)} س`;
+    }
+
+    function excelSerialToDateStrV183(serial) {
+        const utcDays = Math.floor(serial - 25569);
+        const d = new Date(utcDays * 86400 * 1000);
+        if (isNaN(d.getTime())) return String(serial);
+        return `${d.getUTCFullYear()}-${pad2V183(d.getUTCMonth() + 1)}-${pad2V183(d.getUTCDate())}`;
+    }
+
+    function excelFractionToTimeStrV183(frac) {
+        const totalSecs = Math.round((frac % 1) * 86400);
+        const h = Math.floor(totalSecs / 3600) % 24;
+        const m = Math.floor((totalSecs % 3600) / 60);
+        const s = totalSecs % 60;
+        return `${pad2V183(h)}:${pad2V183(m)}:${pad2V183(s)}`;
+    }
+
+    function normalizeTimeTo24V183(val) {
+        if (val === null || val === undefined || val === '') return '';
+        if (typeof val === 'number') {
+            if (val > 0 && val < 1) return excelFractionToTimeStrV183(val);
+            if (val >= 1) {
+                const frac = val - Math.floor(val);
+                return frac > 0 ? excelFractionToTimeStrV183(frac) : '';
+            }
+        }
+        if (val instanceof Date && !isNaN(val.getTime())) {
+            return `${pad2V183(val.getHours())}:${pad2V183(val.getMinutes())}:${pad2V183(val.getSeconds())}`;
+        }
+        let s = String(val).trim();
+        if (!s || s === '-' || s === '—') return '';
+        const m = s.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM|am|pm|ص|م)?/);
+        if (!m) return s;
+        let hh = parseInt(m[1], 10);
+        const mm = parseInt(m[2], 10);
+        const ss = m[3] ? parseInt(m[3], 10) : 0;
+        const mer = (m[4] || '').toUpperCase();
+        if ((mer === 'PM' || mer === 'م') && hh < 12) hh += 12;
+        if ((mer === 'AM' || mer === 'ص') && hh === 12) hh = 0;
+        return `${pad2V183(hh)}:${pad2V183(mm)}:${pad2V183(ss)}`;
+    }
+
+    function normalizeDateStrV183(val) {
+        if (val === null || val === undefined || val === '') return '';
+        if (typeof val === 'number' && val > 20000) return excelSerialToDateStrV183(val);
+        if (val instanceof Date && !isNaN(val.getTime())) {
+            return `${val.getFullYear()}-${pad2V183(val.getMonth() + 1)}-${pad2V183(val.getDate())}`;
+        }
+        let s = String(val).trim();
+        const iso = s.match(/(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        if (iso) return `${iso[1]}-${pad2V183(iso[2])}-${pad2V183(iso[3])}`;
+        const dmy = s.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+        if (dmy) {
+            let a = parseInt(dmy[1], 10), b = parseInt(dmy[2], 10), y = dmy[3];
+            if (b > 12 && a <= 12) return `${y}-${pad2V183(a)}-${pad2V183(b)}`;
+            return `${y}-${pad2V183(b)}-${pad2V183(a)}`;
+        }
+        return s.split(' ')[0];
+    }
+
+    function timeToSecondsV183(t) {
+        if (!t || !String(t).includes(':')) return -1;
+        const p = String(t).split(':').map(Number);
+        return (p[0] || 0) * 3600 + (p[1] || 0) * 60 + (p[2] || 0);
+    }
+
+    function computeDurationSecsV187(t1, t2) {
+        const s1 = timeToSecondsV183(t1);
+        const s2 = timeToSecondsV183(t2);
+        if (s1 < 0 || s2 < 0 || s2 <= s1) return 0;
+        return s2 - s1;
+    }
+
+    function computeDurationStrV183(t1, t2) {
+        const diff = computeDurationSecsV187(t1, t2);
+        if (diff <= 0) return '—';
+        const h = Math.floor(diff / 3600);
+        const m = Math.floor((diff % 3600) / 60);
+        return `${h} س ${m} د`;
+    }
+
+    function evaluateDayPunctualityV187(rec, ruleObj) {
+        const rule = ruleObj || getEmpShiftRuleV188(rec.code, rec.name);
+        const startSec = timeToSecondsV183(rule.start || '10:00');
+        const endSec = timeToSecondsV183(rule.end || '22:00');
+        const graceSec = (Number(rule.grace) || 5) * 60;
+        const inSec = timeToSecondsV183(rec.firstPunch);
+        const outSec = timeToSecondsV183(rec.lastPunch);
+
+        let lateMins = 0;
+        let earlyMins = 0;
+        let inOk = true;
+        let outOk = true;
+
+        if (inSec >= 0 && startSec >= 0 && inSec > startSec + graceSec) {
+            lateMins = Math.ceil((inSec - startSec) / 60);
+            inOk = false;
+        }
+        if (outSec >= 0 && endSec >= 0 && outSec < endSec - graceSec) {
+            earlyMins = Math.ceil((endSec - outSec) / 60);
+            outOk = false;
+        }
+        const missingOut = (outSec < 0);
+        const compliant = inOk && outOk && !missingOut;
+        return { compliant, inOk, outOk, missingOut, lateMins, earlyMins, rule };
+    }
+
+    function buildAutoPunchNoteV183(count, extraNote) {
+        let base = count <= 1
+            ? `⚠️ بصمة واحدة فقط (1 بصمة) — لم يُسجّل انصراف`
+            : (count >= 5
+                ? `⚠️ بصمات متكررة — بصم ${count} مرات`
+                : `عدد البصمات: ${count} ${count === 2 ? 'بصمتان' : 'بصمات'}`);
+        if (extraNote && String(extraNote).trim() && !String(extraNote).includes('عدد البصمات') && !String(extraNote).includes('بصم')) {
+            return `${base} | ${String(extraNote).trim()}`;
+        }
+        return base;
+    }
+
+    function findColIdxV183(headers, patterns) {
+        for (let i = 0; i < headers.length; i++) {
+            const h = String(headers[i] || '').trim().toLowerCase();
+            if (!h) continue;
+            for (const p of patterns) {
+                if (h.includes(p)) return i;
+            }
+        }
+        return -1;
+    }
+
+    function lookupEmpNameByCodeV183(codeVal) {
+        const raw = String(codeVal || '').trim();
+        if (raw && attCodeNameMapV187[raw]) return attCodeNameMapV187[raw];
+        const clean = cleanCodeKeyV187(codeVal);
+        if (!clean) return '';
+        if (attCodeNameMapV187[clean]) return attCodeNameMapV187[clean];
+        if (typeof dbData === 'undefined') return '';
+        for (const bId of Object.keys(dbData)) {
+            const list = dbData[bId] || [];
+            for (const emp of list) {
+                if (!emp) continue;
+                const ec = cleanCodeKeyV187(emp.empCode || emp.code);
+                if (ec && ec === clean) return emp.name || '';
+            }
+        }
+        return '';
+    }
+
+    function findMatchingEmpInDbV187(codeVal, nameVal) {
+        if (typeof dbData === 'undefined') return null;
+        const cleanC = cleanCodeKeyV187(codeVal);
+        const normN = String(nameVal || '').trim().toLowerCase();
+        for (const bId of Object.keys(dbData)) {
+            const list = dbData[bId] || [];
+            for (let idx = 0; idx < list.length; idx++) {
+                const emp = list[idx];
+                if (!emp) continue;
+                const ec = cleanCodeKeyV187(emp.empCode || emp.code);
+                if (cleanC && ec && ec === cleanC) return { emp, branchId: bId, empIdx: idx };
+                const en = String(emp.name || '').trim().toLowerCase();
+                if (normN && !normN.startsWith('موظف كود') && (en === normN || en.includes(normN) || normN.includes(en))) {
+                    return { emp, branchId: bId, empIdx: idx };
+                }
+            }
+        }
+        return null;
+    }
+
+    function isLikelyDateTimeCellV183(val) {
+        if (val instanceof Date && !isNaN(val.getTime())) return true;
+        if (typeof val === 'number' && val > 20000 && val < 90000) return true;
+        const s = String(val || '').trim();
+        return /\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/.test(s) || /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}/.test(s);
+    }
+
+    function sortAttendanceAscendingV187() {
+        attendanceRecordsV183.sort((a, b) =>
+            (a.date || '').localeCompare(b.date || '') ||
+            String(a.code || '').localeCompare(String(b.code || ''), undefined, { numeric: true })
+        );
+    }
+
+    // ⏰ نافذة ضبط مواعيد كل موظف (بجانب زر تعديل)
+    window.openEmpShiftRuleModalV188 = function(codeVal, nameVal) {
+        const key = getEmpRuleKeyV188(codeVal, nameVal);
+        const cur = getEmpShiftRuleV188(codeVal, nameVal);
+        document.getElementById('empShiftKeyV188').value = key;
+        const infoEl = document.getElementById('empShiftTargetInfoV188');
+        if (infoEl) infoEl.textContent = `👤 ${nameVal || 'موظف'}  (كود: ${codeVal || '—'})`;
+        document.getElementById('empRuleStartV188').value = cur.start || '10:00';
+        document.getElementById('empRuleEndV188').value = cur.end || '22:00';
+        document.getElementById('empRuleGraceV188').value = cur.grace ?? 5;
+        document.getElementById('empRuleWorkDaysV188').value = cur.workDays || 26;
+        document.getElementById('empShiftRuleModalV188')?.classList.add('active');
+    };
+
+    window.closeEmpShiftRuleModalV188 = function() {
+        document.getElementById('empShiftRuleModalV188')?.classList.remove('active');
+    };
+
+    window.saveEmpShiftRuleV188 = function() {
+        const key = document.getElementById('empShiftKeyV188')?.value;
+        if (!key) return;
+        const rule = {
+            start: document.getElementById('empRuleStartV188')?.value || '10:00',
+            end: document.getElementById('empRuleEndV188')?.value || '22:00',
+            grace: Math.max(0, parseInt(document.getElementById('empRuleGraceV188')?.value || '5', 10) || 0),
+            workDays: Math.max(1, Math.min(31, parseInt(document.getElementById('empRuleWorkDaysV188')?.value || '26', 10) || 26))
+        };
+        empShiftRulesMapV188[key] = rule;
+        saveEmpShiftRulesStoreV188();
+        closeEmpShiftRuleModalV188();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        showToast(`✅ تم حفظ مواعيد الموظف (${rule.start} ← ${rule.end} • سماح ±${rule.grace} د) بنجاح!`, 'success');
+    };
+
+    window.resetEmpShiftRuleV188 = function() {
+        const key = document.getElementById('empShiftKeyV188')?.value;
+        if (key && empShiftRulesMapV188[key]) {
+            delete empShiftRulesMapV188[key];
+            saveEmpShiftRulesStoreV188();
+        }
+        closeEmpShiftRuleModalV188();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        showToast('🔄 تمت إعادة مواعيد الموظف إلى الإعداد الافتراضي.', 'info');
+    };
+
+    // ✅ اقتراح الالتزام فوق بند «الالتزام بالمواعيد» في شيت التقييم الأسبوعي (بحسب مواعيد كل موظف)
+    window.getEvalPunctualityHintHtmlV187 = function(emp, metricName) {
+        if (!emp || !metricName) return '';
+        const isPunctMetric = /(مواعيد|حضور|التزام)/i.test(metricName);
+        if (!isPunctMetric || !attendanceRecordsV183 || attendanceRecordsV183.length === 0) return '';
+
+        const empCleanCode = cleanCodeKeyV187(emp.empCode || emp.code);
+        const empNormName = String(emp.name || '').trim().toLowerCase();
+
+        const matched = attendanceRecordsV183.filter(r => {
+            const rc = cleanCodeKeyV187(r.code);
+            if (empCleanCode && rc && empCleanCode === rc) return true;
+            const rn = String(r.name || '').trim().toLowerCase();
+            return rn && !rn.startsWith('موظف كود') && (rn === empNormName || rn.includes(empNormName) || empNormName.includes(rn));
+        });
+        if (matched.length === 0) return '';
+
+        const empRule = getEmpShiftRuleV188(matched[0].code || emp.empCode, emp.name);
+        let compliantDays = 0, lateDays = 0, earlyDays = 0, totalLate = 0, totalEarly = 0;
+        matched.forEach(r => {
+            const ev = evaluateDayPunctualityV187(r, empRule);
+            if (ev.compliant) compliantDays++;
+            if (!ev.inOk) { lateDays++; totalLate += ev.lateMins; }
+            if (!ev.outOk) { earlyDays++; totalEarly += ev.earlyMins; }
+        });
+
+        const ratio = Math.round((compliantDays / matched.length) * 100);
+        let label = '', bg = '', col = '', border = '', suggested = 5;
+        if (ratio >= 85) {
+            label = `✅ ملتزم (${ratio}%)`;
+            suggested = 5;
+            bg = 'rgba(16,185,129,0.16)'; col = '#34d399'; border = 'rgba(16,185,129,0.45)';
+        } else if (ratio >= 65) {
+            label = `⚠️ متوسط (${ratio}%)`;
+            suggested = 3;
+            bg = 'rgba(245,158,11,0.16)'; col = '#fbbf24'; border = 'rgba(245,158,11,0.45)';
+        } else {
+            label = `🚨 غير ملتزم (${ratio}%)`;
+            suggested = 2;
+            bg = 'rgba(239,68,68,0.18)'; col = '#fb7185'; border = 'rgba(239,68,68,0.5)';
+        }
+
+        const tip = `مواعيد الموظف: ${empRule.start} - ${empRule.end} (سماح ±${empRule.grace} د) | ملتزم: ${compliantDays}/${matched.length} يوم | إجمالي التأخير: ${formatMinutesAsHoursV188(totalLate + totalEarly)} | المقترح: ${suggested}/5`;
+        return `<div title="${tip}" style="font-size:9.5px; font-weight:800; color:${col}; background:${bg}; border:1px solid ${border}; border-radius:6px; padding:2px 5px; margin-bottom:4px; white-space:nowrap; line-height:1.3;">${label} • مقترح ${suggested}/5</div>`;
+    };
+
+    window.handleAttendanceSheetUploadV183 = function(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let rows = [];
+                if (typeof XLSX !== 'undefined') {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array', cellDates: false });
+                    const firstSheet = wb.Sheets[wb.SheetNames[0]];
+                    rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                } else {
+                    const txt = new TextDecoder('utf-8').decode(e.target.result);
+                    rows = txt.split(/\r?\n/).map(line => line.split(/[,\t;]/));
+                }
+
+                rows = rows.filter(r => Array.isArray(r) && r.some(cell => String(cell).trim() !== ''));
+                if (rows.length < 1) {
+                    showToast('الملف فارغ أو لا يحتوي على صفوف بيانات!', 'error');
+                    return;
+                }
+
+                let headerRowIdx = -1;
+                for (let r = 0; r < Math.min(5, rows.length); r++) {
+                    const joined = rows[r].map(c => String(c).toLowerCase()).join(' ');
+                    if (/(كود|اسم|تاريخ|وقت|بصم|حضور|انصراف|code|emp|name|date|time|check|punch|ac-no)/i.test(joined)) {
+                        headerRowIdx = r;
+                        break;
+                    }
+                }
+
+                const timeOffsetHrs = parseInt(document.getElementById('attTimeOffsetSelectV190')?.value || '0', 10) || 0;
+                const grouped = new Map();
+                const isRawDeviceLog = (headerRowIdx === -1 && rows[0].length >= 2 && isLikelyDateTimeCellV183(rows[0][1]));
+
+                if (isRawDeviceLog) {
+                    rows.forEach((row) => {
+                        const rawCode = String(row[0] ?? '').trim();
+                        if (!rawCode) return;
+                        const dtCell = row[1];
+                        let dateVal = normalizeDateStrV183(dtCell);
+                        let timeVal = normalizeTimeTo24V183(dtCell);
+                        if (!dateVal) return;
+                        if (timeOffsetHrs !== 0 && timeVal) {
+                            const shifted = shiftDateTimeByHoursV190(dateVal, timeVal, timeOffsetHrs);
+                            dateVal = shifted.date;
+                            timeVal = shifted.time;
+                        }
+
+                        const stateRaw = row.length >= 4 ? String(row[3] ?? '').trim() : '';
+                        const isOut = (stateRaw === '1');
+                        const isIn = (stateRaw === '0');
+
+                        const matchedName = lookupEmpNameByCodeV183(rawCode);
+                        const empName = matchedName || `موظف كود ${rawCode}`;
+                        const key = `${rawCode}__${dateVal}`;
+
+                        if (!grouped.has(key)) {
+                            grouped.set(key, {
+                                code: rawCode,
+                                name: empName,
+                                date: dateVal,
+                                times: timeVal ? [timeVal] : [],
+                                inTimes: (timeVal && isIn) ? [timeVal] : [],
+                                outTimes: (timeVal && isOut) ? [timeVal] : [],
+                                explicitCount: null,
+                                extraNote: ''
+                            });
+                        } else {
+                            const rec = grouped.get(key);
+                            if (timeVal) {
+                                rec.times.push(timeVal);
+                                if (isIn) rec.inTimes.push(timeVal);
+                                if (isOut) rec.outTimes.push(timeVal);
+                            }
+                        }
+                    });
+                } else {
+                    if (headerRowIdx === -1) headerRowIdx = 0;
+                    const headers = rows[headerRowIdx].map(c => String(c || '').trim());
+                    const dataRows = rows.slice(headerRowIdx + 1);
+
+                    const idxCode = findColIdxV183(headers, ['كود', 'الرقم الوظيفي', 'رقم الموظف', 'ac-no', 'emp id', 'emp_id', 'code', 'id', 'رقم']);
+                    const idxName = findColIdxV183(headers, ['اسم', 'الموظف', 'name', 'employee']);
+                    const idxDate = findColIdxV183(headers, ['تاريخ', 'اليوم', 'date', 'day']);
+                    const idxFirst = findColIdxV183(headers, ['الاولى', 'الأولى', 'اول', 'أول', 'حضور', 'دخول', 'first', 'check-in', 'check in', 'clock in', 'in']);
+                    const idxLast = findColIdxV183(headers, ['الاخيرة', 'الأخيرة', 'اخير', 'أخير', 'انصراف', 'خروج', 'last', 'check-out', 'check out', 'clock out', 'out']);
+                    const idxSingleTime = findColIdxV183(headers, ['وقت البصمة', 'وقت', 'الساعة', 'time', 'datetime', 'punch', 'timestamp']);
+                    const idxCount = findColIdxV183(headers, ['عدد البصمات', 'البصمات', 'العدد', 'count', 'punches']);
+                    const idxNote = findColIdxV183(headers, ['ملاحظ', 'note', 'remark', 'comment']);
+
+                    const isPreAggregated = (idxFirst !== -1 && idxLast !== -1 && idxFirst !== idxLast);
+
+                    dataRows.forEach((row) => {
+                        const rawCode = idxCode !== -1 ? String(row[idxCode] || '').trim() : String(row[0] || '').trim();
+                        let rawName = idxName !== -1 ? String(row[idxName] || '').trim() : (isLikelyDateTimeCellV183(row[1]) ? '' : String(row[1] || '').trim());
+                        if (!rawName && rawCode) rawName = lookupEmpNameByCodeV183(rawCode) || `موظف كود ${rawCode}`;
+                        if (!rawCode && !rawName) return;
+
+                        let dateVal = '';
+                        if (idxDate !== -1) dateVal = normalizeDateStrV183(row[idxDate]);
+                        else if (idxSingleTime !== -1) dateVal = normalizeDateStrV183(row[idxSingleTime]);
+                        else if (isLikelyDateTimeCellV183(row[1])) dateVal = normalizeDateStrV183(row[1]);
+                        else if (row.length >= 3) dateVal = normalizeDateStrV183(row[2]);
+                        if (!dateVal) dateVal = new Date().toISOString().slice(0, 10);
+
+                        if (isPreAggregated) {
+                            let t1 = normalizeTimeTo24V183(row[idxFirst]);
+                            let t2 = normalizeTimeTo24V183(row[idxLast]);
+                            if (timeOffsetHrs !== 0) {
+                                if (t1) {
+                                    const s1 = shiftDateTimeByHoursV190(dateVal, t1, timeOffsetHrs);
+                                    dateVal = s1.date;
+                                    t1 = s1.time;
+                                }
+                                if (t2) {
+                                    const s2 = shiftDateTimeByHoursV190(dateVal, t2, timeOffsetHrs);
+                                    t2 = s2.time;
+                                }
+                            }
+                            const times = [];
+                            if (t1) times.push(t1);
+                            if (t2 && t2 !== t1) times.push(t2);
+                            const pCount = idxCount !== -1 && !isNaN(parseInt(row[idxCount], 10))
+                                ? parseInt(row[idxCount], 10)
+                                : (times.length || 1);
+                            const extraNote = idxNote !== -1 ? String(row[idxNote] || '').trim() : '';
+                            const key = `${rawCode || rawName}__${dateVal}`;
+
+                            if (!grouped.has(key)) {
+                                grouped.set(key, {
+                                    code: rawCode || '—',
+                                    name: rawName || 'موظف',
+                                    date: dateVal,
+                                    times: [...times],
+                                    inTimes: t1 ? [t1] : [],
+                                    outTimes: t2 ? [t2] : [],
+                                    explicitCount: pCount,
+                                    extraNote: extraNote
+                                });
+                            } else {
+                                const rec = grouped.get(key);
+                                times.forEach(t => rec.times.push(t));
+                                if (t1) rec.inTimes.push(t1);
+                                if (t2) rec.outTimes.push(t2);
+                                rec.explicitCount = Math.max(rec.explicitCount || 0, pCount);
+                            }
+                        } else {
+                            let rawTimeCell = '';
+                            if (idxSingleTime !== -1) rawTimeCell = row[idxSingleTime];
+                            else if (idxFirst !== -1) rawTimeCell = row[idxFirst];
+                            else if (idxDate !== -1 && (typeof row[idxDate] === 'number' || String(row[idxDate]).includes(':'))) rawTimeCell = row[idxDate];
+                            else if (isLikelyDateTimeCellV183(row[1])) rawTimeCell = row[1];
+                            else if (row.length >= 4) rawTimeCell = row[3];
+                            else if (row.length >= 3) rawTimeCell = row[2];
+
+                            let extractedTimes = [];
+                            if (typeof rawTimeCell === 'string' && (rawTimeCell.match(/\d{1,2}:\d{2}/g) || []).length > 1) {
+                                const matches = rawTimeCell.match(/\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM|am|pm|ص|م)?/g) || [];
+                                extractedTimes = matches.map(m => normalizeTimeTo24V183(m)).filter(Boolean);
+                            } else {
+                                const t = normalizeTimeTo24V183(rawTimeCell);
+                                if (t) extractedTimes.push(t);
+                            }
+                            if (timeOffsetHrs !== 0 && extractedTimes.length > 0) {
+                                const shiftedPairs = extractedTimes.map(t => shiftDateTimeByHoursV190(dateVal, t, timeOffsetHrs));
+                                dateVal = shiftedPairs[0].date;
+                                extractedTimes = shiftedPairs.map(p => p.time);
+                            }
+
+                            const extraNote = idxNote !== -1 ? String(row[idxNote] || '').trim() : '';
+                            const rowCount = idxCount !== -1 && !isNaN(parseInt(row[idxCount], 10)) ? parseInt(row[idxCount], 10) : null;
+                            const key = `${rawCode || rawName}__${dateVal}`;
+
+                            if (!grouped.has(key)) {
+                                grouped.set(key, {
+                                    code: rawCode || '—',
+                                    name: rawName || 'موظف',
+                                    date: dateVal,
+                                    times: [...extractedTimes],
+                                    inTimes: [],
+                                    outTimes: [],
+                                    explicitCount: rowCount,
+                                    extraNote: extraNote
+                                });
+                            } else {
+                                const rec = grouped.get(key);
+                                extractedTimes.forEach(t => rec.times.push(t));
+                                if (rowCount) rec.explicitCount = (rec.explicitCount || 0) + rowCount;
+                                if (extraNote && !rec.extraNote.includes(extraNote)) {
+                                    rec.extraNote = rec.extraNote ? `${rec.extraNote} | ${extraNote}` : extraNote;
+                                }
+                            }
+                        }
+                    });
+                }
+
+                const parsedList = [];
+                grouped.forEach(rec => {
+                    const validTimes = rec.times.filter(Boolean).sort((a, b) => timeToSecondsV183(a) - timeToSecondsV183(b));
+                    const inTimes = (rec.inTimes || []).filter(Boolean).sort((a, b) => timeToSecondsV183(a) - timeToSecondsV183(b));
+                    const outTimes = (rec.outTimes || []).filter(Boolean).sort((a, b) => timeToSecondsV183(a) - timeToSecondsV183(b));
+                    const punchCount = rec.explicitCount ? Math.max(rec.explicitCount, validTimes.length) : Math.max(1, validTimes.length);
+
+                    const firstPunch = inTimes.length > 0 ? inTimes[0] : (validTimes.length > 0 ? validTimes[0] : '—');
+                    let lastOutPunch = '—';
+                    if (outTimes.length > 0) {
+                        const firstInSec = timeToSecondsV183(firstPunch);
+                        const outsAfterIn = outTimes.filter(t => timeToSecondsV183(t) > firstInSec);
+                        lastOutPunch = outsAfterIn.length > 0 ? outsAfterIn[outsAfterIn.length - 1] : outTimes[outTimes.length - 1];
+                    } else if (validTimes.length > 1) {
+                        const firstSec = timeToSecondsV183(firstPunch);
+                        const laterDistinct = validTimes.filter(t => timeToSecondsV183(t) > firstSec);
+                        lastOutPunch = laterDistinct.length > 0 ? laterDistinct[laterDistinct.length - 1] : validTimes[validTimes.length - 1];
+                    }
+                    const meta = resolveAttEmpMetaV190(rec.code, rec.name, null);
+                    parsedList.push({
+                        id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                        code: rec.code,
+                        name: rec.name,
+                        branch: meta.branch,
+                        adminDept: meta.adminDept,
+                        dept: meta.dept,
+                        jobTitle: meta.jobTitle,
+                        date: rec.date,
+                        firstPunch: firstPunch,
+                        lastPunch: lastOutPunch,
+                        punchCount: punchCount,
+                        note: buildAutoPunchNoteV183(punchCount, rec.extraNote)
+                    });
+                });
+
+                if (parsedList.length === 0) {
+                    showToast('لم يتم التعرف على سجلات بصمة صالحة داخل الملف.', 'error');
+                    return;
+                }
+
+                const existingMap = new Map(attendanceRecordsV183.map(r => [`${r.code}__${r.date}`, r]));
+                parsedList.forEach(item => {
+                    existingMap.set(`${item.code}__${item.date}`, item);
+                });
+                attendanceRecordsV183 = Array.from(existingMap.values());
+                sortAttendanceAscendingV187();
+                saveAttendanceStoreV183();
+                if (typeof recordAuditLog === 'function') {
+                    recordAuditLog('رفع شيت البصمة', `تم استيراد ومعالجة ${parsedList.length} سجل حضور وانصراف من ملف (${file.name})`);
+                }
+                renderActiveAttendanceViewV187();
+                if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+                const offLabel = timeOffsetHrs === -12 ? ' (تم إنقاص 12 ساعة)' : (timeOffsetHrs === 12 ? ' (تمت زيادة 12 ساعة)' : '');
+                showToast(`✅ تم رفع شيت البصمة مرتباً من بداية الشهر (${parsedList.length} سجل)${offLabel}!`, 'success');
+            } catch (err) {
+                console.error('Attendance upload error:', err);
+                showToast('حدث خطأ أثناء قراءة شيت البصمة. تأكد من صيغة الملف (.xlsx / .xls / .csv).', 'error');
+            } finally {
+                event.target.value = '';
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    };
+
+    window.switchAttendanceViewModeV187 = function(mode) {
+        attViewModeV187 = mode;
+        document.getElementById('btnAttModeDailyV187')?.classList.toggle('active', mode === 'daily');
+        document.getElementById('btnAttModeMonthlyV187')?.classList.toggle('active', mode === 'monthly');
+        document.getElementById('attDailyTableWrapV187')?.classList.toggle('hidden', mode !== 'daily');
+        document.getElementById('attMonthlyTableWrapV187')?.classList.toggle('hidden', mode !== 'monthly');
+        document.getElementById('attQuickFilterBarV183')?.classList.toggle('hidden', mode !== 'daily');
+        document.getElementById('attDateFilterV183')?.classList.toggle('hidden', mode !== 'daily');
+        document.getElementById('attMonthFilterV187')?.classList.toggle('hidden', mode !== 'monthly');
+        renderActiveAttendanceViewV187();
+    };
+
+    window.renderActiveAttendanceViewV187 = function() {
+        if (attViewModeV187 === 'monthly') {
+            renderMonthlySummaryTableV187();
+        } else {
+            renderAttendanceTableV183();
+        }
+    };
+
+    window.setAttendanceQuickFilterV183 = function(mode, btn) {
+        attQuickFilterV183 = mode;
+        document.querySelectorAll('#attQuickFilterBarV183 .mc-filter-pill').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        renderAttendanceTableV183();
+    };
+
+    window.toggleManualAttFormV183 = function() {
+        const box = document.getElementById('manualAttEntryBoxV183');
+        if (box) box.classList.toggle('hidden');
+    };
+
+    window.addManualAttendanceRecordV183 = function() {
+        const code = (document.getElementById('attManCode')?.value || '').trim() || '—';
+        const name = (document.getElementById('attManName')?.value || '').trim();
+        const date = (document.getElementById('attManDate')?.value || '').trim() || new Date().toISOString().slice(0, 10);
+        const firstP = normalizeTimeTo24V183(document.getElementById('attManFirst')?.value || '');
+        const lastP = normalizeTimeTo24V183(document.getElementById('attManLast')?.value || '');
+        const pCount = Math.max(1, parseInt(document.getElementById('attManCount')?.value || '2', 10) || 1);
+        const extraNote = (document.getElementById('attManNote')?.value || '').trim();
+
+        if (!name) {
+            showToast('يرجى كتابة اسم الموظف أولاً!', 'warn');
+            return;
+        }
+        const meta = resolveAttEmpMetaV190(code, name, null);
+        attendanceRecordsV183.push({
+            id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+            code,
+            name,
+            branch: meta.branch,
+            adminDept: meta.adminDept,
+            dept: meta.dept,
+            jobTitle: meta.jobTitle,
+            date,
+            firstPunch: firstP || '—',
+            lastPunch: lastP || '—',
+            punchCount: pCount,
+            note: buildAutoPunchNoteV183(pCount, extraNote)
+        });
+        sortAttendanceAscendingV187();
+        saveAttendanceStoreV183();
+        ['attManCode', 'attManName', 'attManFirst', 'attManLast', 'attManNote'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        showToast('✅ تم إضافة سجل البصمة بنجاح!', 'success');
+    };
+
+    // ✏️ تعديل سجل بصمة
+    window.openEditAttendanceModalV187 = function(recId) {
+        const rec = attendanceRecordsV183.find(r => r.id === recId);
+        if (!rec) return;
+        populateAttEditDatalistsV190();
+        const meta = resolveAttEmpMetaV190(rec.code, rec.name, rec);
+        document.getElementById('editAttRecIdV187').value = rec.id;
+        document.getElementById('editAttCodeV187').value = rec.code || '';
+        document.getElementById('editAttNameV187').value = rec.name || '';
+        const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = (v && v !== '—') ? v : ''; };
+        setVal('editAttBranchV190', meta.branch);
+        setVal('editAttAdminDeptV190', meta.adminDept);
+        setVal('editAttDeptV190', meta.dept);
+        setVal('editAttJobTitleV190', meta.jobTitle);
+        document.getElementById('editAttDateV187').value = rec.date || '';
+        document.getElementById('editAttFirstV187').value = rec.firstPunch && rec.firstPunch !== '—' ? rec.firstPunch : '';
+        document.getElementById('editAttLastV187').value = rec.lastPunch && rec.lastPunch !== '—' ? rec.lastPunch : '';
+        document.getElementById('editAttCountV187').value = Number(rec.punchCount) || 1;
+        document.getElementById('editAttNoteV187').value = '';
+        document.getElementById('editAttendanceModalV187')?.classList.add('active');
+    };
+
+    window.openEditAttendanceByEmpCodeV190 = function(codeVal) {
+        const cleanC = cleanCodeKeyV187(codeVal);
+        const rec = attendanceRecordsV183.find(r => cleanCodeKeyV187(r.code) === cleanC || String(r.code) === String(codeVal));
+        if (rec) window.openEditAttendanceModalV187(rec.id);
+    };
+
+    window.closeEditAttendanceModalV187 = function() {
+        document.getElementById('editAttendanceModalV187')?.classList.remove('active');
+    };
+
+    window.saveEditedAttendanceRecordV187 = function() {
+        const recId = document.getElementById('editAttRecIdV187')?.value;
+        const rec = attendanceRecordsV183.find(r => r.id === recId);
+        if (!rec) return;
+
+        const newCode = (document.getElementById('editAttCodeV187')?.value || '').trim() || '—';
+        const newName = (document.getElementById('editAttNameV187')?.value || '').trim() || rec.name;
+        const newBranch = (document.getElementById('editAttBranchV190')?.value || '').trim() || '—';
+        const newAdminDept = (document.getElementById('editAttAdminDeptV190')?.value || '').trim() || '—';
+        const newDept = (document.getElementById('editAttDeptV190')?.value || '').trim() || '—';
+        const newJobTitle = (document.getElementById('editAttJobTitleV190')?.value || '').trim() || '—';
+        const newDate = (document.getElementById('editAttDateV187')?.value || '').trim() || rec.date;
+        const newFirst = normalizeTimeTo24V183(document.getElementById('editAttFirstV187')?.value || '');
+        const newLast = normalizeTimeTo24V183(document.getElementById('editAttLastV187')?.value || '');
+        const newCount = Math.max(1, parseInt(document.getElementById('editAttCountV187')?.value || '1', 10) || 1);
+        const extraNote = (document.getElementById('editAttNoteV187')?.value || '').trim();
+        const applyAll = document.getElementById('editAttApplyAllNameV187')?.checked;
+
+        rec.code = newCode;
+        rec.name = newName;
+        rec.branch = newBranch;
+        rec.adminDept = newAdminDept;
+        rec.dept = newDept;
+        rec.jobTitle = newJobTitle;
+        rec.date = newDate;
+        rec.firstPunch = newFirst || '—';
+        rec.lastPunch = newLast || '—';
+        rec.punchCount = newCount;
+        rec.note = buildAutoPunchNoteV183(newCount, extraNote);
+
+        if (applyAll && newCode && newCode !== '—') {
+            const cleanC = cleanCodeKeyV187(newCode);
+            if (newName && !newName.startsWith('موظف كود')) {
+                attCodeNameMapV187[newCode] = newName;
+                if (cleanC) attCodeNameMapV187[cleanC] = newName;
+                try { localStorage.setItem(ATT_CODEMAP_KEY, JSON.stringify(attCodeNameMapV187)); } catch (e) {}
+            }
+            const metaObj = { branch: newBranch, adminDept: newAdminDept, dept: newDept, jobTitle: newJobTitle };
+            attEmpMetaMapV190[newCode] = metaObj;
+            if (cleanC) attEmpMetaMapV190[cleanC] = metaObj;
+            saveEmpMetaStoreV190();
+
+            attendanceRecordsV183.forEach(item => {
+                if (cleanCodeKeyV187(item.code) === cleanC) {
+                    if (newName && !newName.startsWith('موظف كود')) item.name = newName;
+                    item.branch = newBranch;
+                    item.adminDept = newAdminDept;
+                    item.dept = newDept;
+                    item.jobTitle = newJobTitle;
+                }
+            });
+        }
+
+        sortAttendanceAscendingV187();
+        saveAttendanceStoreV183();
+        closeEditAttendanceModalV187();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        if (typeof recordAuditLog === 'function') {
+            recordAuditLog('تعديل سجل بصمة', `تم تعديل سجل البصمة للموظف «${newName}» (كود ${newCode}) بتاريخ ${newDate}`);
+        }
+        showToast('✅ تم حفظ تعديلات سجل البصمة بنجاح!', 'success');
+    };
+
+    window.deleteAttendanceRecordV183 = function(recId) {
+        attendanceRecordsV183 = attendanceRecordsV183.filter(r => r.id !== recId);
+        saveAttendanceStoreV183();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+    };
+
+    window.clearAttendanceDataV183 = function() {
+        if (attendanceRecordsV183.length === 0) return;
+        if (!confirm('هل أنت متأكد من مسح جميع سجلات البصمة الحالية؟')) return;
+        attendanceRecordsV183 = [];
+        saveAttendanceStoreV183();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        showToast('🗑️ تم مسح سجل البصمة بالكامل.', 'warn');
+    };
+
+    function getFilteredAttendanceV183() {
+        sortAttendanceAscendingV187();
+        const q = (document.getElementById('attSearchInputV183')?.value || '').trim().toLowerCase();
+        const dateFilter = document.getElementById('attDateFilterV183')?.value || 'all';
+        return attendanceRecordsV183.filter(r => {
+            if (dateFilter !== 'all' && r.date !== dateFilter) return false;
+            if (q) {
+                const m = resolveAttEmpMetaV190(r.code, r.name, r);
+                const hay = `${r.name || ''} ${r.code || ''} ${m.branch} ${m.adminDept} ${m.dept} ${m.jobTitle}`.toLowerCase();
+                if (!hay.includes(q)) return false;
+            }
+            if (attQuickFilterV183 === 'complete') return r.punchCount >= 2 && r.lastPunch && r.lastPunch !== '—';
+            if (attQuickFilterV183 === 'single') return r.punchCount <= 1 || !r.lastPunch || r.lastPunch === '—';
+            return true;
+        });
+    }
+
+    function updateAttendanceTopStatsV187() {
+        const uniqueEmps = new Set(attendanceRecordsV183.map(r => `${r.code}_${r.name}`)).size;
+        const totalPunches = attendanceRecordsV183.reduce((s, r) => s + (Number(r.punchCount) || 0), 0);
+        const singlePunchCount = attendanceRecordsV183.filter(r => (Number(r.punchCount) || 0) <= 1 || !r.lastPunch || r.lastPunch === '—').length;
+
+        const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+        setTxt('attStatTotalDays', attendanceRecordsV183.length);
+        setTxt('attStatUniqueEmps', uniqueEmps);
+        setTxt('attStatTotalPunches', totalPunches);
+        setTxt('attStatSinglePunch', singlePunchCount);
+    }
+
+    window.renderAttendanceTableV183 = function() {
+        const tbody = document.getElementById('attendanceTableBodyV183');
+        if (!tbody) return;
+        sortAttendanceAscendingV187();
+        updateAttendanceTopStatsV187();
+
+        const dateSel = document.getElementById('attDateFilterV183');
+        if (dateSel) {
+            const prevVal = dateSel.value || 'all';
+            const uniqueDates = Array.from(new Set(attendanceRecordsV183.map(r => r.date).filter(Boolean))).sort();
+            dateSel.innerHTML = `<option value="all">📅 كل التواريخ (${uniqueDates.length})</option>` +
+                uniqueDates.map(d => `<option value="${d}">${d}</option>`).join('');
+            if (uniqueDates.includes(prevVal)) dateSel.value = prevVal;
+        }
+
+        const filtered = getFilteredAttendanceV183();
+        if (filtered.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="12" style="text-align:center; color:#94a3b8; padding:28px;">
+                لا توجد سجلات بصمة معروضة حالياً. اضغط <b>«📁 رفع شيت البصمة (Excel / CSV)»</b> بالأعلى لرفع الشيت ومعالجته تلقائياً.
+            </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = filtered.map(r => {
+            const isSingle = (Number(r.punchCount) || 0) <= 1 || !r.lastPunch || r.lastPunch === '—';
+            const dur = computeDurationStrV183(r.firstPunch, r.lastPunch);
+            const empRule = getEmpShiftRuleV188(r.code, r.name);
+            const hasCustom = hasCustomShiftRuleV188(r.code, r.name);
+            const ev = evaluateDayPunctualityV187(r, empRule);
+            const countBadge = isSingle
+                ? `<span class="badge b-red">${r.note}</span>`
+                : ((Number(r.punchCount) || 0) >= 5 ? `<span class="badge b-yellow">${r.note}</span>` : `<span class="badge b-green">${r.note}</span>`);
+            const punctTag = (!ev.inOk ? ` <span class="badge b-red" style="font-size:9.5px;">تأخير ${formatMinutesAsHoursV188(ev.lateMins)}</span>` : '') +
+                             (!ev.outOk ? ` <span class="badge b-yellow" style="font-size:9.5px;">خروج مبكر ${formatMinutesAsHoursV188(ev.earlyMins)}</span>` : '');
+            const safeCode = String(r.code || '').replace(/'/g, '');
+            const safeName = String(r.name || '').replace(/'/g, '');
+            const shiftBtnStyle = hasCustom
+                ? 'background:rgba(16,185,129,0.22); color:#34d399; border:1px solid #10b981; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold; margin-left:4px;'
+                : 'background:rgba(245,158,11,0.16); color:#fbbf24; border:1px solid #f59e0b; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:bold; margin-left:4px;';
+            const meta = resolveAttEmpMetaV190(r.code, r.name, r);
+            const shiftTitle = `مواعيد الموظف: ${empRule.start} - ${empRule.end} (سماح ±${empRule.grace} د)`;
+            return `<tr class="${isSingle ? 'row-alert' : ''}">
+                <td style="text-align:center; font-family:monospace; color:#38bdf8; font-weight:bold;">${r.code}</td>
+                <td style="font-weight:bold; color:var(--text-main);">${r.name}</td>
+                <td style="color:#7dd3fc;">${meta.branch}</td>
+                <td style="color:#cbd5e1;">${meta.adminDept}</td>
+                <td style="color:#c4b5fd;">${meta.dept}</td>
+                <td style="color:#94a3b8;">${meta.jobTitle}</td>
+                <td style="text-align:center; font-family:monospace; color:#cbd5e1;">${r.date}</td>
+                <td style="text-align:center; font-family:monospace; color:${ev.inOk ? '#34d399' : '#fb7185'}; font-weight:bold;">${r.firstPunch || '—'}</td>
+                <td style="text-align:center; font-family:monospace; color:${isSingle || !ev.outOk ? '#fb7185' : '#38bdf8'}; font-weight:bold;">${r.lastPunch || '—'}</td>
+                <td style="text-align:center; color:#cbd5e1;">${dur}</td>
+                <td style="text-align:right; white-space:normal;">${countBadge}${punctTag}</td>
+                <td style="text-align:center; white-space:nowrap;">
+                    <button type="button" onclick="openEmpShiftRuleModalV188('${safeCode}', '${safeName}')" style="${shiftBtnStyle}" title="${shiftTitle}">⏰ مواعيده</button>
+                    <button type="button" onclick="openEditAttendanceModalV187('${r.id}')" class="btn-edit-tbl">✏️ تعديل</button>
+                    <button type="button" onclick="deleteAttendanceRecordV183('${r.id}')" class="btn-danger">حذف</button>
+                </td>
+            </tr>`;
+        }).join('');
+    };
+
+    // 📊 بناء الملخص الشهري الكامل لكل موظف (بساعات التأخير + تواريخ البصمات المتكررة + بنود التقييم كاملة)
+    function computeMonthlySummariesV187() {
+        const monthSel = document.getElementById('attMonthFilterV187');
+        const uniqueMonths = Array.from(new Set(attendanceRecordsV183.map(r => (r.date || '').slice(0, 7)).filter(m => /^\d{4}-\d{2}$/.test(m)))).sort();
+        if (monthSel) {
+            const prevM = monthSel.value || 'all';
+            monthSel.innerHTML = `<option value="all">🗓️ كل الشهور (${uniqueMonths.length})</option>` +
+                uniqueMonths.map(m => `<option value="${m}">${m}</option>`).join('');
+            if (uniqueMonths.includes(prevM)) monthSel.value = prevM;
+        }
+        const selectedMonth = monthSel ? monthSel.value : 'all';
+        const q = (document.getElementById('attSearchInputV183')?.value || '').trim().toLowerCase();
+        const activeWeek = (typeof getCurrentWeekKey === 'function') ? getCurrentWeekKey() : '';
+
+        const map = new Map();
+        attendanceRecordsV183.forEach(r => {
+            if (selectedMonth !== 'all' && !(r.date || '').startsWith(selectedMonth)) return;
+            const key = cleanCodeKeyV187(r.code) || r.name;
+            if (!map.has(key)) {
+                map.set(key, {
+                    key,
+                    code: r.code || '—',
+                    name: r.name || 'موظف',
+                    monthLabel: selectedMonth === 'all' ? (uniqueMonths[0] || 'الشهر الحالي') : selectedMonth,
+                    daysSet: new Set(),
+                    totalSecs: 0,
+                    totalLateMins: 0,
+                    totalEarlyMins: 0,
+                    lateDays: 0,
+                    earlyDays: 0,
+                    compliantDays: 0,
+                    repeatedDaysList: [],
+                    highRepeatDays: 0,
+                    singlePunchDays: 0,
+                    totalPunches: 0
+                });
+            }
+            const agg = map.get(key);
+            if (r.name && !String(r.name).startsWith('موظف كود')) agg.name = r.name;
+            const empRule = getEmpShiftRuleV188(r.code, agg.name);
+            agg.daysSet.add(r.date);
+            agg.totalSecs += computeDurationSecsV187(r.firstPunch, r.lastPunch);
+            const ev = evaluateDayPunctualityV187(r, empRule);
+            if (ev.compliant) agg.compliantDays++;
+            if (!ev.inOk) { agg.lateDays++; agg.totalLateMins += ev.lateMins; }
+            if (!ev.outOk) { agg.earlyDays++; agg.totalEarlyMins += ev.earlyMins; }
+            const pc = Number(r.punchCount) || 1;
+            agg.totalPunches += pc;
+            if (pc <= 1 || !r.lastPunch || r.lastPunch === '—') agg.singlePunchDays++;
+            if (pc > 2) {
+                agg.repeatedDaysList.push({ date: r.date, count: pc });
+            }
+            if (pc >= 5) agg.highRepeatDays++;
+        });
+
+        const results = [];
+        map.forEach(agg => {
+            if (q && !(String(agg.name).toLowerCase().includes(q) || String(agg.code).toLowerCase().includes(q))) return;
+            const empRule = getEmpShiftRuleV188(agg.code, agg.name);
+            const workDaysTarget = Number(empRule.workDays) || 26;
+            const presentDays = agg.daysSet.size;
+            const absentDays = Math.max(0, workDaysTarget - presentDays);
+            const totalHours = (agg.totalSecs / 3600).toFixed(1);
+            const totalDelayMins = agg.totalLateMins + agg.totalEarlyMins;
+            const totalDelayHoursStr = formatMinutesAsHoursV188(totalDelayMins);
+            const lateHoursStr = formatMinutesAsHoursV188(agg.totalLateMins);
+            const earlyHoursStr = formatMinutesAsHoursV188(agg.totalEarlyMins);
+            const compliancePct = presentDays > 0 ? Math.round((agg.compliantDays / presentDays) * 100) : 0;
+
+            agg.repeatedDaysList.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+            const multiPunchDays = agg.repeatedDaysList.length;
+
+            // ربط تقييم الموظف وبياناته الوظيفية (الفرع / الإدارة / القسم / الوظيفة)
+            const dbMatch = findMatchingEmpInDbV187(agg.code, agg.name);
+            const resolvedMeta = resolveAttEmpMetaV190(agg.code, agg.name, null);
+            let evalPct = null;
+            let branchName = resolvedMeta.branch;
+            let adminDeptName = resolvedMeta.adminDept;
+            let deptName = resolvedMeta.dept;
+            let jobTitle = resolvedMeta.jobTitle;
+            let metricsBreakdown = [];
+            let weaknesses = [];
+            let solutions = [];
+
+            if (dbMatch && dbMatch.emp) {
+                const emp = dbMatch.emp;
+                const bObj = (typeof branchesData !== 'undefined') ? branchesData.find(b => b.id === dbMatch.branchId) : null;
+                if (branchName === '—') branchName = bObj ? bObj.name : (dbMatch.branchId || '—');
+                if (adminDeptName === '—') adminDeptName = emp.adminDept || '—';
+                if (deptName === '—') deptName = (typeof getDeptDisplayName === 'function') ? getDeptDisplayName(emp.dept) : (emp.dept || '—');
+                if (jobTitle === '—') jobTitle = emp.jobTitle || 'موظف';
+                const sc = (emp.history && emp.history[activeWeek]) ? emp.history[activeWeek] : new Array((metricNames || []).length).fill(3);
+                if (typeof calculateWeightedEmployeePct === 'function') {
+                    evalPct = calculateWeightedEmployeePct(emp, sc, null);
+                }
+                (metricNames || []).forEach((m, idx) => {
+                    if (typeof isMetricApplicableForDept === 'function' && !isMetricApplicableForDept(m, emp.dept)) return;
+                    const v = Number(sc[idx]) || 3;
+                    const pct = Math.round((v / 5) * 100);
+                    const w = (typeof metricSettingsData !== 'undefined' && metricSettingsData[m] && Number(metricSettingsData[m].weight) > 0) ? Number(metricSettingsData[m].weight) : 15;
+                    metricsBreakdown.push({ name: m, score: v, pct, weight: w });
+                    if (v <= 2) {
+                        weaknesses.push(`قصور في «${m}» (${v}/5 • ${pct}%)`);
+                        if (typeof getSmartCoachingSuggestion === 'function') {
+                            const plainTip = String(getSmartCoachingSuggestion(m)).replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+                            solutions.push(plainTip.slice(0, 125));
+                        }
+                    }
+                });
+            }
+
+            // قصور وحلول الحضور والبصمة بالساعة
+            if (totalDelayMins > 0) {
+                weaknesses.push(`تأخير/انصراف مبكر بإجمالي ${totalDelayHoursStr} (دخول: ${lateHoursStr} • خروج مبكر: ${earlyHoursStr})`);
+                solutions.push(`الالتزام بمواعيدك الرسمية (${empRule.start} ← ${empRule.end}) ضمن سماح ±${empRule.grace} دقائق.`);
+            }
+            if (agg.singlePunchDays > 0) {
+                weaknesses.push(`نسيان بصمة الانصراف في ${agg.singlePunchDays} أيام`);
+                solutions.push(`تفعيل تذكير يومي بتسجيل بصمة الانصراف قبل مغادرة الفرع.`);
+            }
+            if (multiPunchDays > 0) {
+                weaknesses.push(`تكرار البصمات في ${multiPunchDays} أيام${agg.highRepeatDays > 0 ? ' (منها ' + agg.highRepeatDays + ' أيام ≥5 بصمات)' : ''}`);
+                solutions.push(`الاكتفاء ببصمة حضور واحدة وبصمة انصراف واحدة لتجنب تضارب السجلات.`);
+            }
+            if (absentDays >= 4) {
+                weaknesses.push(`ارتفاع أيام الغياب (${absentDays} أيام من أصل ${workDaysTarget})`);
+                solutions.push(`عقد جلسة متابعة فردية لمراجعة أسباب الغياب ووضع خطة التزام شهرية.`);
+            }
+
+            if (weaknesses.length === 0) weaknesses.push('لا توجد قصور مرصودة — التزام ممتاز');
+            if (solutions.length === 0) solutions.push('الاستمرار على نفس مستوى الانضباط والتميز وترشيحه للوحة الشرف.');
+
+            results.push({
+                code: agg.code,
+                name: agg.name,
+                monthLabel: agg.monthLabel,
+                empRule,
+                hasCustomRule: hasCustomShiftRuleV188(agg.code, agg.name),
+                branchName,
+                adminDeptName,
+                deptName,
+                jobTitle,
+                presentDays,
+                absentDays,
+                workDaysTarget,
+                totalHours,
+                totalLateMins: agg.totalLateMins,
+                totalEarlyMins: agg.totalEarlyMins,
+                totalDelayMins,
+                totalDelayHoursStr,
+                lateHoursStr,
+                earlyHoursStr,
+                multiPunchDays,
+                repeatedDaysList: agg.repeatedDaysList,
+                highRepeatDays: agg.highRepeatDays,
+                singlePunchDays: agg.singlePunchDays,
+                totalPunches: agg.totalPunches,
+                compliancePct,
+                evalPct,
+                metricsBreakdown,
+                weaknesses,
+                solutions
+            });
+        });
+
+        results.sort((a, b) => String(a.code).localeCompare(String(b.code), undefined, { numeric: true }));
+        return results;
+    }
+
+    let cachedMonthlySummariesV187 = [];
+
+    window.renderMonthlySummaryTableV187 = function() {
+        updateAttendanceTopStatsV187();
+        const tbody = document.getElementById('attendanceMonthlyBodyV187');
+        if (!tbody) return;
+        cachedMonthlySummariesV187 = computeMonthlySummariesV187();
+
+        if (cachedMonthlySummariesV187.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="15" style="text-align:center; color:#94a3b8; padding:28px;">
+                لا توجد بيانات للملخص الشهري بعد. ارفع شيت البصمة أولاً لإنشاء التقرير الشهري الكامل لكل موظف.
+            </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = cachedMonthlySummariesV187.map((s, idx) => {
+            const evalBadge = s.evalPct !== null
+                ? `<span class="badge ${s.evalPct >= 85 ? 'b-green' : (s.evalPct <= 60 ? 'b-red' : 'b-blue')}">${s.evalPct}%</span><div style="font-size:9.5px; color:#94a3b8; margin-top:3px;">${s.metricsBreakdown.length} بنود تقييم</div>`
+                : `<span class="badge b-yellow">غير مربوط</span>`;
+            const delayBadge = s.totalDelayMins === 0
+                ? `<span class="badge b-green">0 س (ملتزم)</span>`
+                : `<span class="badge b-red" title="تأخير دخول: ${s.lateHoursStr} | خروج مبكر: ${s.earlyHoursStr}">${s.totalDelayHoursStr}</span>`;
+            const repHtml = s.repeatedDaysList.length === 0
+                ? `<span class="badge b-green">لا يوجد</span>`
+                : s.repeatedDaysList.slice(0, 4).map(d => `<span class="badge ${d.count >= 5 ? 'b-red' : 'b-yellow'}" style="font-size:9.5px; margin:2px;">📅 ${d.date} (${d.count})</span>`).join('') +
+                  (s.repeatedDaysList.length > 4 ? ` <span class="badge b-blue" style="font-size:9.5px;">+${s.repeatedDaysList.length - 4} أيام</span>` : '');
+            const safeCode = String(s.code || '').replace(/'/g, '');
+            const safeName = String(s.name || '').replace(/'/g, '');
+            const shiftBtnStyle = s.hasCustomRule
+                ? 'background:rgba(16,185,129,0.22); color:#34d399; border:1px solid #10b981; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:10.5px; font-weight:bold; margin-bottom:4px; width:100%;'
+                : 'background:rgba(245,158,11,0.16); color:#fbbf24; border:1px solid #f59e0b; padding:5px 8px; border-radius:6px; cursor:pointer; font-size:10.5px; font-weight:bold; margin-bottom:4px; width:100%;';
+
+            return `<tr>
+                <td style="text-align:center; font-family:monospace; color:#38bdf8; font-weight:bold;">${s.code}</td>
+                <td style="font-weight:bold; color:var(--text-main);">
+                    ${s.name}
+                    <div style="font-size:10px; color:#94a3b8;">⏰ ${s.empRule.start} - ${s.empRule.end} (±${s.empRule.grace}د)</div>
+                </td>
+                <td style="color:#7dd3fc;">${s.branchName || '—'}</td>
+                <td style="color:#cbd5e1;">${s.adminDeptName || '—'}</td>
+                <td style="color:#c4b5fd;">${s.deptName || '—'}</td>
+                <td style="color:#94a3b8;">${s.jobTitle || '—'}</td>
+                <td style="text-align:center; color:#34d399; font-weight:bold;">${s.presentDays}</td>
+                <td style="text-align:center; color:${s.absentDays > 3 ? '#fb7185' : '#cbd5e1'}; font-weight:bold;">${s.absentDays}</td>
+                <td style="text-align:center; font-family:monospace; color:#38bdf8; font-weight:bold;">${s.totalHours} س</td>
+                <td style="text-align:center;">${delayBadge}</td>
+                <td style="white-space:normal; min-width:170px; line-height:1.8;">${repHtml}</td>
+                <td style="text-align:center;">${evalBadge}</td>
+                <td style="white-space:normal; min-width:165px; font-size:11px; color:#fca5a5; line-height:1.5;">${s.weaknesses.slice(0, 2).join(' • ')}</td>
+                <td style="white-space:normal; min-width:175px; font-size:11px; color:#6ee7b7; line-height:1.5;">${s.solutions.slice(0, 2).join(' • ')}</td>
+                <td style="text-align:center; min-width:118px;">
+                    <button type="button" onclick="openEmpShiftRuleModalV188('${safeCode}', '${safeName}')" style="${shiftBtnStyle}">⏰ مواعيده</button>
+                    <button type="button" onclick="openEditAttendanceByEmpCodeV190('${safeCode}')" class="btn-edit-tbl" style="width:100%; margin:0 0 4px 0;">✏️ تعديل بياناته</button>
+                    <button type="button" onclick="exportMonthlyEmployeeCardPngV187(${idx})" class="btn-action" style="background:linear-gradient(135deg,#0284c7,#7c3aed); padding:5px 8px; width:100%; white-space:nowrap;">📸 بطاقة PNG</button>
+                </td>
+            </tr>`;
+        }).join('');
+    };
+
+    // 📸 إصدار بطاقة شهرية متطورة ومتناسقة التصميم (PNG 1480×1280) تشمل كل بنود التقييم + ساعات التأخير + البصمات المتكررة بالتاريخ
+    window.exportMonthlyEmployeeCardPngV187 = function(idx) {
+        const s = cachedMonthlySummariesV187[idx];
+        if (!s) return;
+
+        const W = 1480, H = 1280;
+        const c = document.createElement('canvas');
+        c.width = W; c.height = H;
+        const ctx = c.getContext('2d');
+
+        const pctDisplay = s.evalPct !== null ? s.evalPct : s.compliancePct;
+        const accent = pctDisplay >= 85 ? '#10b981' : (pctDisplay <= 60 ? '#f43f5e' : '#38bdf8');
+        const compName = (typeof brandingData !== 'undefined' && brandingData?.companyName) ? brandingData.companyName : 'الرحلة الفريدة';
+
+        function rRect(x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+
+        function drawWrappedRtl(text, x, y, maxW, lineH, maxLines) {
+            const words = String(text || '').split(/\s+/);
+            let line = '', count = 0;
+            for (let i = 0; i < words.length; i++) {
+                const test = line ? `${line} ${words[i]}` : words[i];
+                if (ctx.measureText(test).width > maxW && line) {
+                    ctx.fillText(line, x, y + count * lineH);
+                    count++;
+                    line = words[i];
+                    if (count >= maxLines - 1) break;
+                } else {
+                    line = test;
+                }
+            }
+            if (line && count < maxLines) ctx.fillText(line, x, y + count * lineH);
+            return Math.min(maxLines, count + 1);
+        }
+
+        // 1. Deep Futuristic Background + Subtle Ambient Glow
+        const bg = ctx.createLinearGradient(0, 0, W, H);
+        bg.addColorStop(0, '#040814');
+        bg.addColorStop(0.45, '#0a1428');
+        bg.addColorStop(1, '#050a17');
+        ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+        const glowTop = ctx.createRadialGradient(W * 0.8, 120, 20, W * 0.8, 120, 480);
+        glowTop.addColorStop(0, 'rgba(56,189,248,0.14)');
+        glowTop.addColorStop(1, 'rgba(56,189,248,0)');
+        ctx.fillStyle = glowTop; ctx.fillRect(0, 0, W, 550);
+
+        const glowBot = ctx.createRadialGradient(W * 0.18, H - 150, 20, W * 0.18, H - 150, 460);
+        glowBot.addColorStop(0, 'rgba(124,58,237,0.13)');
+        glowBot.addColorStop(1, 'rgba(124,58,237,0)');
+        ctx.fillStyle = glowBot; ctx.fillRect(0, H - 600, W, 600);
+
+        // Subtle Grid
+        ctx.strokeStyle = 'rgba(56,189,248,0.035)'; ctx.lineWidth = 1;
+        for (let gx = 0; gx < W; gx += 44) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
+        for (let gy = 0; gy < H; gy += 44) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+        // Outer Frame
+        rRect(20, 20, W - 40, H - 40, 26);
+        ctx.strokeStyle = accent; ctx.lineWidth = 2.5; ctx.stroke();
+        ctx.direction = 'rtl';
+
+        // 2. Hero Header Panel (y: 44..216)
+        rRect(44, 44, W - 88, 172, 20);
+        const hdrBg = ctx.createLinearGradient(44, 44, W - 44, 216);
+        hdrBg.addColorStop(0, 'rgba(15, 25, 48, 0.96)');
+        hdrBg.addColorStop(1, 'rgba(9, 15, 30, 0.96)');
+        ctx.fillStyle = hdrBg; ctx.fill();
+        ctx.strokeStyle = 'rgba(56,189,248,0.34)'; ctx.lineWidth = 1.4; ctx.stroke();
+
+        // Avatar Badge (Right)
+        const initials = (s.name || 'م').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('');
+        const avG = ctx.createLinearGradient(1312, 82, 1408, 178);
+        avG.addColorStop(0, '#0284c7'); avG.addColorStop(1, '#7c3aed');
+        rRect(1312, 82, 96, 96, 24);
+        ctx.fillStyle = avG; ctx.fill();
+        ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = 'bold 36px Cairo, Tahoma, Arial';
+        ctx.fillText(initials || 'م', 1360, 142);
+
+        // Employee Title & Info
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 14.5px Cairo, Tahoma, Arial';
+        ctx.fillText(`🚀 ${compName}   •   بطاقة التقرير الشهري المتكامل للحضور وتقييم الأداء`, 1286, 84);
+        ctx.fillStyle = '#ffffff'; ctx.font = 'bold 34px Cairo, Tahoma, Arial';
+        ctx.fillText(s.name, 1286, 132);
+        ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+        ctx.fillText(`🆔 كود: ${s.code}  •  🗓️ ${s.monthLabel}  •  🏢 ${s.branchName}  •  🏛️ ${s.adminDeptName || '—'}  •  🧩 ${s.deptName}  •  💼 ${s.jobTitle}`, 1286, 168);
+        ctx.fillStyle = '#34d399'; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
+        ctx.fillText(`⏰ مواعيد دوام الموظف المعتمدة: من ${s.empRule.start} إلى ${s.empRule.end} (سماح ±${s.empRule.grace} دقائق • مطلوب ${s.workDaysTarget} يوم عمل)`, 1286, 198);
+
+        // Circular Score Gauge (Left)
+        const rx = 152, ry = 130, rr = 60;
+        ctx.beginPath(); ctx.arc(rx, ry, rr, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(148,163,184,0.18)'; ctx.lineWidth = 11; ctx.stroke();
+        ctx.beginPath(); ctx.arc(rx, ry, rr, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * Math.max(0, Math.min(100, pctDisplay)) / 100));
+        ctx.strokeStyle = accent; ctx.lineWidth = 11; ctx.lineCap = 'round';
+        ctx.shadowColor = accent; ctx.shadowBlur = 14; ctx.stroke();
+        ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+        ctx.textAlign = 'center'; ctx.fillStyle = '#ffffff'; ctx.font = 'bold 31px Cairo, Tahoma, Arial';
+        ctx.fillText(`${pctDisplay}%`, rx, ry + 8);
+        ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 11.5px Cairo, Tahoma, Arial';
+        ctx.fillText(s.evalPct !== null ? 'التقييم العام' : 'نسبة الالتزام', rx, ry + 32);
+
+        // 3. Six Balanced KPI Stat Cards (2 rows x 3 cols, y: 234..472)
+        const kpis = [
+            { title: 'أيام الحضور', val: `${s.presentDays} يوم`, sub: `من أصل ${s.workDaysTarget} يوم عمل`, col: '#34d399', border: 'rgba(16,185,129,0.35)' },
+            { title: 'أيام الغياب', val: `${s.absentDays} يوم`, sub: s.absentDays === 0 ? 'حضور كامل ممتاز' : 'أيام لم يُسجّل بها حضور', col: s.absentDays > 3 ? '#fb7185' : '#38bdf8', border: 'rgba(56,189,248,0.30)' },
+            { title: 'إجمالي ساعات العمل', val: `${s.totalHours} س`, sub: 'ساعات التواجد الفعلي', col: '#38bdf8', border: 'rgba(56,189,248,0.35)' },
+            { title: 'ساعات التأخير', val: s.totalDelayHoursStr, sub: `دخول: ${s.lateHoursStr}  •  خروج مبكر: ${s.earlyHoursStr}`, col: s.totalDelayMins > 0 ? '#fb7185' : '#34d399', border: s.totalDelayMins > 0 ? 'rgba(244,63,94,0.42)' : 'rgba(16,185,129,0.35)' },
+            { title: 'البصمات المتكررة', val: `${s.multiPunchDays} أيام`, sub: `إجمالي ${s.totalPunches} بصمة خلال الشهر`, col: s.multiPunchDays > 0 ? '#fbbf24' : '#34d399', border: s.multiPunchDays > 0 ? 'rgba(245,158,11,0.42)' : 'rgba(16,185,129,0.35)' },
+            { title: 'نسبة الالتزام بالمواعيد', val: `${s.compliancePct}%`, sub: s.compliancePct >= 85 ? '✅ ملتزم بالمواعيد' : (s.compliancePct >= 65 ? '⚠️ التزام متوسط' : '🚨 غير ملتزم'), col: s.compliancePct >= 85 ? '#34d399' : (s.compliancePct >= 65 ? '#fbbf24' : '#fb7185'), border: 'rgba(139,92,246,0.35)' }
+        ];
+        const tileW = 452, tileH = 110, gapX = 18, gapY = 16;
+        kpis.forEach((k, i) => {
+            const colIdx = i % 3;
+            const rowIdx = Math.floor(i / 3);
+            const bx = W - 44 - (colIdx + 1) * tileW - colIdx * gapX;
+            const by = 234 + rowIdx * (tileH + gapY);
+            rRect(bx, by, tileW, tileH, 16);
+            ctx.fillStyle = 'rgba(11, 18, 35, 0.92)'; ctx.fill();
+            ctx.strokeStyle = k.border; ctx.lineWidth = 1.3; ctx.stroke();
+
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
+            ctx.fillText(k.title, bx + tileW - 22, by + 30);
+            ctx.fillStyle = k.col; ctx.font = 'bold 31px Cairo, Tahoma, Arial';
+            ctx.fillText(k.val, bx + tileW - 22, by + 72);
+            ctx.fillStyle = '#cbd5e1'; ctx.font = '12.5px Cairo, Tahoma, Arial';
+            ctx.fillText(k.sub, bx + tileW - 22, by + 97);
+        });
+
+        // 4. Middle 2-Column Section (y: 488..880, height: 392)
+        // Right Panel: Full Evaluation Metrics Breakdown (x: 616, w: 820)
+        rRect(616, 488, 820, 392, 18);
+        ctx.fillStyle = 'rgba(11, 18, 36, 0.94)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.36)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 17px Cairo, Tahoma, Arial';
+        ctx.fillText('📊 بنود تقييم الموظف الكاملة ونسبها المئوية', 1412, 524);
+
+        if (s.metricsBreakdown && s.metricsBreakdown.length > 0) {
+            const list = s.metricsBreakdown.slice(0, 8);
+            const useTwoCols = list.length > 5;
+            const itemH = useTwoCols ? 74 : 62;
+            list.forEach((m, mi) => {
+                const colM = useTwoCols ? (mi % 2) : 0;
+                const rowM = useTwoCols ? Math.floor(mi / 2) : mi;
+                const cardW = useTwoCols ? 378 : 772;
+                const mx = useTwoCols ? (1412 - colM * 394 - cardW) : 640;
+                const my = 544 + rowM * (itemH + 8);
+                const mCol = m.pct >= 80 ? '#10b981' : (m.pct <= 40 ? '#f43f5e' : '#38bdf8');
+
+                rRect(mx, my, cardW, itemH, 11);
+                ctx.fillStyle = 'rgba(15, 23, 42, 0.85)'; ctx.fill();
+                ctx.strokeStyle = 'rgba(148,163,184,0.16)'; ctx.lineWidth = 1; ctx.stroke();
+
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#f8fafc'; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
+                ctx.fillText(`${m.name}  (وزن ${m.weight}%)`, mx + cardW - 14, my + 26);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = mCol; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+                ctx.fillText(`${m.pct}%  (${m.score}/5)`, mx + 14, my + 26);
+
+                // Progress bar
+                const barX = mx + 14, barY = my + 44, barW = cardW - 28, barH = 10;
+                rRect(barX, barY, barW, barH, 5);
+                ctx.fillStyle = 'rgba(148,163,184,0.16)'; ctx.fill();
+                const fillW = Math.max(8, (barW * m.pct) / 100);
+                rRect(barX + (barW - fillW), barY, fillW, barH, 5);
+                ctx.fillStyle = mCol; ctx.fill();
+            });
+        } else {
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 15px Cairo, Tahoma, Arial';
+            ctx.fillText('لم يتم ربط هذا الكود بموظف في شيت التقييم الأسبوعي بعد', 1026, 665);
+            ctx.fillStyle = '#64748b'; ctx.font = '13px Cairo, Tahoma, Arial';
+            ctx.fillText('اضغط «✏️ تعديل» بجانب الموظف لربط اسمه بكود البصمة فتظهر جميع بنود تقييمه تلقائياً', 1026, 698);
+        }
+
+        // Left Panel: Repeated Punches by Date & Count (x: 44, w: 554)
+        rRect(44, 488, 554, 392, 18);
+        ctx.fillStyle = 'rgba(15, 21, 38, 0.94)'; ctx.fill();
+        ctx.strokeStyle = s.repeatedDaysList.length > 0 ? 'rgba(245, 158, 11, 0.45)' : 'rgba(16, 185, 129, 0.4)';
+        ctx.lineWidth = 1.5; ctx.stroke();
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 17px Cairo, Tahoma, Arial';
+        ctx.fillText('👆 سجل البصمات المتكررة (بالتاريخ والعدد)', 574, 524);
+
+        if (s.repeatedDaysList && s.repeatedDaysList.length > 0) {
+            const maxShow = 10;
+            const repSlice = s.repeatedDaysList.slice(0, maxShow);
+            repSlice.forEach((d, di) => {
+                const colR = di % 2;
+                const rowR = Math.floor(di / 2);
+                const pillW = 248, pillH = 48;
+                const px = 574 - colR * (pillW + 12) - pillW;
+                const py = 546 + rowR * (pillH + 10);
+                const isHigh = d.count >= 5;
+
+                rRect(px, py, pillW, pillH, 10);
+                ctx.fillStyle = isHigh ? 'rgba(127, 29, 29, 0.35)' : 'rgba(120, 53, 15, 0.28)'; ctx.fill();
+                ctx.strokeStyle = isHigh ? 'rgba(244, 63, 94, 0.55)' : 'rgba(245, 158, 11, 0.48)'; ctx.lineWidth = 1.2; ctx.stroke();
+
+                ctx.textAlign = 'right';
+                ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 13.5px monospace';
+                ctx.fillText(`📅 ${d.date}`, px + pillW - 12, py + 30);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = isHigh ? '#fb7185' : '#fde047'; ctx.font = 'bold 13.5px Cairo, Tahoma, Arial';
+                ctx.fillText(`${d.count} بصمات`, px + 12, py + 30);
+            });
+            if (s.repeatedDaysList.length > maxShow) {
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 12.5px Cairo, Tahoma, Arial';
+                ctx.fillText(`+ ${s.repeatedDaysList.length - maxShow} أيام إضافية مسجلة في ملف Excel`, 321, 860);
+            }
+        } else {
+            rRect(94, 610, 454, 130, 16);
+            ctx.fillStyle = 'rgba(6, 78, 59, 0.25)'; ctx.fill();
+            ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)'; ctx.lineWidth = 1.3; ctx.stroke();
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#34d399'; ctx.font = 'bold 20px Cairo, Tahoma, Arial';
+            ctx.fillText('✅ انضباط ممتاز في البصمات', 321, 668);
+            ctx.fillStyle = '#a7f3d0'; ctx.font = '13.5px Cairo, Tahoma, Arial';
+            ctx.fillText('لا توجد أي أيام بها بصمات متكررة خلال هذه الفترة', 321, 704);
+        }
+
+        // 5. Bottom 2 Panels: Weaknesses (Right) & Solutions (Left) (y: 900..1185)
+        rRect(750, 900, 686, 286, 18);
+        ctx.fillStyle = 'rgba(127, 29, 29, 0.20)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(244, 63, 94, 0.48)'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#fb7185'; ctx.font = 'bold 17px Cairo, Tahoma, Arial';
+        ctx.fillText('🚨 القصور والملاحظات التي واجهها الموظف', 1412, 938);
+        ctx.fillStyle = '#fecaca'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        let wy = 978;
+        s.weaknesses.slice(0, 4).forEach((wTxt) => {
+            const used = drawWrappedRtl(`• ${wTxt}`, 1412, wy, 636, 23, 2);
+            wy += used * 23 + 12;
+        });
+
+        rRect(44, 900, 688, 286, 18);
+        ctx.fillStyle = 'rgba(6, 78, 59, 0.22)'; ctx.fill();
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.48)'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#34d399'; ctx.font = 'bold 17px Cairo, Tahoma, Arial';
+        ctx.fillText('💡 الحلول والتوصيات التطويرية المقترحة', 708, 938);
+        ctx.fillStyle = '#d1fae5'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        let sy = 978;
+        s.solutions.slice(0, 4).forEach((sTxt) => {
+            const used = drawWrappedRtl(`• ${sTxt}`, 708, sy, 638, 23, 2);
+            sy += used * 23 + 12;
+        });
+
+        // 6. Footer (y: 1212..1246)
+        ctx.strokeStyle = 'rgba(148,163,184,0.22)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(48, 1206); ctx.lineTo(W - 48, 1206); ctx.stroke();
+        ctx.textAlign = 'right'; ctx.fillStyle = '#94a3b8'; ctx.font = 'bold 14px Cairo, Tahoma, Arial';
+        ctx.fillText(`✅ بطاقة شهرية معتمدة من إدارة ${compName}   •   تاريخ الإصدار: ${new Date().toLocaleDateString('ar-EG')}`, W - 48, 1238);
+        ctx.textAlign = 'left'; ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 12.5px monospace';
+        ctx.fillText('EXECUTIVE MONTHLY ATTENDANCE & KPI CARD • V18.8', 48, 1238);
+
+        const a = document.createElement('a');
+        a.download = `ملخص_شهري_${String(s.name).replace(/\s+/g, '_')}_${s.monthLabel}.png`;
+        a.href = c.toDataURL('image/png');
+        a.click();
+        showToast(`📸 تم إصدار البطاقة الشهرية المتطورة للموظف «${s.name}» بنجاح!`, 'success');
+    };
+
+    // 📊 تصدير الشيت اليومي Excel
+    window.exportAttendanceToExcelV183 = function() {
+        const list = getFilteredAttendanceV183();
+        if (list.length === 0) {
+            showToast('لا توجد بيانات بصمة لتصديرها!', 'warn');
+            return;
+        }
+        if (typeof XLSX === 'undefined') {
+            showToast('مكتبة تصدير Excel غير متاحة حالياً!', 'error');
+            return;
+        }
+        const rows = list.map(r => {
+            const empRule = getEmpShiftRuleV188(r.code, r.name);
+            const ev = evaluateDayPunctualityV187(r, empRule);
+            const meta = resolveAttEmpMetaV190(r.code, r.name, r);
+            return {
+                'كود الموظف': r.code,
+                'اسم الموظف': r.name,
+                'الفرع': meta.branch,
+                'الإدارة': meta.adminDept,
+                'القسم': meta.dept,
+                'الوظيفة': meta.jobTitle,
+                'التاريخ': r.date,
+                'مواعيد الدوام المخصصة': `${empRule.start} - ${empRule.end} (±${empRule.grace}د)`,
+                'وقت البصمة الأولى (الحضور)': r.firstPunch || '—',
+                'وقت البصمة الأخيرة (انصراف)': r.lastPunch || '—',
+                'مدة التواجد': computeDurationStrV183(r.firstPunch, r.lastPunch),
+                'ساعات التأخير': formatMinutesAsHoursV188(ev.lateMins + ev.earlyMins),
+                'حالة الالتزام': ev.compliant ? 'ملتزم' : 'غير ملتزم',
+                'عدد البصمات': Number(r.punchCount) || 1,
+                'ملاحظة أخيرة (عدد البصمات)': r.note
+            };
+        });
+        const ws = XLSX.utils.json_to_sheet(rows);
+        ws['!cols'] = [
+            { wch: 14 }, { wch: 24 }, { wch: 18 }, { wch: 20 }, { wch: 16 }, { wch: 18 },
+            { wch: 14 }, { wch: 22 }, { wch: 22 }, { wch: 22 }, { wch: 14 },
+            { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 36 }
+        ];
+        const wb = XLSX.utils.book_new();
+        wb.Workbook = { Views: [{ RTL: true }] };
+        XLSX.utils.book_append_sheet(wb, ws, 'الحضور والانصراف');
+        const todayStr = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `شيت_الحضور_والانصراف_${todayStr}.xlsx`);
+        if (typeof recordAuditLog === 'function') {
+            recordAuditLog('تصدير الحضور والانصراف', `تم تصدير شيت الحضور والانصراف Excel (${list.length} سجل)`);
+        }
+        showToast(`📊 تم تصدير شيت الحضور والانصراف Excel بنجاح (${list.length} سجل)!`, 'success');
+    };
+
+    // 📑 تصدير الملخص الشهري الكامل Excel
+    window.exportMonthlySummaryExcelV187 = function() {
+        const list = computeMonthlySummariesV187();
+        if (list.length === 0) {
+            showToast('لا توجد بيانات للملخص الشهري لتصديرها!', 'warn');
+            return;
+        }
+        if (typeof XLSX === 'undefined') {
+            showToast('مكتبة تصدير Excel غير متاحة حالياً!', 'error');
+            return;
+        }
+        const rows = list.map(s => ({
+            'كود الموظف': s.code,
+            'اسم الموظف': s.name,
+            'الفرع': s.branchName || '—',
+            'الإدارة': s.adminDeptName || '—',
+            'القسم': s.deptName || '—',
+            'الوظيفة': s.jobTitle || '—',
+            'الفترة': s.monthLabel,
+            'مواعيد الدوام المخصصة': `${s.empRule.start} - ${s.empRule.end} (سماح ±${s.empRule.grace}د)`,
+            'أيام الحضور': s.presentDays,
+            'أيام الغياب': s.absentDays,
+            'إجمالي ساعات العمل': Number(s.totalHours),
+            'ساعات التأخير': s.totalDelayHoursStr,
+            'ساعات التأخير (عشري)': Number((s.totalDelayMins / 60).toFixed(2)),
+            'تفاصيل البصمات المتكررة (التاريخ والعدد)': s.repeatedDaysList.length
+                ? s.repeatedDaysList.map(d => `${d.date} (${d.count} بصمات)`).join(' | ')
+                : 'لا يوجد',
+            'نسبة الالتزام (%)': s.compliancePct,
+            'تقييم الأداء (%)': s.evalPct !== null ? s.evalPct : 'غير مربوط',
+            'بنود التقييم كاملة ونسبها': s.metricsBreakdown.length
+                ? s.metricsBreakdown.map(m => `${m.name}: ${m.pct}% (${m.score}/5)`).join(' | ')
+                : 'غير مربوط',
+            'القصور المرصودة': s.weaknesses.join(' | '),
+            'الحلول والتوجيه المقترح': s.solutions.join(' | ')
+        }));
+        const ws = XLSX.utils.json_to_sheet(rows);
+        ws['!cols'] = [
+            { wch: 12 }, { wch: 24 }, { wch: 18 }, { wch: 20 }, { wch: 16 }, { wch: 18 },
+            { wch: 12 }, { wch: 24 }, { wch: 12 }, { wch: 12 }, { wch: 16 }, { wch: 16 },
+            { wch: 16 }, { wch: 38 }, { wch: 14 }, { wch: 14 },
+            { wch: 48 }, { wch: 42 }, { wch: 46 }
+        ];
+        const wb = XLSX.utils.book_new();
+        wb.Workbook = { Views: [{ RTL: true }] };
+        XLSX.utils.book_append_sheet(wb, ws, 'الملخص الشهري للموظفين');
+        const todayStr = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `الملخص_الشهري_للموظفين_${todayStr}.xlsx`);
+        if (typeof recordAuditLog === 'function') {
+            recordAuditLog('تصدير الملخص الشهري', `تم تصدير الملخص الشهري الكامل Excel (${list.length} موظف)`);
+        }
+        showToast(`📑 تم تصدير الملخص الشهري الكامل Excel بنجاح (${list.length} موظف)!`, 'success');
+    };
+})();
+</script>
+<script>
+// =========================================================================
+// 🛡️ v18.9 QUALITY DEPARTMENT REPORT IMPORTER (PDF / EXCEL / TXT)
+//    Automatically converts 10..100 quality scores into 1..5 in «تقييم الجودة»
+// =========================================================================
+(function() {
+    function toLatinDigitsV189(str) {
+        return String(str || '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+    }
+
+    function normalizeArTextV189(str) {
+        return toLatinDigitsV189(str)
+            .toLowerCase()
+            .replace(/[\u064B-\u065F\u0670]/g, '')
+            .replace(/[أإآ]/g, 'ا')
+            .replace(/ة/g, 'ه')
+            .replace(/ى/g, 'ي')
+            .replace(/[^\u0600-\u06FFa-z0-9\s]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    function cleanCodeV189(c) {
+        return toLatinDigitsV189(c).trim().toLowerCase().replace(/^emp[-_]?/i, '').replace(/^0+/, '');
+    }
+
+    function convertQualityTo5V189(rawVal) {
+        let num = parseFloat(toLatinDigitsV189(String(rawVal || '')).replace(/[%٪,\s]/g, ''));
+        if (isNaN(num)) return null;
+        // Handle Excel decimal percentage format (e.g. 0.85 -> 85%)
+        if (num > 0 && num <= 1) {
+            num = Math.round(num * 100);
+        }
+        if (num >= 1 && num <= 5) {
+            const s5 = Math.max(1, Math.min(5, Math.round(num)));
+            return { rawPct: s5 * 20, score5: s5 };
+        }
+        if (num > 5 && num <= 100) {
+            // Scale 10..100 -> 1..5: 90-100=>5, 70-89=>4, 50-69=>3, 30-49=>2, 10-29=>1
+            const s5 = Math.max(1, Math.min(5, Math.round(num / 20)));
+            return { rawPct: Math.round(num * 10) / 10, score5: s5 };
+        }
+        return null;
+    }
+
+    function findQualityMetricIdxV189() {
+        if (typeof metricNames === 'undefined' || !Array.isArray(metricNames)) return -1;
+        let idx = metricNames.findIndex(m => /(جود|quality)/i.test(m));
+        return idx;
+    }
+
+    function getAllEmployeesPoolV189() {
+        const pool = [];
+        if (typeof dbData === 'undefined') return pool;
+        const orderedBranches = [];
+        if (typeof currentBranch !== 'undefined' && dbData[currentBranch]) orderedBranches.push(currentBranch);
+        Object.keys(dbData).forEach(b => { if (!orderedBranches.includes(b)) orderedBranches.push(b); });
+
+        orderedBranches.forEach(bId => {
+            (dbData[bId] || []).forEach((emp, empIdx) => {
+                if (!emp || !emp.name) return;
+                const normName = normalizeArTextV189(emp.name);
+                const tokens = normName.split(' ').filter(Boolean);
+                pool.push({
+                    branchId: bId,
+                    empIdx,
+                    emp,
+                    normName,
+                    tokens,
+                    cleanCode: cleanCodeV189(emp.empCode || emp.code || '')
+                });
+            });
+        });
+        return pool;
+    }
+
+    function matchEmployeeEntryV189(pool, rawName, rawCode) {
+        const cCode = cleanCodeV189(rawCode);
+        if (cCode) {
+            const byCode = pool.find(p => p.cleanCode && p.cleanCode === cCode);
+            if (byCode) return byCode;
+        }
+        const nName = normalizeArTextV189(rawName);
+        if (!nName || nName.length < 2) return null;
+
+        // 1. Exact normalized match
+        let hit = pool.find(p => p.normName === nName);
+        if (hit) return hit;
+
+        // 2. Full containment match
+        hit = pool.find(p => p.normName.includes(nName) || nName.includes(p.normName));
+        if (hit) return hit;
+
+        // 3. First + Second name match
+        const inTokens = nName.split(' ').filter(Boolean);
+        if (inTokens.length >= 2) {
+            const firstTwo = `${inTokens[0]} ${inTokens[1]}`;
+            hit = pool.find(p => p.tokens.length >= 2 && `${p.tokens[0]} ${p.tokens[1]}` === firstTwo);
+            if (hit) return hit;
+        }
+        return null;
+    }
+
+    function parseLinesToQualityEntriesV189(lines, pool) {
+        const entries = [];
+        const seen = new Set();
+
+        lines.forEach(rawLine => {
+            const line = toLatinDigitsV189(String(rawLine || '')).trim();
+            if (!line || line.length < 3) return;
+            const normLine = normalizeArTextV189(line);
+
+            // Try matching any known employee directly inside the line (handles PDF & free-text reports cleanly)
+            let matched = null;
+            for (const p of pool) {
+                if (p.normName.length >= 4 && normLine.includes(p.normName)) {
+                    matched = p;
+                    break;
+                }
+                if (p.tokens.length >= 2) {
+                    const two = `${p.tokens[0]} ${p.tokens[1]}`;
+                    if (two.length >= 5 && normLine.includes(two)) {
+                        matched = p;
+                        break;
+                    }
+                }
+            }
+            // Fallback by employee code if line has explicit code
+            if (!matched) {
+                const codeM = line.match(/(?:emp[-_]?|كود[:\s]*)(\d{1,6})/i);
+                if (codeM) {
+                    const cc = cleanCodeV189(codeM[1]);
+                    matched = pool.find(p => p.cleanCode && p.cleanCode === cc) || null;
+                }
+            }
+            if (!matched) return;
+
+            // Extract candidate numbers from the line (preferring % numbers or numbers in 10..100)
+            const pctMatches = [...line.matchAll(/(\d{1,3}(?:\.\d+)?)\s*[%٪]/g)].map(m => parseFloat(m[1]));
+            let chosenRaw = null;
+            if (pctMatches.length > 0) {
+                chosenRaw = pctMatches[pctMatches.length - 1];
+            } else {
+                // Remove date-like patterns and phone/national IDs before scanning numbers
+                const stripped = line
+                    .replace(/\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/g, ' ')
+                    .replace(/\d{1,2}[\/\-]\d{1,2}[\/\-]\d{4}/g, ' ')
+                    .replace(/\d{1,2}:\d{2}(?::\d{2})?/g, ' ')
+                    .replace(/\b\d{7,}\b/g, ' ');
+                const nums = [...stripped.matchAll(/\b(\d{1,3}(?:\.\d+)?)\b/g)]
+                    .map(m => parseFloat(m[1]))
+                    .filter(n => !isNaN(n) && n >= 1 && n <= 100);
+                // Prefer numbers in 10..100 (the quality scale)
+                const scale100 = nums.filter(n => n >= 10 && n <= 100 && String(Math.trunc(n)) !== matched.cleanCode);
+                if (scale100.length > 0) chosenRaw = scale100[scale100.length - 1];
+                else if (nums.length > 0) chosenRaw = nums[nums.length - 1];
+            }
+
+            if (chosenRaw === null) return;
+            const conv = convertQualityTo5V189(chosenRaw);
+            if (!conv) return;
+
+            const uniqKey = `${matched.branchId}__${matched.empIdx}`;
+            if (!seen.has(uniqKey)) {
+                seen.add(uniqKey);
+                entries.push({ matched, rawPct: conv.rawPct, score5: conv.score5 });
+            }
+        });
+        return entries;
+    }
+
+    function parseExcelRowsToQualityEntriesV189(rows, pool) {
+        const cleanRows = rows.filter(r => Array.isArray(r) && r.some(c => String(c || '').trim() !== ''));
+        if (cleanRows.length === 0) return [];
+
+        let headerIdx = -1;
+        for (let r = 0; r < Math.min(6, cleanRows.length); r++) {
+            const joined = cleanRows[r].map(c => normalizeArTextV189(c)).join(' ');
+            if (/(اسم|الموظف|كود|جود|تقييم|درج|نسب|name|emp|code|quality|score|grade|rate)/i.test(joined)) {
+                headerIdx = r;
+                break;
+            }
+        }
+
+        const entries = [];
+        const seen = new Set();
+
+        if (headerIdx !== -1) {
+            const headers = cleanRows[headerIdx].map(c => normalizeArTextV189(c));
+            const findCol = (pats) => headers.findIndex(h => pats.some(p => h.includes(p)));
+            const idxCode = findCol(['كود', 'رقم الموظف', 'code', 'id', 'emp id']);
+            const idxName = findCol(['اسم', 'الموظف', 'name', 'employee']);
+            const idxScore = findCol(['جود', 'تقييم الجود', 'النسبه', 'الدرجه', 'المجموع', 'quality', 'score', 'grade', 'rate', 'pct', '%']);
+
+            const dataRows = cleanRows.slice(headerIdx + 1);
+            dataRows.forEach(row => {
+                const rName = idxName !== -1 ? String(row[idxName] || '').trim() : '';
+                const rCode = idxCode !== -1 ? String(row[idxCode] || '').trim() : '';
+                const matched = matchEmployeeEntryV189(pool, rName, rCode);
+                if (!matched) return;
+
+                let rawVal = idxScore !== -1 ? row[idxScore] : null;
+                if (rawVal === null || rawVal === '' || isNaN(parseFloat(toLatinDigitsV189(String(rawVal)).replace(/[%٪,\s]/g, '')))) {
+                    // Fallback: scan numeric cells in the row for a 10..100 or 0..1 percentage value
+                    for (let ci = row.length - 1; ci >= 0; ci--) {
+                        if (ci === idxCode || ci === idxName) continue;
+                        const testConv = convertQualityTo5V189(row[ci]);
+                        if (testConv) { rawVal = row[ci]; break; }
+                    }
+                }
+                const conv = convertQualityTo5V189(rawVal);
+                if (!conv) return;
+                const uniqKey = `${matched.branchId}__${matched.empIdx}`;
+                if (!seen.has(uniqKey)) {
+                    seen.add(uniqKey);
+                    entries.push({ matched, rawPct: conv.rawPct, score5: conv.score5 });
+                }
+            });
+        }
+
+        // Fallback to line-based matching if structured columns yielded 0 matches
+        if (entries.length === 0) {
+            const lines = cleanRows.map(r => r.map(c => String(c ?? '')).join('  '));
+            return parseLinesToQualityEntriesV189(lines, pool);
+        }
+        return entries;
+    }
+
+    async function extractPdfLinesV189(arrayBuffer) {
+        if (typeof pdfjsLib === 'undefined') {
+            throw new Error('مكتبة قراءة PDF غير محمّلة (تأكد من الاتصال بالإنترنت أو ارفع الملف كـ Excel / TXT).');
+        }
+        if (pdfjsLib.GlobalWorkerOptions && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const allLines = [];
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+            const content = await page.getTextContent();
+            const rowMap = new Map();
+            (content.items || []).forEach(item => {
+                const str = String(item.str || '').trim();
+                if (!str) return;
+                const y = Math.round((item.transform && item.transform[5]) ? item.transform[5] / 4 : 0) * 4;
+                const x = (item.transform && item.transform[4]) ? item.transform[4] : 0;
+                if (!rowMap.has(y)) rowMap.set(y, []);
+                rowMap.get(y).push({ x, str });
+            });
+            const sortedYs = Array.from(rowMap.keys()).sort((a, b) => b - a);
+            sortedYs.forEach(y => {
+                const items = rowMap.get(y).sort((a, b) => b.x - a.x); // RTL order
+                allLines.push(items.map(i => i.str).join(' '));
+            });
+        }
+        return allLines;
+    }
+
+    // 🏷️ شارة درجة تقرير الجودة الأصلية (%) فوق بند «تقييم الجودة» في شيت التقييم
+    window.getEvalQualityHintHtmlV189 = function(emp, metricName, activeWeek) {
+        if (!emp || !metricName || !/(جود|quality)/i.test(metricName)) return '';
+        const wk = activeWeek || (typeof getCurrentWeekKey === 'function' ? getCurrentWeekKey() : '');
+        const meta = emp.qualityReportMeta && emp.qualityReportMeta[wk];
+        if (!meta || meta.rawPct === undefined || meta.rawPct === null) return '';
+        const col = meta.rawPct >= 80 ? '#34d399' : (meta.rawPct < 50 ? '#fb7185' : '#38bdf8');
+        const bg = meta.rawPct >= 80 ? 'rgba(16,185,129,0.16)' : (meta.rawPct < 50 ? 'rgba(239,68,68,0.18)' : 'rgba(56,189,248,0.16)');
+        const border = meta.rawPct >= 80 ? 'rgba(16,185,129,0.45)' : (meta.rawPct < 50 ? 'rgba(239,68,68,0.5)' : 'rgba(56,189,248,0.45)');
+        const tip = `تم الاستيراد من تقرير الجودة (${meta.fileName || 'تقرير'}) | الدرجة الأصلية: ${meta.rawPct}% ← تم التحويل تلقائياً إلى ${meta.score5}/5`;
+        return `<div title="${tip}" style="font-size:9.5px; font-weight:800; color:${col}; background:${bg}; border:1px solid ${border}; border-radius:6px; padding:2px 5px; margin-bottom:4px; white-space:nowrap; line-height:1.3;">🛡️ جودة ${meta.rawPct}% ← ${meta.score5}/5</div>`;
+    };
+
+    window.handleQualityReportUploadV189 = async function(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        const qualityIdx = findQualityMetricIdxV189();
+        if (qualityIdx === -1) {
+            showToast('لم يتم العثور على بند «تقييم الجودة» في بنود التقييم! أضفه أولاً.', 'error');
+            event.target.value = '';
+            return;
+        }
+
+        const pool = getAllEmployeesPoolV189();
+        if (pool.length === 0) {
+            showToast('لا يوجد موظفون في قاعدة البيانات لمطابقة تقرير الجودة معهم!', 'warn');
+            event.target.value = '';
+            return;
+        }
+
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        showToast('⏳ جاري قراءة تقرير قسم الجودة ومطابقة الموظفين...', 'info');
+
+        try {
+            let entries = [];
+            if (ext === 'pdf') {
+                const buf = await file.arrayBuffer();
+                const lines = await extractPdfLinesV189(buf);
+                entries = parseLinesToQualityEntriesV189(lines, pool);
+            } else if (ext === 'xlsx' || ext === 'xls' || ext === 'csv') {
+                const buf = await file.arrayBuffer();
+                if (typeof XLSX !== 'undefined') {
+                    const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
+                    let allRows = [];
+                    wb.SheetNames.forEach(sn => {
+                        const r = XLSX.utils.sheet_to_json(wb.Sheets[sn], { header: 1, defval: '' });
+                        allRows = allRows.concat(r);
+                    });
+                    entries = parseExcelRowsToQualityEntriesV189(allRows, pool);
+                } else {
+                    const txt = new TextDecoder('utf-8').decode(buf);
+                    entries = parseLinesToQualityEntriesV189(txt.split(/\r?\n/), pool);
+                }
+            } else {
+                const txt = await file.text();
+                entries = parseLinesToQualityEntriesV189(txt.split(/\r?\n/), pool);
+            }
+
+            if (entries.length === 0) {
+                showToast('⚠️ لم يتم العثور على أسماء موظفين مطابقة ودرجات جودة (10-100) داخل التقرير. تأكد أن الأسماء أو الأكواد تطابق قاعدة البيانات.', 'warn');
+                return;
+            }
+
+            const activeWeek = (typeof getCurrentWeekKey === 'function') ? getCurrentWeekKey() : '';
+            const summaryLines = [];
+            entries.forEach(item => {
+                const emp = item.matched.emp;
+                if (!emp.history) emp.history = {};
+                if (!Array.isArray(emp.history[activeWeek])) {
+                    emp.history[activeWeek] = new Array(metricNames.length).fill(3);
+                }
+                while (emp.history[activeWeek].length < metricNames.length) {
+                    emp.history[activeWeek].push(3);
+                }
+                emp.history[activeWeek][qualityIdx] = item.score5;
+                if (!emp.qualityReportMeta) emp.qualityReportMeta = {};
+                emp.qualityReportMeta[activeWeek] = {
+                    rawPct: item.rawPct,
+                    score5: item.score5,
+                    fileName: file.name,
+                    updatedAt: new Date().toLocaleString('ar-EG')
+                };
+                summaryLines.push(`${emp.name}: ${item.rawPct}% ← ${item.score5}/5`);
+            });
+
+            localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
+            if (typeof recordAuditLog === 'function') {
+                recordAuditLog('رفع تقرير قسم الجودة', `تم استيراد تقرير الجودة (${file.name}) وتحديث ${entries.length} موظف تلقائياً: ${summaryLines.slice(0, 6).join(' | ')}`);
+            }
+            if (typeof renderEvalTable === 'function') renderEvalTable();
+            if (typeof updateSmartNotifications === 'function') updateSmartNotifications();
+
+            showToast(`✅ تم تحديث بند «تقييم الجودة» لـ ${entries.length} موظف تلقائياً (تحويل 10-100 إلى 1-5)!`, 'success');
+        } catch (err) {
+            console.error('Quality report import error:', err);
+            showToast(`حدث خطأ أثناء قراءة تقرير الجودة: ${err.message || 'تأكد من صيغة الملف'}`, 'error');
+        } finally {
+            event.target.value = '';
+        }
     };
 })();
 </script>
