@@ -8979,7 +8979,8 @@
             if (realIdx === -1) realIdx = idx;
 
             let trendHtml = getEmployeeTrendHtml(emp, pct, activeWeek, userAllowedMetrics);
-            let html = `<td data-label="الكود" style="text-align:center; color:#94a3b8;">${idx + 1}</td>
+            let displayEmpCode = String(emp.empCode || emp.code || '').trim();
+            let html = `<td data-label="الكود" style="text-align:center; color:#94a3b8; font-family:monospace; font-weight:bold;">${displayEmpCode || (idx + 1)}</td>
                         <td data-label="الموظف"><span class="clickable-emp" onclick="openEmployeeAnalysis('${currentBranch}', ${realIdx})">${emp.name}</span>${alertBadge}<div style="margin-top:3px;">${getEmployeeDnaPill(emp, scores)}${getEmployeeStreakPill(emp)}</div></td>
                         <td data-label="الإدارة" style="color:#22d3ee;">${adminDeptDisplay}</td>
                         <td data-label="القسم" style="color:#38bdf8;">${deptDisplay}</td>`;
@@ -9171,50 +9172,65 @@
         let activeWeek = getCurrentWeekKey();
 
         function importRowsArray(rows) {
-            let addedCount = 0;
-            if (!rows || rows.length === 0) return 0;
-            let header = rows[0].map(c => String(c || '').trim().toLowerCase());
-            let nameIdx = header.findIndex(h => h.includes('اسم') || h.includes('موظف') || h === 'name');
+            let addedCount = 0, updatedCount = 0, skippedCodeOnly = 0;
+            if (!rows || rows.length === 0) return { added: 0, updated: 0, skipped: 0 };
+            const normHeader = v => String(v || '').trim().toLowerCase().replace(/[\s_\-]/g, '');
+            let header = rows[0].map(normHeader);
+            let nameIdx = header.findIndex(h => h.includes('اسم') || h.includes('موظف') || h === 'name' || h.includes('employeename'));
             let deptIdx = header.findIndex(h => h.includes('قسم') || h === 'dept' || h === 'department');
-            let jobIdx = header.findIndex(h => h.includes('وظيف') || h.includes('مسمى') || h === 'job' || h === 'title');
+            let jobIdx = header.findIndex(h => h.includes('وظيف') || h.includes('مسمى') || h === 'job' || h === 'title' || h === 'jobtitle');
             let branchIdx = header.findIndex(h => h.includes('فرع') || h === 'branch');
-            let adminIdx = header.findIndex(h => h.includes('ادار') || h.includes('إدار') || h === 'admin');
-            let codeIdx = header.findIndex(h => h.includes('كود') || h === 'code' || h === 'id');
+            let adminIdx = header.findIndex(h => h.includes('ادار') || h.includes('إدار') || h === 'admin' || h === 'administration');
+            let codeIdx = header.findIndex(h => h.includes('كود') || h.includes('رقموظيف') || h === 'code' || h === 'id' || h === 'empcode' || h === 'employeeid');
             let nidIdx = header.findIndex(h => h.includes('بطاق') || h.includes('قومي') || h.includes('national'));
             let phoneIdx = header.findIndex(h => h.includes('واتس') || h.includes('هاتف') || h.includes('موبايل') || h.includes('تليفون') || h.includes('phone') || h.includes('whatsapp'));
             let hireIdx = header.findIndex(h => h.includes('تعيين') || h.includes('تاريخ') || h.includes('hire'));
-            let startRow = 0;
-            if (nameIdx !== -1 || deptIdx !== -1 || jobIdx !== -1 || branchIdx !== -1 || adminIdx !== -1) {
-                startRow = 1;
-                if (nameIdx === -1) nameIdx = 0;
-            } else {
-                nameIdx = 0; deptIdx = 1; jobIdx = 2; branchIdx = 3; adminIdx = 4;
-            }
+            let startRow = (nameIdx !== -1 || deptIdx !== -1 || jobIdx !== -1 || branchIdx !== -1 || adminIdx !== -1 || codeIdx !== -1) ? 1 : 0;
+            if (startRow === 0) { nameIdx = 0; deptIdx = 1; jobIdx = 2; branchIdx = 3; adminIdx = 4; codeIdx = -1; }
+            const cleanCode = v => String(v == null ? '' : v).trim().replace(/\.0$/, '').replace(/[\s\u200e\u200f]/g, '').toLowerCase();
+            const findExisting = (code, name) => {
+                const cc = cleanCode(code), nn = String(name || '').trim().toLowerCase();
+                for (const bid of Object.keys(dbData || {})) {
+                    const list = dbData[bid] || [];
+                    for (let ix = 0; ix < list.length; ix++) {
+                        const emp = list[ix]; if (!emp) continue;
+                        const ec = cleanCode(emp.empCode || emp.code);
+                        if (cc && ec && cc === ec) return { branchId: bid, index: ix, emp };
+                        if (!cc && nn && String(emp.name || '').trim().toLowerCase() === nn) return { branchId: bid, index: ix, emp };
+                    }
+                }
+                return null;
+            };
             for (let r = startRow; r < rows.length; r++) {
-                let parts = rows[r];
-                if (!parts || parts.length === 0) continue;
-                let name = parts[nameIdx] !== undefined ? String(parts[nameIdx]).trim() : '';
-                if (!name && parts.length === 1) name = String(parts[0] || '').trim();
-                if (!name || name === 'name' || name === 'الاسم' || name === 'اسم الموظف') continue;
-                let rawDept = (deptIdx !== -1 && parts[deptIdx] !== undefined) ? String(parts[deptIdx]).trim() : 'sales';
-                let dMatch = departmentsData.find(d => d.id.toLowerCase() === rawDept.toLowerCase() || d.name === rawDept || rawDept.includes(d.name));
-                let deptId = dMatch ? dMatch.id : (rawDept || 'sales');
-                let jobTitle = (jobIdx !== -1 && parts[jobIdx]) ? String(parts[jobIdx]).trim() : 'موظف';
-                let rawBranch = (branchIdx !== -1 && parts[branchIdx]) ? String(parts[branchIdx]).trim() : '';
-                let bMatch = branchesData.find(b => b.id.toLowerCase() === rawBranch.toLowerCase() || b.name === rawBranch || rawBranch.includes(b.name));
-                let branchId = bMatch ? bMatch.id : (rawBranch.includes('ترعة') ? 'tura' : (rawBranch.includes('سندوب') ? 'sandoob' : currentBranch));
-                let adminDept = (adminIdx !== -1 && parts[adminIdx]) ? String(parts[adminIdx]).trim() : (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة');
-                if (!dbData[branchId]) dbData[branchId] = [];
-                let historyObj = {};
-                historyObj[activeWeek] = new Array(metricNames.length).fill(3);
-                let empCode = (codeIdx !== -1 && parts[codeIdx] !== undefined) ? String(parts[codeIdx]).trim() : '';
-                let nationalId = (nidIdx !== -1 && parts[nidIdx] !== undefined) ? String(parts[nidIdx]).trim() : '';
-                let phone = (phoneIdx !== -1 && parts[phoneIdx] !== undefined) ? String(parts[phoneIdx]).trim() : '';
-                let hireDate = (hireIdx !== -1 && parts[hireIdx] !== undefined) ? String(parts[hireIdx]).trim() : '';
-                dbData[branchId].push({ id: Date.now() + Math.random(), name, adminDept, dept: deptId, jobTitle, empCode, nationalId, phone, hireDate, notes: {}, history: historyObj });
-                addedCount++;
+                const parts = rows[r]; if (!parts || !parts.length || !parts.some(v => String(v == null ? '' : v).trim())) continue;
+                const get = idx => idx >= 0 && parts[idx] !== undefined ? String(parts[idx]).trim() : '';
+                const name = get(nameIdx), empCode = get(codeIdx);
+                // لا ننشئ موظفاً باسم وهمي: صف الكود فقط يظل سجلاً غير معروف في شاشة البصمة كما هو.
+                if (!name) { if (empCode) skippedCodeOnly++; continue; }
+                if (/^(name|الاسم|اسم الموظف)$/i.test(name)) continue;
+                const rawDept = get(deptIdx) || '';
+                const dMatch = departmentsData.find(x => String(x.id).toLowerCase() === rawDept.toLowerCase() || x.name === rawDept || (rawDept && rawDept.includes(x.name)));
+                const deptIdFromSheet = dMatch ? dMatch.id : rawDept;
+                const jobTitle = get(jobIdx) || '';
+                const rawBranch = get(branchIdx) || '';
+                const bMatch = branchesData.find(x => String(x.id).toLowerCase() === rawBranch.toLowerCase() || x.name === rawBranch || (rawBranch && rawBranch.includes(x.name)));
+                const branchIdFromSheet = bMatch ? bMatch.id : (rawBranch.includes('ترعة') ? 'tura' : (rawBranch.includes('سندوب') ? 'sandoob' : rawBranch));
+                const adminDept = get(adminIdx) || '';
+                const nationalId = get(nidIdx), phone = get(phoneIdx), hireDate = get(hireIdx);
+                const existing = findExisting(empCode, name);
+                const branchId = branchIdFromSheet || (existing && existing.branchId) || currentBranch;
+                const deptId = deptIdFromSheet || (existing && existing.emp && existing.emp.dept) || 'sales';
+                const target = existing ? existing.emp : null;
+                const historyObj = target && target.history ? target.history : {};
+                if (!historyObj[activeWeek]) historyObj[activeWeek] = new Array(metricNames.length).fill(3);
+                const merged = Object.assign({}, target || {}, { id: (target && target.id) || (Date.now() + Math.random()), name, adminDept: adminDept || (target && target.adminDept) || (adminDepartmentsData[0] ? adminDepartmentsData[0].name : 'الإدارة العامة'), dept: deptId || (target && target.dept) || 'sales', jobTitle: jobTitle || (target && target.jobTitle) || 'موظف', empCode: empCode || (target && target.empCode) || '', nationalId: nationalId || (target && target.nationalId) || '', phone: phone || (target && target.phone) || '', hireDate: hireDate || (target && target.hireDate) || '', notes: (target && target.notes) || {}, history: historyObj });
+                if (existing) {
+                    if (existing.branchId !== branchId) { dbData[existing.branchId].splice(existing.index, 1); if (!dbData[branchId]) dbData[branchId] = []; dbData[branchId].push(merged); }
+                    else dbData[existing.branchId][existing.index] = merged;
+                    updatedCount++;
+                } else { if (!dbData[branchId]) dbData[branchId] = []; dbData[branchId].push(merged); addedCount++; }
             }
-            return addedCount;
+            return { added: addedCount, updated: updatedCount, skipped: skippedCodeOnly };
         }
 
         let ext = file.name.split('.').pop().toLowerCase();
@@ -9227,12 +9243,13 @@
                     let workbook = XLSX.read(uint8, { type: 'array', codepage: 1256 });
                     let sheet = workbook.Sheets[workbook.SheetNames[0]];
                     let rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
-                    let addedCount = importRowsArray(rows);
+                    const importResult = importRowsArray(rows);
                     localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
-                    recordAuditLog('رفع شيت إكسل', `تم استيراد ${addedCount} موظف من ملف الإكسل (${file.name})`);
+                    recordAuditLog('رفع/تحديث شيت الموظفين', `تمت إضافة ${importResult.added} وتحديث ${importResult.updated} موظف من ملف الإكسل (${file.name})`);
                     renderAllEmployeesTable();
                     renderEvalTable();
-                    showToast(`🎉 تمت إضافة ${addedCount} موظف بنجاح من شيت الإكسل المرفوع!`);
+                    showToast(`تمت المزامنة: إضافة ${importResult.added} وتحديث ${importResult.updated} موظف. سجلات الأكواد التي بلا أسماء لم يتم حذفها أو تغييرها.`, 'success');
+                    if (typeof window.renderActiveAttendanceViewV187 === 'function') window.renderActiveAttendanceViewV187();
                     event.target.value = '';
                     return;
                 } catch (err) {
@@ -9257,12 +9274,13 @@
                 let sep = line.indexOf('\t') !== -1 ? '\t' : (line.indexOf(';') !== -1 && line.indexOf(',') === -1 ? ';' : ',');
                 return line.split(sep).map(s => s.replace(/^"|"$/g, '').trim());
             });
-            let addedCount = importRowsArray(rows);
+                    const importResult = importRowsArray(rows);
             localStorage.setItem('unique_journey_db_v30', JSON.stringify(dbData));
-            recordAuditLog('رفع شيت إكسل/CSV', `تم استيراد ${addedCount} موظف باللغة العربية السليمة من ملف (${file.name})`);
+            recordAuditLog('رفع/تحديث شيت الموظفين', `تمت إضافة ${importResult.added} وتحديث ${importResult.updated} موظف من ملف (${file.name})`);
             renderAllEmployeesTable();
             renderEvalTable();
-            showToast(`🎉 تمت إضافة ${addedCount} موظف بنجاح وبترميز عربي سليم 100%!`);
+                    showToast(`تمت المزامنة: إضافة ${importResult.added} وتحديث ${importResult.updated} موظف. سجلات الأكواد التي بلا أسماء لم يتم حذفها أو تغييرها.`, 'success');
+            if (typeof window.renderActiveAttendanceViewV187 === 'function') window.renderActiveAttendanceViewV187();
             event.target.value = '';
         };
         reader.readAsArrayBuffer(file);
@@ -20383,11 +20401,17 @@
             dbJobTitle = emp.jobTitle || '';
         }
 
+        const usableMetaV190 = value => {
+            const s = String(value == null ? '' : value).trim();
+            return s && !['—', '-', '–', 'غير محدد', 'null', 'undefined'].includes(s) ? s : '';
+        };
+
+        // قاعدة بيانات الموظفين هي المرجع الأساسي؛ نتجاهل الشرطات والقيم القديمة المحفوظة.
         return {
-            branch: (recObj && recObj.branch) || (saved && saved.branch) || dbBranch || '—',
-            adminDept: (recObj && recObj.adminDept) || (saved && saved.adminDept) || dbAdminDept || '—',
-            dept: (recObj && recObj.dept) || (saved && saved.dept) || dbDept || '—',
-            jobTitle: (recObj && recObj.jobTitle) || (saved && saved.jobTitle) || dbJobTitle || '—'
+            branch: usableMetaV190(dbBranch) || usableMetaV190(recObj && recObj.branch) || usableMetaV190(saved && saved.branch) || '—',
+            adminDept: usableMetaV190(dbAdminDept) || usableMetaV190(recObj && recObj.adminDept) || usableMetaV190(saved && saved.adminDept) || '—',
+            dept: usableMetaV190(dbDept) || usableMetaV190(recObj && recObj.dept) || usableMetaV190(saved && saved.dept) || '—',
+            jobTitle: usableMetaV190(dbJobTitle) || usableMetaV190(recObj && recObj.jobTitle) || usableMetaV190(saved && saved.jobTitle) || '—'
         };
     }
 
