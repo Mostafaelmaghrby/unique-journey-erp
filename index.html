@@ -15,7 +15,7 @@
     <!-- Chart.js for performance graphs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/chart.js';document.head.appendChild(s);"></script>
     <!-- SheetJS (XLSX) لدعم رفع شيت الإكسل (.xlsx / .xls / .csv) كما هو مباشرة -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" onerror="this.onerror=null;this.src='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';"></script>
     <!-- PDF.js لدعم قراءة تقارير قسم الجودة بصيغة PDF مباشرة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
@@ -3968,6 +3968,126 @@
                 z-index: 20 !important;
             }
         }
+
+        /* ===================================================================
+           👆 v19.1 SMART ATTENDANCE SUITE (CLEAN TOOLBAR, EXPORT MENU, GROUPED 1-30)
+           =================================================================== */
+        .att-toolbar-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .att-toolbar-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: rgba(9, 13, 22, 0.72);
+            border: 1px solid rgba(56, 189, 248, 0.18);
+            border-radius: 10px;
+            padding: 9px 12px;
+        }
+        body.light-mode .att-toolbar-row {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+        .att-export-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .att-export-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            min-width: 260px;
+            background: #0f172a;
+            border: 1px solid rgba(56, 189, 248, 0.45);
+            border-radius: 10px;
+            padding: 6px;
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.7);
+            z-index: 300;
+            flex-direction: column;
+            gap: 4px;
+        }
+        body.light-mode .att-export-menu {
+            background: #ffffff;
+            border-color: #cbd5e1;
+        }
+        .att-export-menu.open {
+            display: flex;
+        }
+        .att-export-item {
+            width: 100%;
+            text-align: right;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .att-export-item:hover {
+            background: rgba(56, 189, 248, 0.14);
+            border-color: rgba(56, 189, 248, 0.35);
+            color: #38bdf8;
+        }
+        .att-ico-btn {
+            padding: 4px 7px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 3px;
+            border: 1px solid transparent;
+            transition: transform 0.15s;
+        }
+        .att-ico-btn:hover { transform: scale(1.06); }
+        .att-group-row {
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .att-group-row:hover {
+            background: rgba(56, 189, 248, 0.09) !important;
+        }
+        .att-group-detail-row td {
+            background: rgba(6, 11, 22, 0.92) !important;
+            padding: 12px 14px !important;
+        }
+        body.light-mode .att-group-detail-row td {
+            background: #f1f5f9 !important;
+        }
+        @media (min-width: 900px) {
+            #attDailyTableWrapV187 table th:nth-child(1),
+            #attDailyTableWrapV187 table td:nth-child(1) {
+                position: sticky;
+                right: 0;
+                z-index: 6;
+                background: var(--bg-card);
+            }
+            #attDailyTableWrapV187 table th:nth-child(2),
+            #attDailyTableWrapV187 table td:nth-child(2) {
+                position: sticky;
+                right: 78px;
+                z-index: 6;
+                background: var(--bg-card);
+                box-shadow: -4px 0 8px rgba(0, 0, 0, 0.25);
+            }
+            #attDailyTableWrapV187 table thead th:nth-child(1),
+            #attDailyTableWrapV187 table thead th:nth-child(2) {
+                z-index: 16 !important;
+                background: #090d16;
+            }
+            body.light-mode #attDailyTableWrapV187 table thead th:nth-child(1),
+            body.light-mode #attDailyTableWrapV187 table thead th:nth-child(2) {
+                background: #e2e8f0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -4827,28 +4947,43 @@
                 <tbody id="allEmployeesTableBody"></tbody>
             </table>
         </div>
-        <!-- 2.5 شيت البصمة والحضور والانصراف والملخص الشهري -->
+        <!-- 2.5 شيت البصمة والحضور والانصراف والملخص الشهري (v19.1 Smart Daytime Edition) -->
         <div id="sec-attendance" class="card hidden">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
-                <div>
-                    <h3 style="color:#34d399; font-size:16px;">👆 شيت البصمة والحضور والانصراف والملخص الشهري</h3>
-                    <p style="color:var(--text-muted); font-size:11px;">ارفع شيت البصمة (Excel / CSV / TXT) مرتباً من بداية الشهر، واضبط مواعيد الحضور والانصراف وفترة السماح لكل موظف بشكل مستقل بجانب زر التعديل، ثم أصدر البطاقة الشهرية المتطورة أو شيت Excel.</p>
+            <div class="att-toolbar-wrap">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <h3 style="color:#34d399; font-size:16px;">👆 شيت البصمة والحضور والانصراف الذكي (شيفت نهاري 9 ص – 10 م)</h3>
+                        <p style="color:var(--text-muted); font-size:11px;">معالج ذكي يكتشف أخطاء توقيت جهاز البصمة (±12 ساعة) ويضبطها تلقائياً على مواعيد الشيفت النهاري لكل موظف، مع تعيين جماعي للأكواد وتصدير Excel تفصيلي من يوم 1 إلى 30.</p>
+                    </div>
+                    <span id="attSmartEngineBadgeV191" class="badge b-green" style="font-size:10.5px;">🧠 المعالج الذكي للشيفت النهاري جاهز</span>
                 </div>
-                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                    <select id="attTimeOffsetSelectV190" class="form-input" style="width:auto; min-width:215px; padding:7px 10px; font-size:11.5px; border-color:#f59e0b; color:#fde047; font-weight:bold;" title="اختر فرق التوقيت قبل رفع شيت البصمة إذا كانت ساعة الجهاز متقدمة أو متأخرة 12 ساعة">
-                        <option value="0">⏱️ توقيت الشيت مضبوط (0 ساعة)</option>
-                        <option value="-12">⏱️ الشيت مزوّد 12 ساعة (إنقاص 12 ساعة)</option>
-                        <option value="12">⏱️ الشيت منقّص 12 ساعة (زيادة 12 ساعة)</option>
-                    </select>
-                    <button type="button" onclick="applyTimeOffsetToExistingAttendanceV190()" class="btn-action" style="background:#d97706; padding:7px 11px;" title="تطبيق فرق التوقيت المختار على السجلات الحالية المعروضة">🔄 ضبط التوقيت الحالي</button>
-                    <label class="btn-action" style="background:#0284c7; cursor:pointer; margin:0; padding:7px 14px;">
-                        📁 رفع شيت البصمة (Excel / CSV)
-                        <input type="file" id="attendanceFileInputV183" accept=".xlsx, .xls, .csv, .txt" onchange="handleAttendanceSheetUploadV183(event)" style="display:none;">
-                    </label>
-                    <button type="button" onclick="toggleManualAttFormV183()" class="btn-action" style="background:#7c3aed; padding:7px 12px;">➕ إضافة سجل يدوي</button>
-                    <button type="button" onclick="exportAttendanceToExcelV183()" class="btn-action" style="background:#059669; padding:7px 14px;">📊 تصدير Excel اليومي</button>
-                    <button type="button" onclick="exportMonthlySummaryExcelV187()" class="btn-action" style="background:#0f766e; padding:7px 14px;">📑 تصدير الملخص الشهري Excel</button>
-                    <button type="button" onclick="clearAttendanceDataV183()" class="btn-danger" style="padding:7px 11px;">🗑️ مسح السجل</button>
+                <div class="att-toolbar-row">
+                    <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
+                        <select id="attTimeOffsetSelectV190" class="form-input" style="width:auto; min-width:235px; padding:6px 10px; font-size:11.5px; border-color:#10b981; color:#6ee7b7; font-weight:bold;" title="الوضع الذكي يصحح توقيت الشيت تلقائياً حسب الشيفت النهاري (9 ص - 10 م) وموعد كل موظف">
+                            <option value="auto" selected>🧠 تصحيح ذكي تلقائي (نهاري 9 ص – 10 م)</option>
+                            <option value="0">⏱️ بدون تعديل (توقيت الشيت مضبوط 0 ساعة)</option>
+                            <option value="-12">⏱️ الشيت مزوّد 12 ساعة (إنقاص 12 ساعة)</option>
+                            <option value="12">⏱️ الشيت منقّص 12 ساعة (زيادة 12 ساعة)</option>
+                        </select>
+                        <button type="button" onclick="applyTimeOffsetToExistingAttendanceV190()" class="btn-action" style="background:#d97706; padding:7px 11px;" title="تطبيق التصحيح الذكي أو فرق التوقيت المختار على السجلات الحالية">🔄 ضبط التوقيت الحالي</button>
+                        <label class="btn-action" style="background:#0284c7; cursor:pointer; margin:0; padding:7px 14px;">
+                            📁 رفع شيت البصمة (Excel / CSV)
+                            <input type="file" id="attendanceFileInputV183" accept=".xlsx, .xls, .csv, .txt" onchange="handleAttendanceSheetUploadV183(event)" style="display:none;">
+                        </label>
+                    </div>
+                    <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
+                        <button type="button" onclick="openBulkAttCodesModalV191()" class="btn-action" style="background:linear-gradient(135deg,#0891b2,#6366f1); padding:7px 12px;">👥 تعيين بيانات الأكواد</button>
+                        <div class="att-export-dropdown">
+                            <button type="button" onclick="toggleAttExportMenuV191(event)" class="btn-action" style="background:#059669; padding:7px 13px;">📊 تصدير Excel ▾</button>
+                            <div id="attExportMenuV191" class="att-export-menu">
+                                <button type="button" class="att-export-item" onclick="closeAttExportMenuV191(); exportDetailed1To30ExcelV191();">📅 تصدير التفصيلي الكامل (من يوم 1 إلى 30 لكل موظف)</button>
+                                <button type="button" class="att-export-item" onclick="closeAttExportMenuV191(); exportAttendanceToExcelV183();">📋 تصدير السجل اليومي المعروض</button>
+                                <button type="button" class="att-export-item" onclick="closeAttExportMenuV191(); exportMonthlySummaryExcelV187();">📑 تصدير الملخص الشهري المختصر</button>
+                            </div>
+                        </div>
+                        <button type="button" onclick="toggleManualAttFormV183()" class="btn-action" style="background:#7c3aed; padding:7px 11px;">➕ سجل يدوي</button>
+                        <button type="button" onclick="clearAttendanceDataV183()" class="btn-danger" style="padding:7px 10px;">🗑️ مسح</button>
+                    </div>
                 </div>
             </div>
 
@@ -4860,7 +4995,7 @@
                     <input type="text" id="attManName" class="form-input" placeholder="اسم الموظف">
                     <input type="date" id="attManDate" class="form-input">
                     <input type="time" id="attManFirst" class="form-input" title="وقت البصمة الأولى حضور">
-                    <input type="time" id="attManLast" class="form-input" title="وقت البصمة الأخيرة (انصراف)">
+                    <input type="time" id="attManLast" class="form-input" title="وقت البصمة الأولى (انصراف)">
                     <input type="number" id="attManCount" min="1" value="2" class="form-input" placeholder="عدد البصمات">
                     <input type="text" id="attManNote" class="form-input" placeholder="ملاحظة إضافية (اختياري)">
                     <button type="button" onclick="addManualAttendanceRecordV183()" class="btn-action" style="background:#059669; padding:9px 12px;">💾 حفظ السجل</button>
@@ -4875,26 +5010,36 @@
                 <div class="stat-card"><div><h4>بصمة واحدة فقط (ناقص انصراف)</h4><div class="val" id="attStatSinglePunch" style="color:#fb7185;">0</div></div><span style="font-size:22px;">⚠️</span></div>
             </div>
 
-            <!-- 🔀 تبديل العرض: سجل الأيام vs الملخص الشهري الكامل -->
+            <!-- 🔀 تبديل العرض والفلاتر الذكية (يومي / مجمّع 1-30 / ملخص شهري) -->
             <div class="dept-filter-bar" style="margin-bottom:12px;">
-                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <div style="display:flex; gap:7px; align-items:center; flex-wrap:wrap;">
                     <div class="mc-filter-pills" id="attViewModeBarV187">
-                        <button type="button" id="btnAttModeDailyV187" class="mc-filter-pill active" onclick="switchAttendanceViewModeV187('daily')">📋 سجل البصمات اليومي</button>
-                        <button type="button" id="btnAttModeMonthlyV187" class="mc-filter-pill" onclick="switchAttendanceViewModeV187('monthly')">📊 الملخص الشهري الكامل للموظفين</button>
+                        <button type="button" id="btnAttModeDailyV187" class="mc-filter-pill active" onclick="switchAttendanceViewModeV187('daily')">📋 السجل اليومي</button>
+                        <button type="button" id="btnAttModeGroupedV191" class="mc-filter-pill" onclick="switchAttendanceViewModeV187('grouped')">👤 مجمّع حسب الموظف (1–30)</button>
+                        <button type="button" id="btnAttModeMonthlyV187" class="mc-filter-pill" onclick="switchAttendanceViewModeV187('monthly')">📊 الملخص الشهري</button>
                     </div>
                     <div class="mc-filter-pills" id="attQuickFilterBarV183">
                         <button type="button" class="mc-filter-pill active" onclick="setAttendanceQuickFilterV183('all', this)">الكل</button>
                         <button type="button" class="mc-filter-pill" onclick="setAttendanceQuickFilterV183('complete', this)">✅ مكتمل</button>
                         <button type="button" class="mc-filter-pill" onclick="setAttendanceQuickFilterV183('single', this)">⚠️ بصمة واحدة</button>
                     </div>
-                    <select id="attDateFilterV183" onchange="renderAttendanceTableV183()" class="form-input" style="width:165px; padding:5px 8px; font-size:11px;">
+                    <select id="attBranchFilterV191" onchange="renderActiveAttendanceViewV187()" class="form-input" style="width:135px; padding:5px 7px; font-size:11px;">
+                        <option value="all">🏢 كل الفروع</option>
+                    </select>
+                    <select id="attDeptFilterV191" onchange="renderActiveAttendanceViewV187()" class="form-input" style="width:135px; padding:5px 7px; font-size:11px;">
+                        <option value="all">🧩 كل الأقسام</option>
+                    </select>
+                    <select id="attEmpFilterV191" onchange="renderActiveAttendanceViewV187()" class="form-input" style="width:155px; padding:5px 7px; font-size:11px;">
+                        <option value="all">👤 كل الموظفين</option>
+                    </select>
+                    <select id="attDateFilterV183" onchange="renderAttendanceTableV183()" class="form-input" style="width:148px; padding:5px 7px; font-size:11px;">
                         <option value="all">📅 كل التواريخ</option>
                     </select>
-                    <select id="attMonthFilterV187" onchange="renderMonthlySummaryTableV187()" class="form-input hidden" style="width:165px; padding:5px 8px; font-size:11px;">
+                    <select id="attMonthFilterV187" onchange="renderActiveAttendanceViewV187()" class="form-input hidden" style="width:148px; padding:5px 7px; font-size:11px;">
                         <option value="all">🗓️ كل الشهور</option>
                     </select>
                 </div>
-                <input type="text" id="attSearchInputV183" oninput="renderActiveAttendanceViewV187()" placeholder="🔍 بحث بكود أو اسم الموظف..." class="form-input" style="width:210px; padding:6px 10px; font-size:11px;">
+                <input type="text" id="attSearchInputV183" oninput="renderActiveAttendanceViewV187()" placeholder="🔍 بحث بكود، اسم، فرع، قسم..." class="form-input" style="width:195px; padding:6px 10px; font-size:11px;">
             </div>
 
             <!-- 📋 جدول البصمات اليومي -->
@@ -4910,13 +5055,33 @@
                             <th style="text-align:right; position:sticky; top:0; z-index:10;">الوظيفة</th>
                             <th style="text-align:center; position:sticky; top:0; z-index:10;">التاريخ</th>
                             <th style="text-align:center; position:sticky; top:0; z-index:10;">وقت البصمة الأولى (حضور)</th>
-                            <th style="text-align:center; position:sticky; top:0; z-index:10;">وقت البصمة الأخيرة (انصراف)</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">وقت البصمة الأولى (انصراف)</th>
                             <th style="text-align:center; position:sticky; top:0; z-index:10;">مدة التواجد</th>
                             <th style="text-align:right; position:sticky; top:0; z-index:10;">ملاحظة أخيرة (عدد البصمات)</th>
                             <th style="text-align:center; position:sticky; top:0; z-index:10;">المواعيد والإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="attendanceTableBodyV183"></tbody>
+                </table>
+            </div>
+
+            <!-- 👤 جدول العرض المجمّع حسب الموظف (اضغط على الصف لعرض أيامه 1–30) -->
+            <div id="attGroupedTableWrapV191" class="eval-table-sticky-wrap hidden">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:center; width:38px; position:sticky; top:0; z-index:10;">▼</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">الكود</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">اسم الموظف</th>
+                            <th style="text-align:right; position:sticky; top:0; z-index:10;">الفرع / الإدارة / القسم / الوظيفة</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">الشيفت</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">حضور / غياب</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">ساعات الشهر</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">تأخير الشهر</th>
+                            <th style="text-align:center; position:sticky; top:0; z-index:10;">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceGroupedBodyV191"></tbody>
                 </table>
             </div>
 
@@ -5001,7 +5166,7 @@
                         <input type="text" id="editAttFirstV187" class="form-input" placeholder="HH:MM:SS" style="font-family:monospace;">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">وقت البصمة الأخيرة (انصراف)</label>
+                        <label class="form-label">وقت البصمة الأولى (انصراف)</label>
                         <input type="text" id="editAttLastV187" class="form-input" placeholder="HH:MM:SS" style="font-family:monospace;">
                     </div>
                     <div class="form-group">
@@ -5061,6 +5226,49 @@
                 </div>
             </div>
         </div>
+        <!-- 👥 نافذة تعيين بيانات الأكواد دفعة واحدة (Bulk Code Assignment v19.1) -->
+        <div id="bulkAttCodesModalV191" class="modal" style="z-index:9660;">
+            <div class="modal-content" style="max-width:980px; border-top:3px solid #0891b2;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px; border-bottom:1px solid #334155; padding-bottom:10px;">
+                    <div>
+                        <h3 style="color:#38bdf8; font-size:15.5px;">👥 تعيين بيانات ومواعيد جميع الأكواد دفعة واحدة</h3>
+                        <p style="color:var(--text-muted); font-size:11px; margin-top:2px;">اكتب الاسم والفرع والإدارة والقسم والوظيفة ومواعيد الشيفت النهاري لكل كود مرة واحدة — وسيتم تحديث جميع أيام الشهر وإعادة ضبط التوقيت تلقائياً.</p>
+                    </div>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <label class="btn-action" style="background:#059669; cursor:pointer; margin:0; padding:6px 12px;">
+                            📁 استيراد الأكواد من Excel/CSV
+                            <input type="file" id="bulkCodesExcelInputV191" accept=".xlsx,.xls,.csv,.txt" onchange="importBulkAttCodesExcelV191(event)" style="display:none;">
+                        </label>
+                        <button type="button" onclick="closeBulkAttCodesModalV191()" class="emp-modal-close-btn">✕</button>
+                    </div>
+                </div>
+                <div style="max-height:58vh; overflow:auto; border:1px solid #1e293b; border-radius:10px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align:center; position:sticky; top:0; z-index:5;">الكود</th>
+                                <th style="text-align:right; position:sticky; top:0; z-index:5;">اسم الموظف</th>
+                                <th style="text-align:right; position:sticky; top:0; z-index:5;">الفرع</th>
+                                <th style="text-align:right; position:sticky; top:0; z-index:5;">الإدارة</th>
+                                <th style="text-align:right; position:sticky; top:0; z-index:5;">القسم</th>
+                                <th style="text-align:right; position:sticky; top:0; z-index:5;">الوظيفة</th>
+                                <th style="text-align:center; position:sticky; top:0; z-index:5;">حضور</th>
+                                <th style="text-align:center; position:sticky; top:0; z-index:5;">انصراف</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulkAttCodesTableBodyV191"></tbody>
+                    </table>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-top:12px;">
+                    <span id="bulkAttCodesCountInfoV191" style="font-size:11px; color:#94a3b8;"></span>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" onclick="closeBulkAttCodesModalV191()" class="btn-action" style="background:#475569;">إلغاء</button>
+                        <button type="button" onclick="saveBulkAttCodesV191()" class="btn-action" style="background:#059669; padding:8px 18px;">💾 حفظ وتطبيق على كل الأيام</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- 3. كاميرات وغرفة العمليات الحية -->
         <div id="sec-camerarules" class="card hidden">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
@@ -20217,36 +20425,169 @@
         }
     }
 
-    // 🔄 تطبيق فرق التوقيت (±12 ساعة) على السجلات الحالية المعروضة عند الطلب
-    window.applyTimeOffsetToExistingAttendanceV190 = function() {
-        const off = parseInt(document.getElementById('attTimeOffsetSelectV190')?.value || '0', 10) || 0;
-        if (!off) {
-            showToast('اختر أولاً (الشيت مزوّد 12 ساعة) أو (الشيت منقّص 12 ساعة) من القائمة المجاورة.', 'warn');
-            return;
+    // 🧠 المحرك الذكي لضبط توقيت الشيفت النهاري (9 ص – 10 م بحد أقصى) حسب موعد كل موظف
+    function isNightAnomalySecV191(sec) {
+        return sec >= 0 && sec < 7 * 3600; // من 00:00 حتى 06:59 فجراً (خارج ساعات العمل النهارية)
+    }
+
+    function scorePunchAgainstDaytimeShiftV191(sec, empRule) {
+        if (sec < 0) return 0;
+        const startSec = timeToSecondsV183((empRule && empRule.start) || '09:00');
+        const endSec = timeToSecondsV183((empRule && empRule.end) || '22:00');
+        const minOk = Math.max(7 * 3600, startSec - 2 * 3600);
+        const maxOk = Math.min(23 * 3600 + 30 * 60, endSec + 90 * 60);
+        if (sec >= minOk && sec <= maxOk) {
+            const dStart = Math.abs(sec - startSec);
+            const dEnd = Math.abs(sec - endSec);
+            const closest = Math.min(dStart, dEnd);
+            return 100 - Math.min(40, closest / 360);
         }
+        if (sec < 7 * 3600) return -120; // عقوبة قوية لمنتصف الليل/الفجر لأن كل الفروع شيفت نهاري
+        return -35;
+    }
+
+    function detectBestSmartOffsetV191(rawEvents) {
+        if (!rawEvents || rawEvents.length === 0) return { offset: 0, reason: 'لا توجد سجلات' };
+        const scoreForOffset = (off) => {
+            let totalScore = 0;
+            let dayCount = 0;
+            let nightCount = 0;
+            const dowCounts = [0, 0, 0, 0, 0, 0, 0];
+            const dowDays = [new Set(), new Set(), new Set(), new Set(), new Set(), new Set(), new Set()];
+            rawEvents.forEach(ev => {
+                if (!ev.date || !ev.time) return;
+                const sh = shiftDateTimeByHoursV190(ev.date, ev.time, off);
+                const sec = timeToSecondsV183(sh.time);
+                const rule = getEmpShiftRuleV188(ev.code, ev.name);
+                totalScore += scorePunchAgainstDaytimeShiftV191(sec, rule);
+                if (isNightAnomalySecV191(sec)) nightCount++;
+                else if (sec >= 7 * 3600 && sec <= 23 * 3600 + 30 * 60) dayCount++;
+                const dm = String(sh.date).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+                if (dm) {
+                    const dow = new Date(Date.UTC(Number(dm[1]), Number(dm[2]) - 1, Number(dm[3]))).getUTCDay();
+                    dowCounts[dow]++;
+                    dowDays[dow].add(sh.date);
+                }
+            });
+            const friAvg = dowDays[5].size > 0 ? (dowCounts[5] / dowDays[5].size) : Infinity;
+            const otherAvgs = [];
+            for (let d = 0; d < 7; d++) {
+                if (d !== 5 && dowDays[d].size > 0) otherAvgs.push(dowCounts[d] / dowDays[d].size);
+            }
+            const nonFriAvg = otherAvgs.length ? (otherAvgs.reduce((a, b) => a + b, 0) / otherAvgs.length) : 0;
+            return { off, totalScore, dayCount, nightCount, friAvg, nonFriAvg };
+        };
+
+        const s0 = scoreForOffset(0);
+        const sMinus = scoreForOffset(-12);
+        const sPlus = scoreForOffset(12);
+
+        if (s0.totalScore >= sMinus.totalScore && s0.totalScore >= sPlus.totalScore) {
+            return { offset: 0, reason: `التوقيت سليم ومتوافق مع الشيفت النهاري (${s0.dayCount} بصمة نهارية)` };
+        }
+        // التوقيت مقلوب ±12 ساعة: نختار -12 أو +12 بناءً على يوم الجمعة (أقل يوم حضور أسبوعي)
+        let chosen = sMinus;
+        if (sPlus.friAvg < sMinus.friAvg - 3) {
+            chosen = sPlus;
+        } else if (sMinus.friAvg < sPlus.friAvg - 3) {
+            chosen = sMinus;
+        } else {
+            chosen = sMinus; // الافتراضي عند تساوي الجمعة هو إنقاص 12 ساعة (ساعة الجهاز متقدمة 12 ساعة)
+        }
+        const dirTxt = chosen.off === -12 ? 'ساعة الجهاز متقدمة 12 ساعة ← تم إنقاص 12 ساعة تلقائياً' : 'ساعة الجهاز متأخرة 12 ساعة ← تمت زيادة 12 ساعة تلقائياً';
+        return { offset: chosen.off, reason: `${dirTxt} (${chosen.dayCount} بصمة نهارية مضبوطة)` };
+    }
+
+    // تصحيح فردي ذكي لأي بصمة شاذة متبقية مقارنةً بشيفت الموظف النهاري
+    function smartAlignSinglePunchToEmpShiftV191(dateStr, timeStr, empRule, preferredDir) {
+        if (!dateStr || !timeStr || timeStr === '—') return { date: dateStr, time: timeStr, adjusted: false };
+        const sec = timeToSecondsV183(timeStr);
+        if (!isNightAnomalySecV191(sec)) return { date: dateStr, time: timeStr, adjusted: false };
+        const dir = preferredDir === 12 ? 12 : -12;
+        const cand = shiftDateTimeByHoursV190(dateStr, timeStr, dir);
+        const candSec = timeToSecondsV183(cand.time);
+        if (scorePunchAgainstDaytimeShiftV191(candSec, empRule) > scorePunchAgainstDaytimeShiftV191(sec, empRule)) {
+            return { date: cand.date, time: cand.time, adjusted: true };
+        }
+        return { date: dateStr, time: timeStr, adjusted: false };
+    }
+
+    // 🔄 تطبيق التصحيح الذكي أو فرق التوقيت (±12 ساعة) على السجلات الحالية المعروضة
+    window.applyTimeOffsetToExistingAttendanceV190 = function() {
+        const modeVal = document.getElementById('attTimeOffsetSelectV190')?.value || 'auto';
         if (!attendanceRecordsV183 || attendanceRecordsV183.length === 0) {
             showToast('لا توجد سجلات بصمة حالية لتعديل توقيتها. سيُطبّق الاختيار تلقائياً عند رفع الشيت.', 'info');
             return;
         }
-        const dirTxt = off < 0 ? 'إنقاص 12 ساعة' : 'زيادة 12 ساعة';
-        if (!confirm(`هل تريد تطبيق (${dirTxt}) على جميع السجلات الحالية (${attendanceRecordsV183.length} سجل)؟`)) return;
+        let off = 0;
+        let reasonTxt = '';
+        if (modeVal === 'auto') {
+            const rawEvents = [];
+            attendanceRecordsV183.forEach(r => {
+                if (r.firstPunch && r.firstPunch !== '—') rawEvents.push({ code: r.code, name: r.name, date: r.date, time: r.firstPunch });
+                if (r.lastPunch && r.lastPunch !== '—') rawEvents.push({ code: r.code, name: r.name, date: r.date, time: r.lastPunch });
+            });
+            const det = detectBestSmartOffsetV191(rawEvents);
+            off = det.offset;
+            reasonTxt = det.reason;
+            if (off === 0) {
+                showToast(`🧠 المعالج الذكي: ${reasonTxt} — لا حاجة لتعديل التوقيت!`, 'success');
+                return;
+            }
+        } else {
+            off = parseInt(modeVal, 10) || 0;
+            if (!off) {
+                showToast('اختر (تصحيح ذكي تلقائي) أو (±12 ساعة) من القائمة المجاورة.', 'warn');
+                return;
+            }
+            reasonTxt = off < 0 ? 'إنقاص 12 ساعة' : 'زيادة 12 ساعة';
+        }
 
+        if (!confirm(`هل تريد تطبيق (${reasonTxt}) على جميع السجلات الحالية (${attendanceRecordsV183.length} سجل) وإعادة تجميع أيام الحضور والانصراف؟`)) return;
+
+        // تفكيك السجلات وإعادة تجميعها بالتواريخ والأوقات المصححة
+        const regrouped = new Map();
         attendanceRecordsV183.forEach(r => {
-            if (r.firstPunch && r.firstPunch !== '—') {
-                const s1 = shiftDateTimeByHoursV190(r.date, r.firstPunch, off);
-                r.date = s1.date;
-                r.firstPunch = s1.time;
-            }
-            if (r.lastPunch && r.lastPunch !== '—') {
-                const s2 = shiftDateTimeByHoursV190(r.date, r.lastPunch, off);
-                r.lastPunch = s2.time;
-            }
+            const punches = [];
+            if (r.firstPunch && r.firstPunch !== '—') punches.push(shiftDateTimeByHoursV190(r.date, r.firstPunch, off));
+            if (r.lastPunch && r.lastPunch !== '—') punches.push(shiftDateTimeByHoursV190(r.date, r.lastPunch, off));
+            if (punches.length === 0) return;
+            punches.forEach(p => {
+                const key = `${r.code}__${p.date}`;
+                if (!regrouped.has(key)) {
+                    regrouped.set(key, {
+                        code: r.code, name: r.name,
+                        branch: r.branch, adminDept: r.adminDept, dept: r.dept, jobTitle: r.jobTitle,
+                        date: p.date, times: [p.time], punchCount: 0
+                    });
+                } else {
+                    regrouped.get(key).times.push(p.time);
+                }
+            });
         });
+
+        const rebuilt = [];
+        regrouped.forEach(g => {
+            const valid = g.times.filter(Boolean).sort((a, b) => timeToSecondsV183(a) - timeToSecondsV183(b));
+            const firstP = valid[0] || '—';
+            const lastP = valid.length > 1 ? valid[valid.length - 1] : '—';
+            const pc = Math.max(1, valid.length);
+            rebuilt.push({
+                id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                code: g.code, name: g.name,
+                branch: g.branch, adminDept: g.adminDept, dept: g.dept, jobTitle: g.jobTitle,
+                date: g.date, firstPunch: firstP, lastPunch: lastP,
+                punchCount: pc, note: buildAutoPunchNoteV183(pc, '')
+            });
+        });
+        attendanceRecordsV183 = rebuilt;
         sortAttendanceAscendingV187();
         saveAttendanceStoreV183();
         renderActiveAttendanceViewV187();
         if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
-        showToast(`✅ تم تطبيق (${dirTxt}) على جميع السجلات الحالية بنجاح!`, 'success');
+        const badge = document.getElementById('attSmartEngineBadgeV191');
+        if (badge) badge.textContent = `🧠 ${reasonTxt}`;
+        showToast(`✅ تم ضبط التوقيت وإعادة التجميع بنجاح (${reasonTxt})!`, 'success');
     };
 
     function saveAttendanceStoreV183() {
@@ -20580,7 +20921,18 @@
     window.handleAttendanceSheetUploadV183 = function(event) {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
+        showToast(`⏳ جارٍ قراءة ملف البصمة: ${file.name}`, 'info');
+        const ext = (file.name.split('.').pop() || '').toLowerCase();
+        if ((ext === 'xlsx' || ext === 'xls') && typeof XLSX === 'undefined') {
+            showToast('مكتبة Excel لم يتم تحميلها. تحقق من اتصال الإنترنت ثم أعد فتح البرنامج.', 'error');
+            event.target.value = '';
+            return;
+        }
         const reader = new FileReader();
+        reader.onerror = function() {
+            showToast('تعذرت قراءة الملف من الجهاز. أعد اختيار ملف Excel وحاول مرة أخرى.', 'error');
+            event.target.value = '';
+        };
         reader.onload = function(e) {
             try {
                 let rows = [];
@@ -20609,9 +20961,46 @@
                     }
                 }
 
-                const timeOffsetHrs = parseInt(document.getElementById('attTimeOffsetSelectV190')?.value || '0', 10) || 0;
+                const offsetModeVal = document.getElementById('attTimeOffsetSelectV190')?.value || 'auto';
+                let timeOffsetHrs = (offsetModeVal === 'auto') ? 0 : (parseInt(offsetModeVal, 10) || 0);
+                let smartReasonNote = '';
                 const grouped = new Map();
-                const isRawDeviceLog = (headerRowIdx === -1 && rows[0].length >= 2 && isLikelyDateTimeCellV183(rows[0][1]));
+                const isRawDeviceLog = (rows[0].length >= 2 && isLikelyDateTimeCellV183(rows[0][1]));
+                if (isRawDeviceLog) headerRowIdx = -1;
+
+                if (offsetModeVal === 'auto') {
+                    const sampleEvents = [];
+                    if (isRawDeviceLog) {
+                        rows.forEach(row => {
+                            const rc = String(row[0] ?? '').trim();
+                            if (!rc) return;
+                            const d = normalizeDateStrV183(row[1]);
+                            const t = normalizeTimeTo24V183(row[1]);
+                            if (d && t) sampleEvents.push({ code: rc, name: lookupEmpNameByCodeV183(rc), date: d, time: t });
+                        });
+                    } else {
+                        const hdrRowIdx = headerRowIdx === -1 ? 0 : headerRowIdx;
+                        const hdrs = rows[hdrRowIdx].map(c => String(c || '').trim());
+                        const iC = findColIdxV183(hdrs, ['كود', 'الرقم الوظيفي', 'رقم الموظف', 'ac-no', 'emp id', 'code', 'id', 'رقم']);
+                        const iD = findColIdxV183(hdrs, ['تاريخ', 'اليوم', 'date', 'day']);
+                        const iF = findColIdxV183(hdrs, ['الاولى', 'الأولى', 'اول', 'أول', 'حضور', 'دخول', 'first', 'check-in', 'in']);
+                        const iL = findColIdxV183(hdrs, ['الاخيرة', 'الأخيرة', 'اخير', 'أخير', 'انصراف', 'خروج', 'last', 'check-out', 'out']);
+                        const iT = findColIdxV183(hdrs, ['وقت البصمة', 'وقت', 'الساعة', 'time', 'datetime', 'punch', 'timestamp']);
+                        rows.slice(hdrRowIdx + 1).forEach(row => {
+                            const rc = iC !== -1 ? String(row[iC] || '').trim() : String(row[0] || '').trim();
+                            let d = iD !== -1 ? normalizeDateStrV183(row[iD]) : (iT !== -1 ? normalizeDateStrV183(row[iT]) : (isLikelyDateTimeCellV183(row[1]) ? normalizeDateStrV183(row[1]) : ''));
+                            const tCand1 = iF !== -1 ? normalizeTimeTo24V183(row[iF]) : (iT !== -1 ? normalizeTimeTo24V183(row[iT]) : (isLikelyDateTimeCellV183(row[1]) ? normalizeTimeTo24V183(row[1]) : ''));
+                            const tCand2 = iL !== -1 ? normalizeTimeTo24V183(row[iL]) : '';
+                            if (d && tCand1) sampleEvents.push({ code: rc, name: lookupEmpNameByCodeV183(rc), date: d, time: tCand1 });
+                            if (d && tCand2) sampleEvents.push({ code: rc, name: lookupEmpNameByCodeV183(rc), date: d, time: tCand2 });
+                        });
+                    }
+                    const smartDet = detectBestSmartOffsetV191(sampleEvents);
+                    timeOffsetHrs = smartDet.offset;
+                    smartReasonNote = smartDet.reason;
+                    const smartBadge = document.getElementById('attSmartEngineBadgeV191');
+                    if (smartBadge) smartBadge.textContent = `🧠 ${smartReasonNote}`;
+                }
 
                 if (isRawDeviceLog) {
                     rows.forEach((row) => {
@@ -20625,6 +21014,13 @@
                             const shifted = shiftDateTimeByHoursV190(dateVal, timeVal, timeOffsetHrs);
                             dateVal = shifted.date;
                             timeVal = shifted.time;
+                        }
+                        if (offsetModeVal === 'auto' && !isRawDeviceLog && timeVal) {
+                            const matchedNameTmp = lookupEmpNameByCodeV183(rawCode);
+                            const empRuleTmp = getEmpShiftRuleV188(rawCode, matchedNameTmp);
+                            const refined = smartAlignSinglePunchToEmpShiftV191(dateVal, timeVal, empRuleTmp, timeOffsetHrs || -12);
+                            dateVal = refined.date;
+                            timeVal = refined.time;
                         }
 
                         const stateRaw = row.length >= 4 ? String(row[3] ?? '').trim() : '';
@@ -20787,11 +21183,11 @@
                     if (outTimes.length > 0) {
                         const firstInSec = timeToSecondsV183(firstPunch);
                         const outsAfterIn = outTimes.filter(t => timeToSecondsV183(t) > firstInSec);
-                        lastOutPunch = outsAfterIn.length > 0 ? outsAfterIn[outsAfterIn.length - 1] : outTimes[outTimes.length - 1];
+                        lastOutPunch = outsAfterIn.length > 0 ? outsAfterIn[0] : outTimes[0];
                     } else if (validTimes.length > 1) {
                         const firstSec = timeToSecondsV183(firstPunch);
                         const laterDistinct = validTimes.filter(t => timeToSecondsV183(t) > firstSec);
-                        lastOutPunch = laterDistinct.length > 0 ? laterDistinct[laterDistinct.length - 1] : validTimes[validTimes.length - 1];
+                        lastOutPunch = laterDistinct.length > 0 ? laterDistinct[0] : validTimes[validTimes.length - 1];
                     }
                     const meta = resolveAttEmpMetaV190(rec.code, rec.name, null);
                     parsedList.push({
@@ -20827,8 +21223,10 @@
                 }
                 renderActiveAttendanceViewV187();
                 if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
-                const offLabel = timeOffsetHrs === -12 ? ' (تم إنقاص 12 ساعة)' : (timeOffsetHrs === 12 ? ' (تمت زيادة 12 ساعة)' : '');
-                showToast(`✅ تم رفع شيت البصمة مرتباً من بداية الشهر (${parsedList.length} سجل)${offLabel}!`, 'success');
+                const offLabel = smartReasonNote
+                    ? ` — 🧠 ${smartReasonNote}`
+                    : (timeOffsetHrs === -12 ? ' (تم إنقاص 12 ساعة)' : (timeOffsetHrs === 12 ? ' (تمت زيادة 12 ساعة)' : ''));
+                showToast(`✅ تم رفع ومعالجة شيت البصمة (${parsedList.length} سجل)${offLabel}!`, 'success');
             } catch (err) {
                 console.error('Attendance upload error:', err);
                 showToast('حدث خطأ أثناء قراءة شيت البصمة. تأكد من صيغة الملف (.xlsx / .xls / .csv).', 'error');
@@ -20842,18 +21240,23 @@
     window.switchAttendanceViewModeV187 = function(mode) {
         attViewModeV187 = mode;
         document.getElementById('btnAttModeDailyV187')?.classList.toggle('active', mode === 'daily');
+        document.getElementById('btnAttModeGroupedV191')?.classList.toggle('active', mode === 'grouped');
         document.getElementById('btnAttModeMonthlyV187')?.classList.toggle('active', mode === 'monthly');
         document.getElementById('attDailyTableWrapV187')?.classList.toggle('hidden', mode !== 'daily');
+        document.getElementById('attGroupedTableWrapV191')?.classList.toggle('hidden', mode !== 'grouped');
         document.getElementById('attMonthlyTableWrapV187')?.classList.toggle('hidden', mode !== 'monthly');
         document.getElementById('attQuickFilterBarV183')?.classList.toggle('hidden', mode !== 'daily');
         document.getElementById('attDateFilterV183')?.classList.toggle('hidden', mode !== 'daily');
-        document.getElementById('attMonthFilterV187')?.classList.toggle('hidden', mode !== 'monthly');
+        document.getElementById('attMonthFilterV187')?.classList.toggle('hidden', mode === 'daily');
         renderActiveAttendanceViewV187();
     };
 
     window.renderActiveAttendanceViewV187 = function() {
+        populateAttExtraFiltersV191();
         if (attViewModeV187 === 'monthly') {
             renderMonthlySummaryTableV187();
+        } else if (attViewModeV187 === 'grouped') {
+            renderGroupedAttendanceTableV191();
         } else {
             renderAttendanceTableV183();
         }
@@ -21023,12 +21426,62 @@
         showToast('🗑️ تم مسح سجل البصمة بالكامل.', 'warn');
     };
 
+    function populateAttExtraFiltersV191() {
+        const bSel = document.getElementById('attBranchFilterV191');
+        const dSel = document.getElementById('attDeptFilterV191');
+        const eSel = document.getElementById('attEmpFilterV191');
+        const bSet = new Set(), dSet = new Set(), eMap = new Map();
+        attendanceRecordsV183.forEach(r => {
+            const m = resolveAttEmpMetaV190(r.code, r.name, r);
+            if (m.branch && m.branch !== '—') bSet.add(m.branch);
+            if (m.dept && m.dept !== '—') dSet.add(m.dept);
+            const ck = cleanCodeKeyV187(r.code) || r.name;
+            if (ck && !eMap.has(ck)) eMap.set(ck, { code: r.code, name: r.name });
+            else if (ck && r.name && !String(r.name).startsWith('موظف كود')) eMap.set(ck, { code: r.code, name: r.name });
+        });
+        if (bSel) {
+            const prev = bSel.value || 'all';
+            const list = Array.from(bSet).sort();
+            bSel.innerHTML = `<option value="all">🏢 كل الفروع (${list.length})</option>` + list.map(x => `<option value="${x}">${x}</option>`).join('');
+            if (list.includes(prev)) bSel.value = prev;
+        }
+        if (dSel) {
+            const prev = dSel.value || 'all';
+            const list = Array.from(dSet).sort();
+            dSel.innerHTML = `<option value="all">🧩 كل الأقسام (${list.length})</option>` + list.map(x => `<option value="${x}">${x}</option>`).join('');
+            if (list.includes(prev)) dSel.value = prev;
+        }
+        if (eSel) {
+            const prev = eSel.value || 'all';
+            const list = Array.from(eMap.entries()).sort((a, b) => String(a[1].code).localeCompare(String(b[1].code), undefined, { numeric: true }));
+            eSel.innerHTML = `<option value="all">👤 كل الموظفين (${list.length})</option>` + list.map(([k, v]) => `<option value="${k}">${v.code} — ${v.name}</option>`).join('');
+            if (eMap.has(prev)) eSel.value = prev;
+        }
+    }
+
+    function matchesAttExtraFiltersV191(codeVal, nameVal, recObj) {
+        const bFilter = document.getElementById('attBranchFilterV191')?.value || 'all';
+        const dFilter = document.getElementById('attDeptFilterV191')?.value || 'all';
+        const eFilter = document.getElementById('attEmpFilterV191')?.value || 'all';
+        if (eFilter !== 'all') {
+            const ck = cleanCodeKeyV187(codeVal) || nameVal;
+            if (ck !== eFilter) return false;
+        }
+        if (bFilter !== 'all' || dFilter !== 'all') {
+            const m = resolveAttEmpMetaV190(codeVal, nameVal, recObj);
+            if (bFilter !== 'all' && m.branch !== bFilter) return false;
+            if (dFilter !== 'all' && m.dept !== dFilter) return false;
+        }
+        return true;
+    }
+
     function getFilteredAttendanceV183() {
         sortAttendanceAscendingV187();
         const q = (document.getElementById('attSearchInputV183')?.value || '').trim().toLowerCase();
         const dateFilter = document.getElementById('attDateFilterV183')?.value || 'all';
         return attendanceRecordsV183.filter(r => {
             if (dateFilter !== 'all' && r.date !== dateFilter) return false;
+            if (!matchesAttExtraFiltersV191(r.code, r.name, r)) return false;
             if (q) {
                 const m = resolveAttEmpMetaV190(r.code, r.name, r);
                 const hay = `${r.name || ''} ${r.code || ''} ${m.branch} ${m.adminDept} ${m.dept} ${m.jobTitle}`.toLowerCase();
@@ -21057,6 +21510,7 @@
         if (!tbody) return;
         sortAttendanceAscendingV187();
         updateAttendanceTopStatsV187();
+        populateAttExtraFiltersV191();
 
         const dateSel = document.getElementById('attDateFilterV183');
         if (dateSel) {
@@ -21106,9 +21560,9 @@
                 <td style="text-align:center; color:#cbd5e1;">${dur}</td>
                 <td style="text-align:right; white-space:normal;">${countBadge}${punctTag}</td>
                 <td style="text-align:center; white-space:nowrap;">
-                    <button type="button" onclick="openEmpShiftRuleModalV188('${safeCode}', '${safeName}')" style="${shiftBtnStyle}" title="${shiftTitle}">⏰ مواعيده</button>
-                    <button type="button" onclick="openEditAttendanceModalV187('${r.id}')" class="btn-edit-tbl">✏️ تعديل</button>
-                    <button type="button" onclick="deleteAttendanceRecordV183('${r.id}')" class="btn-danger">حذف</button>
+                    <button type="button" onclick="openEmpShiftRuleModalV188('${safeCode}', '${safeName}')" class="att-ico-btn" style="${shiftBtnStyle}" title="${shiftTitle}">⏰</button>
+                    <button type="button" onclick="openEditAttendanceModalV187('${r.id}')" class="btn-edit-tbl att-ico-btn" title="تعديل السجل والبيانات الوظيفية">✏️</button>
+                    <button type="button" onclick="deleteAttendanceRecordV183('${r.id}')" class="btn-danger att-ico-btn" title="حذف السجل">🗑️</button>
                 </td>
             </tr>`;
         }).join('');
@@ -21171,7 +21625,12 @@
 
         const results = [];
         map.forEach(agg => {
-            if (q && !(String(agg.name).toLowerCase().includes(q) || String(agg.code).toLowerCase().includes(q))) return;
+            if (!matchesAttExtraFiltersV191(agg.code, agg.name, null)) return;
+            if (q) {
+                const mTmp = resolveAttEmpMetaV190(agg.code, agg.name, null);
+                const hay = `${agg.name} ${agg.code} ${mTmp.branch} ${mTmp.adminDept} ${mTmp.dept} ${mTmp.jobTitle}`.toLowerCase();
+                if (!hay.includes(q)) return;
+            }
             const empRule = getEmpShiftRuleV188(agg.code, agg.name);
             const workDaysTarget = Number(empRule.workDays) || 26;
             const presentDays = agg.daysSet.size;
@@ -21644,7 +22103,7 @@
                 'التاريخ': r.date,
                 'مواعيد الدوام المخصصة': `${empRule.start} - ${empRule.end} (±${empRule.grace}د)`,
                 'وقت البصمة الأولى (الحضور)': r.firstPunch || '—',
-                'وقت البصمة الأخيرة (انصراف)': r.lastPunch || '—',
+                'وقت البصمة الأولى (انصراف)': r.lastPunch || '—',
                 'مدة التواجد': computeDurationStrV183(r.firstPunch, r.lastPunch),
                 'ساعات التأخير': formatMinutesAsHoursV188(ev.lateMins + ev.earlyMins),
                 'حالة الالتزام': ev.compliant ? 'ملتزم' : 'غير ملتزم',
@@ -21721,6 +22180,492 @@
             recordAuditLog('تصدير الملخص الشهري', `تم تصدير الملخص الشهري الكامل Excel (${list.length} موظف)`);
         }
         showToast(`📑 تم تصدير الملخص الشهري الكامل Excel بنجاح (${list.length} موظف)!`, 'success');
+    };
+
+    // =========================================================================
+    // 🚀 v19.1 EXPORT DROPDOWN + GROUPED 1-30 VIEW + BULK CODES + DETAILED 1-30 EXCEL
+    // =========================================================================
+    window.toggleAttExportMenuV191 = function(ev) {
+        if (ev) ev.stopPropagation();
+        const menu = document.getElementById('attExportMenuV191');
+        if (menu) menu.classList.toggle('open');
+    };
+    window.closeAttExportMenuV191 = function() {
+        const menu = document.getElementById('attExportMenuV191');
+        if (menu) menu.classList.remove('open');
+    };
+    document.addEventListener('click', function() {
+        const menu = document.getElementById('attExportMenuV191');
+        if (menu && menu.classList.contains('open')) menu.classList.remove('open');
+    });
+
+    const AR_DAYS_V191 = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+    function getMonthYearDaysListV191(selectedMonth) {
+        let ym = selectedMonth;
+        if (!ym || ym === 'all' || !/^\d{4}-\d{2}$/.test(ym)) {
+            const months = Array.from(new Set(attendanceRecordsV183.map(r => (r.date || '').slice(0, 7)).filter(m => /^\d{4}-\d{2}$/.test(m)))).sort();
+            ym = months.length > 0 ? months[months.length - 1] : new Date().toISOString().slice(0, 7);
+        }
+        const [yStr, mStr] = ym.split('-');
+        const yr = parseInt(yStr, 10), mo = parseInt(mStr, 10);
+        const daysInMonth = new Date(Date.UTC(yr, mo, 0)).getUTCDate();
+        const days = [];
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateStr = `${yr}-${pad2V183(mo)}-${pad2V183(d)}`;
+            const dow = new Date(Date.UTC(yr, mo - 1, d)).getUTCDay();
+            days.push({ dayNum: d, dateStr, dayName: AR_DAYS_V191[dow], isFriday: dow === 5 });
+        }
+        return { ym, days };
+    }
+
+    // 👤 العرض المجمّع حسب الموظف (صف ملخص ينفتح لعرض أيامه 1–30)
+    const expandedAttGroupsV191 = new Set();
+
+    window.toggleGroupedEmpRowV191 = function(empKey) {
+        if (expandedAttGroupsV191.has(empKey)) expandedAttGroupsV191.delete(empKey);
+        else expandedAttGroupsV191.add(empKey);
+        renderGroupedAttendanceTableV191();
+    };
+
+    window.renderGroupedAttendanceTableV191 = function() {
+        updateAttendanceTopStatsV187();
+        const tbody = document.getElementById('attendanceGroupedBodyV191');
+        if (!tbody) return;
+        const summaries = computeMonthlySummariesV187();
+        if (summaries.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:#94a3b8; padding:28px;">لا توجد بيانات بصمة معروضة حالياً.</td></tr>`;
+            return;
+        }
+        const selectedMonth = document.getElementById('attMonthFilterV187')?.value || 'all';
+        const { ym, days } = getMonthYearDaysListV191(selectedMonth);
+
+        let html = '';
+        summaries.forEach((s) => {
+            const empKey = cleanCodeKeyV187(s.code) || s.name;
+            const isOpen = expandedAttGroupsV191.has(empKey);
+            const safeCode = String(s.code || '').replace(/'/g, '');
+            const safeName = String(s.name || '').replace(/'/g, '');
+            const delayBadge = s.totalDelayMins === 0
+                ? `<span class="badge b-green">0 س</span>`
+                : `<span class="badge b-red">${s.totalDelayHoursStr}</span>`;
+
+            html += `<tr class="att-group-row" onclick="toggleGroupedEmpRowV191('${empKey.replace(/'/g, '')}')">
+                <td style="text-align:center; color:#38bdf8; font-weight:bold;">${isOpen ? '🔼' : '🔽'}</td>
+                <td style="text-align:center; font-family:monospace; color:#38bdf8; font-weight:bold;">${s.code}</td>
+                <td style="font-weight:bold; color:var(--text-main);">${s.name}</td>
+                <td style="white-space:normal; font-size:11px; color:#cbd5e1;">
+                    <span style="color:#7dd3fc;">${s.branchName}</span> • ${s.adminDeptName} • <span style="color:#c4b5fd;">${s.deptName}</span> • <span style="color:#94a3b8;">${s.jobTitle}</span>
+                </td>
+                <td style="text-align:center; font-family:monospace; font-size:11px; color:#fbbf24;">${s.empRule.start} - ${s.empRule.end}</td>
+                <td style="text-align:center;"><span style="color:#34d399; font-weight:bold;">${s.presentDays}</span> / <span style="color:#fb7185; font-weight:bold;">${s.absentDays}</span></td>
+                <td style="text-align:center; font-family:monospace; color:#38bdf8; font-weight:bold;">${s.totalHours} س</td>
+                <td style="text-align:center;">${delayBadge}</td>
+                <td style="text-align:center; white-space:nowrap;" onclick="event.stopPropagation();">
+                    <button type="button" onclick="openEmpShiftRuleModalV188('${safeCode}', '${safeName}')" class="att-ico-btn" style="background:rgba(245,158,11,0.16); color:#fbbf24; border-color:#f59e0b;" title="مواعيد الشيفت">⏰</button>
+                    <button type="button" onclick="openEditAttendanceByEmpCodeV190('${safeCode}')" class="btn-edit-tbl att-ico-btn" title="تعديل بيانات الموظف">✏️</button>
+                </td>
+            </tr>`;
+
+            if (isOpen) {
+                const recByDate = new Map();
+                attendanceRecordsV183.forEach(r => {
+                    if ((cleanCodeKeyV187(r.code) || r.name) === empKey && (r.date || '').startsWith(ym)) {
+                        recByDate.set(r.date, r);
+                    }
+                });
+                const subRows = days.map(d => {
+                    const r = recByDate.get(d.dateStr);
+                    if (!r) {
+                        const absLbl = d.isFriday ? 'إجازة أسبوعية (جمعة)' : 'غياب / لا توجد بصمة';
+                        return `<tr style="opacity:0.65;">
+                            <td style="text-align:center; font-family:monospace;">${d.dateStr}</td>
+                            <td style="text-align:center;">${d.dayName}</td>
+                            <td style="text-align:center; color:#94a3b8;">—</td>
+                            <td style="text-align:center; color:#94a3b8;">—</td>
+                            <td style="text-align:center; color:#94a3b8;">0 س</td>
+                            <td style="text-align:center; color:#94a3b8;">0 س</td>
+                            <td style="text-align:center;">0</td>
+                            <td style="color:${d.isFriday ? '#38bdf8' : '#fb7185'};">${absLbl}</td>
+                        </tr>`;
+                    }
+                    const ev = evaluateDayPunctualityV187(r, s.empRule);
+                    const dur = computeDurationStrV183(r.firstPunch, r.lastPunch);
+                    const delMins = ev.lateMins + ev.earlyMins;
+                    return `<tr>
+                        <td style="text-align:center; font-family:monospace; color:#38bdf8;">${d.dateStr}</td>
+                        <td style="text-align:center;">${d.dayName}</td>
+                        <td style="text-align:center; font-family:monospace; color:${ev.inOk ? '#34d399' : '#fb7185'}; font-weight:bold;">${r.firstPunch || '—'}</td>
+                        <td style="text-align:center; font-family:monospace; color:${ev.outOk && r.lastPunch !== '—' ? '#38bdf8' : '#fb7185'}; font-weight:bold;">${r.lastPunch || '—'}</td>
+                        <td style="text-align:center;">${dur}</td>
+                        <td style="text-align:center; color:${delMins > 0 ? '#fb7185' : '#34d399'};">${formatMinutesAsHoursV188(delMins)}</td>
+                        <td style="text-align:center;">${r.punchCount || 1}</td>
+                        <td style="white-space:normal;">${r.note}</td>
+                    </tr>`;
+                }).join('');
+
+                html += `<tr class="att-group-detail-row"><td colspan="9">
+                    <div style="font-size:11.5px; color:#38bdf8; font-weight:bold; margin-bottom:8px;">📅 سجل أيام الشهر (${ym}) للموظف: ${s.name} (إجمالي الساعات: ${s.totalHours} س • إجمالي التأخير: ${s.totalDelayHoursStr})</div>
+                    <table style="font-size:11px;">
+                        <thead><tr>
+                            <th style="text-align:center;">التاريخ</th>
+                            <th style="text-align:center;">اليوم</th>
+                            <th style="text-align:center;">الدخول</th>
+                            <th style="text-align:center;">الخروج</th>
+                            <th style="text-align:center;">ساعات العمل</th>
+                            <th style="text-align:center;">التأخير</th>
+                            <th style="text-align:center;">البصمات</th>
+                            <th style="text-align:right;">الملاحظات</th>
+                        </tr></thead>
+                        <tbody>${subRows}</tbody>
+                    </table>
+                </td></tr>`;
+            }
+        });
+        tbody.innerHTML = html;
+    };
+
+    // 📅 تصدير الإكسل التفصيلي الكامل لكل كود موظف من يوم 1 إلى يوم 30/31
+    window.exportDetailed1To30ExcelV191 = function() {
+        if (attendanceRecordsV183.length === 0) {
+            showToast('لا توجد بيانات بصمة لتصديرها!', 'warn');
+            return;
+        }
+        if (typeof XLSX === 'undefined') {
+            showToast('مكتبة تصدير Excel غير متاحة حالياً!', 'error');
+            return;
+        }
+        const summaries = computeMonthlySummariesV187();
+        if (summaries.length === 0) {
+            showToast('لا توجد بيانات مطابقة للفلاتر الحالية لتصديرها!', 'warn');
+            return;
+        }
+        const selectedMonth = document.getElementById('attMonthFilterV187')?.value || 'all';
+        const { ym, days } = getMonthYearDaysListV191(selectedMonth);
+
+        const detailRows = [];
+        const summarySheetRows = [];
+
+        summaries.forEach(s => {
+            const empKey = cleanCodeKeyV187(s.code) || s.name;
+            const shiftStr = `${s.empRule.start} - ${s.empRule.end} (±${s.empRule.grace} د)`;
+            const recByDate = new Map();
+            attendanceRecordsV183.forEach(r => {
+                if ((cleanCodeKeyV187(r.code) || r.name) === empKey && (r.date || '').startsWith(ym)) {
+                    recByDate.set(r.date, r);
+                }
+            });
+
+            let monthSecs = 0;
+            let monthDelayMins = 0;
+            let presentCount = 0;
+            let absentCount = 0;
+
+            // حساب إجمالي الشهر أولاً لوضعه أمام كل صف وفي صف الإجمالي
+            days.forEach(d => {
+                const r = recByDate.get(d.dateStr);
+                if (r) {
+                    presentCount++;
+                    monthSecs += computeDurationSecsV187(r.firstPunch, r.lastPunch);
+                    const ev = evaluateDayPunctualityV187(r, s.empRule);
+                    monthDelayMins += (ev.lateMins + ev.earlyMins);
+                } else {
+                    absentCount++;
+                }
+            });
+            const monthHoursStr = `${(monthSecs / 3600).toFixed(2)} س`;
+            const monthDelayStr = formatMinutesAsHoursV188(monthDelayMins);
+
+            days.forEach(d => {
+                const r = recByDate.get(d.dateStr);
+                if (!r) {
+                    detailRows.push({
+                        'كود الموظف': s.code,
+                        'اسم الموظف': s.name,
+                        'الفرع': s.branchName || '—',
+                        'الإدارة': s.adminDeptName || '—',
+                        'القسم': s.deptName || '—',
+                        'الوظيفة': s.jobTitle || '—',
+                        'توقيت الشيفت': shiftStr,
+                        'التاريخ': d.dateStr,
+                        'اليوم': d.dayName,
+                        'الدخول': d.isFriday ? 'إجازة' : 'غياب',
+                        'الخروج': '—',
+                        'ساعات العمل اليومية': '0 س',
+                        'ساعات العمل (عشري)': 0,
+                        'التأخير اليومي': '0 س',
+                        'عدد البصمات': 0,
+                        'الملاحظات': d.isFriday ? 'إجازة أسبوعية (الجمعة)' : 'غياب / لم تُسجّل بصمة',
+                        'إجمالي ساعات الشهر': monthHoursStr,
+                        'إجمالي ساعات التأخير في الشهر': monthDelayStr
+                    });
+                } else {
+                    const durSecs = computeDurationSecsV187(r.firstPunch, r.lastPunch);
+                    const durStr = computeDurationStrV183(r.firstPunch, r.lastPunch);
+                    const ev = evaluateDayPunctualityV187(r, s.empRule);
+                    const dayDelayMins = ev.lateMins + ev.earlyMins;
+                    detailRows.push({
+                        'كود الموظف': s.code,
+                        'اسم الموظف': s.name,
+                        'الفرع': s.branchName || '—',
+                        'الإدارة': s.adminDeptName || '—',
+                        'القسم': s.deptName || '—',
+                        'الوظيفة': s.jobTitle || '—',
+                        'توقيت الشيفت': shiftStr,
+                        'التاريخ': d.dateStr,
+                        'اليوم': d.dayName,
+                        'الدخول': r.firstPunch || '—',
+                        'الخروج': r.lastPunch || '—',
+                        'ساعات العمل اليومية': durStr,
+                        'ساعات العمل (عشري)': Number((durSecs / 3600).toFixed(2)),
+                        'التأخير اليومي': formatMinutesAsHoursV188(dayDelayMins),
+                        'عدد البصمات': Number(r.punchCount) || 1,
+                        'الملاحظات': r.note || '',
+                        'إجمالي ساعات الشهر': monthHoursStr,
+                        'إجمالي ساعات التأخير في الشهر': monthDelayStr
+                    });
+                }
+            });
+
+            // صف إجمالي فاصل أسفل كل موظف
+            detailRows.push({
+                'كود الموظف': `إجمالي (${s.code})`,
+                'اسم الموظف': s.name,
+                'الفرع': s.branchName || '—',
+                'الإدارة': s.adminDeptName || '—',
+                'القسم': s.deptName || '—',
+                'الوظيفة': s.jobTitle || '—',
+                'توقيت الشيفت': shiftStr,
+                'التاريخ': `شهر ${ym}`,
+                'اليوم': `حضور ${presentCount} / غياب ${absentCount}`,
+                'الدخول': '—',
+                'الخروج': '—',
+                'ساعات العمل اليومية': monthHoursStr,
+                'ساعات العمل (عشري)': Number((monthSecs / 3600).toFixed(2)),
+                'التأخير اليومي': monthDelayStr,
+                'عدد البصمات': s.totalPunches,
+                'الملاحظات': `نسبة الالتزام: ${s.compliancePct}%`,
+                'إجمالي ساعات الشهر': monthHoursStr,
+                'إجمالي ساعات التأخير في الشهر': monthDelayStr
+            });
+
+            summarySheetRows.push({
+                'كود الموظف': s.code,
+                'اسم الموظف': s.name,
+                'الفرع': s.branchName || '—',
+                'الإدارة': s.adminDeptName || '—',
+                'القسم': s.deptName || '—',
+                'الوظيفة': s.jobTitle || '—',
+                'توقيت الشيفت': shiftStr,
+                'الشهر': ym,
+                'أيام الحضور': presentCount,
+                'أيام الغياب/الإجازة': absentCount,
+                'إجمالي ساعات الشهر': Number((monthSecs / 3600).toFixed(2)),
+                'إجمالي ساعات التأخير في الشهر': monthDelayStr,
+                'إجمالي التأخير (عشري)': Number((monthDelayMins / 60).toFixed(2)),
+                'نسبة الالتزام (%)': s.compliancePct
+            });
+        });
+
+        const wb = XLSX.utils.book_new();
+        wb.Workbook = { Views: [{ RTL: true }] };
+
+        const wsDetail = XLSX.utils.json_to_sheet(detailRows);
+        wsDetail['!cols'] = [
+            { wch: 14 }, { wch: 24 }, { wch: 16 }, { wch: 18 }, { wch: 15 }, { wch: 18 },
+            { wch: 22 }, { wch: 13 }, { wch: 13 }, { wch: 12 }, { wch: 12 },
+            { wch: 15 }, { wch: 14 }, { wch: 14 }, { wch: 12 }, { wch: 34 },
+            { wch: 16 }, { wch: 18 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsDetail, 'تفصيلي_1_إلى_30');
+
+        const wsSum = XLSX.utils.json_to_sheet(summarySheetRows);
+        wsSum['!cols'] = [
+            { wch: 12 }, { wch: 24 }, { wch: 16 }, { wch: 18 }, { wch: 15 }, { wch: 18 },
+            { wch: 22 }, { wch: 11 }, { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 18 }, { wch: 16 }, { wch: 14 }
+        ];
+        XLSX.utils.book_append_sheet(wb, wsSum, 'ملخص_الشهر_للموظفين');
+
+        XLSX.writeFile(wb, `شيت_الحضور_التفصيلي_1_30_${ym}.xlsx`);
+        if (typeof recordAuditLog === 'function') {
+            recordAuditLog('تصدير تفصيلي 1-30', `تم تصدير شيت البصمة التفصيلي (1-30) لشهر ${ym} لعدد ${summaries.length} موظف`);
+        }
+        showToast(`📅 تم تصدير شيت الإكسل التفصيلي (من يوم 1 إلى ${days.length}) لعدد ${summaries.length} موظف بنجاح!`, 'success');
+    };
+
+    // 👥 نافذة تعيين بيانات جميع الأكواد دفعة واحدة
+    window.openBulkAttCodesModalV191 = function() {
+        populateAttEditDatalistsV190();
+        const tbody = document.getElementById('bulkAttCodesTableBodyV191');
+        if (!tbody) return;
+        const codeMap = new Map();
+        attendanceRecordsV183.forEach(r => {
+            const ck = cleanCodeKeyV187(r.code) || String(r.code || '').trim();
+            if (!ck) return;
+            if (!codeMap.has(ck)) {
+                codeMap.set(ck, { code: r.code, name: r.name, rec: r });
+            } else if (r.name && !String(r.name).startsWith('موظف كود')) {
+                codeMap.get(ck).name = r.name;
+            }
+        });
+        const entries = Array.from(codeMap.values()).sort((a, b) => String(a.code).localeCompare(String(b.code), undefined, { numeric: true }));
+        const infoEl = document.getElementById('bulkAttCodesCountInfoV191');
+        if (infoEl) infoEl.textContent = `إجمالي الأكواد المرصودة في الشيت: ${entries.length} كود`;
+
+        if (entries.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:#94a3b8; padding:22px;">ارفع شيت البصمة أولاً لتظهر الأكواد هنا وتتمكن من تعيين بياناتها دفعة واحدة.</td></tr>`;
+        } else {
+            tbody.innerHTML = entries.map((item, idx) => {
+                const m = resolveAttEmpMetaV190(item.code, item.name, item.rec);
+                const rule = getEmpShiftRuleV188(item.code, item.name);
+                const cleanVal = v => (v && v !== '—') ? String(v).replace(/"/g, '&quot;') : '';
+                return `<tr data-bulk-code="${String(item.code).replace(/"/g, '&quot;')}">
+                    <td style="text-align:center; font-family:monospace; color:#38bdf8; font-weight:bold;">${item.code}</td>
+                    <td><input type="text" class="table-input bulk-name" value="${cleanVal(item.name)}" style="text-align:right; min-width:140px;"></td>
+                    <td><input type="text" class="table-input bulk-branch" list="attBranchDatalistV190" value="${cleanVal(m.branch)}" style="text-align:right; min-width:110px;"></td>
+                    <td><input type="text" class="table-input bulk-admin" list="attAdminDeptDatalistV190" value="${cleanVal(m.adminDept)}" style="text-align:right; min-width:120px;"></td>
+                    <td><input type="text" class="table-input bulk-dept" list="attDeptDatalistV190" value="${cleanVal(m.dept)}" style="text-align:right; min-width:105px;"></td>
+                    <td><input type="text" class="table-input bulk-job" value="${cleanVal(m.jobTitle)}" style="text-align:right; min-width:110px;"></td>
+                    <td><input type="time" class="table-input bulk-start" value="${rule.start || '09:00'}" style="min-width:95px;"></td>
+                    <td><input type="time" class="table-input bulk-end" value="${rule.end || '22:00'}" style="min-width:95px;"></td>
+                </tr>`;
+            }).join('');
+        }
+        document.getElementById('bulkAttCodesModalV191')?.classList.add('active');
+    };
+
+    window.closeBulkAttCodesModalV191 = function() {
+        document.getElementById('bulkAttCodesModalV191')?.classList.remove('active');
+    };
+
+    window.saveBulkAttCodesV191 = function() {
+        const rows = document.querySelectorAll('#bulkAttCodesTableBodyV191 tr[data-bulk-code]');
+        let updatedCodes = 0;
+        rows.forEach(tr => {
+            const codeVal = tr.getAttribute('data-bulk-code');
+            const cleanC = cleanCodeKeyV187(codeVal);
+            const nameVal = (tr.querySelector('.bulk-name')?.value || '').trim() || `موظف كود ${codeVal}`;
+            const branchVal = (tr.querySelector('.bulk-branch')?.value || '').trim() || '—';
+            const adminVal = (tr.querySelector('.bulk-admin')?.value || '').trim() || '—';
+            const deptVal = (tr.querySelector('.bulk-dept')?.value || '').trim() || '—';
+            const jobVal = (tr.querySelector('.bulk-job')?.value || '').trim() || '—';
+            const startVal = tr.querySelector('.bulk-start')?.value || '09:00';
+            const endVal = tr.querySelector('.bulk-end')?.value || '22:00';
+
+            if (nameVal && !nameVal.startsWith('موظف كود')) {
+                attCodeNameMapV187[codeVal] = nameVal;
+                if (cleanC) attCodeNameMapV187[cleanC] = nameVal;
+            }
+            const metaObj = { branch: branchVal, adminDept: adminVal, dept: deptVal, jobTitle: jobVal };
+            attEmpMetaMapV190[codeVal] = metaObj;
+            if (cleanC) attEmpMetaMapV190[cleanC] = metaObj;
+
+            const ruleKey = getEmpRuleKeyV188(codeVal, nameVal);
+            const curRule = getEmpShiftRuleV188(codeVal, nameVal);
+            empShiftRulesMapV188[ruleKey] = Object.assign({}, curRule, { start: startVal, end: endVal });
+
+            attendanceRecordsV183.forEach(r => {
+                if (cleanCodeKeyV187(r.code) === cleanC) {
+                    r.name = nameVal;
+                    r.branch = branchVal;
+                    r.adminDept = adminVal;
+                    r.dept = deptVal;
+                    r.jobTitle = jobVal;
+                }
+            });
+            updatedCodes++;
+        });
+        try { localStorage.setItem(ATT_CODEMAP_KEY, JSON.stringify(attCodeNameMapV187)); } catch (e) {}
+        saveEmpMetaStoreV190();
+        saveEmpShiftRulesStoreV188();
+        saveAttendanceStoreV183();
+        closeBulkAttCodesModalV191();
+        renderActiveAttendanceViewV187();
+        if (typeof renderEvalTable === 'function') { try { renderEvalTable(); } catch (e) {} }
+        showToast(`✅ تم حفظ وتطبيق بيانات ومواعيد ${updatedCodes} كود موظف على جميع أيام الشهر!`, 'success');
+    };
+
+    window.importBulkAttCodesExcelV191 = function(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                let rows = [];
+                if (typeof XLSX !== 'undefined') {
+                    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                    rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '' });
+                } else {
+                    const txt = new TextDecoder('utf-8').decode(e.target.result);
+                    rows = txt.split(/\r?\n/).map(l => l.split(/[,\t;]/));
+
+
+                }
+                rows = rows.filter(r => Array.isArray(r) && r.some(c => String(c).trim() !== ''));
+                if (rows.length < 2) { showToast('الملف لا يحتوي على بيانات كافية!', 'error'); return; }
+                const hdrs = rows[0].map(c => String(c || '').trim());
+                const iCode = findColIdxV183(hdrs, ['كود', 'رقم', 'code', 'id', 'ac-no']);
+                const iName = findColIdxV183(hdrs, ['اسم', 'موظف', 'name']);
+                const iBranch = findColIdxV183(hdrs, ['فرع', 'branch']);
+                const iAdmin = findColIdxV183(hdrs, ['ادار', 'إدار', 'admin']);
+                const iDept = findColIdxV183(hdrs, ['قسم', 'dept']);
+                const iJob = findColIdxV183(hdrs, ['وظيف', 'مسمى', 'job', 'title']);
+                const iStart = findColIdxV183(hdrs, ['حضور', 'بداية', 'start', 'in']);
+                const iEnd = findColIdxV183(hdrs, ['انصراف', 'نهاية', 'end', 'out']);
+
+                let matchedCount = 0;
+                rows.slice(1).forEach(r => {
+                    const c = iCode !== -1 ? String(r[iCode] || '').trim() : String(r[0] || '').trim();
+                    const cleanC = cleanCodeKeyV187(c);
+                    if (!cleanC) return;
+                    const name = iName !== -1 ? String(r[iName] || '').trim() : '';
+                    const branch = iBranch !== -1 ? String(r[iBranch] || '').trim() : '';
+                    const adminDept = iAdmin !== -1 ? String(r[iAdmin] || '').trim() : '';
+                    const dept = iDept !== -1 ? String(r[iDept] || '').trim() : '';
+                    const jobTitle = iJob !== -1 ? String(r[iJob] || '').trim() : '';
+                    const st = iStart !== -1 ? normalizeTimeTo24V183(r[iStart]).slice(0, 5) : '';
+                    const en = iEnd !== -1 ? normalizeTimeTo24V183(r[iEnd]).slice(0, 5) : '';
+
+                    if (name) { attCodeNameMapV187[c] = name; attCodeNameMapV187[cleanC] = name; }
+                    const prevMeta = attEmpMetaMapV190[cleanC] || {};
+                    const metaObj = {
+                        branch: branch || prevMeta.branch || '—',
+                        adminDept: adminDept || prevMeta.adminDept || '—',
+                        dept: dept || prevMeta.dept || '—',
+                        jobTitle: jobTitle || prevMeta.jobTitle || '—'
+                    };
+                    attEmpMetaMapV190[c] = metaObj;
+                    attEmpMetaMapV190[cleanC] = metaObj;
+                    if (st || en) {
+                        const rk = getEmpRuleKeyV188(c, name);
+                        const curR = getEmpShiftRuleV188(c, name);
+                        empShiftRulesMapV188[rk] = Object.assign({}, curR, { start: st || curR.start, end: en || curR.end });
+                    }
+                    attendanceRecordsV183.forEach(rec => {
+                        if (cleanCodeKeyV187(rec.code) === cleanC) {
+                            if (name) rec.name = name;
+                            rec.branch = metaObj.branch;
+                            rec.adminDept = metaObj.adminDept;
+                            rec.dept = metaObj.dept;
+                            rec.jobTitle = metaObj.jobTitle;
+                        }
+                    });
+                    matchedCount++;
+                });
+                try { localStorage.setItem(ATT_CODEMAP_KEY, JSON.stringify(attCodeNameMapV187)); } catch (e) {}
+                saveEmpMetaStoreV190();
+                saveEmpShiftRulesStoreV188();
+                saveAttendanceStoreV183();
+                openBulkAttCodesModalV191();
+                renderActiveAttendanceViewV187();
+                showToast(`✅ تم استيراد وربط بيانات ${matchedCount} كود موظف من Excel بنجاح!`, 'success');
+            } catch (err) {
+                showToast('تعذر قراءة ملف الأكواد، تأكد من الصيغة (.xlsx / .csv).', 'error');
+            } finally {
+                event.target.value = '';
+            }
+        };
+        reader.readAsArrayBuffer(file);
     };
 })();
 </script>
